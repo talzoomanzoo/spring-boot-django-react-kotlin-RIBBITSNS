@@ -1,0 +1,441 @@
+import BarChartIcon from "@mui/icons-material/BarChart";
+import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FileUploadIcon from "@mui/icons-material/FileUpload";
+import FmdGoodIcon from "@mui/icons-material/FmdGood";
+import ImageIcon from "@mui/icons-material/Image";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import RepeatIcon from "@mui/icons-material/Repeat";
+import SlideshowIcon from "@mui/icons-material/Slideshow";
+import TagFacesIcon from "@mui/icons-material/TagFaces";
+import {
+  Avatar,
+  Button,
+  Menu,
+  MenuItem,
+  TextareaAutosize,
+} from "@mui/material";
+import EmojiPicker from "emoji-picker-react";
+import { useFormik } from "formik";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
+import * as Yup from "yup";
+import {
+  createRetweet,
+  createTweet,
+  deleteTweet,
+  getTime,
+  likeTweet,
+  updateTweet,
+  viewPlus,
+} from "../../../../Store/Tweet/Action";
+import { uploadToCloudinary } from "../../../../Utils/UploadToCloudinary";
+import BackdropComponent from "../../../Backdrop/Backdrop";
+import ReplyModal from "./ReplyModal";
+
+const validationSchema = Yup.object().shape({
+  content: Yup.string().required("Tweet text is required"),
+});
+
+const TwitCard = ({ twit }) => {
+  const [selectedImage, setSelectedImage] = useState(twit.image);
+  const [selectedVideo,setSelectedVideo] = useState(twit.video);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [openEmoji, setOpenEmoji] = useState(false);
+  const handleOpenEmoji = () => setOpenEmoji(!openEmoji);
+  const handleCloseEmoji = () => setOpenEmoji(false);
+
+  const dispatch = useDispatch();
+  const { auth } = useSelector((store) => store);
+  const [isLiked, setIsLiked] = useState(twit.liked);
+  const [likes, setLikes] = useState(twit.totalLikes);
+  const [datetime, setDatetimes] = useState(twit.createdAt);
+  const [isRetwit, setIsRetwit] = useState(
+    twit.retwitUsersId.includes(auth.user.id)
+  );
+  const [retwit, setRetwit] = useState(twit.totalRetweets);
+  const [openReplyModel, setOpenReplyModel] = useState();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const openDeleteMenu = Boolean(anchorEl);
+
+  const handleOpenDeleteMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleCloseDeleteMenu = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLikeTweet = (num) => {
+    dispatch(likeTweet(twit.id));
+    setIsLiked(!isLiked);
+    setLikes(likes + num);
+  };
+  const handleCreateRetweet = () => {
+    dispatch(createRetweet(twit.id));
+    setRetwit(isRetwit ? retwit - 1 : retwit + 1);
+    setIsRetwit(!retwit);
+  };
+  const handleCloseReplyModel = () => setOpenReplyModel(false);
+
+  const handleOpenReplyModel = () => setOpenReplyModel(true);
+  //const handleNavigateToTwitDetial = () => navigate(`/twit/${twit.id}`);
+
+  const handleNavigateToTwitDetial = () => {
+    if (!isEditing) {
+      navigate(`/twit/${twit.id}`);
+      dispatch(viewPlus(twit.id));
+    }
+  };
+
+  const handleDeleteTwit = async () => {
+    try {
+      dispatch(deleteTweet(twit.id));
+      handleCloseDeleteMenu();
+
+      const currentId = window.location.pathname.replace(/^\/twit\//, "");
+      if (location.pathname === `/twit/${currentId}`) {
+        window.location.reload();
+      } else {
+        navigate(".", { replace: true });
+      }
+    } catch (error) {
+      console.error("게시글 삭제 중 오류 발생:", error);
+    }
+  };
+
+  const handleEditClick = () => {
+    setIsEditing(true); // 편집 모드로 변경
+  };
+
+  const handleCloseEditClick = () => {
+    setIsEditing(false);
+  };
+
+  const [isEditing, setIsEditing] = useState(false); // 편집 상태를 관리하는 상태 변수
+  const [editedContent, setEditedContent] = useState(twit.content); // 편집된 내용을 관리하는 상태 변수
+
+  const handleSaveClick = () => {
+    // 수정된 내용을 서버에 저장하거나 상태를 업데이트하는 등의 로직을 구현하세요.
+    // editedContent에 수정된 내용이 들어 있습니다.
+    console.log("수정된 트윗 내용:", editedContent);
+
+    // 편집 모드를 종료하고 편집 상태를 초기화합니다.
+    setIsEditing(false);
+    // 수정된 내용 초기화 (필요에 따라 서버에서 업데이트한 내용으로 초기화)
+
+    setEditedContent(editedContent);
+    twit.content = editedContent;
+    twit.image = selectedImage;
+    twit.video = selectedVideo;
+    //dispatch(updateTweet(twit.id, editedContent));
+    dispatch(updateTweet(twit));
+    setEditedContent("");
+    setSelectedImage("");
+    setSelectedVideo("");
+    window.location.reload();
+    handleCloseEditClick();
+  };
+
+  const handleCancelClick = () => {
+    // 편집 모드를 종료하고 편집 상태를 초기화합니다.
+    setIsEditing(false);
+    setEditedContent(twit.content); // 수정된 내용 초기화
+    handleCloseEditClick();
+  };
+
+  const handleSubmit = (values, actions) => {
+    dispatch(createTweet(values));
+    actions.resetForm();
+    setSelectedImage("");
+    setSelectedVideo("");
+    handleCloseEmoji();
+  };
+
+  const formik = useFormik({
+    initialValues: {
+      content: "",
+      image: "",
+      video: "",
+    },
+    validationSchema,
+    onSubmit: handleSubmit,
+  });
+
+  const handleEmojiClick = (value) => {
+    const { emoji } = value;
+    formik.setFieldValue("content", formik.values.content + emoji);
+  };
+
+  const handleSelectImage = async (event) => {
+    setUploadingImage(true);
+    const imgUrl = await uploadToCloudinary(event.target.files[0], "image");
+    console.log("e.tar.val.I", event.target.value);
+    formik.setFieldValue("image", imgUrl);
+    setSelectedImage(imgUrl);
+    setUploadingImage(false);
+  };
+
+  const handleSelectVideo = async (event) => {
+    setUploadingImage(true);
+    const videoUrl = await uploadToCloudinary(event.target.files[0], "video");
+    console.log("e.tar.val.V", event.target.value);
+    formik.setFieldValue("video", videoUrl);
+    setSelectedVideo(videoUrl);
+    setUploadingImage(false);
+  };
+
+  const currTimestamp = new Date().getTime();
+  console.log(`currTimestamp`, currTimestamp);
+  const datefinal = new Date(datetime).getTime();
+  console.log(`created at +`, datefinal);
+
+  const timeAgo = getTime(datefinal, currTimestamp);
+  console.log(timeAgo);
+
+  return (
+    <div className="">
+      {auth.user?.id !== twit.user.id &&
+        location.pathname === `/profile/${auth.user?.id}` && (
+          <div className="flex items-center font-semibold text-gray-700 py-2">
+            <RepeatIcon />
+            <p className="ml-3">You Retweet</p>
+          </div>
+        )}
+      <div className="flex space-x-5 ">
+        <Avatar
+          onClick={() => navigate(`/profile/${twit.user.id}`)}
+          alt="Avatar"
+          src={twit.user.image}
+          className="cursor-pointer"
+        />
+        <div className="w-full">
+          <div className="flex justify-between items-center ">
+            <div
+              onClick={() => navigate(`/profile/${twit.user.id}`)}
+              className="flex cursor-pointer items-center space-x-2"
+            >
+              <span className="font-semibold">{twit.user.fullName}</span>
+              <span className=" text-gray-600">
+                @{twit.user.fullName.toLowerCase().split(" ").join("_")} ·{" "}
+                {timeAgo}
+              </span>
+              {twit.user.verified && (
+                <img
+                  className="ml-2 w-5 h-5"
+                  src="https://abs.twimg.com/responsive-web/client-web/verification-card-v2@3x.8ebee01a.png"
+                  alt=""
+                />
+              )}
+            </div>
+            <div>
+              <Button onClick={handleOpenDeleteMenu}>
+                <MoreHorizIcon
+                  id="basic-button"
+                  aria-controls={openDeleteMenu ? "basic-menu" : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={openDeleteMenu ? "true" : undefined}
+                />
+              </Button>
+
+              <Menu
+                id="basic-menu"
+                anchorEl={anchorEl}
+                open={openDeleteMenu}
+                onClose={handleCloseDeleteMenu}
+                MenuListProps={{
+                  "aria-labelledby": "basic-button",
+                }}
+              >
+                {isEditing ? (
+                  <div>
+                    <MenuItem onClick={handleSaveClick}>Save</MenuItem>
+                    <MenuItem onClick={handleCancelClick}>Cancel</MenuItem>
+                  </div>
+                ) : (
+                  <div>
+                    {twit.user.id === auth.user.id && (
+                      <MenuItem onClick={handleDeleteTwit}>Delete</MenuItem>
+                    )}
+                    {twit.user.id === auth.user.id && (
+                      <MenuItem onClick={handleEditClick}>Edit</MenuItem>
+                    )}
+                    <MenuItem onClick={handleNavigateToTwitDetial}>
+                      Details
+                    </MenuItem>
+                  </div>
+                )}
+              </Menu>
+            </div>
+          </div>
+
+          <div className="mt-2 ">
+            <div
+              className="cursor-pointer"
+              onClick={handleNavigateToTwitDetial}
+            >
+              {isEditing ? (
+                <div>
+                  <TextareaAutosize
+                    value={editedContent}
+                    onChange={(e) => setEditedContent(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault(); // 엔터 키의 기본 동작을 막음
+                        handleSaveClick(); // Save 이벤트를 발생시킴
+                      } else if (e.key === "Enter" && e.shiftKey) {
+                      }
+                    }}
+                  />
+                  {!uploadingImage && (
+                    <div>
+                      {selectedImage && ( // 편집 모드일 때 이미지가 선택된 경우에만 표시
+                        <img
+                          className="w-[28rem] border border-gray-400 p-5 rounded-md"
+                          src={selectedImage}
+                          alt=""
+                        />
+                      )}
+                      {selectedVideo && (
+                        <div className="flex flex-col items-center w-full border border-gray-400 rounded-md">
+                          <video
+                            className="max-h-[40rem] p-5"
+                            controls
+                            src={selectedVideo}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div>
+                  <p className="mb-2 p-0 ">
+                    {isEditing ? editedContent : twit.content}
+                  </p>
+                  {twit.image && (
+                    <img
+                      className="w-[28rem] border border-gray-400 p-5 rounded-md"
+                      src={twit.image}
+                      alt=""
+                    />
+                  )}
+                  {twit.video && (
+                    <div className="flex flex-col items-center w-full border border-gray-400 rounded-md">
+                      <video
+                        className="max-h-[40rem] p-5"
+                        controls
+                        src={twit.video}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div className="flex justify-between items-center mt-5">
+              <div className="flex space-x-5 items-center">
+                {isEditing && (
+                  <>
+                    <label className="flex items-center space-x-2 rounded-md cursor-pointer">
+                      <ImageIcon className="text-[#1d9bf0]" />
+                      <input
+                        type="file"
+                        name="imageFile"
+                        className="hidden"
+                        onChange={handleSelectImage}
+                      />
+                    </label>
+                    <label className="flex items-center space-x-2 rounded-md cursor-pointer">
+                      <SlideshowIcon className="text-[#1d9bf0]" />
+                      <input
+                        type="file"
+                        name="videoFile"
+                        className="hidden"
+                        onChange={handleSelectVideo}
+                      />
+                    </label>
+                    <FmdGoodIcon className="text-[#1d9bf0]" />
+                    <div className="relative">
+                      <TagFacesIcon
+                        onClick={handleOpenEmoji}
+                        className="text-[#1d9bf0] cursor-pointer"
+                      />
+                      {openEmoji && (
+                        <div className="absolute top-10 z-50 ">
+                          <EmojiPicker
+                            // theme={theme.currentTheme}
+                            onEmojiClick={handleEmojiClick}
+                            lazyLoadEmojis={true}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+
+            <div className="py-5 flex flex-wrap justify-between items-center">
+              {!isEditing && (
+                <>
+                  <div className="space-x-3 flex items-center text-gray-600">
+                    <ChatBubbleOutlineIcon
+                      className="cursor-pointer"
+                      onClick={handleOpenReplyModel}
+                    />
+                    {twit.totalReplies > 0 && <p>{twit.totalReplies}</p>}
+                  </div>
+                  <div
+                    className={`${
+                      isRetwit ? "text-pink-600" : "text-gray-600"
+                    } space-x-3 flex items-center`}
+                  >
+                    <RepeatIcon
+                      className={` cursor-pointer`}
+                      onClick={handleCreateRetweet}
+                    />
+                    {retwit > 0 && <p>{retwit}</p>}
+                  </div>
+                  <div
+                    className={`${
+                      isLiked ? "text-pink-600" : "text-gray-600"
+                    } space-x-3 flex items-center `}
+                  >
+                    {isLiked ? (
+                      <FavoriteIcon onClick={() => handleLikeTweet(-1)} />
+                    ) : (
+                      <FavoriteBorderIcon onClick={() => handleLikeTweet(1)} />
+                    )}
+                    {likes > 0 && <p>{likes}</p>}
+                  </div>
+                  <div className="space-x-3 flex items-center text-gray-600">
+                    <BarChartIcon />
+                    <p>{twit.viewCount}</p>
+                  </div>
+                  <div className="flex items-center text-gray-600">
+                    <FileUploadIcon />
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+      <ReplyModal
+        twitData={twit}
+        open={openReplyModel}
+        handleClose={handleCloseReplyModel}
+      />
+
+      <section>
+        <BackdropComponent open={uploadingImage} />
+      </section>
+    </div>
+  );
+};
+
+export default TwitCard;
