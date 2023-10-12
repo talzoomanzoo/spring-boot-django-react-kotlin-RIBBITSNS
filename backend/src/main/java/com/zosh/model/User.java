@@ -63,7 +63,6 @@ public class User {
     
     private boolean is_req_user=false;
     
-    @Column(nullable = false)
     private LocalDateTime joinedAt; 
     
 //    @ManyToMany(mappedBy = "retwitUser",cascade = CascadeType.ALL)
