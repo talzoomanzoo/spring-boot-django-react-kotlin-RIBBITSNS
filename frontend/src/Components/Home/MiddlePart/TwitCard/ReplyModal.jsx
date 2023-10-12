@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
 import { createTweetReply } from "../../../../Store/Tweet/Action";
+
 const validationSchema = Yup.object().shape({
   content: Yup.string().required("Tweet text is required"),
 });
@@ -27,6 +28,8 @@ const ReplyModal = ({ handleClose, twitData, open }) => {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
   const dispatch = useDispatch();
+
+  const { auth, theme } = useSelector((store) => store);
   // const jwt=localStorage.getItem("jwt")
   const handleSubmit = (values, actions) => {
     console.log("val", values);
@@ -38,18 +41,17 @@ const ReplyModal = ({ handleClose, twitData, open }) => {
   };
   console.log("twitData", twitData);
 
-  const { auth } = useSelector((store) => store);
-
   const formik = useFormik({
     initialValues: {
       content: "",
-      twitId:twitData.id,
+      // image: "",
+      twitId:twitData.id
     },
     validationSchema,
     onSubmit: handleSubmit,
   });
 
-  console.log("initialvalues",formik.initialValues);
+  //console.log("initialvalues",formik.initialValues);
   // const handleSelectImage = async (event) => {
   //   setUploadingImage(true);
   //   const imgUrl = await uploadToCloudinary(event.target.files[0],"image");
