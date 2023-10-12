@@ -20,15 +20,15 @@ import {
   REGISTER_FAILURE,
   REGISTER_REQUEST,
   REGISTER_SUCCESS,
+  SEARCH_TWIT_FAILURE,
+  SEARCH_TWIT_REQUEST,
+  SEARCH_TWIT_SUCCESS,
   SEARCH_USER_FAILURE,
   SEARCH_USER_REQUEST,
   SEARCH_USER_SUCCESS,
   UPDATE_USER_FAILURE,
   UPDATE_USER_REQUEST,
   UPDATE_USER_SUCCESS,
-  SEARCH_TWIT_REQUEST,
-  SEARCH_TWIT_SUCCESS,
-  SEARCH_TWIT_FAILURE,
 } from "./ActionType"; //액션 유형 상수들을 가져옵니다. 이러한 상수들은 Redux 액션 유형을 식별하는 데 사용된다.
 
 export const loginRequest = () => ({
@@ -245,33 +245,3 @@ export const logout = () => (dispatch) => {
 //사용자 로그아웃을 처리하며, 로컬 스토리지에서 JWT 토큰을 제거하고 LOGOUT 액션을 디스패치한다.
 
 // Redux 액션을 정의하고, 이러한 액션을 사용하여 Redux 상태를 변경하거나 API와 상호작용하는 데 사용된다.
-
-// const persistConfig = {
-//   key: 'root',
-//   storage,
-// };
-
-// // Redux Toolkit을 사용한 Slice 생성
-// const authSlice = createSlice({
-//   name: 'auth',
-//   initialState,
-//   reducers: {
-//     loginSuccess: (state, action) => {
-//       state.user = action.payload;
-//     },
-//     // 다른 액션 및 리듀서들...
-//     logout: (state) => {
-//       // 로그아웃 시에 상태 초기화
-//       state.user = null;
-//     },
-//   },
-// });
-
-// // rootReducer에 Redux Persist 설정 적용
-// const persistedReducer = persistReducer(persistConfig, authSlice.reducer);
-
-// export { persistStore }; // persistor를 사용하기 위해 export
-
-// export const { loginSuccess, logout } = authSlice.actions;
-
-// export default persistedReducer; 

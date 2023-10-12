@@ -35,7 +35,6 @@ const TwitDetail = () => {
       </section>
        {twit.twit && <TwitCard twit={twit.twit}/>}
        <Divider sx={{margin:"2rem 0rem"}}/>
-
        <div>
         {twit.twit?.replyTwits.slice().reverse().map((item)=><TwitCard twit={item}/>)}
        </div>

@@ -26,15 +26,15 @@ import {
   TWEET_DELETE_FAILURE,
   TWEET_DELETE_REQUEST,
   TWEET_DELETE_SUCCESS,
+  UPDATE_TWEET_FAILURE,
+  UPDATE_TWEET_REQUEST,
+  UPDATE_TWEET_SUCCESS,
   USER_LIKE_TWEET_FAILURE,
   USER_LIKE_TWEET_REQUEST,
   USER_LIKE_TWEET_SUCCESS,
   VIEW_PLUS_FAILURE,
   VIEW_PLUS_REQUEST,
   VIEW_PLUS_SUCCESS,
-  UPDATE_TWEET_REQUEST,
-  UPDATE_TWEET_SUCCESS,
-  UPDATE_TWEET_FAILURE,
 } from "./ActionType";
 
 export const createTweetRequest = () => ({
@@ -82,10 +82,7 @@ export const getAllTweetsFailure = (error) => ({
 });
 
 export const getAllTweets = () => {
-
   return async (dispatch) => {
-
-
     dispatch(getAllTweetsRequest());
     try {
       const response = await api.get("/api/twits/");
