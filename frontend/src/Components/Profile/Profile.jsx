@@ -62,14 +62,13 @@ const Profile = () => {
     dispatch(FollowUserAction(param.id));
   };
 
-  console.log("find user ",auth.findUser)
+  console.log("find user ", auth.findUser)
 
   return (
     <React.Fragment>
       <section
-        className={`z-50 flex items-center sticky top-0 ${
-          theme.currentTheme === "light" ? "bg-white" : "bg-[#0D0D0D]"
-        } bg-opacity-95`}
+        className={`z-50 flex items-center sticky top-0 ${theme.currentTheme === "light" ? "bg-white" : "bg-[#0D0D0D]"
+          } bg-opacity-95`}
       >
         <KeyboardBackspaceIcon
           className="cursor-pointer"
@@ -122,11 +121,11 @@ const Profile = () => {
           <div>
             <div className="flex items-center">
               <h1 className="font-bold text-lg">{auth.findUser?.fullName}</h1>
-            {auth.findUser?.verified && <img
-              className="ml-2 w-5 h-5"
-              src="https://abs.twimg.com/responsive-web/client-web/verification-card-v2@3x.8ebee01a.png"
-              alt=""
-            />}
+              {auth.findUser?.verified && <img
+                className="ml-2 w-5 h-5"
+                src="https://abs.twimg.com/responsive-web/client-web/verification-card-v2@3x.8ebee01a.png"
+                alt=""
+              />}
             </div>
             <h1 className="text-gray-500">
               @{auth.findUser?.fullName?.toLowerCase()}
@@ -144,8 +143,26 @@ const Profile = () => {
                 <p className="ml-2">{auth.findUser?.location}</p>
               </div>
               <div className="flex items-center text-gray-500">
-                <CalendarMonthIcon />
-                <p className="ml-2"> {auth.findUser?.joinedAt?.substr(0,4)}년 {auth.findUser?.joinedAt?.substring(5,7)}월 {auth.findUser?.joinedAt?.substring(8,10)}일에 가입함</p>
+
+                {auth.findUser?.joinedAt? (
+                  <>
+                    <CalendarMonthIcon />
+                    <p className="ml-2">
+                      {`${auth.findUser.joinedAt?.substr(0, 4) || ''}년 ${auth.findUser.joinedAt?.substring(5, 7) || ''}월 ${auth.findUser.joinedAt?.substring(8, 10) || ''}일에 가입함`}
+                    </p>
+                  </>
+                ) : null}
+
+                {/* {auth.findUser && (
+                  <>
+                    <CalendarMonthIcon />
+                    <p className="ml-2">
+                      {`${auth.findUser.joinedAt?.substr(0, 4) || ''}년 ${auth.findUser.joinedAt?.substring(5, 7) || ''}월 ${auth.findUser.joinedAt?.substring(8, 10) || ''}일에 가입함`}
+                    </p>
+                  </>
+                )}
+                {!auth.findUser && <CalendarMonthIcon />} */}
+
               </div>
             </div>
             <div className="flex items-center space-x-5">
