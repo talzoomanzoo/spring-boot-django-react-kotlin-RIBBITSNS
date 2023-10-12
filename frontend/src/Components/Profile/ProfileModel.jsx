@@ -1,3 +1,4 @@
+import CloseIcon from "@mui/icons-material/Close";
 import {
   Avatar,
   Box,
@@ -6,14 +7,13 @@ import {
   Modal,
   TextField,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import CloseIcon from "@mui/icons-material/Close";
 import { useFormik } from "formik";
-import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
-import BackdropComponent from "../Backdrop/Backdrop";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateUserProfile } from "../../Store/Auth/Action";
-import "./ProfileModel.css"
+import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
+import BackdropComponent from "../Backdrop/Backdrop";
+import "./ProfileModel.css";
 
 const style = {
   position: "absolute",
@@ -47,7 +47,8 @@ const ProfileModel = ({ handleClose,open }) => {
       location: "",
       bio: "",
       backgroundImage:"",
-      image:""
+      image:"",
+      education:"",
     },
     onSubmit: handleSubmit,
   });
@@ -61,6 +62,7 @@ const ProfileModel = ({ handleClose,open }) => {
       bio: auth.user.bio || "",
       backgroundImage: auth.user.backgroundImage || "",
       image: auth.user.image || "",
+      education: auth.user.education || "",
     });
 
   },[auth.user])
@@ -188,10 +190,22 @@ const ProfileModel = ({ handleClose,open }) => {
                   }
                   helperText={formik.touched.location && formik.errors.location}
                 />
+                <TextField
+                  fullWidth
+                  id="education"
+                  name="education"
+                  label="Education"
+                  value={formik.values.education}
+                  onChange={formik.handleChange}
+                  error={
+                    formik.touched.education && Boolean(formik.errors.education)
+                  }
+                  helperText={formik.touched.education && formik.errors.education}
+                />
               </div>
-               <div className="my-3">
+              <div className="my-3" float="left">
               <p className="text-lg">Birth date · Edit</p>
-              <p className="text-2xl"> October 26, 1999</p>
+              <p className="text-2xl"> {auth.findUser?.birthDate?.substr(0,4)}년 {auth.findUser?.birthDate?.substring(5,7)}월 {auth.findUser?.birthDate?.substring(8,10)}일</p>
 
             </div>
             <p className="py-3 text-lg">

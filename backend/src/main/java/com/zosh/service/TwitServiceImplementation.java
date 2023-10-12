@@ -107,7 +107,10 @@ public class TwitServiceImplementation implements TwitService {
 		twit.setContent(req.getContent());
 		twit.setImage(req.getImage());
 		twit.setVideo(req.getVideo());
-		System.out.println(twit.getContent());
+		twit.setEdited(req.isEdited());
+		twit.setEditedAt(req.getEditedAt());
+		System.out.println(twit.isEdited());
+		System.out.println(twit.getEditedAt());
 		twitRepository.save(twit);
 		return twit;
 	}
@@ -154,4 +157,11 @@ public class TwitServiceImplementation implements TwitService {
 	
 		return twitRepository.searchTwit(query);
 	}
+
+/*	@Override
+	public List<Twit> findTwitFollowedByReqUser(User user) {
+		// TODO Auto-generated method stub
+		System.out.println(user.getId());
+		return twitRepository.searchFollowedTwit(user.getId());
+	} */
 }

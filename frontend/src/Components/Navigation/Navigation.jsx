@@ -3,7 +3,7 @@ import { Avatar, Button, Menu, MenuItem } from "@mui/material";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { logout } from "../../Store/Auth/Action";
+import { followTwit, logout } from "../../Store/Auth/Action";
 import { navigationMenu } from "../../Utils/NavigationMenu";
 
 const Navigation = () => {
@@ -24,6 +24,11 @@ const Navigation = () => {
     dispatch(logout())
     handleClose()
   }
+  const handleFollowTwit=()=> {
+    navigate(`/followTwit`)
+    dispatch(followTwit())
+  }
+
   return (
     <div className="h-screen sticky top-0 ">
       <div>
@@ -44,6 +49,7 @@ const Navigation = () => {
         </div>
         <div className="py-10">
           <Button
+            type="button"
             sx={{
               width: "100%",
               borderRadius: "29px",
@@ -52,6 +58,7 @@ const Navigation = () => {
             }}
             variant="contained"
             size="large"
+            onClick={()=>handleFollowTwit()}
           >
             Tweet
           </Button>

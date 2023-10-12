@@ -48,7 +48,7 @@ public class TwitController {
 		System.out.println("content + "+req.getContent());
 		User user=userService.findUserProfileByJwt(jwt);
 		Twit twit=twitService.createTwit(req, user);
-		
+		System.out.println("edit + "+req.isEdited()+req.getEditedAt());
 		TwitDto twitDto=TwitDtoMapper.toTwitDto(twit,user);
 		
 		return new ResponseEntity<>(twitDto,HttpStatus.CREATED);
@@ -61,7 +61,6 @@ public class TwitController {
 		
 		User user=userService.findUserProfileByJwt(jwt);
 		Twit twit=twitService.createReply(req, user);
-		
 		TwitDto twitDto=TwitDtoMapper.toTwitDto(twit,user);
 		
 		return new ResponseEntity<>(twitDto,HttpStatus.CREATED);
@@ -173,5 +172,6 @@ public class TwitController {
 		
 		return new ResponseEntity<>(twitDtos,HttpStatus.ACCEPTED);
 	}
+	
 
 }

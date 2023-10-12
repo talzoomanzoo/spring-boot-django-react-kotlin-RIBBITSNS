@@ -18,13 +18,14 @@ public class UserDtoMapper {
 		userDto.setImage(user.getImage());
 		userDto.setBackgroundImage(user.getBackgroundImage());
 		userDto.setBio(user.getBio());
+		userDto.setEducation(user.getEducation());
 		userDto.setBirthDate(user.getBirthDate());
 		userDto.setFollowers(toUserDtos(user.getFollowers()));
 		userDto.setFollowings(toUserDtos(user.getFollowings()));
 		userDto.setLogin_with_google(user.isLogin_with_google());
 		userDto.setLocation(user.getLocation());
 		userDto.setVerified(UserUtil.isVerified(user.getVerification().getEndsAt()));
-		
+		userDto.setJoinedAt(user.getJoinedAt());
 		return userDto;
 	}
 	

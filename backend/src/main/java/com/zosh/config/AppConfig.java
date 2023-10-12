@@ -29,7 +29,11 @@ public class AppConfig {
 		.authorizeHttpRequests(Authorize -> Authorize
 				.requestMatchers("/api/**").authenticated()
 				.anyRequest().permitAll()
+				// "/api" 경로는 인증된 모든 사용자에게 허용하는 설정
 				)
+		//authorizeHttpRequests(): http 요청에 대한 인가 설정 구성, 경로별로 다른 권한 설정 가능
+		//requestMatcher(): 위와 같이 사용되며, 특정한 http 요청 매처를 적용할 수 있음 (여기서는 /api 로 시작하는 경로에 대한 인가설정)
+		//permitAll(): 인증된 사용자나 권한에 상관없이 모든 사용자가 접근할 수 있게 허용
 		.addFilterBefore(new JwtTokenValidator(), BasicAuthenticationFilter.class)
 		.csrf().disable()
 		.cors().configurationSource(corsConfigurationSource())
@@ -52,8 +56,8 @@ public class AppConfig {
                 CorsConfiguration cfg = new CorsConfiguration();
                 cfg.setAllowedOrigins(Arrays.asList(
                     "http://localhost:3000",
-                    "http://localhost:4000",
-                    "http://localhost:4200",
+                    //"http://localhost:4000",
+                    "http://localhost:8000",
                     "https://twitter-clone-two-woad.vercel.app",
                     "https://twitter-clone-six-kohl.vercel.app"
                 ));

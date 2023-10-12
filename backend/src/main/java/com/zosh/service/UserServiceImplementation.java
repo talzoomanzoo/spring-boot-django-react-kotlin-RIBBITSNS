@@ -72,6 +72,9 @@ public class UserServiceImplementation implements UserService {
 		if(req.getWebsite()!=null) {
 			user.setWebsite(req.getWebsite());
 		}
+		if(req.getEducation()!=null) {
+			user.setEducation(req.getEducation());
+		}
 		
 		return userRepository.save(user);
 		

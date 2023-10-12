@@ -1,6 +1,7 @@
 package com.zosh.controller;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.time.LocalDateTime;
 import java.util.Collections;
 
 import javax.security.auth.login.CredentialException;
@@ -170,6 +171,7 @@ public class AuthController {
 	        createdUser.setPassword(passwordEncoder.encode(password));
 	        createdUser.setBirthDate(birthDate);
 	        createdUser.setVerification(new Varification());
+	        createdUser.setJoinedAt(LocalDateTime.now());
 	        
 	        User savedUser= userRepository.save(createdUser);
 	        

@@ -28,17 +28,18 @@ const ReplyModal = ({ handleClose, twitData, open }) => {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
   const dispatch = useDispatch();
+
   const { auth, theme } = useSelector((store) => store);
   // const jwt=localStorage.getItem("jwt")
-
   const handleSubmit = (values, actions) => {
-    console.log("val", values)
+    console.log("val", values);
     dispatch(createTweetReply(values));
     actions.resetForm();
     // setSelectedImage("");
     window.location.reload();
     handleClose()
   };
+  console.log("twitData", twitData);
 
   const formik = useFormik({
     initialValues: {
@@ -49,6 +50,8 @@ const ReplyModal = ({ handleClose, twitData, open }) => {
     validationSchema,
     onSubmit: handleSubmit,
   });
+
+  //console.log("initialvalues",formik.initialValues);
   // const handleSelectImage = async (event) => {
   //   setUploadingImage(true);
   //   const imgUrl = await uploadToCloudinary(event.target.files[0],"image");
@@ -91,15 +94,14 @@ const ReplyModal = ({ handleClose, twitData, open }) => {
             </div>
           </div>
           <section
-            className={`py-10 }`}
+            className={`py-10 `}
           >
             <div className="flex space-x-6 ">
-              <Avatar alt="Avatar" src={auth.user?.image} />
+              <Avatar alt="Avatar" src={auth.user?.image}/>
               <div className="w-full">
                 <form onSubmit={formik.handleSubmit}>
                   <div>
                     <input
-                   
                       type="text"
                       name="content"
                       placeholder="What is happening?"

@@ -37,6 +37,7 @@ const HomeSection = () => {
     setSelectedImage("")
     setSelectedVideo("")
     handleCloseEmoji()
+    window.location.reload();
   };
 
 
@@ -63,8 +64,6 @@ const HomeSection = () => {
     formik.setFieldValue("video", videoUrl);
     setSelectedVideo(videoUrl)
     setUploadingImage(false);
-
-    // console.log()
   };
 
   useEffect(()=>{

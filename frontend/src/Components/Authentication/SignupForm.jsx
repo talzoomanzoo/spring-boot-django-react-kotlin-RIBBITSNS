@@ -22,9 +22,18 @@ const validationSchema = Yup.object().shape({
 
 const days = Array.from({ length: 31 }, (_, i) => i + 1);
 const months = [
-  { value: 1, label: "January" },
-  { value: 2, label: "February" },
-  // Add other months here
+  { value: "01", label: "January" },
+  { value: "02", label: "February" },
+  { value: "03", label: "March" },
+  { value: "04", label: "April" },
+  { value: "05", label: "May" },
+  { value: "06", label: "June" },
+  { value: "07", label: "July" },
+  { value: "08", label: "August" },
+  { value: "09", label: "September" },
+  { value: "10", label: "October" },
+  { value: "11", label: "November" },
+  { value: "12", label: "December" },
 ];
 const currentYear = new Date().getFullYear();
 const years = Array.from({ length: 100 }, (_, i) => currentYear - i);
@@ -38,7 +47,7 @@ const SignupForm = () => {
       fullName: "",
       email: "",
       password: "",
-      dateOfBirth: {
+      birthDate: {
         day: "",
         month: "",
         year: "",
@@ -46,18 +55,18 @@ const SignupForm = () => {
     },
     validationSchema,
     onSubmit: (values) => {
-      const { day, month, year } = values.dateOfBirth;
-      const dateOfBirth = `${year}-${month}-${day}`;
-      values.dateOfBirth = dateOfBirth;
+      const { day, month, year } = values.birthDate;
+      const birthDate = `${year}-${month}-${day}`;
+      values.birthDate = birthDate;
 
-      console.log(values);
+      console.log("values", values);
       dispatch(registerUser(values))
     },
   });
 
   const handleDateChange = (name) => (event) => {
-    formik.setFieldValue("dateOfBirth", {
-      ...formik.values.dateOfBirth,
+    formik.setFieldValue("birthDate", {
+      ...formik.values.birthDate,
       [name]: event.target.value,
     });
   };
@@ -113,11 +122,11 @@ const SignupForm = () => {
           <InputLabel>Date</InputLabel>
           <Select
             name="day"
-            value={formik.values.dateOfBirth.day}
+            value={formik.values.birthDate.day}
             onChange={handleDateChange("day")}
             onBlur={formik.handleBlur}
             error={
-              formik.touched.dateOfBirth && Boolean(formik.errors.dateOfBirth)
+              formik.touched.birthDate && Boolean(formik.errors.birthDate)
             }
             className="w-full"
           >
@@ -132,11 +141,11 @@ const SignupForm = () => {
           <InputLabel>Month</InputLabel>
           <Select
             name="month"
-            value={formik.values.dateOfBirth.month}
+            value={formik.values.birthDate.month}
             onChange={handleDateChange("month")}
             onBlur={formik.handleBlur}
             error={
-              formik.touched.dateOfBirth && Boolean(formik.errors.dateOfBirth)
+              formik.touched.birthDate && Boolean(formik.errors.birthDate)
             }
             className="w-full"
           >
@@ -151,11 +160,11 @@ const SignupForm = () => {
           <InputLabel>Year</InputLabel>
           <Select
             name="year"
-            value={formik.values.dateOfBirth.year}
+            value={formik.values.birthDate.year}
             onChange={handleDateChange("year")}
             onBlur={formik.handleBlur}
             error={
-              formik.touched.dateOfBirth && Boolean(formik.errors.dateOfBirth)
+              formik.touched.birthDate && Boolean(formik.errors.birthDate)
             }
             className="w-full"
           >
@@ -167,8 +176,8 @@ const SignupForm = () => {
           </Select>
         </Grid>
         <Grid item xs={12}>
-          {formik.touched.dateOfBirth && formik.errors.dateOfBirth && (
-            <div className="text-red-500">{formik.errors.dateOfBirth}</div>
+          {formik.touched.birthDate && formik.errors.birthDate && (
+            <div className="text-red-500">{formik.errors.birthDate}</div>
           )}
         </Grid>
         <Grid className="mt-20" item xs={12}>

@@ -5,6 +5,9 @@ import {
   FIND_USER_BY_ID_FILURE,
   FIND_USER_BY_ID_REQUEST,
   FIND_USER_BY_ID_SUCCESS,
+  FOLLOW_TWIT_FAILURE,
+  FOLLOW_TWIT_REQUEST,
+  FOLLOW_TWIT_SUCCESS,
   FOLLOW_USER_FAILURE,
   FOLLOW_USER_REQUEST,
   FOLLOW_USER_SUCCESS,
@@ -149,6 +152,18 @@ export const getUserProfile = (jwt) => async (dispatch) => {
 //사용자 프로필을 가져오는 비동기 액션 생성자다. 사용자 등록 정보를 API로 전송하고, 
 //성공 또는 실패에 따라 각각 getUserProfileSuccess 또는 getUserProfileFailure 액션을 디스패치한다.
 
+export const followTwit = () => async (dispatch) => {
+  dispatch({type:FOLLOW_TWIT_REQUEST})
+  try {
+    const response = await api.get(`/api/users/followTwit`);
+    const user = response.data;
+    dispatch({type:FOLLOW_TWIT_SUCCESS, payload:user});
+    console.log("find by twit user -: ", user);
+  } catch (error) {
+    dispatch({type:FOLLOW_TWIT_FAILURE, payload:error.message});
+  }
+};
+
 export const findUserById = (userId) => async (dispatch) => {
   dispatch({type:FIND_USER_BY_ID_REQUEST})
   try {
@@ -245,3 +260,33 @@ export const logout = () => (dispatch) => {
 //사용자 로그아웃을 처리하며, 로컬 스토리지에서 JWT 토큰을 제거하고 LOGOUT 액션을 디스패치한다.
 
 // Redux 액션을 정의하고, 이러한 액션을 사용하여 Redux 상태를 변경하거나 API와 상호작용하는 데 사용된다.
+
+// const persistConfig = {
+//   key: 'root',
+//   storage,
+// };
+
+// // Redux Toolkit을 사용한 Slice 생성
+// const authSlice = createSlice({
+//   name: 'auth',
+//   initialState,
+//   reducers: {
+//     loginSuccess: (state, action) => {
+//       state.user = action.payload;
+//     },
+//     // 다른 액션 및 리듀서들...
+//     logout: (state) => {
+//       // 로그아웃 시에 상태 초기화
+//       state.user = null;
+//     },
+//   },
+// });
+
+// // rootReducer에 Redux Persist 설정 적용
+// const persistedReducer = persistReducer(persistConfig, authSlice.reducer);
+
+// export { persistStore }; // persistor를 사용하기 위해 export
+
+// export const { loginSuccess, logout } = authSlice.actions;
+
+// export default persistedReducer; 

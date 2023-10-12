@@ -26,6 +26,8 @@ public class TwitDto {
 	
 	private LocalDateTime createdAt;
 	
+	private String editedAt;
+	
 	private int totalLikes;
 	
 	private int totalReplies;
@@ -33,6 +35,8 @@ public class TwitDto {
 	private int totalRetweets;
 
 	private int viewCount;
+	
+	private boolean isEdited;
 	
     private boolean isLiked;
     

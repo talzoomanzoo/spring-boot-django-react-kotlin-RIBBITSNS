@@ -41,7 +41,7 @@ const validationSchema = Yup.object().shape({
 
 const TwitCard = ({ twit }) => {
   const [selectedImage, setSelectedImage] = useState(twit.image);
-  const [selectedVideo,setSelectedVideo] = useState(twit.video);
+  const [selectedVideo, setSelectedVideo] = useState(twit.video);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [openEmoji, setOpenEmoji] = useState(false);
   const handleOpenEmoji = () => setOpenEmoji(!openEmoji);
@@ -51,7 +51,13 @@ const TwitCard = ({ twit }) => {
   const { auth } = useSelector((store) => store);
   const [isLiked, setIsLiked] = useState(twit.liked);
   const [likes, setLikes] = useState(twit.totalLikes);
+
+  const [isEditing, setIsEditing] = useState(false); // 편집 상태를 관리하는 상태 변수
+  const [editedContent, setEditedContent] = useState(twit.content); // 편집된 내용을 관리하는 상태 변수
+
+  const [isEdited, setIsEdited] = useState(twit.edited);
   const [datetime, setDatetimes] = useState(twit.createdAt);
+  const [edittime, setEdittimes] = useState(twit.editedAt);
   const [isRetwit, setIsRetwit] = useState(
     twit.retwitUsersId.includes(auth.user.id)
   );
@@ -88,6 +94,7 @@ const TwitCard = ({ twit }) => {
     if (!isEditing) {
       navigate(`/twit/${twit.id}`);
       dispatch(viewPlus(twit.id));
+      window.location.reload();
     }
   };
 
@@ -95,7 +102,8 @@ const TwitCard = ({ twit }) => {
     try {
       dispatch(deleteTweet(twit.id));
       handleCloseDeleteMenu();
-
+      window.location.reload();
+      
       const currentId = window.location.pathname.replace(/^\/twit\//, "");
       if (location.pathname === `/twit/${currentId}`) {
         window.location.reload();
@@ -115,29 +123,40 @@ const TwitCard = ({ twit }) => {
     setIsEditing(false);
   };
 
-  const [isEditing, setIsEditing] = useState(false); // 편집 상태를 관리하는 상태 변수
-  const [editedContent, setEditedContent] = useState(twit.content); // 편집된 내용을 관리하는 상태 변수
+  //const [isEditing, setIsEditing] = useState(false); // 편집 상태를 관리하는 상태 변수
+  //const [editedContent, setEditedContent] = useState(twit.content); // 편집된 내용을 관리하는 상태 변수
 
-  const handleSaveClick = () => {
-    // 수정된 내용을 서버에 저장하거나 상태를 업데이트하는 등의 로직을 구현하세요.
-    // editedContent에 수정된 내용이 들어 있습니다.
-    console.log("수정된 트윗 내용:", editedContent);
+  //const [isEdited, setIsEdited] = useState(twit.isEdited);
+  //const [edittimes, setEdittimes] = useState(twit.editedAt);
 
-    // 편집 모드를 종료하고 편집 상태를 초기화합니다.
-    setIsEditing(false);
-    // 수정된 내용 초기화 (필요에 따라 서버에서 업데이트한 내용으로 초기화)
+  const handleSaveClick = async () => {
+    try {
+      const currentTime = new Date();
+      setEditedContent(editedContent);
+      setSelectedImage(selectedImage);
+      setSelectedVideo(selectedVideo);
+      setIsEdited(true);
+      setEdittimes(currentTime);
 
-    setEditedContent(editedContent);
-    twit.content = editedContent;
-    twit.image = selectedImage;
-    twit.video = selectedVideo;
-    //dispatch(updateTweet(twit.id, editedContent));
-    dispatch(updateTweet(twit));
-    setEditedContent("");
-    setSelectedImage("");
-    setSelectedVideo("");
-    window.location.reload();
-    handleCloseEditClick();
+      twit.content = editedContent;
+      twit.image = selectedImage;
+      twit.video = selectedVideo;
+      twit.edited = true;
+      twit.editedAt = currentTime;
+      //console.log("currTime", currentTime);
+
+      await dispatch(updateTweet(twit));
+
+      setEditedContent("");
+      setSelectedImage("");
+      setSelectedVideo("");
+      setIsEditing(false);
+      //console.log("edit test", twit);
+      window.location.reload();
+      handleCloseEditClick();
+    } catch (error) {
+      //console.error("Error updating twit:", error);
+    }
   };
 
   const handleCancelClick = () => {
@@ -168,12 +187,14 @@ const TwitCard = ({ twit }) => {
   const handleEmojiClick = (value) => {
     const { emoji } = value;
     formik.setFieldValue("content", formik.values.content + emoji);
+    const newContent = editedContent + emoji;
+    setEditedContent(newContent);
   };
 
   const handleSelectImage = async (event) => {
     setUploadingImage(true);
     const imgUrl = await uploadToCloudinary(event.target.files[0], "image");
-    console.log("e.tar.val.I", event.target.value);
+    //console.log("e.tar.val.I", event.target.value);
     formik.setFieldValue("image", imgUrl);
     setSelectedImage(imgUrl);
     setUploadingImage(false);
@@ -182,30 +203,35 @@ const TwitCard = ({ twit }) => {
   const handleSelectVideo = async (event) => {
     setUploadingImage(true);
     const videoUrl = await uploadToCloudinary(event.target.files[0], "video");
-    console.log("e.tar.val.V", event.target.value);
+    //console.log("e.tar.val.V", event.target.value);
     formik.setFieldValue("video", videoUrl);
     setSelectedVideo(videoUrl);
     setUploadingImage(false);
   };
 
   const currTimestamp = new Date().getTime();
-  console.log(`currTimestamp`, currTimestamp);
   const datefinal = new Date(datetime).getTime();
-  console.log(`created at +`, datefinal);
-
   const timeAgo = getTime(datefinal, currTimestamp);
-  console.log(timeAgo);
 
+  const dateedit = new Date(edittime).getTime();
+  //console.log("dateedit", dateedit);
+  const timeEdit = getTime(dateedit, currTimestamp);
+  //console.log("timeedit", timeEdit);
+
+  console.log("twitTest", twit);
   return (
     <div className="">
       {auth.user?.id !== twit.user.id &&
+      // auth.user notnull 일때, auth.user.id 가 twit.user.id 와 일치하지 않고,
         location.pathname === `/profile/${auth.user?.id}` && (
+          // 현재 url의 pathname이 /profile/${auth.user?.id} 이면
           <div className="flex items-center font-semibold text-gray-700 py-2">
             <RepeatIcon />
             <p className="ml-3">You Retweet</p>
           </div>
+          // 해당 표시를 해라
         )}
-      <div className="flex space-x-5 ">
+      <div className="flex space-x-5 "> 
         <Avatar
           onClick={() => navigate(`/profile/${twit.user.id}`)}
           alt="Avatar"
@@ -220,8 +246,17 @@ const TwitCard = ({ twit }) => {
             >
               <span className="font-semibold">{twit.user.fullName}</span>
               <span className=" text-gray-600">
-                @{twit.user.fullName.toLowerCase().split(" ").join("_")} ·{" "}
-                {timeAgo}
+                {twit.edited === true ? (
+                  <p>
+                    @{twit.user.fullName.toLowerCase().split(" ").join("_")} ·{" "}
+                    {timeAgo} {"· " + timeEdit + " 수정됨"}
+                  </p>
+                ) : (
+                  <p>
+                    @{twit.user.fullName.toLowerCase().split(" ").join("_")} ·{" "}
+                    {timeAgo}
+                  </p>
+                )}
               </span>
               {twit.user.verified && (
                 <img
@@ -280,6 +315,8 @@ const TwitCard = ({ twit }) => {
               {isEditing ? (
                 <div>
                   <TextareaAutosize
+                    minRows={0}
+                    maxRows={0}
                     value={editedContent}
                     onChange={(e) => setEditedContent(e.target.value)}
                     onKeyDown={(e) => {
@@ -289,6 +326,7 @@ const TwitCard = ({ twit }) => {
                       } else if (e.key === "Enter" && e.shiftKey) {
                       }
                     }}
+                    style={{ width: "450px" }}
                   />
                   {!uploadingImage && (
                     <div>
@@ -378,7 +416,6 @@ const TwitCard = ({ twit }) => {
                 )}
               </div>
             </div>
-
             <div className="py-5 flex flex-wrap justify-between items-center">
               {!isEditing && (
                 <>
@@ -388,6 +425,7 @@ const TwitCard = ({ twit }) => {
                       onClick={handleOpenReplyModel}
                     />
                     {twit.totalReplies > 0 && <p>{twit.totalReplies}</p>}
+                    {/* twit 객체의 totalReplies 속성 값이 0보다 큰 경우에만 해당 값을 포함하는 <p> 태그로 래핑 시도*/}
                   </div>
                   <div
                     className={`${
@@ -421,19 +459,21 @@ const TwitCard = ({ twit }) => {
                   </div>
                 </>
               )}
-            </div>
+            </div> 
           </div>
         </div>
       </div>
+
       <ReplyModal
         twitData={twit}
         open={openReplyModel}
         handleClose={handleCloseReplyModel}
       />
-
+      
       <section>
         <BackdropComponent open={uploadingImage} />
       </section>
+
     </div>
   );
 };

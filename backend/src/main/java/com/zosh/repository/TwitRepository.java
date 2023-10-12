@@ -18,10 +18,13 @@ public interface TwitRepository extends JpaRepository<Twit, Long> {
 	@Query("SELECT t FROM Twit t JOIN t.likes l WHERE l.user.id = :userId")
 	List<Twit> findByLikesUser_Id(Long userId);
 	
-//    @Query("SELECT t FROM Twit t JOIN t.likes l WHERE l.user.id = :userId")
-//    List<Twit> findTwitsByUserIdInLikes(Long userId);
+//  @Query("SELECT t FROM Twit t JOIN t.likes l WHERE l.user.id = :userId")
+//  List<Twit> findTwitsByUserIdInLikes(Long userId);
 	
 	@Query("SELECT DISTINCT t FROM Twit t WHERE t.content LIKE %:query%")
 	public List<Twit> searchTwit(@Param("query") String query);
+	
+	@Query("SELECT t FROM Twit t JOIN t.user u WHERE u.id IN (SELECT f.id FROM User u2 JOIN u2.followers f WHERE u2.id = :userId)")
+	public List<Twit> searchFollowedTwit(Long userId);
 
 }

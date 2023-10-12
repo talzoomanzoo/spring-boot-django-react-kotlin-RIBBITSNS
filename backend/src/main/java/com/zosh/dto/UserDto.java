@@ -1,5 +1,6 @@
 package com.zosh.dto;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +31,10 @@ public class UserDto {
     private String backgroundImage;
     
     private String bio;
+    
+    private String education;
+    
+    private LocalDateTime joinedAt;
     
     private boolean req_user;
     

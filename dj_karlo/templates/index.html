@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>karlo: txt to image</title>
+</head>
+<body>
+    <form method="post">
+        {% csrf_token %}
+        <label for="keyword">키워드 입력: </label>
+        <input type="text", id="keyword", name="keyword">
+        <button type="submit">이미지 만들기</button>
+    </form>
+    
+    <input type="text", id="test", name="test" value="{{ image_url }}" disabled>
+    <br>
+    {% if image_url %}
+    <img src="{{ image_url }}" alt="아직 이미지가 없음" id="generated_image">
+    <br>
+    
+    <a id="download" href="{% url 'karlo:download_image' %}" download>이미지 다운로드</a>
+    <br>
+    <form method="post" action="{% url 'karlo:save_selected_image' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" id="user" name="user" value="test1">
+        <button type="submit" id="profile" name="profile">선정하기</button>
+    </form>
+    {% endif %}
+
+    
+
+</body>
+</html>

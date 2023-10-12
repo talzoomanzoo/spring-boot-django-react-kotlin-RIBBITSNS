@@ -34,6 +34,8 @@ public class TwitDtoMapper {
 		twitDto.setTotalRetweets(twit.getRetwitUser().size());
 		twitDto.setUser(user);
 		twitDto.setLiked(isLiked);
+		twitDto.setEdited(twit.isEdited());
+		twitDto.setEditedAt(twit.getEditedAt());
 		twitDto.setRetwit(isRetwited);
 		twitDto.setRetwitUsersId(retwitUserId);
 		twitDto.setReplyTwits(toTwitDtos(twit.getReplyTwits(), reqUser));
@@ -57,6 +59,7 @@ public class TwitDtoMapper {
 		
 		return twitDtos;
 	}
+	
 	
 	public static TwitDto toReplyTwitDto(Twit twit, User reqUser) {
 		UserDto user=UserDtoMapper.toUserDto(twit.getUser());
@@ -82,6 +85,8 @@ public class TwitDtoMapper {
 		twitDto.setUser(user);
 		twitDto.setLiked(isLiked);
 		twitDto.setRetwit(isRetwited);
+		twitDto.setEdited(twit.isEdited());
+		twitDto.setEditedAt(twit.getEditedAt());
 		twitDto.setRetwitUsersId(retwitUserId);
 		twitDto.setVideo(twit.getVideo());
 		

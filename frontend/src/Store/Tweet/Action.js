@@ -82,7 +82,10 @@ export const getAllTweetsFailure = (error) => ({
 });
 
 export const getAllTweets = () => {
+
   return async (dispatch) => {
+
+
     dispatch(getAllTweetsRequest());
     try {
       const response = await api.get("/api/twits/");
@@ -168,7 +171,7 @@ export const createTweetReply = (tweetData) => {
     console.log("td", tweetData);
     try {
       const {data} = await api.post("/api/twits/reply", tweetData);
-      console.log("reply twit ",data)
+      console.log("reply twit ", data)
       dispatch({type:REPLY_TWEET_SUCCESS,payload:data});
     } catch (error) {
       dispatch({type:REPLY_TWEET_FAILURE,payload:error.message});

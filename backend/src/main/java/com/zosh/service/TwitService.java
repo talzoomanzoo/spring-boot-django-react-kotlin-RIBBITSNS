@@ -25,13 +25,15 @@ public interface TwitService {
 	
 	public Twit createReply(TwitReplyRequest req,User user) throws TwitException;
 	
-	public Twit editTwit(Twit req,User user) throws TwitException;
+	public Twit editTwit(Twit req,User user) throws UserException, TwitException;
 
 	public void deleteReply(Long replyId, Long userId) throws TwitException, UserException;
 	
 	public List<Twit> getUsersTwit(User user);
 	
 	public List<Twit> findByLikesContainsUser(User user);
+
+	//public List<Twit> findTwitFollowedByReqUser(User user);
 
 	public Twit updateView(Twit twit) throws TwitException;
 	
