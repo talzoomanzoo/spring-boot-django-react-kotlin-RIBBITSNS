@@ -95,7 +95,7 @@ const Profile = () => {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
-        followersListRef&&
+        followersListRef &&
         followersListRef.current &&
         !followersListRef.current.contains(event.target) &&
         !event.target.classList.contains("text-gray-500") // 예외를 추가하여 리스트 항목 클릭 시 숨기지 않음
@@ -115,8 +115,9 @@ const Profile = () => {
   return (
     <React.Fragment>
       <section
-        className={`z-50 flex items-center sticky top-0 ${theme.currentTheme === "light" ? "bg-white" : "bg-[#0D0D0D]"
-          } bg-opacity-95`}
+        className={`z-50 flex items-center sticky top-0 ${
+          theme.currentTheme === "light" ? "bg-white" : "bg-[#0D0D0D]"
+        } bg-opacity-95`}
       >
         <KeyboardBackspaceIcon
           className="cursor-pointer"
@@ -185,34 +186,34 @@ const Profile = () => {
             {auth.findUser?.bio && <p>{auth.findUser?.bio}</p>}
             <div className="py-1 flex space-x-5">
               <div className="flex items-center text-gray-500">
-                <BusinessCenterSharp />
-                <p className="ml-2">{auth.findUser?.education}</p>
+                {auth.findUser?.education ? (
+                  <>
+                    <BusinessCenterSharp />
+                    <p className="ml-2">{auth.findUser.education}</p>
+                  </>
+                ) : null}
               </div>
               <div className="flex items-center text-gray-500">
-                <LocationOnIcon />
-                <p className="ml-2">{auth.findUser?.location}</p>
+                {auth.findUser?.location ? (
+                  <>
+                    <LocationOnIcon />
+                    <p className="ml-2">{auth.findUser.location}</p>
+                  </>
+                ) : null}
               </div>
               <div className="flex items-center text-gray-500">
-
-                {auth.findUser?.joinedAt? (
+                {auth.findUser?.joinedAt ? (
                   <>
                     <CalendarMonthIcon />
                     <p className="ml-2">
-                      {`${auth.findUser.joinedAt?.substr(0, 4) || ''}년 ${auth.findUser.joinedAt?.substring(5, 7) || ''}월 ${auth.findUser.joinedAt?.substring(8, 10) || ''}일에 가입함`}
+                      {`${auth.findUser.joinedAt?.substr(0, 4) || ""}년 ${
+                        auth.findUser.joinedAt?.substring(5, 7) || ""
+                      }월 ${
+                        auth.findUser.joinedAt?.substring(8, 10) || ""
+                      }일에 가입함`}
                     </p>
                   </>
                 ) : null}
-
-                {/* {auth.findUser && (
-                  <>
-                    <CalendarMonthIcon />
-                    <p className="ml-2">
-                      {`${auth.findUser.joinedAt?.substr(0, 4) || ''}년 ${auth.findUser.joinedAt?.substring(5, 7) || ''}월 ${auth.findUser.joinedAt?.substring(8, 10) || ''}일에 가입함`}
-                    </p>
-                  </>
-                )}
-                {!auth.findUser && <CalendarMonthIcon />} */}
-
               </div>
             </div>
             <div className="flex items-center space-x-5">
