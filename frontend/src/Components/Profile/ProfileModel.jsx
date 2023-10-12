@@ -1,3 +1,4 @@
+import CloseIcon from "@mui/icons-material/Close";
 import {
   Avatar,
   Box,
@@ -6,14 +7,13 @@ import {
   Modal,
   TextField,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import CloseIcon from "@mui/icons-material/Close";
 import { useFormik } from "formik";
-import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
-import BackdropComponent from "../Backdrop/Backdrop";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateUserProfile } from "../../Store/Auth/Action";
-import "./ProfileModel.css"
+import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
+import BackdropComponent from "../Backdrop/Backdrop";
+import "./ProfileModel.css";
 
 const style = {
   position: "absolute",
@@ -34,7 +34,6 @@ const ProfileModel = ({ handleClose,open }) => {
     const [uploading,setUploading]=useState(false);
     const dispatch=useDispatch();
     const {auth}=useSelector(store=>store);
-    //console.log("auth", auth);
 
   const handleSubmit = (values) => {
     dispatch(updateUserProfile(values))

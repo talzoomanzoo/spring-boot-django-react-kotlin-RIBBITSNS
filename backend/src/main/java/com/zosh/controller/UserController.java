@@ -14,12 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.zosh.dto.TwitDto;
 import com.zosh.dto.UserDto;
-import com.zosh.dto.mapper.TwitDtoMapper;
 import com.zosh.dto.mapper.UserDtoMapper;
 import com.zosh.exception.UserException;
-import com.zosh.model.Twit;
 import com.zosh.model.User;
 import com.zosh.service.TwitService;
 import com.zosh.service.UserService;

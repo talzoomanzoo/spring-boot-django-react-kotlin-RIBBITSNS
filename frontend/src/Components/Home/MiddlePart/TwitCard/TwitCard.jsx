@@ -20,7 +20,7 @@ import EmojiPicker from "emoji-picker-react";
 import { useFormik } from "formik";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate} from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import {
   createRetweet,
@@ -63,8 +63,7 @@ const TwitCard = ({ twit }) => {
   );
   const [retwit, setRetwit] = useState(twit.totalRetweets);
   const [openReplyModel, setOpenReplyModel] = useState();
-  const location = useLocation(); // 현재 URL 정보 가져오기
-  //console.log("location", location);
+  const location = useLocation();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const openDeleteMenu = Boolean(anchorEl);

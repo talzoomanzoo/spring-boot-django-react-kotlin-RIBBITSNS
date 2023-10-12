@@ -5,15 +5,23 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
-import { Avatar, Backdrop, Box, Button, CircularProgress } from "@mui/material";
+import {
+  Avatar,
+  Backdrop,
+  Box,
+  Button,
+  CircularProgress,
+  Divider,
+} from "@mui/material";
 import Tab from "@mui/material/Tab";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { FollowUserAction, findUserById } from "../../Store/Auth/Action";
 import {
   findTwitsByLikesContainUser,
-  getUsersTweets
+  getUsersTweets,
+  viewPlus,
 } from "../../Store/Tweet/Action";
 import TwitCard from "../Home/MiddlePart/TwitCard/TwitCard";
 import SnackbarComponent from "../Snackbar/SnackbarComponent";
@@ -24,6 +32,9 @@ const Profile = () => {
   const { auth, twit, theme } = useSelector((store) => store);
   const [openProfileModel, setOpenProfileModel] = useState();
   const [openSnackBar, setOpenSnackBar] = useState(false);
+  const [followersClicked, setFollowersClicked] = useState(false);
+  const [followingsClicked, setFollowingsClicked] = useState(false);
+  const followersListRef = useRef(null);
 
   const param = useParams();
   const dispatch = useDispatch();
@@ -62,7 +73,44 @@ const Profile = () => {
     dispatch(FollowUserAction(param.id));
   };
 
-  console.log("find user ", auth.findUser)
+  const handleNavigateToTwit = (i) => {
+    navigate(`/twit/${i.id}`);
+    dispatch(viewPlus(i.id));
+  };
+
+  const navigateToProfile = (id) => {
+    navigate(`/profile/${id}`);
+  };
+
+  const handleFollowersClick = () => {
+    setFollowersClicked(!followersClicked);
+  };
+
+  const handleFollowingsClick = () => {
+    setFollowingsClicked(!followingsClicked);
+  };
+
+  // console.log("find user ",auth.findUser)
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        followersListRef&&
+        followersListRef.current &&
+        !followersListRef.current.contains(event.target) &&
+        !event.target.classList.contains("text-gray-500") // 예외를 추가하여 리스트 항목 클릭 시 숨기지 않음
+      ) {
+        setFollowersClicked(false);
+        setFollowingsClicked(false);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
 
   return (
     <React.Fragment>
@@ -121,11 +169,13 @@ const Profile = () => {
           <div>
             <div className="flex items-center">
               <h1 className="font-bold text-lg">{auth.findUser?.fullName}</h1>
-              {auth.findUser?.verified && <img
-                className="ml-2 w-5 h-5"
-                src="https://abs.twimg.com/responsive-web/client-web/verification-card-v2@3x.8ebee01a.png"
-                alt=""
-              />}
+              {auth.findUser?.verified && (
+                <img
+                  className="ml-2 w-5 h-5"
+                  src="https://abs.twimg.com/responsive-web/client-web/verification-card-v2@3x.8ebee01a.png"
+                  alt=""
+                />
+              )}
             </div>
             <h1 className="text-gray-500">
               @{auth.findUser?.fullName?.toLowerCase()}
@@ -167,12 +217,93 @@ const Profile = () => {
             </div>
             <div className="flex items-center space-x-5">
               <div className="flex items-center space-x-1 font-semibold">
-                <span>{auth.findUser?.followings.length}</span>
-                <span className="text-gray-500">Following</span>
+                <span
+                  onClick={handleFollowingsClick} // followers 텍스트 클릭 시 handleFollowersClick 함수 실행
+                  className="text-gray-500"
+                >
+                  {auth.findUser?.followings.length} followings
+                </span>
+
+                {followingsClicked && ( // followersClicked 상태에 따라 followers 리스트를 렌더링합니다.
+                  <div
+                    ref={followersListRef}
+                    className={` overflow-y-scroll hideScrollbar absolute z-50 bg-white border rounded-md p-3 w-30 ${
+                      theme.currentTheme === "light"
+                        ? "bg-white"
+                        : "bg-[#151515] border"
+                    }`}
+                  >
+                    {auth.findUser?.followings &&
+                      auth.findUser?.followings.map((item) => (
+                        <div
+                          onClick={() => {
+                            if (Array.isArray(item)) {
+                              item.forEach((i) => handleNavigateToTwit(i));
+                            } else {
+                              navigateToProfile(item.id);
+                            }
+                            handleFollowingsClick();
+                          }}
+                          className="flex items-center hover:bg-slate-800 p-3 cursor-pointer"
+                          key={item.id}
+                        >
+                          <Avatar alt={item.fullName} src={item.image} />
+                          <div className="ml-2">
+                            <p>{item.fullName}</p>
+                            <p className="text-sm text-gray-400">
+                              @
+                              {item.fullName.split(" ").join("_").toLowerCase()}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                )}
               </div>
+
               <div className="flex items-center space-x-1 font-semibold">
-                <span>{auth.findUser?.followers.length}</span>
-                <span className="text-gray-500">Followers</span>
+                <span
+                  onClick={handleFollowersClick} // followers 텍스트 클릭 시 handleFollowersClick 함수 실행
+                  className="text-gray-500"
+                >
+                  {auth.findUser?.followers.length} followers
+                </span>
+
+                {followersClicked && ( // followersClicked 상태에 따라 followers 리스트를 렌더링합니다.
+                  <div
+                    ref={followersListRef}
+                    className={` overflow-y-scroll hideScrollbar absolute z-50 bg-white border rounded-md p-3 w-30 ${
+                      theme.currentTheme === "light"
+                        ? "bg-white"
+                        : "bg-[#151515] border"
+                    }`}
+                  >
+                    {auth.findUser?.followers &&
+                      auth.findUser?.followers.map((item) => (
+                        <div
+                          onClick={() => {
+                            if (Array.isArray(item)) {
+                              item.forEach((i) => handleNavigateToTwit(i));
+                            } else {
+                              navigateToProfile(item.id);
+                            }
+                            handleFollowersClick();
+                          }}
+                          className="flex items-center hover:bg-slate-800 p-3 cursor-pointer"
+                          key={item.id}
+                        >
+                          <Avatar alt={item.fullName} src={item.image} />
+                          <div className="ml-2">
+                            <p>{item.fullName}</p>
+                            <p className="text-sm text-gray-400">
+                              @
+                              {item.fullName.split(" ").join("_").toLowerCase()}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -192,13 +323,60 @@ const Profile = () => {
                 <Tab label="Likes" value="4" />
               </TabList>
             </Box>
+
             <TabPanel value="1">
               {twit.twits?.map((item) => (
-                <TwitCard twit={item} />
+                <div>
+                  <TwitCard twit={item} />
+                  <Divider sx={{ margin: "2rem 0rem" }} />{" "}
+                </div>
               ))}
             </TabPanel>
-            <TabPanel value="2">Item Two</TabPanel>
-            <TabPanel value="3">Item Three</TabPanel>
+
+            <TabPanel value="2">
+              {/* {twit.twits
+                // .filter((item) => item.user.id === auth.user.id)
+                .filter((item) => {
+                  console.log(item);
+                  return item.user.id === auth.user.id;
+                })
+                .map((item) => (
+                  <div>
+                    <TwitCard twit={item} />
+                    <Divider sx={{ margin: "2rem 0rem" }} />{" "}
+                  </div>
+                ))} */}
+
+              {twit.twit?.replyTwits
+                .filter((item) => {
+                  console.log(item);
+                  return item.user.id === auth.user.id;
+                })
+                .map((item, index) => (
+                  <React.Fragment key={item.id}>
+                    <div>
+                      <TwitCard twit={item} />
+                      <Divider sx={{ margin: "2rem 0rem" }} />{" "}
+                    </div>
+
+                    {index !== twit.twit?.replyTwits.length - 1 && (
+                      <Divider sx={{ margin: "2rem 0rem" }} />
+                    )}
+                  </React.Fragment>
+                ))}
+            </TabPanel>
+
+            <TabPanel value="3">
+              {twit.twits
+                .filter((item) => item.image || item.video)
+                .map((item) => (
+                  <div>
+                    <TwitCard twit={item} />
+                    <Divider sx={{ margin: "2rem 0rem" }} />{" "}
+                  </div>
+                ))}
+            </TabPanel>
+
             <TabPanel value="4">
               {twit.likedTwits?.map((item) => (
                 <TwitCard twit={item} />

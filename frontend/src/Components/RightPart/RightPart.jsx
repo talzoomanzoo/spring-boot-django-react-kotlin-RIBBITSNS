@@ -1,15 +1,14 @@
-import React, { useState } from "react";
-import SearchIcon from "@mui/icons-material/Search";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import { Avatar, Button } from "@mui/material";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import SearchIcon from "@mui/icons-material/Search";
+import { Avatar, Button } from "@mui/material";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { changeTheme } from "../../Store/Theme/Action";
 import SubscriptionModel from "./SubscriptionModel";
-//import { searchUser } from "../../Store/Auth/Action";
-import { searchAll } from "../../Store/Auth/Action";
-import { useNavigate } from "react-router-dom";
 // import { searchUser } from "../../Store/Auth/Action";
+import { useNavigate } from "react-router-dom";
+import { searchAll } from "../../Store/Auth/Action";
 import { viewPlus } from "../../Store/Tweet/Action";
 
 const RightPart = () => {
