@@ -145,7 +145,7 @@ const Profile = () => {
               </div>
               <div className="flex items-center text-gray-500">
                 <CalendarMonthIcon />
-                <p className="ml-2"> {auth.findUser?.joinedAt.substr(0,4)}년 {auth.findUser?.joinedAt.substring(5,7)}월 {auth.findUser?.joinedAt.substring(8,10)}일에 가입함</p>
+                <p className="ml-2"> {auth.findUser?.joinedAt?.substr(0,4)}년 {auth.findUser?.joinedAt?.substring(5,7)}월 {auth.findUser?.joinedAt?.substring(8,10)}일에 가입함</p>
               </div>
             </div>
             <div className="flex items-center space-x-5">
