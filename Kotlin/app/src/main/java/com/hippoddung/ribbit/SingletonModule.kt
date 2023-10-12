@@ -73,8 +73,9 @@ class SingletonModule {
 
     @Singleton
     @Provides
-    fun provideRibbitAPIService(retrofit: Retrofit.Builder): RibbitApiService =
+    fun provideRibbitAPIService(okHttpClient: OkHttpClient, retrofit: Retrofit.Builder): RibbitApiService =
         retrofit
+            .client(okHttpClient)
             .build()
             .create(RibbitApiService::class.java)
 }

@@ -2,6 +2,7 @@
 
 package com.hippoddung.ribbit.ui
 
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -32,42 +33,54 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.hippoddung.ribbit.R
-import com.hippoddung.ribbit.data.local.LoginUiState
 import com.hippoddung.ribbit.ui.screens.HomeScreen
-import com.hippoddung.ribbit.ui.screens.LogInScreen
+import com.hippoddung.ribbit.ui.screens.authscreens.LoginScreen
 import com.hippoddung.ribbit.ui.screens.ProfileScreen
-import com.hippoddung.ribbit.ui.screens.SignUpScreen
+import com.hippoddung.ribbit.ui.screens.authscreens.SignUpScreen
+import com.hippoddung.ribbit.ui.screens.TwitCreateScreen
+import com.hippoddung.ribbit.ui.screens.authscreens.LogoutScreen
+import com.hippoddung.ribbit.ui.viewmodel.AuthUiState
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
 import com.hippoddung.ribbit.ui.viewmodel.HomeViewModel
 
-enum class HippoScreen(@StringRes val title: Int) {
+enum class RibbitScreen(@StringRes val title: Int) {
     HomeScreen(title = R.string.Home_screen),
+    LoginScreen(title = R.string.Login_screen),
+    LogoutScreen(title = R.string.Logout_screen),
+    ProfileScreen(title = R.string.Profile_screen),
     SignUpScreen(title = R.string.Sign_up_screen),
-    LogInScreen(title = R.string.Login_screen),
-    ProfileScreen(title = R.string.Profile_screen)
+    TwitCreateScreen(title = R.string.Twit_create_screen),
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RibbitApp(
-    navController: NavHostController = rememberNavController()
+fun RibbitApp() {
+    val authViewModel: AuthViewModel = hiltViewModel()
+    val navController: NavHostController = rememberNavController()
+
+    when(authViewModel.authUiState) {
+        is AuthUiState.Login -> {
+            RibbitScreen(navController)
+        }
+        is AuthUiState.Logout -> {
+            AuthScreen(navController, authViewModel)
+            Log.d("HippoLog, RibbitApp","Fail")
+        }
+    }
+}
+
+@Composable
+fun RibbitScreen(
+    navController: NavHostController
 ) {
-    val navController = navController
-    val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentScreen = HippoScreen.valueOf(
-        backStackEntry?.destination?.route ?: HippoScreen.SignUpScreen.name
-    )
+//    val backStackEntry by navController.currentBackStackEntryAsState()
+//    val currentScreen = RibbitScreen.valueOf(backStackEntry?.destination?.route ?: RibbitScreen.SignUpScreen.name)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val loginUiState = LoginUiState()
-    val isLogin: Boolean = loginUiState.isLogin
-    val jwt: String = loginUiState.jwt
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -80,26 +93,54 @@ fun RibbitApp(
         ) {
             NavHost(
                 navController = navController,
-                startDestination =
-                if (isLogin) HippoScreen.HomeScreen.name else HippoScreen.LogInScreen.name,
+                startDestination = RibbitScreen.HomeScreen.name,
                 modifier = Modifier
             ) {
-                composable(route = HippoScreen.HomeScreen.name) {
-                    val homeViewModel: HomeViewModel = viewModel()
+                composable(route = RibbitScreen.HomeScreen.name) {
+                    val homeViewModel: HomeViewModel = hiltViewModel()
                     HomeScreen(
+                        navController = navController,
                         homeUiState = homeViewModel.homeUiState
                     )
                 }
-                composable(route = HippoScreen.LogInScreen.name) {
-                    val authViewModel: AuthViewModel = viewModel()
-                    LogInScreen(
-                        authViewModel
-                    )
-                }
-                composable(route = HippoScreen.ProfileScreen.name) {
+                composable(route = RibbitScreen.ProfileScreen.name) {
                     ProfileScreen()
                 }
-                composable(route = HippoScreen.SignUpScreen.name) {
+                composable(route = RibbitScreen.TwitCreateScreen.name) {
+                    TwitCreateScreen(navController)
+                }
+                composable(route = RibbitScreen.LogoutScreen.name) {
+                    LogoutScreen()
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun AuthScreen(
+    navController: NavHostController,
+    authViewModel: AuthViewModel
+) {
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
+    Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+    ) {
+        Surface(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it)
+        ) {
+            NavHost(
+                navController = navController,
+                startDestination = RibbitScreen.LoginScreen.name,
+                modifier = Modifier
+            ) {
+                composable(route = RibbitScreen.LoginScreen.name) {
+                    LoginScreen(navController, authViewModel)
+                }
+                composable(route = RibbitScreen.SignUpScreen.name) {
                     SignUpScreen()
                 }
             }
@@ -117,13 +158,14 @@ fun HippoTopAppBar(scrollBehavior: TopAppBarScrollBehavior,navController: NavHos
                 style = MaterialTheme.typography.headlineSmall,
             )
         },
-        navigationIcon = { ButtonWithDropDownMenu(navController) },
+        navigationIcon = { MainDropDownMenu(navController) },
+        actions = { ProfileDropDownMenu(navController) },
         modifier = modifier
     )
 }
 
 @Composable
-fun ButtonWithDropDownMenu(navController: NavHostController, modifier: Modifier = Modifier) {
+fun MainDropDownMenu(navController: NavHostController, modifier: Modifier = Modifier) {
     var isDropDownMenuExpanded by remember { mutableStateOf(false) }
 
     Button(
@@ -141,57 +183,12 @@ fun ButtonWithDropDownMenu(navController: NavHostController, modifier: Modifier 
     ) {
         DropdownMenuItem(
             onClick = {
-                navController.navigate(HippoScreen.HomeScreen.name)
+                navController.navigate(RibbitScreen.HomeScreen.name)
                 isDropDownMenuExpanded = false
                       },
             text = {
                 Text(
                     text = "Home",
-                    color = Color.Blue,
-                    fontStyle = FontStyle.Italic,
-                    fontSize = 14.sp,
-                    style = TextStyle(shadow = Shadow(Color.Black))
-                )
-            }
-        )
-        DropdownMenuItem(
-            onClick = {
-                navController.navigate(HippoScreen.LogInScreen.name)
-                isDropDownMenuExpanded = false
-                      },
-            text = {
-                Text(
-                    text = "LogIn",
-                    color = Color.Blue,
-                    fontStyle = FontStyle.Italic,
-                    fontSize = 14.sp,
-                    style = TextStyle(shadow = Shadow(Color.Black))
-                )
-            }
-        )
-        DropdownMenuItem(
-            onClick = {
-                navController.navigate(HippoScreen.SignUpScreen.name)
-                isDropDownMenuExpanded = false
-                      },
-            text = {
-                Text(
-                    text = "SignUp",
-                    color = Color.Blue,
-                    fontStyle = FontStyle.Italic,
-                    fontSize = 14.sp,
-                    style = TextStyle(shadow = Shadow(Color.Black))
-                )
-            }
-        )
-        DropdownMenuItem(
-            onClick = {
-                navController.navigate(HippoScreen.ProfileScreen.name)
-                isDropDownMenuExpanded = false
-                      },
-            text = {
-                Text(
-                    text = "Profile",
                     color = Color.Blue,
                     fontStyle = FontStyle.Italic,
                     fontSize = 14.sp,
@@ -223,6 +220,52 @@ fun ButtonWithDropDownMenu(navController: NavHostController, modifier: Modifier 
     }
 }
 
+@Composable
+fun ProfileDropDownMenu(navController: NavHostController, modifier: Modifier = Modifier) {
+    var isDropDownMenuExpanded by remember { mutableStateOf(false) }
 
+    Button(
+        onClick = { isDropDownMenuExpanded = true }
+    ) {
+        Text(text = "Profile")
+    }
 
-
+    DropdownMenu(
+        expanded = isDropDownMenuExpanded,
+        onDismissRequest = { isDropDownMenuExpanded = false },
+        modifier = Modifier
+            .wrapContentSize()
+            .padding(4.dp)
+    ) {
+        DropdownMenuItem(
+            onClick = {
+                navController.navigate(RibbitScreen.ProfileScreen.name)
+                isDropDownMenuExpanded = false
+            },
+            text = {
+                Text(
+                    text = "My Profile",
+                    color = Color.Blue,
+                    fontStyle = FontStyle.Italic,
+                    fontSize = 14.sp,
+                    style = TextStyle(shadow = Shadow(Color.Black))
+                )
+            }
+        )
+        DropdownMenuItem(
+            onClick = {
+                navController.navigate(RibbitScreen.LogoutScreen.name)
+                isDropDownMenuExpanded = false
+            },
+            text = {
+                Text(
+                    text = "Log out",
+                    color = Color.Blue,
+                    fontStyle = FontStyle.Italic,
+                    fontSize = 14.sp,
+                    style = TextStyle(shadow = Shadow(Color.Black))
+                )
+            }
+        )
+    }
+}

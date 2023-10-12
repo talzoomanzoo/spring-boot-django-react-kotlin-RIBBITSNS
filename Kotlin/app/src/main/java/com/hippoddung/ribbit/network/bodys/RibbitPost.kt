@@ -1,6 +1,5 @@
 package com.hippoddung.ribbit.network.bodys
 
-
 data class RibbitPost(
     val content: String,
     val createdAt: String,

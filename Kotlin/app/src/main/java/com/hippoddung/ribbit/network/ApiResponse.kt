@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withTimeoutOrNull
 import retrofit2.Response
 
-sealed class ApiResponse<out T>{
+sealed class ApiResponse<out T> {
     object Loading: ApiResponse<Nothing>()
 
     data class Success<out T>(

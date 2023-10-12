@@ -6,43 +6,38 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hippoddung.ribbit.data.network.RibbitRepository
-import com.hippoddung.ribbit.network.bodys.RibbitPost
+import com.hippoddung.ribbit.network.RibbitApiService
+import com.hippoddung.ribbit.network.bodys.TwitCreateRequest
+import com.hippoddung.ribbit.network.bodys.TwitCreateResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import java.io.IOException
 import javax.inject.Inject
 
-sealed interface HomeUiState {
-    data class Success(val posts: List<RibbitPost>) : HomeUiState
-    object Error : HomeUiState
-    object Loading : HomeUiState
+sealed interface TwitsCreateUiState {
+    object Success : TwitsCreateUiState
+    object Error : TwitsCreateUiState
+    object Loading : TwitsCreateUiState
 }
+
 @HiltViewModel
-class HomeViewModel @Inject constructor(
+class TwitsCreateViewModel @Inject constructor(
     private val ribbitRepository: RibbitRepository
 ) : ViewModel() {
-    var homeUiState: HomeUiState by mutableStateOf(HomeUiState.Loading)
+    var twitsCreateUiState: TwitsCreateUiState by mutableStateOf(TwitsCreateUiState.Loading)
         private set
 
-    init {
-        getRibbitPosts()
-    }
-
-    fun getRibbitPosts() {
+    fun twitCreate(twitCreateRequest: TwitCreateRequest) {
         viewModelScope.launch {
             try {
-                val result = ribbitRepository.getPosts()
-                homeUiState = HomeUiState.Success(
-                    result
-                )
+                ribbitRepository.twitCreate(twitCreateRequest)
+                twitsCreateUiState = TwitsCreateUiState.Success
             } catch (e: IOException) {
-                homeUiState = HomeUiState.Error
+                twitsCreateUiState = TwitsCreateUiState.Error
                 println(e.stackTrace)
             } catch(e:  ExceptionInInitializerError){
-                homeUiState = HomeUiState.Error
+                twitsCreateUiState = TwitsCreateUiState.Error
                 println(e.stackTrace)
             }
         }

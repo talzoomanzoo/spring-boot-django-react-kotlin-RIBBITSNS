@@ -44,9 +44,9 @@ class AuthAuthenticator @Inject constructor(
             }
 
             newToken.body()?.let {
-                tokenManager.saveToken(it.token)
+                tokenManager.saveToken(it.jwt)
                 response.request.newBuilder()
-                    .header("Authorization", "Bearer ${it.token}")
+                    .header("Authorization", "Bearer ${it.jwt}")
                     .build()
             }
         }
