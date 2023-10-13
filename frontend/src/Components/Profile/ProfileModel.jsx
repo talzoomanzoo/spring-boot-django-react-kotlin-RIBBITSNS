@@ -49,6 +49,7 @@ const ProfileModel = ({ handleClose,open }) => {
       backgroundImage:"",
       image:"",
       education:"",
+      birthDate:"",
     },
     onSubmit: handleSubmit,
   });
@@ -63,6 +64,7 @@ const ProfileModel = ({ handleClose,open }) => {
       backgroundImage: auth.user.backgroundImage || "",
       image: auth.user.image || "",
       education: auth.user.education || "",
+      birthDate: auth.user.birthDate || "",
     });
 
   },[auth.user])
@@ -202,15 +204,19 @@ const ProfileModel = ({ handleClose,open }) => {
                   }
                   helperText={formik.touched.education && formik.errors.education}
                 />
+                <TextField
+                  fullWidth
+                  id="birthDate"
+                  name="birthDate"
+                  label="BirthDate (XXXX-XX-XX)"
+                  value={formik.values.birthDate}
+                  onChange={formik.handleChange}
+                  error={
+                    formik.touched.birthDate && Boolean(formik.errors.birthDate)
+                  }
+                  helperText={formik.touched.birthDate && formik.errors.birthDate}
+                />
               </div>
-              <div className="my-3" float="left">
-              <p className="text-lg">Birth date · Edit</p>
-              <p className="text-2xl"> {auth.findUser?.birthDate?.substr(0,4)}년 {auth.findUser?.birthDate?.substring(5,7)}월 {auth.findUser?.birthDate?.substring(8,10)}일</p>
-
-            </div>
-            <p className="py-3 text-lg">
-                Edit Professional Profile
-            </p>
             </div>
             <BackdropComponent open={uploading}/>
           
