@@ -327,7 +327,7 @@ const Profile = () => {
             </TabPanel>
 
             <TabPanel value="2">
-              {/* {twit.twits
+              {twit.twits
                 // .filter((item) => item.user.id === auth.user.id)
                 .filter((item) => {
                   console.log(item);
@@ -338,8 +338,7 @@ const Profile = () => {
                     <TwitCard twit={item} />
                     <Divider sx={{ margin: "2rem 0rem" }} />{" "}
                   </div>
-                ))} */}
-
+                ))}
               {twit.twit?.replyTwits
                 .filter((item) => {
                   console.log(item);
