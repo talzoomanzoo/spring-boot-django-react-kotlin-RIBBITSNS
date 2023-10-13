@@ -1,10 +1,13 @@
-// actions.js
+ // actions.js
 
 import { api } from "../../Config/apiConfig";
 import {
   FIND_TWEET_BY_ID_FAILURE,
   FIND_TWEET_BY_ID_REQUEST,
   FIND_TWEET_BY_ID_SUCCESS,
+  FOLLOW_TWIT_FAILURE,
+  FOLLOW_TWIT_REQUEST,
+  FOLLOW_TWIT_SUCCESS,
   GET_ALL_TWEETS_FAILURE,
   GET_ALL_TWEETS_REQUEST,
   GET_ALL_TWEETS_SUCCESS,
@@ -235,6 +238,18 @@ export const deleteTweet = (tweetId) => {
       dispatch(deleteTweetFailure(error.message));
     }
   };
+};
+
+export const followTwit = () => async (dispatch) => {
+  dispatch({type:FOLLOW_TWIT_REQUEST})
+  try {
+    const response = await api.get(`/api/twits/followTwit`);
+    const user = response.data;
+    dispatch({type:FOLLOW_TWIT_SUCCESS, payload:user});
+    console.log("find by twit user -: ", user);
+  } catch (error) {
+    dispatch({type:FOLLOW_TWIT_FAILURE, payload:error.message});
+  }
 };
 
 export const getTime = (datetime, currTimestamp) => {

@@ -1,9 +1,14 @@
-import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { followTwit } from "../../Store/Tweet/Action";
 import TwitCard from "../Home/MiddlePart/TwitCard/TwitCard";
-
 const FollowTwit = () => {
-  const { auth, theme, twit } = useSelector((store) => store);
-  console.log("followTwitAuth", auth);
+  const dispatch = useDispatch();
+  const { twit, theme } = useSelector((store) => store);
+  useEffect(() => {
+    dispatch(followTwit());
+  }, []); // [검사하고자 하는 특정 값]
+  console.log("followTwittwit", twit);
   return (
     <div className="space-y-5">
       <section>
@@ -12,10 +17,8 @@ const FollowTwit = () => {
       <section
         className={`${theme.currentTheme === "dark" ? "pt-14" : ""} space-y-5`}
       >
-        {auth.findUser?.map((item) => (
-          <div>
-            <TwitCard twit={item} />
-          </div>
+        {twit.twits?.map((item) => (
+          <TwitCard twit={item} />
         ))}
       </section>
     </div>
