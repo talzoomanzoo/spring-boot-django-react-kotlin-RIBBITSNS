@@ -95,7 +95,7 @@ const Profile = () => {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
-        followersListRef&&
+        followersListRef &&
         followersListRef.current &&
         !followersListRef.current.contains(event.target) &&
         !event.target.classList.contains("text-gray-500") // 예외를 추가하여 리스트 항목 클릭 시 숨기지 않음
@@ -115,8 +115,9 @@ const Profile = () => {
   return (
     <React.Fragment>
       <section
-        className={`z-50 flex items-center sticky top-0 ${theme.currentTheme === "light" ? "bg-white" : "bg-[#0D0D0D]"
-          } bg-opacity-95`}
+        className={`z-50 flex items-center sticky top-0 ${
+          theme.currentTheme === "light" ? "bg-white" : "bg-[#0D0D0D]"
+        } bg-opacity-95`}
       >
         <KeyboardBackspaceIcon
           className="cursor-pointer"
@@ -184,36 +185,37 @@ const Profile = () => {
           <div className="mt-2 space-y-3">
             {auth.findUser?.bio && <p>{auth.findUser?.bio}</p>}
             <div className="py-1 flex space-x-5">
-              <div className="flex items-center text-gray-500">
-                <BusinessCenterSharp />
-                <p className="ml-2">{auth.findUser?.education}</p>
-              </div>
-              <div className="flex items-center text-gray-500">
-                <LocationOnIcon />
-                <p className="ml-2">{auth.findUser?.location}</p>
-              </div>
-              <div className="flex items-center text-gray-500">
+              {auth.findUser?.education ? (
+                <div className="flex items-center text-gray-500">
+                  <>
+                    <BusinessCenterSharp />
+                    <p className="ml-2">{auth.findUser.education}</p>
+                  </>
+                </div>
+              ) : null}
 
-                {auth.findUser?.joinedAt? (
+              {auth.findUser?.location ? (
+                <div className="flex items-center text-gray-500">
+                  <>
+                    <LocationOnIcon />
+                    <p className="ml-2">{auth.findUser.location}</p>
+                  </>
+                </div>
+              ) : null}
+              {auth.findUser?.joinedAt ? (
+                <div className="flex items-center text-gray-500">
                   <>
                     <CalendarMonthIcon />
                     <p className="ml-2">
-                      {`${auth.findUser.joinedAt?.substr(0, 4) || ''}년 ${auth.findUser.joinedAt?.substring(5, 7) || ''}월 ${auth.findUser.joinedAt?.substring(8, 10) || ''}일에 가입함`}
+                      {`${auth.findUser.joinedAt?.substr(0, 4) || ""}년 ${
+                        auth.findUser.joinedAt?.substring(5, 7) || ""
+                      }월 ${
+                        auth.findUser.joinedAt?.substring(8, 10) || ""
+                      }일에 가입함`}
                     </p>
                   </>
-                ) : null}
-
-                {/* {auth.findUser && (
-                  <>
-                    <CalendarMonthIcon />
-                    <p className="ml-2">
-                      {`${auth.findUser.joinedAt?.substr(0, 4) || ''}년 ${auth.findUser.joinedAt?.substring(5, 7) || ''}월 ${auth.findUser.joinedAt?.substring(8, 10) || ''}일에 가입함`}
-                    </p>
-                  </>
-                )}
-                {!auth.findUser && <CalendarMonthIcon />} */}
-
-              </div>
+                </div>
+              ) : null}
             </div>
             <div className="flex items-center space-x-5">
               <div className="flex items-center space-x-1 font-semibold">
@@ -334,7 +336,7 @@ const Profile = () => {
             </TabPanel>
 
             <TabPanel value="2">
-              {/* {twit.twits
+              {twit.twits
                 // .filter((item) => item.user.id === auth.user.id)
                 .filter((item) => {
                   console.log(item);
@@ -345,7 +347,7 @@ const Profile = () => {
                     <TwitCard twit={item} />
                     <Divider sx={{ margin: "2rem 0rem" }} />{" "}
                   </div>
-                ))} */}
+                ))}
 
               {twit.twit?.replyTwits
                 .filter((item) => {
