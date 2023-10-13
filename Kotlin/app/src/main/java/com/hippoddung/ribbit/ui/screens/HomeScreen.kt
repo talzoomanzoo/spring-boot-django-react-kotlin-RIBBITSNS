@@ -1,8 +1,10 @@
 package com.hippoddung.ribbit.ui.screens
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,52 +12,54 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.hippoddung.ribbit.R
 import com.hippoddung.ribbit.network.bodys.RibbitPost
 import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.viewmodel.HomeUiState
+import com.hippoddung.ribbit.ui.viewmodel.HomeViewModel
 
 @Composable
 fun HomeScreen(
     navController: NavHostController,
-    homeUiState: HomeUiState,
+    homeViewModel: HomeViewModel,
     modifier: Modifier = Modifier
 ) {
-    when(homeUiState) {
+    when (homeViewModel.homeUiState) {
         is HomeUiState.Loading -> LoadingScreen(
             modifier = modifier.fillMaxSize()
         )
-        is HomeUiState.Success -> {
-            Column {
-                Log.d("HippoLog, HomeScreen", "HomeUiState.Success")
-                Button(
-                    onClick = {
-                        navController.navigate(RibbitScreen.TwitCreateScreen.name)
-                    },
-                    modifier.padding(14.dp)
-                ) {
-                    Text(text = stringResource(R.string.Twit_create))
-                }
-                homeUiState.posts?.let {
-                    Log.d("HippoLog, HomeScreen", "HomeUiState.Success.posts")
-                    PostsGridScreen(
-                        it, modifier
-                    )
-                }
-            }
-        }
+
+        is HomeUiState.Success -> SuccessScreen(
+            navController = navController,
+            homeViewModel = homeViewModel,
+            modifier = modifier.fillMaxSize()
+        )
+
         is HomeUiState.Error -> ErrorScreen(
             modifier = modifier.fillMaxSize()
         )
@@ -63,7 +67,7 @@ fun HomeScreen(
 }
 
 @Composable
-fun LoadingScreen(modifier: Modifier = Modifier){
+fun LoadingScreen(modifier: Modifier) {
     Image(
         modifier = modifier.size(200.dp),
         painter = painterResource(R.drawable.loading_img),
@@ -72,7 +76,7 @@ fun LoadingScreen(modifier: Modifier = Modifier){
 }
 
 @Composable
-fun ErrorScreen(modifier: Modifier = Modifier){
+fun ErrorScreen(modifier: Modifier) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.Center,
@@ -90,42 +94,89 @@ fun ErrorScreen(modifier: Modifier = Modifier){
     }
 }
 
+@Composable
+fun SuccessScreen(
+    navController: NavHostController,
+    homeViewModel: HomeViewModel,
+    modifier: Modifier
+) {
+    val listState = rememberLazyListState()
+
+    Column {
+        Log.d("HippoLog, HomeScreen", "HomeUiState.Success")
+
+        (homeViewModel.homeUiState as HomeUiState.Success).posts?.let {
+            Log.d("HippoLog, HomeScreen", "HomeUiState.Success.posts")
+            PostsGridScreen(
+                it, listState = listState, modifier
+            )
+        }
+    }
+
+    Box(modifier = modifier) {
+        FloatingActionButton(
+            onClick = { navController.navigate(RibbitScreen.TwitCreateScreen.name) },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(14.dp)
+        ) {
+            Icon(Icons.Filled.Edit, "Floating action button.")
+        }
+    }
+}
+
 /**
  * ResultScreen displaying number of photos retrieved.
  */
 
+@SuppressLint("UnrememberedMutableState")
 @Composable
-fun PostsGridScreen(posts: List<RibbitPost>, modifier: Modifier = Modifier) {
-    LazyColumn(modifier = modifier){
-        items(posts){post ->
+fun PostsGridScreen(posts: List<RibbitPost>, listState: LazyListState, modifier: Modifier) {
+    LazyColumn(state = listState, modifier = modifier) {
+        items(posts) { post ->
             TextCard(
                 post = post,
-                modifier = modifier.padding(8.dp))
+                modifier = modifier.padding(8.dp)
+            )
         }
     }
 }
 
 @Composable
-fun TextCard(post: RibbitPost, modifier: Modifier = Modifier) {
+fun TextCard(post: RibbitPost, modifier: Modifier) {
     Card(modifier = modifier.fillMaxWidth()) {
-        Column {
+        Column(modifier = Modifier.padding(8.dp)) {
             Row {
                 Text(
-                    text = "No. " + post.id.toString(),
+                    text = "No." + post.id.toString(),
+                    fontSize = 14.sp,
                     modifier = Modifier.padding(4.dp),
                     style = MaterialTheme.typography.headlineSmall
                 )
                 Text(
                     text = "@" + post.user.email,
+                    fontSize = 14.sp,
                     modifier = Modifier.padding(4.dp),
                     style = MaterialTheme.typography.headlineSmall
                 )
             }
             Text(
                 text = post.content,
+                fontSize = 14.sp,
                 modifier = Modifier.padding(4.dp),
                 style = MaterialTheme.typography.headlineSmall
             )
+            if (post.user.image != null) {
+                AsyncImage(
+                    model = ImageRequest.Builder(context = LocalContext.current).data(post.user.image)
+                        .crossfade(true).build(),
+                    error = painterResource(R.drawable.ic_broken_image),
+                    placeholder = painterResource(R.drawable.loading_img),
+                    contentDescription = stringResource(R.string.user_image),
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
     }
 }

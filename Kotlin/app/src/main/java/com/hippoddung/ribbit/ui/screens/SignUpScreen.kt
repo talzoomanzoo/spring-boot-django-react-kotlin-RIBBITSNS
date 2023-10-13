@@ -134,7 +134,7 @@ fun InputFullNameField(
     TextField(
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-        label = { Text(stringResource(R.string.FullName)) },
+        label = { Text(stringResource(R.string.Full_name)) },
         value = value,
         onValueChange = onValueChange,
         modifier = modifier,

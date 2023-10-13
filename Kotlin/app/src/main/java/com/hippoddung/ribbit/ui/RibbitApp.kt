@@ -100,7 +100,7 @@ fun RibbitScreen(
                     val homeViewModel: HomeViewModel = hiltViewModel()
                     HomeScreen(
                         navController = navController,
-                        homeUiState = homeViewModel.homeUiState
+                        homeViewModel = homeViewModel
                     )
                 }
                 composable(route = RibbitScreen.ProfileScreen.name) {

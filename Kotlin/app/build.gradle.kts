@@ -103,8 +103,8 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
     implementation("androidx.hilt:hilt-work:1.0.0")
     kapt("androidx.hilt:hilt-compiler:1.0.0")
-
-
+    // Coil: getImage from URL
+    implementation("io.coil-kt:coil-compose:2.4.0")
 
     //Test and Debug
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
