@@ -14,14 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.zosh.dto.TwitDto;
 import com.zosh.dto.UserDto;
-import com.zosh.dto.mapper.TwitDtoMapper;
 import com.zosh.dto.mapper.UserDtoMapper;
 import com.zosh.exception.UserException;
-import com.zosh.model.Twit;
 import com.zosh.model.User;
-import com.zosh.service.TwitService;
 import com.zosh.service.UserService;
 import com.zosh.util.UserUtil;
 
@@ -35,8 +31,6 @@ public class UserController {
 
 @Autowired
 private UserService userService;
-@Autowired
-private TwitService twitService;
 	
 	public UserController(UserService userService) {
 		this.userService=userService;
@@ -74,18 +68,6 @@ private TwitService twitService;
 		userDto.setFollowed(UserUtil.isFollowedByReqUser(reqUser, user));
 		return new ResponseEntity<>(userDto,HttpStatus.ACCEPTED);
 	}
-	
-	@GetMapping("/followTwit")
-	public ResponseEntity<List<TwitDto>> getUserFollowTwit(@RequestHeader("Authorization") String jwt) throws UserException{
-		User reqUser=userService.findUserProfileByJwt(jwt);
-		System.out.println("reqUser + " + reqUser);
-		List<Twit> twits=twitService.findTwitFollowedByReqUser(reqUser);
-		System.out.println("twits + " + twits);
-		
-		List<TwitDto> twitDtos=TwitDtoMapper.toTwitDtos(twits, reqUser);
-		return new ResponseEntity<>(twitDtos, HttpStatus.ACCEPTED);
-		
-	} 
 	
 	@GetMapping("/search1")
 	public ResponseEntity<List<UserDto>> searchUserHandler(@RequestParam String query, 
