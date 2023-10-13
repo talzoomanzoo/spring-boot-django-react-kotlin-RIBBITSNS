@@ -158,10 +158,10 @@ public class TwitServiceImplementation implements TwitService {
 		return twitRepository.searchTwit(query);
 	}
 
-/*	@Override
+	@Override
 	public List<Twit> findTwitFollowedByReqUser(User user) {
 		// TODO Auto-generated method stub
 		System.out.println(user.getId());
 		return twitRepository.searchFollowedTwit(user.getId());
-	} */
+	} 
 }
