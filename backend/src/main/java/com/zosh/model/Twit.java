@@ -24,7 +24,7 @@ public class Twit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne//(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id") // 외래키를 매핑할 때 사용; name 속성에는 매핑할 외래키 이름 지정
     private User user;
 
@@ -38,7 +38,7 @@ public class Twit {
     @JoinColumn(name = "twit_id")
     private List<Twit> replyTwits = new ArrayList<>(); //여러개의 twit에 하나의 reply 리스트
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)//eagerloading추가해 데이터를 즉시 로그 시킴
     private List<User> retwitUser = new ArrayList<>();
 
     @ManyToOne // 붙는 엔티티가 M, 상대가 1
@@ -62,4 +62,8 @@ public class Twit {
     private boolean isTwit; 
     private boolean is_liked = false; 
     private boolean is_retwit = false;
+    
+    private String ethicrate; //윤리수치 저장
+    private int label; //수치중 가장 큰것을 라벨값으로 저장
+    private String sentence;//라벨값에 알맞는 문장을 입력
 }

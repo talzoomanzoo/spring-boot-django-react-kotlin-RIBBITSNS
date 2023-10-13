@@ -18,10 +18,11 @@ import {
 } from "@mui/material";
 import EmojiPicker from "emoji-picker-react";
 import { useFormik } from "formik";
-import React, { useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
+import { css } from '@emotion/react';
 import {
   createRetweet,
   createTweet,
@@ -34,6 +35,14 @@ import {
 import { uploadToCloudinary } from "../../../../Utils/UploadToCloudinary";
 import BackdropComponent from "../../../Backdrop/Backdrop";
 import ReplyModal from "./ReplyModal";
+import { BounceLoader } from 'react-spinners';//npm install react-spinners --save 명령어로 설치진행
+import axios from 'axios';
+
+const override = css`
+  display: block;
+  margin: 0 auto;
+  border-color: red;
+`;
 
 const validationSchema = Yup.object().shape({
   content: Yup.string().required("Tweet text is required"),
@@ -46,6 +55,41 @@ const TwitCard = ({ twit }) => {
   const [openEmoji, setOpenEmoji] = useState(false);
   const handleOpenEmoji = () => setOpenEmoji(!openEmoji);
   const handleCloseEmoji = () => setOpenEmoji(false);
+
+  const [sentence, setSentence] = useState(null);//sentence는 윤리수치에 해당하는 문장이 담아진다.
+  const [isloading, setIsLoading] = useState(true);//로딩창의 띄어짐의 유무를 판단한다. default는 true이다.
+  const jwtToken = localStorage.getItem("jwt")
+  const ethicreveal = async()=>{
+    if (twit.sentence ===null) {
+      try {
+        const response = await fetch('http://localhost:8080/api/twits/request',{
+          method:'GET',
+          headers:{
+            'Content-Type': 'application/json',
+            'Authorization':`Bearer ${jwtToken}`,
+          },
+        });
+        console.log("response: ",response);
+        console.log("jwt: ",jwtToken);
+        if(response.status===201){
+          
+          setSentence(twit.sentence);
+          setIsLoading(false);
+        }
+      } catch (error) {
+        setIsLoading(false);
+      }
+    } else{
+      setSentence(twit.sentence);
+      setIsLoading(false);
+    }
+    
+  };
+
+  useEffect(() => {
+    ethicreveal();
+    console.log("ethicreveal: ",ethicreveal());
+  }, []);
 
   const dispatch = useDispatch();
   const { auth } = useSelector((store) => store);
@@ -74,6 +118,11 @@ const TwitCard = ({ twit }) => {
   const handleCloseDeleteMenu = () => {
     setAnchorEl(null);
   };
+
+  const twitsWithoutSentence = twit.filter(twit => !twit.sentence);
+  twitsWithoutSentence.forEach(twit => {
+    console.log("no sentence",twit.id);
+  });
 
   const handleLikeTweet = (num) => {
     dispatch(likeTweet(twit.id));
@@ -354,6 +403,16 @@ const TwitCard = ({ twit }) => {
                   <p className="mb-2 p-0 ">
                     {isEditing ? editedContent : twit.content}
                   </p>
+
+                  
+                  {isloading ? (//로딩창을 띄우는 것과 윤리수치문장 sentence를 띄운다.
+                    <BounceLoader color={'#36D7B7'} loading={isloading} css={override} size={150} />
+                  ):(sentence && (
+                    <div>
+                      <p>{sentence}</p>
+                    </div>
+                  ))}
+
                   {twit.image && (
                     <img
                       className="w-[28rem] border border-gray-400 p-5 rounded-md"

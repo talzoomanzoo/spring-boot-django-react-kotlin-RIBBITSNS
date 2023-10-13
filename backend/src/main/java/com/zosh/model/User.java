@@ -68,11 +68,11 @@ public class User {
 //    private List<Twit> retwits = new ArrayList<>();
     
     @JsonIgnore // 특정 필드 위에 사용하면 해당 필드는 JSON 직렬화 과정에서 무시되어 출력되지 않음
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)//, fetch = FetchType.LAZY)
     private List<Twit> twit = new ArrayList<>();
     
     @JsonIgnore
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)//, fetch = FetchType.LAZY)
     private List<Like> likes  = new ArrayList<>();
     
     @Embedded
@@ -84,7 +84,7 @@ public class User {
     
     @JsonIgnore
     //@ManyToMany(mappedBy = "followers")
-    @ManyToMany(cascade = CascadeType.ALL) // followers와 followings 테이블 분리를 통해 null칸 폐기
+    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER) // followers와 followings 테이블 분리를 통해 null칸 폐기
     private List<User> followings=new ArrayList<>();
     
 }

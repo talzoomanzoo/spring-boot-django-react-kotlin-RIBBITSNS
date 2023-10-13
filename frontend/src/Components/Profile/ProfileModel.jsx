@@ -8,12 +8,14 @@ import {
   TextField,
 } from "@mui/material";
 import { useFormik } from "formik";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateUserProfile } from "../../Store/Auth/Action";
 import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
 import BackdropComponent from "../Backdrop/Backdrop";
 import "./ProfileModel.css";
+
+import axios from 'axios';
 
 const style = {
   position: "absolute",
@@ -31,9 +33,11 @@ const style = {
 };
 
 const ProfileModel = ({ handleClose,open }) => {
-    const [uploading,setUploading]=useState(false);
-    const dispatch=useDispatch();
-    const {auth}=useSelector(store=>store);
+  const [uploading,setUploading]=useState(false);
+  const dispatch=useDispatch();
+  const {auth}=useSelector(store=>store);
+
+  const fileInputRef = useRef(null);
 
   const handleSubmit = (values) => {
     dispatch(updateUserProfile(values))
@@ -69,6 +73,45 @@ const ProfileModel = ({ handleClose,open }) => {
 
   },[auth.user])
 
+  const [openInputAiKeyword, setOpenInputAiKeyword] = useState(false); // 모달 열기/닫기 상태
+  const [keyword, setKeyword] = useState(""); // AI 키워드 입력 상태
+  const [image, setImage] = useState(""); // 이미지 상태 추가
+
+  const openInputAiKeywordModal = () => {//keyword를 넣는 모달 열기
+    setOpenInputAiKeyword(true);
+  };
+
+  const closeInputAiKeywordModal = () => {//keyword를 넣는 모달 닫기
+    setOpenInputAiKeyword(false);
+  };
+
+  const handleKeywordChange = (event) => {
+    setKeyword(event.target.value);
+  };
+
+  const handleGenerateImage = async () => {
+
+    try {
+      const url = 'http://localhost:8080/sendprompt';
+
+      const requestdata = {
+        keyword: keyword,
+      };
+
+      const response = await axios.get(url, {
+        params: requestdata,
+      });
+
+      const generatedImage = response.data.image_url;
+
+      setImage(generatedImage);
+
+
+    } catch (error) {
+      console.error('이미지 생성 요청 중 오류 발생:', error);
+    }
+  };
+
   const handleImageChange=async(event)=>{
     setUploading(true)
     const {name}=event.target;
@@ -78,6 +121,24 @@ const ProfileModel = ({ handleClose,open }) => {
     setUploading(false);
 
   }
+
+  const handleAIImageChange = async (event) => {//ai이미지를 cloudinary로 업로드하는 함수이다.
+    setUploading(true);
+
+    const response = await fetch('http://localhost:8080/webptojpg', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ karlourl: image }), // image 변수에 있는 webp URL을 전송한다..
+    });
+    
+    const blob = await response.blob();
+    const file = new File([blob], 'output.jpg', { type: 'image/jpeg' });
+    const url = await uploadToCloudinary(file, "image");
+    formik.setFieldValue("image", url);
+    setUploading(false);
+  };
 
   return (
     <div>
@@ -138,10 +199,16 @@ const ProfileModel = ({ handleClose,open }) => {
                     {/* Hidden file input */}
                     <input
                       type="file"
+                      ref={fileInputRef}
                       className="absolute top-0 left-0 w-[10rem] h-full opacity-0 cursor-pointer"
                       onChange={handleImageChange}
+                      style={{ display: "none" }}
                       name="image"
                     />
+                  </div>
+                  <div style={{ position: 'absolute', top: '109px', right: '250px' }}>
+                    <Button onClick={() => fileInputRef.current.click()}>로컬 저장소</Button>
+                    <Button onClick={openInputAiKeywordModal}>AI 이미지</Button>
                   </div>
                 </div>
               </div>
@@ -224,7 +291,54 @@ const ProfileModel = ({ handleClose,open }) => {
         </Box>
         
       </Modal>
-      
+      <Modal
+        open={openInputAiKeyword}
+        onClose={closeInputAiKeywordModal}
+        aria-labelledby="image-source-modal-title"
+        aria-describedby="image-source-modal-description"
+      >
+        <div className="image-source-modal">
+          <Box
+            sx={{
+              p: 2,
+              bgcolor: "background.paper",
+              borderRadius: 3,
+              textAlign: "center",
+            }}
+          >
+            <div className="image-source-options">
+              <p>Enter a keyword to generate an AI image:</p>
+              <input
+                type="text"
+                value={keyword}
+                onChange={handleKeywordChange}
+                placeholder="Keyword"
+              />
+            </div>
+            {image && (
+              <div>
+                <img
+                  src={image}
+                  alt="Generated Image"
+                  style={{
+                    width: '200px',
+                    height: '200px',
+                    objectFit: 'cover',
+                    display: 'block',
+                    margin: '0 auto',
+                  }}
+                />
+                <a
+                  href={`http://localhost:8080/download`}
+                  download="generated_image.jpg"
+                >이미지 다운로드</a>
+                <button onClick={handleAIImageChange}>이미지 선택</button>
+              </div>
+            )}
+            <button onClick={handleGenerateImage}>이미지 생성</button>
+          </Box>
+        </div>
+      </Modal>
     </div>
   );
 };
