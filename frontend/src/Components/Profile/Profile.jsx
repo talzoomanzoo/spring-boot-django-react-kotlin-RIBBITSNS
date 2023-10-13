@@ -21,6 +21,7 @@ import { FollowUserAction, findUserById } from "../../Store/Auth/Action";
 import {
   findTwitsByLikesContainUser,
   getUsersTweets,
+  getUsersReplies,
   viewPlus,
 } from "../../Store/Tweet/Action";
 import TwitCard from "../Home/MiddlePart/TwitCard/TwitCard";
@@ -44,15 +45,18 @@ const Profile = () => {
   };
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
-    if (newValue === 4) {
+    if (newValue === "4") {
       dispatch(findTwitsByLikesContainUser(param.id));
-    } else if (newValue === 1) {
+    } else if (newValue === "1") {
       dispatch(getUsersTweets(param.id));
+    } else if (newValue === "2") {
+      dispatch(getUsersReplies(param.id));
     }
   };
   useEffect(() => {
     dispatch(getUsersTweets(param.id));
-    dispatch(findTwitsByLikesContainUser(param.id));
+    //dispatch(getUsersReplies(param.id));
+    //dispatch(findTwitsByLikesContainUser(param.id));
   }, [param.id, twit.retwit]);
 
   useEffect(() => {
@@ -90,8 +94,6 @@ const Profile = () => {
     setFollowingsClicked(!followingsClicked);
   };
 
-  // console.log("find user ",auth.findUser)
-
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -111,6 +113,9 @@ const Profile = () => {
       document.removeEventListener("click", handleClickOutside);
     };
   }, []);
+
+  console.log("check twit.twits",twit.twits);
+  console.log("check twit only", twit);
 
   return (
     <React.Fragment>
@@ -223,7 +228,7 @@ const Profile = () => {
                   onClick={handleFollowingsClick} // followers 텍스트 클릭 시 handleFollowersClick 함수 실행
                   className="text-gray-500"
                 >
-                  {auth.findUser?.followings.length} followings
+                  {auth.findUser?.followings?.length} followings
                 </span>
 
                 {followingsClicked && ( // followersClicked 상태에 따라 followers 리스트를 렌더링합니다.
@@ -268,7 +273,7 @@ const Profile = () => {
                   onClick={handleFollowersClick} // followers 텍스트 클릭 시 handleFollowersClick 함수 실행
                   className="text-gray-500"
                 >
-                  {auth.findUser?.followers.length} followers
+                  {auth.findUser?.followers?.length} followers
                 </span>
 
                 {followersClicked && ( // followersClicked 상태에 따라 followers 리스트를 렌더링합니다.
@@ -336,35 +341,12 @@ const Profile = () => {
             </TabPanel>
 
             <TabPanel value="2">
-              {twit.twits
-                // .filter((item) => item.user.id === auth.user.id)
-                .filter((item) => {
-                  console.log(item);
-                  return item.user.id === auth.user.id;
-                })
-                .map((item) => (
-                  <div>
-                    <TwitCard twit={item} />
-                    <Divider sx={{ margin: "2rem 0rem" }} />{" "}
-                  </div>
-                ))}
-              {twit.twit?.replyTwits
-                .filter((item) => {
-                  console.log(item);
-                  return item.user.id === auth.user.id;
-                })
-                .map((item, index) => (
-                  <React.Fragment key={item.id}>
-                    <div>
-                      <TwitCard twit={item} />
-                      <Divider sx={{ margin: "2rem 0rem" }} />{" "}
-                    </div>
-
-                    {index !== twit.twit?.replyTwits.length - 1 && (
-                      <Divider sx={{ margin: "2rem 0rem" }} />
-                    )}
-                  </React.Fragment>
-                ))}
+              {twit.twits?.map((item) => (
+                <div>
+                  <TwitCard twit={item} />
+                  <Divider sx={{ margin: "2rem 0rem" }} />{" "}
+                </div>
+              ))}
             </TabPanel>
 
             <TabPanel value="3">

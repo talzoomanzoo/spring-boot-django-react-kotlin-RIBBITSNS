@@ -31,9 +31,11 @@ public interface TwitService {
 	
 	public List<Twit> getUsersTwit(User user);
 	
+	public List<Twit> getUsersReplies(Long userId);
+	
 	public List<Twit> findByLikesContainsUser(User user);
 
-	//public List<Twit> findTwitFollowedByReqUser(User user);
+	public List<Twit> findTwitFollowedByReqUser(User user);
 
 	public Twit updateView(Twit twit) throws TwitException;
 	

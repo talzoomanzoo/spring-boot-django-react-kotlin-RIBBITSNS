@@ -5,6 +5,9 @@ import {
   FIND_TWEET_BY_ID_FAILURE,
   FIND_TWEET_BY_ID_REQUEST,
   FIND_TWEET_BY_ID_SUCCESS,
+  FOLLOW_TWIT_FAILURE,
+  FOLLOW_TWIT_REQUEST,
+  FOLLOW_TWIT_SUCCESS,
   GET_ALL_TWEETS_FAILURE,
   GET_ALL_TWEETS_REQUEST,
   GET_ALL_TWEETS_SUCCESS,
@@ -35,6 +38,9 @@ import {
   VIEW_PLUS_FAILURE,
   VIEW_PLUS_REQUEST,
   VIEW_PLUS_SUCCESS,
+  GET_USERS_REPLIES_REQUEST,
+  GET_USERS_REPLIES_SUCCESS,
+  GET_USERS_REPLIES_FAILURE,
 } from "./ActionType";
 
 export const createTweetRequest = () => ({
@@ -109,6 +115,19 @@ export const getUsersTweets = (userId) => {
     }
   };
 };
+
+export const getUsersReplies = (userId) => {
+  return async (dispatch) => {
+    dispatch({type:GET_USERS_REPLIES_REQUEST});
+    try {
+      const response = await api.get(`/api/twits/user/${userId}/replies`);
+      console.log("users replies", response.data)
+      dispatch({type:GET_USERS_REPLIES_SUCCESS, payload:response.data});
+    } catch (error) {
+      dispatch({type:GET_USERS_REPLIES_FAILURE, payload:error.message});
+    }
+  }
+}
 
 export const findTwitsByLikesContainUser = (userId) => {
   return async (dispatch) => {
@@ -236,6 +255,20 @@ export const deleteTweet = (tweetId) => {
     }
   };
 };
+
+export const followTwit = () => async (dispatch) => {
+  dispatch({type:FOLLOW_TWIT_REQUEST})
+  try {
+    const response = await api.get(`/api/twits/followTwit`);
+    const user = response.data;
+    dispatch({type:FOLLOW_TWIT_SUCCESS, payload:user});
+    console.log("find by twit user -: ", user);
+  } catch (error) {
+    dispatch({type:FOLLOW_TWIT_FAILURE, payload:error.message});
+  }
+};
+
+
 
 export const getTime = (datetime, currTimestamp) => {
   const totalMilliseconds = currTimestamp - datetime;

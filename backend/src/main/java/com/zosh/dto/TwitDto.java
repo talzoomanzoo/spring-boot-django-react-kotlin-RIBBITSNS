@@ -42,6 +42,8 @@ public class TwitDto {
     
     private boolean isRetwit;
     
+    private boolean isReply;
+    
     private List<Long> retwitUsersId;
     
     private List<TwitDto> replyTwits;

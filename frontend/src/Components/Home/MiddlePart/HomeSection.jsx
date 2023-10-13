@@ -166,8 +166,8 @@ const HomeSection = () => {
           </div>
         </div>
       </section>
-
-      {/* twit section */}
+{/* 여기까지가 맨 위 빈칸 */}
+      {/* 여기서부터 twit 불러오는 twit section */}
       <section className={`${theme.currentTheme==="dark"?"pt-14":""} space-y-5`}>
         {twit.twits?.map((item) => (
           <TwitCard twit={item} />
