@@ -2,6 +2,9 @@ package com.hippoddung.ribbit.ui.screens
 
 import android.annotation.SuppressLint
 import android.util.Log
+import android.view.ViewGroup
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,12 +15,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -29,11 +31,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -100,15 +100,13 @@ fun SuccessScreen(
     homeViewModel: HomeViewModel,
     modifier: Modifier
 ) {
-    val listState = rememberLazyListState()
-
     Column {
         Log.d("HippoLog, HomeScreen", "HomeUiState.Success")
 
         (homeViewModel.homeUiState as HomeUiState.Success).posts?.let {
             Log.d("HippoLog, HomeScreen", "HomeUiState.Success.posts")
             PostsGridScreen(
-                it, listState = listState, modifier
+                it, modifier
             )
         }
     }
@@ -125,14 +123,10 @@ fun SuccessScreen(
     }
 }
 
-/**
- * ResultScreen displaying number of photos retrieved.
- */
-
 @SuppressLint("UnrememberedMutableState")
 @Composable
-fun PostsGridScreen(posts: List<RibbitPost>, listState: LazyListState, modifier: Modifier) {
-    LazyColumn(state = listState, modifier = modifier) {
+fun PostsGridScreen(posts: List<RibbitPost>, modifier: Modifier) {
+    LazyColumn(modifier = modifier) {
         items(posts) { post ->
             TextCard(
                 post = post,
@@ -142,9 +136,14 @@ fun PostsGridScreen(posts: List<RibbitPost>, listState: LazyListState, modifier:
     }
 }
 
+@SuppressLint("SetJavaScriptEnabled", "JavascriptInterface")
 @Composable
 fun TextCard(post: RibbitPost, modifier: Modifier) {
-    Card(modifier = modifier.fillMaxWidth()) {
+    Card(
+        shape = MaterialTheme.shapes.medium,
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        modifier = modifier.fillMaxWidth()
+    ) {
         Column(modifier = Modifier.padding(8.dp)) {
             Row {
                 Text(
@@ -166,15 +165,37 @@ fun TextCard(post: RibbitPost, modifier: Modifier) {
                 modifier = Modifier.padding(4.dp),
                 style = MaterialTheme.typography.headlineSmall
             )
-            if (post.user.image != null) {
+            if (post.image.isNotEmpty()) {
                 AsyncImage(
-                    model = ImageRequest.Builder(context = LocalContext.current).data(post.user.image)
-                        .crossfade(true).build(),
+                    model = ImageRequest.Builder(context = LocalContext.current).data(post.image).crossfade(true).build(),
                     error = painterResource(R.drawable.ic_broken_image),
                     placeholder = painterResource(R.drawable.loading_img),
                     contentDescription = stringResource(R.string.user_image),
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.fillMaxWidth()
+                )
+            }
+            if (post.video.isNotEmpty()) {
+                AndroidView(
+                    factory = {
+                        val maxWidth: Int = 1000
+                        WebView(it)
+                            .apply {
+                                layoutParams = ViewGroup.LayoutParams(
+                                    maxWidth,
+                                    maxWidth
+                                )
+                                webViewClient = WebViewClient()
+                                settings.mediaPlaybackRequiresUserGesture = true
+                                settings.useWideViewPort = true
+                                settings.javaScriptEnabled = true
+                            }
+                            .apply {
+                                loadUrl(post.video)
+                                loadUrl("javascript:(function() { " + "let videos = document.getElementsByTagName('video'); " + "for(var i=0;i<videos.length;i++){ " + "videos[i].autoplay=false; " + "}})()")
+                            }
+                    },
+                    modifier = Modifier
                 )
             }
         }
