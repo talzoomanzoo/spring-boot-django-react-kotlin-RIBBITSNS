@@ -9,7 +9,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 
 const val BASE_URL =
-    "http://3.35.24.214:8080/"
+    "http://43.201.96.151:8080/"
 
 interface RibbitApiService {
     @GET("api/twits/")

@@ -348,7 +348,6 @@ const Profile = () => {
                     <Divider sx={{ margin: "2rem 0rem" }} />{" "}
                   </div>
                 ))}
-
               {twit.twit?.replyTwits
                 .filter((item) => {
                   console.log(item);
