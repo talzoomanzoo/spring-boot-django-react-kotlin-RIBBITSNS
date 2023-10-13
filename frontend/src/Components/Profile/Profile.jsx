@@ -28,6 +28,7 @@ import SnackbarComponent from "../Snackbar/SnackbarComponent";
 import ProfileModel from "./ProfileModel";
 
 const Profile = () => {
+  const { kakao } = window;
   const [tabValue, setTabValue] = React.useState("1");
   const { auth, twit, theme } = useSelector((store) => store);
   const [openProfileModel, setOpenProfileModel] = useState();
@@ -114,35 +115,26 @@ const Profile = () => {
   }, []);
 
   const Maplocation = () => {
-    setShowLocation(!showLocation);
-  
+    const initializeMap = () => {
+      var container = document.getElementById("map");
+      var options = {
+        center: new kakao.maps.LatLng(37.365264512305174, 127.10676860117488),
+        level: 3,
+      };
+      var map = new kakao.maps.Map(container, options);
+    };
+
     useEffect(() => {
       if (showLocation) {
-        // Kakao 지도 API 스크립트가 이미 로드되었는지 확인
-        if (window.kakao && window.kakao.maps) {
-          console.error("Kakao Map API failed to load.");
-        } else {
-          // Kakao 지도 API 스크립트가 아직 로드되지 않았다면, 로드될 때까지 기다린 후 지도를 표시
-          console.error("Kakao Map API failed to load.");
-          const script = document.createElement('script');
-          script.src = '//dapi.kakao.com/v2/maps/sdk.js?appkey=YOUR_KAKAO_MAP_API_KEY';
-          script.async = true;
-          script.onload = () => {
-            // Kakao 지도 API 스크립트 로드 후 초기화 함수 호출
-            const container = document.getElementById("map"); // 지도를 표시할 DOM 컨테이너
-            const options = {
-              center: new window.kakao.maps.LatLng(33.5563, 126.79581), // 지도 중심 좌표
-              level: 3, // 지도 확대 레벨
-            };
-            // Kakao Map을 생성하고 표시
-            new window.kakao.maps.Map(container, options);
-          };
-          document.head.appendChild(script);
-        }
+        initializeMap();
       }
     }, [showLocation]);
-  
-    return null;
+
+    return (
+      <div>
+        <div id="map" style={{ width: "500px", height: "400px" }}></div>
+      </div>
+    );
   };
 
   return (
