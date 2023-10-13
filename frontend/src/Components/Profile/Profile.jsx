@@ -185,16 +185,25 @@ const Profile = () => {
           <div className="mt-2 space-y-3">
             {auth.findUser?.bio && <p>{auth.findUser?.bio}</p>}
             <div className="py-1 flex space-x-5">
-              <div className="flex items-center text-gray-500">
-                <BusinessCenterSharp />
-                <p className="ml-2">{auth.findUser?.education}</p>
-              </div>
-              <div className="flex items-center text-gray-500">
-                <LocationOnIcon />
-                <p className="ml-2">{auth.findUser?.location}</p>
-              </div>
-              <div className="flex items-center text-gray-500">
-                {auth.findUser?.joinedAt ? (
+              {auth.findUser?.education ? (
+                <div className="flex items-center text-gray-500">
+                  <>
+                    <BusinessCenterSharp />
+                    <p className="ml-2">{auth.findUser.education}</p>
+                  </>
+                </div>
+              ) : null}
+
+              {auth.findUser?.location ? (
+                <div className="flex items-center text-gray-500">
+                  <>
+                    <LocationOnIcon />
+                    <p className="ml-2">{auth.findUser.location}</p>
+                  </>
+                </div>
+              ) : null}
+              {auth.findUser?.joinedAt ? (
+                <div className="flex items-center text-gray-500">
                   <>
                     <CalendarMonthIcon />
                     <p className="ml-2">
@@ -205,8 +214,8 @@ const Profile = () => {
                       }일에 가입함`}
                     </p>
                   </>
-                ) : null}
-              </div>
+                </div>
+              ) : null}
             </div>
             <div className="flex items-center space-x-5">
               <div className="flex items-center space-x-1 font-semibold">
