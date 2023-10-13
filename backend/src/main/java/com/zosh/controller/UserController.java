@@ -14,9 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.zosh.dto.TwitDto;
 import com.zosh.dto.UserDto;
+import com.zosh.dto.mapper.TwitDtoMapper;
 import com.zosh.dto.mapper.UserDtoMapper;
 import com.zosh.exception.UserException;
+import com.zosh.model.Twit;
 import com.zosh.model.User;
 import com.zosh.service.TwitService;
 import com.zosh.service.UserService;
@@ -72,7 +75,7 @@ private TwitService twitService;
 		return new ResponseEntity<>(userDto,HttpStatus.ACCEPTED);
 	}
 	
-/*	@GetMapping("/followTwit")
+	@GetMapping("/followTwit")
 	public ResponseEntity<List<TwitDto>> getUserFollowTwit(@RequestHeader("Authorization") String jwt) throws UserException{
 		User reqUser=userService.findUserProfileByJwt(jwt);
 		System.out.println("reqUser + " + reqUser);
@@ -82,7 +85,7 @@ private TwitService twitService;
 		List<TwitDto> twitDtos=TwitDtoMapper.toTwitDtos(twits, reqUser);
 		return new ResponseEntity<>(twitDtos, HttpStatus.ACCEPTED);
 		
-	} */
+	} 
 	
 	@GetMapping("/search1")
 	public ResponseEntity<List<UserDto>> searchUserHandler(@RequestParam String query, 
