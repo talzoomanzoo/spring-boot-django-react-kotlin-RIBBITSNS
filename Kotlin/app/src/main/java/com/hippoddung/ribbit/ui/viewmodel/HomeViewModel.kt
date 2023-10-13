@@ -1,8 +1,10 @@
 package com.hippoddung.ribbit.ui.viewmodel
 
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hippoddung.ribbit.data.network.RibbitRepository
@@ -26,6 +28,8 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
     var homeUiState: HomeUiState by mutableStateOf(HomeUiState.Loading)
         private set
+
+    var twitCreateOnClick = mutableStateOf({})
 
     init {
         getRibbitPosts()

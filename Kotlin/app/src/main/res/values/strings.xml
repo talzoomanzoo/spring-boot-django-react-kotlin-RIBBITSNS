@@ -29,4 +29,7 @@
 
     <!--    TwitCreate   -->
     <string name="Twit_create">Twit Create</string>
+
+    <!--    TwitCreate   -->
+    <string name="user_image">User Image</string>
 </resources>
