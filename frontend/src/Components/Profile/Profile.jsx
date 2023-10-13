@@ -35,6 +35,7 @@ const Profile = () => {
   const [followersClicked, setFollowersClicked] = useState(false);
   const [followingsClicked, setFollowingsClicked] = useState(false);
   const followersListRef = useRef(null);
+  const [showLocation, setShowLocation] = useState(false);
 
   const param = useParams();
   const dispatch = useDispatch();
@@ -111,6 +112,37 @@ const Profile = () => {
       document.removeEventListener("click", handleClickOutside);
     };
   }, []);
+
+  const Maplocation = () => {
+    setShowLocation(!showLocation);
+    if (showLocation) {
+      // Kakao 지도 API 스크립트가 로드되면 실행될 콜백 함수
+      const initKakaoMap = () => {
+        const container = document.getElementById("map"); // 지도를 표시할 DOM 컨테이너
+        const options = {
+          center: new window.kakao.maps.LatLng(33.5563, 126.79581), // 지도 중심 좌표
+          level: 3, // 지도 확대 레벨
+        };
+
+        // Kakao Map을 생성하고 표시
+        const map = new window.kakao.maps.Map(container, options);
+      };
+
+      // Kakao 지도 API 스크립트가 이미 로드되었는지 확인
+      if (window.kakao && window.kakao.maps) {
+        // Kakao 지도 API 스크립트가 이미 로드된 경우
+        initKakaoMap();
+      } else {
+        // Kakao 지도 API 스크립트가 아직 로드되지 않았다면, 로드될 때까지 기다린 후 지도 초기화
+        const script = document.createElement("script");
+        script.src =
+          "//dapi.kakao.com/v2/maps/sdk.js?appkey=9f8bcc84eccd63ea9cc0b870b3f73612";
+        script.async = true;
+        script.onload = initKakaoMap; // Kakao 지도 API 스크립트 로드 후 초기화 함수 호출
+        document.head.appendChild(script);
+      }
+    }
+  };
 
   return (
     <React.Fragment>
@@ -197,7 +229,9 @@ const Profile = () => {
               {auth.findUser?.location ? (
                 <div className="flex items-center text-gray-500">
                   <>
-                    <LocationOnIcon />
+                    <button onClick={Maplocation}>
+                      <LocationOnIcon />
+                    </button>
                     <p className="ml-2">{auth.findUser.location}</p>
                   </>
                 </div>
