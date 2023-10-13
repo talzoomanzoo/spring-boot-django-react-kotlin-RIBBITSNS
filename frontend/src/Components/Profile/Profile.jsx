@@ -20,6 +20,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { FollowUserAction, findUserById } from "../../Store/Auth/Action";
 import {
   findTwitsByLikesContainUser,
+  getUsersReplies,
   getUsersTweets,
   viewPlus,
 } from "../../Store/Tweet/Action";
@@ -46,15 +47,16 @@ const Profile = () => {
   };
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
-    if (newValue === 4) {
+    if (newValue === "4") {
       dispatch(findTwitsByLikesContainUser(param.id));
-    } else if (newValue === 1) {
+    } else if (newValue === "1") {
       dispatch(getUsersTweets(param.id));
+    } else if (newValue === "2") {
+      dispatch(getUsersReplies(param.id));
     }
   };
   useEffect(() => {
     dispatch(getUsersTweets(param.id));
-    dispatch(findTwitsByLikesContainUser(param.id));
   }, [param.id, twit.retwit]);
 
   useEffect(() => {
@@ -91,8 +93,6 @@ const Profile = () => {
   const handleFollowingsClick = () => {
     setFollowingsClicked(!followingsClicked);
   };
-
-  // console.log("find user ",auth.findUser)
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -363,35 +363,12 @@ const Profile = () => {
             </TabPanel>
 
             <TabPanel value="2">
-              {twit.twits
-                // .filter((item) => item.user.id === auth.user.id)
-                .filter((item) => {
-                  console.log(item);
-                  return item.user.id === auth.user.id;
-                })
-                .map((item) => (
-                  <div>
-                    <TwitCard twit={item} />
-                    <Divider sx={{ margin: "2rem 0rem" }} />{" "}
-                  </div>
-                ))}
-              {twit.twit?.replyTwits
-                .filter((item) => {
-                  console.log(item);
-                  return item.user.id === auth.user.id;
-                })
-                .map((item, index) => (
-                  <React.Fragment key={item.id}>
-                    <div>
-                      <TwitCard twit={item} />
-                      <Divider sx={{ margin: "2rem 0rem" }} />{" "}
-                    </div>
-
-                    {index !== twit.twit?.replyTwits.length - 1 && (
-                      <Divider sx={{ margin: "2rem 0rem" }} />
-                    )}
-                  </React.Fragment>
-                ))}
+              {twit.twits?.map((item) => (
+                <div>
+                  <TwitCard twit={item} />
+                  <Divider sx={{ margin: "2rem 0rem" }} />{" "}
+                </div>
+              ))}
             </TabPanel>
 
             <TabPanel value="3">

@@ -38,6 +38,9 @@ import {
   VIEW_PLUS_FAILURE,
   VIEW_PLUS_REQUEST,
   VIEW_PLUS_SUCCESS,
+  GET_USERS_REPLIES_REQUEST,
+  GET_USERS_REPLIES_SUCCESS,
+  GET_USERS_REPLIES_FAILURE,
 } from "./ActionType";
 
 export const createTweetRequest = () => ({
@@ -112,6 +115,19 @@ export const getUsersTweets = (userId) => {
     }
   };
 };
+
+export const getUsersReplies = (userId) => {
+  return async (dispatch) => {
+    dispatch({type:GET_USERS_REPLIES_REQUEST});
+    try {
+      const response = await api.get(`/api/twits/user/${userId}/replies`);
+      console.log("users replies", response.data)
+      dispatch({type:GET_USERS_REPLIES_SUCCESS, payload:response.data});
+    } catch (error) {
+      dispatch({type:GET_USERS_REPLIES_FAILURE, payload:error.message});
+    }
+  }
+}
 
 export const findTwitsByLikesContainUser = (userId) => {
   return async (dispatch) => {
@@ -251,6 +267,8 @@ export const followTwit = () => async (dispatch) => {
     dispatch({type:FOLLOW_TWIT_FAILURE, payload:error.message});
   }
 };
+
+
 
 export const getTime = (datetime, currTimestamp) => {
   const totalMilliseconds = currTimestamp - datetime;
