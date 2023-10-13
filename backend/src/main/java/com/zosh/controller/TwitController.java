@@ -159,6 +159,18 @@ public class TwitController {
 		return new ResponseEntity<>(twitDto, HttpStatus.ACCEPTED);
 	}
 	
+	@GetMapping("/followTwit")
+	public ResponseEntity<List<TwitDto>> getUserFollowTwit(@RequestHeader("Authorization") String jwt) throws UserException{
+		User reqUser=userService.findUserProfileByJwt(jwt);
+		System.out.println("reqUser + " + reqUser);
+		List<Twit> twits=twitService.findTwitFollowedByReqUser(reqUser);
+		System.out.println("twits + " + twits);
+		
+		List<TwitDto> twitDtos=TwitDtoMapper.toTwitDtos(twits, reqUser);
+		return new ResponseEntity<>(twitDtos, HttpStatus.ACCEPTED);
+		
+	} 
+	
 	@GetMapping("/search2")
 	public ResponseEntity<List<TwitDto>> searchTwitHandler(@RequestParam String query, 
 			@RequestHeader("Authorization") String jwt) 

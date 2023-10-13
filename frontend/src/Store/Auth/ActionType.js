@@ -45,11 +45,6 @@ export const SEARCH_TWIT_REQUEST="SEARCH_TWIT_REQUEST";
 export const SEARCH_TWIT_SUCCESS="SEARCH_TWIT_SUCCESS";
 export const SEARCH_TWIT_FAILURE="SEARCH_TWIT_FAILURE";
 
-
-export const FOLLOW_TWIT_REQUEST="FOLLOW_TWIT_REQUEST";
-export const FOLLOW_TWIT_SUCCESS="FOLLOW_TWIT_SUCCESS";
-export const FOLLOW_TWIT_FAILURE="FOLLOW_TWIT_FAILURE";
-
 export const LOGOUT="LOGOUT";
 //사용자 로그아웃과 관련된 액션 유형입니다. 사용자 로그아웃 요청 시 사용됩니다.
 

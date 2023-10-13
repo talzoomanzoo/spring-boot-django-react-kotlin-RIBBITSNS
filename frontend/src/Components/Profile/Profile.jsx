@@ -223,7 +223,7 @@ const Profile = () => {
                   onClick={handleFollowingsClick} // followers 텍스트 클릭 시 handleFollowersClick 함수 실행
                   className="text-gray-500"
                 >
-                  {auth.findUser?.followings.length} followings
+                  {auth.findUser?.followings?.length} followings
                 </span>
 
                 {followingsClicked && ( // followersClicked 상태에 따라 followers 리스트를 렌더링합니다.
@@ -268,7 +268,7 @@ const Profile = () => {
                   onClick={handleFollowersClick} // followers 텍스트 클릭 시 handleFollowersClick 함수 실행
                   className="text-gray-500"
                 >
-                  {auth.findUser?.followers.length} followers
+                  {auth.findUser?.followers?.length} followers
                 </span>
 
                 {followersClicked && ( // followersClicked 상태에 따라 followers 리스트를 렌더링합니다.

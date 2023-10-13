@@ -30,6 +30,9 @@ import {
   VIEW_PLUS_FAILURE,
   VIEW_PLUS_REQUEST,
   VIEW_PLUS_SUCCESS,
+  FOLLOW_TWIT_REQUEST,
+  FOLLOW_TWIT_SUCCESS,
+  FOLLOW_TWIT_FAILURE,
 } from "./ActionType";
 
 const initialState = {
@@ -49,6 +52,7 @@ const tweetReducer = (state = initialState, action) => {
     case LIKE_TWEET_REQUEST:
     case VIEW_PLUS_REQUEST:
     case RETWEET_CREATE_REQUEST:
+    case  FOLLOW_TWIT_REQUEST:  
     case FIND_TWEET_BY_ID_REQUEST:
       return {
         ...state, // Spread Parameter: 배열이 개별 원소가 됨 (아래 이외 다른 데이터는 그대로 유지.)
@@ -107,6 +111,13 @@ const tweetReducer = (state = initialState, action) => {
         error:null,
         like:action.payload
       }
+      case  FOLLOW_TWIT_SUCCESS:
+        return {
+          ...state,
+          loading:false,
+          twits:action.payload,
+          error:null,
+        }
     case VIEW_PLUS_SUCCESS:
         return{
           ...state,
@@ -155,7 +166,7 @@ const tweetReducer = (state = initialState, action) => {
             data: null,
             error: action.error, // 액션에서 전달된 에러 메시지
           };
-      
+          case  FOLLOW_TWIT_FAILURE:
     default:
       return state;
   }
