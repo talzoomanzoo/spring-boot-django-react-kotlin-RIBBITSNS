@@ -33,6 +33,9 @@ import {
   FOLLOW_TWIT_REQUEST,
   FOLLOW_TWIT_SUCCESS,
   FOLLOW_TWIT_FAILURE,
+  GET_USERS_REPLIES_REQUEST,
+  GET_USERS_REPLIES_SUCCESS,
+  GET_USERS_REPLIES_FAILURE,
 } from "./ActionType";
 
 const initialState = {
@@ -67,10 +70,18 @@ const tweetReducer = (state = initialState, action) => {
             error: null,
             twits:[]
           };
+    case GET_USERS_REPLIES_REQUEST:
+          return {
+            ...state,
+            loading: true,
+            error: null,
+            twits:[]
+          };
     case TWEET_CREATE_FAILURE:
     case TWEET_DELETE_FAILURE:
     case GET_ALL_TWEETS_FAILURE:
     case GET_USERS_TWEET_FAILURE:
+    case GET_USERS_REPLIES_FAILURE:
     case USER_LIKE_TWEET_FAILURE:
     case LIKE_TWEET_FAILURE:
     case VIEW_PLUS_FAILURE:
@@ -90,6 +101,7 @@ const tweetReducer = (state = initialState, action) => {
       };
     case GET_ALL_TWEETS_SUCCESS:
     case GET_USERS_TWEET_SUCCESS:
+    case GET_USERS_REPLIES_SUCCESS:
     // case USER_LIKE_TWEET_SUCCESS:
       return {
         ...state,
