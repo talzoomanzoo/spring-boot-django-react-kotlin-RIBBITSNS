@@ -208,7 +208,7 @@ const ProfileModel = ({ handleClose,open }) => {
                   fullWidth
                   id="birthDate"
                   name="birthDate"
-                  label="BirthDate (XXXX-XX-XX)"
+                  label="Birth Date (XXXX-XX-XX)"
                   value={formik.values.birthDate}
                   onChange={formik.handleChange}
                   error={
