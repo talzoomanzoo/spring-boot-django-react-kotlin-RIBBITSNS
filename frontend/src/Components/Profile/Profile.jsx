@@ -115,33 +115,34 @@ const Profile = () => {
 
   const Maplocation = () => {
     setShowLocation(!showLocation);
-    if (showLocation) {
-      // Kakao 지도 API 스크립트가 로드되면 실행될 콜백 함수
-      const initKakaoMap = () => {
-        const container = document.getElementById("map"); // 지도를 표시할 DOM 컨테이너
-        const options = {
-          center: new window.kakao.maps.LatLng(33.5563, 126.79581), // 지도 중심 좌표
-          level: 3, // 지도 확대 레벨
-        };
-
-        // Kakao Map을 생성하고 표시
-        const map = new window.kakao.maps.Map(container, options);
-      };
-
-      // Kakao 지도 API 스크립트가 이미 로드되었는지 확인
-      if (window.kakao && window.kakao.maps) {
-        // Kakao 지도 API 스크립트가 이미 로드된 경우
-        initKakaoMap();
-      } else {
-        // Kakao 지도 API 스크립트가 아직 로드되지 않았다면, 로드될 때까지 기다린 후 지도 초기화
-        const script = document.createElement("script");
-        script.src =
-          "//dapi.kakao.com/v2/maps/sdk.js?appkey=9f8bcc84eccd63ea9cc0b870b3f73612";
-        script.async = true;
-        script.onload = initKakaoMap; // Kakao 지도 API 스크립트 로드 후 초기화 함수 호출
-        document.head.appendChild(script);
+  
+    useEffect(() => {
+      if (showLocation) {
+        // Kakao 지도 API 스크립트가 이미 로드되었는지 확인
+        if (window.kakao && window.kakao.maps) {
+          console.error("Kakao Map API failed to load.");
+        } else {
+          // Kakao 지도 API 스크립트가 아직 로드되지 않았다면, 로드될 때까지 기다린 후 지도를 표시
+          console.error("Kakao Map API failed to load.");
+          const script = document.createElement('script');
+          script.src = '//dapi.kakao.com/v2/maps/sdk.js?appkey=YOUR_KAKAO_MAP_API_KEY';
+          script.async = true;
+          script.onload = () => {
+            // Kakao 지도 API 스크립트 로드 후 초기화 함수 호출
+            const container = document.getElementById("map"); // 지도를 표시할 DOM 컨테이너
+            const options = {
+              center: new window.kakao.maps.LatLng(33.5563, 126.79581), // 지도 중심 좌표
+              level: 3, // 지도 확대 레벨
+            };
+            // Kakao Map을 생성하고 표시
+            new window.kakao.maps.Map(container, options);
+          };
+          document.head.appendChild(script);
+        }
       }
-    }
+    }, [showLocation]);
+  
+    return null;
   };
 
   return (
@@ -257,7 +258,7 @@ const Profile = () => {
                   onClick={handleFollowingsClick} // followers 텍스트 클릭 시 handleFollowersClick 함수 실행
                   className="text-gray-500"
                 >
-                  {auth.findUser?.followings.length} followings
+                  {auth.findUser?.followings?.length} followings
                 </span>
 
                 {followingsClicked && ( // followersClicked 상태에 따라 followers 리스트를 렌더링합니다.
