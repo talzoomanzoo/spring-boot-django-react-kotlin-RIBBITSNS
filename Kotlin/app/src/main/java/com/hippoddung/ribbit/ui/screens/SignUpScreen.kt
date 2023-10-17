@@ -58,11 +58,11 @@ fun SignUpScreen(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = stringResource(R.string.Sign_up),
+            text = stringResource(R.string.sign_up),
             style = MaterialTheme.typography.displaySmall
         )
         Text(
-            text = stringResource(R.string.Sign_up),
+            text = stringResource(R.string.sign_up),
             modifier = Modifier
                 .padding(bottom = 16.dp)
                 .align(alignment = Alignment.Start)
@@ -134,7 +134,7 @@ fun InputFullNameField(
     TextField(
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-        label = { Text(stringResource(R.string.Full_name)) },
+        label = { Text(stringResource(R.string.full_name)) },
         value = value,
         onValueChange = onValueChange,
         modifier = modifier,
@@ -152,7 +152,7 @@ fun InputPWCheckField(
         singleLine = true,
         visualTransformation = if (passwordCheckVisible) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-        label = { Text(stringResource(R.string.PW_check)) },
+        label = { Text(stringResource(R.string.pW_check)) },
         value = value,
         onValueChange = onValueChange,
         trailingIcon = {
@@ -180,7 +180,7 @@ fun InputBirthDateField(
     TextField(
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-        label = { Text(stringResource(R.string.Birth_date)) },
+        label = { Text(stringResource(R.string.birth_date)) },
         value = value,
         onValueChange = onValueChange,
         modifier = modifier,

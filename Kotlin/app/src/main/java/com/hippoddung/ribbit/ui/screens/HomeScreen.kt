@@ -167,7 +167,8 @@ fun TextCard(post: RibbitPost, modifier: Modifier) {
             )
             if (post.image.isNotEmpty()) {
                 AsyncImage(
-                    model = ImageRequest.Builder(context = LocalContext.current).data(post.image).crossfade(true).build(),
+                    model = ImageRequest.Builder(context = LocalContext.current).data(post.image)
+                        .crossfade(true).build(),
                     error = painterResource(R.drawable.ic_broken_image),
                     placeholder = painterResource(R.drawable.loading_img),
                     contentDescription = stringResource(R.string.user_image),
@@ -176,28 +177,38 @@ fun TextCard(post: RibbitPost, modifier: Modifier) {
                 )
             }
             if (post.video.isNotEmpty()) {
-                AndroidView(
-                    factory = {
-                        val maxWidth: Int = 1000
-                        WebView(it)
-                            .apply {
-                                layoutParams = ViewGroup.LayoutParams(
-                                    maxWidth,
-                                    maxWidth
-                                )
-                                webViewClient = WebViewClient()
-                                settings.mediaPlaybackRequiresUserGesture = true
-                                settings.useWideViewPort = true
-                                settings.javaScriptEnabled = true
-                            }
-                            .apply {
-                                loadUrl(post.video)
-                                loadUrl("javascript:(function() { " + "let videos = document.getElementsByTagName('video'); " + "for(var i=0;i<videos.length;i++){ " + "videos[i].autoplay=false; " + "}})()")
-                            }
-                    },
-                    modifier = Modifier
-                )
+                RibbitVideo(post.video)
             }
         }
     }
+}
+
+@Composable
+fun RibbitVideo(video: String) {
+    val jsCode =
+            "javascript: function() { let videos = document.getElementsByTagName('video'); for(let i=0;i<videos.length;i++){ videos[i].autoplay='false'; }}()};" +
+                    "javascript: const x = { document.getElementByName(\"media\").removeAttribute(\"autoplay\"); };"
+//    val video = "https://scontent.cdninstagram.com/v/t50.16885-16/10000000_295215923058216_2424649624308768222_n.mp4?_nc_ht=scontent.cdninstagram.com&_nc_cat=100&_nc_ohc=CPqU_m6gRZYAX-frll-&edm=APs17CUBAAAA&ccb=7-5&oh=00_AfD9-2tj5Zv4wLVnOJyPi1MUBhkfI1NgHoLsYpYdRNhpfg&oe=652EA093&_nc_sid=10d13b"
+    AndroidView(
+        factory = {
+            val maxWidth: Int = 1000
+            WebView(it)
+                .apply {
+                    layoutParams = ViewGroup.LayoutParams(
+                        maxWidth,
+                        maxWidth
+                    )
+                    webViewClient = WebViewClient()
+                    settings.mediaPlaybackRequiresUserGesture = true
+                    settings.useWideViewPort = true
+                    settings.javaScriptEnabled = true
+                    loadUrl(jsCode)
+                    evaluateJavascript(jsCode, null)
+                }
+        },
+        update = { webView ->
+            webView.loadUrl(video)
+        },
+        modifier = Modifier
+    )
 }

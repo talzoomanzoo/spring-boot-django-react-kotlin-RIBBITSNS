@@ -24,6 +24,7 @@ import javax.inject.Inject
 class MainActivity @Inject constructor(): ComponentActivity() {
     private val authViewModel: AuthViewModel by viewModels()
     private val tokenViewModel: TokenViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
