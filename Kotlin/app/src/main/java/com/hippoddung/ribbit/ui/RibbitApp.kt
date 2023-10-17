@@ -45,7 +45,6 @@ import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.hippoddung.ribbit.R
 import com.hippoddung.ribbit.ui.screens.HomeScreen
-import com.hippoddung.ribbit.ui.screens.PickImageScreen
 import com.hippoddung.ribbit.ui.screens.ProfileScreen
 import com.hippoddung.ribbit.ui.screens.TwitCreateScreen
 import com.hippoddung.ribbit.ui.screens.authscreens.LoginScreen
@@ -66,13 +65,13 @@ enum class RibbitScreen(@StringRes val title: Int) {
 }
 
 @Composable
-fun RibbitApp() {
+fun RibbitApp(homeViewModel: HomeViewModel) {
     val authViewModel: AuthViewModel = hiltViewModel()
     val navController: NavHostController = rememberNavController()
 
     when (authViewModel.authUiState) {
         is AuthUiState.Login -> {
-            RibbitScreen(navController)
+            RibbitScreen(navController, homeViewModel)
         }
         is AuthUiState.Logout -> {
             AuthScreen(navController, authViewModel)
@@ -83,7 +82,8 @@ fun RibbitApp() {
 
 @Composable
 fun RibbitScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    homeViewModel: HomeViewModel
 ) {
 //    val backStackEntry by navController.currentBackStackEntryAsState()
 //    val currentScreen = RibbitScreen.valueOf(backStackEntry?.destination?.route ?: RibbitScreen.SignUpScreen.name)
@@ -104,7 +104,6 @@ fun RibbitScreen(
                 modifier = Modifier
             ) {
                 composable(route = RibbitScreen.HomeScreen.name) {
-                    val homeViewModel: HomeViewModel = hiltViewModel()
                     HomeScreen(
                         navController = navController,
                         homeViewModel = homeViewModel
@@ -115,9 +114,6 @@ fun RibbitScreen(
                 }
                 composable(route = RibbitScreen.TwitCreateScreen.name) {
                     TwitCreateScreen(navController)
-                }
-                composable(route = RibbitScreen.PickImageScreen.name) {
-                    PickImageScreen()
                 }
                 composable(route = RibbitScreen.LogoutScreen.name) {
                     LogoutScreen()

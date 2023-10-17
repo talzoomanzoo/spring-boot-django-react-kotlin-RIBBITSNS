@@ -2,6 +2,7 @@ package com.hippoddung.ribbit.network
 
 
 import com.hippoddung.ribbit.network.bodys.UploadCloudinary
+import com.hippoddung.ribbit.network.bodys.UploadCloudinaryResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.Multipart
@@ -19,10 +20,10 @@ interface UploadCloudinaryApiService {
         @Part file: MultipartBody.Part,
         @Part("upload_preset") upload_preset: RequestBody,
         @Part("cloud_name") cloud_name: RequestBody
-    ): String
+    ): UploadCloudinaryResponse
 
     @POST("video/upload")
-    suspend fun uploadVideoCloudinary(): String
+    suspend fun uploadVideoCloudinary(): UploadCloudinaryResponse
 
 //    const fileData=await res.json();
 //    console.log("url : ", fileData.url.toString());

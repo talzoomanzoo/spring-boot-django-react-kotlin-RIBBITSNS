@@ -87,6 +87,7 @@ class SingletonModule {
         Retrofit.Builder()
             .baseUrl(CLOUDINARY_URL)
             .addConverterFactory(GsonConverterFactory.create())
+            .client(OkHttpClient.Builder().build())
             .build()
             .create(UploadCloudinaryApiService::class.java)
 }

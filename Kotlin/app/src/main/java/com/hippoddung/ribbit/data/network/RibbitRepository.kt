@@ -9,8 +9,8 @@ import javax.inject.Inject
 class RibbitRepository @Inject constructor(
     private val ribbitApiService: RibbitApiService
 ) {
-    suspend fun getPosts():List<RibbitPost> {
-        return ribbitApiService.getPosts()
+    fun getPosts() = apiRequestFlow {
+        ribbitApiService.getPosts()
     }
     suspend fun twitCreate(twitCreateRequest: TwitCreateRequest) {
         ribbitApiService.twitCreate(twitCreateRequest)

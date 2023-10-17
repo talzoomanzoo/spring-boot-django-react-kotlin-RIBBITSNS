@@ -32,7 +32,7 @@ sealed interface TwitsCreateUiState {
 }
 
 sealed interface UploadCloudinaryUiState {
-    data class Success(val image: String) : UploadCloudinaryUiState
+    object Success : UploadCloudinaryUiState
     object Error : UploadCloudinaryUiState
     object Loading : UploadCloudinaryUiState
 }
@@ -41,74 +41,42 @@ sealed interface UploadCloudinaryUiState {
 class TwitsCreateViewModel @Inject constructor(
     private val ribbitRepository: RibbitRepository,
     private val uploadCloudinaryRepository: UploadCloudinaryRepository
-) : ViewModel() {
-    private var twitsCreateUiState: TwitsCreateUiState by mutableStateOf(TwitsCreateUiState.Loading)
+) : BaseViewModel() {
+    var twitsCreateUiState: TwitsCreateUiState by mutableStateOf(TwitsCreateUiState.Loading)
         private set
-    private var uploadCloudinaryUiState: UploadCloudinaryUiState by mutableStateOf(UploadCloudinaryUiState.Loading)
+
+    var uploadCloudinaryUiState: UploadCloudinaryUiState by mutableStateOf(UploadCloudinaryUiState.Loading)
         private set
 
     fun twitCreate(twitCreateRequest: TwitCreateRequest) {
         viewModelScope.launch {
             try {
                 ribbitRepository.twitCreate(twitCreateRequest)
-                twitsCreateUiState = TwitsCreateUiState.Success
             } catch (e: IOException) {
                 twitsCreateUiState = TwitsCreateUiState.Error
                 println(e.stackTrace)
-            } catch(e:  ExceptionInInitializerError){
+            } catch (e: ExceptionInInitializerError) {
                 twitsCreateUiState = TwitsCreateUiState.Error
                 println(e.stackTrace)
             }
         }
+        twitsCreateUiState = TwitsCreateUiState.Success
     }
-    /**
-     * TwitCreate state for this order
-     */
-    private val _createTwitUiState = MutableStateFlow(TwitCreateRequest())
-    val createTwitUiState: StateFlow<TwitCreateRequest> = _createTwitUiState.asStateFlow()
 
-    /**
-     * Set the [content] of createTwitRequest
-     */
-    fun setContent(content: String) {
-        _createTwitUiState.update { currentState ->
-            currentState.copy(
-                content = content,
-            )
+    suspend fun uploadImageCloudinary(image: Bitmap): String {
+        var imageUrl: String = ""
+        try {
+            val result = uploadCloudinaryRepository.uploadImageCloudinary(image)
+            Log.d("HippoLog, TwitCreateViewModel, result", "$result")
+            uploadCloudinaryUiState = UploadCloudinaryUiState.Success
+            imageUrl = result.url
+        } catch (e: IOException) {
+            uploadCloudinaryUiState = UploadCloudinaryUiState.Error
+            println(e.stackTrace)
+        } catch (e: ExceptionInInitializerError) {
+            uploadCloudinaryUiState = UploadCloudinaryUiState.Error
+            println(e.stackTrace)
         }
-    }
-
-    fun setImage(image: String) {
-        _createTwitUiState.update { currentState ->
-            currentState.copy(image = image)
-        }
-    }
-
-    fun setVideo(video: String) {
-        _createTwitUiState.update { currentState ->
-            currentState.copy(video = video)
-        }
-    }
-
-    fun resetCreateTwitRequest() {
-        _createTwitUiState.value = TwitCreateRequest()
-    }
-
-    fun uploadImageCloudinary(uploadCloudinary: UploadCloudinary) {
-        viewModelScope.launch {
-            try {
-                val result = uploadCloudinaryRepository.uploadImageCloudinary(uploadCloudinary)
-                Log.d("HippoLog, TwitCreateViewModel, result","$result")
-                uploadCloudinaryUiState = UploadCloudinaryUiState.Success(
-                    result
-                )
-            } catch (e: IOException) {
-                uploadCloudinaryUiState = UploadCloudinaryUiState.Error
-                println(e.stackTrace)
-            } catch(e:  ExceptionInInitializerError){
-                uploadCloudinaryUiState = UploadCloudinaryUiState.Error
-                println(e.stackTrace)
-            }
-        }
+        return imageUrl
     }
 }
