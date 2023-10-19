@@ -84,7 +84,7 @@ public class User {
     
     @JsonIgnore
     //@ManyToMany(mappedBy = "followers")
-    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER) // followers와 followings 테이블 분리를 통해 null칸 폐기
+    @ManyToMany(cascade = CascadeType.ALL) // followers와 followings 테이블 분리를 통해 null칸 폐기
     private List<User> followings=new ArrayList<>();
     
 }

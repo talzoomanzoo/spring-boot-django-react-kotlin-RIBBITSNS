@@ -5,9 +5,6 @@ import {
   FIND_USER_BY_ID_FILURE,
   FIND_USER_BY_ID_REQUEST,
   FIND_USER_BY_ID_SUCCESS,
-  FOLLOW_TWIT_FAILURE,
-  FOLLOW_TWIT_REQUEST,
-  FOLLOW_TWIT_SUCCESS,
   FOLLOW_USER_FAILURE,
   FOLLOW_USER_REQUEST,
   FOLLOW_USER_SUCCESS,
@@ -151,18 +148,6 @@ export const getUserProfile = (jwt) => async (dispatch) => {
 };
 //사용자 프로필을 가져오는 비동기 액션 생성자다. 사용자 등록 정보를 API로 전송하고, 
 //성공 또는 실패에 따라 각각 getUserProfileSuccess 또는 getUserProfileFailure 액션을 디스패치한다.
-
-export const followTwit = () => async (dispatch) => {
-  dispatch({type:FOLLOW_TWIT_REQUEST})
-  try {
-    const response = await api.get(`/api/users/followTwit`);
-    const user = response.data;
-    dispatch({type:FOLLOW_TWIT_SUCCESS, payload:user});
-    console.log("find by twit user -: ", user);
-  } catch (error) {
-    dispatch({type:FOLLOW_TWIT_FAILURE, payload:error.message});
-  }
-};
 
 export const findUserById = (userId) => async (dispatch) => {
   dispatch({type:FIND_USER_BY_ID_REQUEST})

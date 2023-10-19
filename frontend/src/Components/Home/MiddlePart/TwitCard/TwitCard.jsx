@@ -31,12 +31,20 @@ import {
   likeTweet,
   updateTweet,
   viewPlus,
+  ethicreveal,
 } from "../../../../Store/Tweet/Action";
 import { uploadToCloudinary } from "../../../../Utils/UploadToCloudinary";
 import BackdropComponent from "../../../Backdrop/Backdrop";
 import ReplyModal from "./ReplyModal";
 import { BounceLoader } from 'react-spinners';//npm install react-spinners --save 명령어로 설치진행
 import axios from 'axios';
+import { api } from "../../../../Config/apiConfig";
+import {
+  UPDATE_TWEET_FAILURE,
+  UPDATE_TWEET_REQUEST,
+  UPDATE_TWEET_SUCCESS,
+
+} from "../../../../Store/Tweet/ActionType";
 
 const override = css`
   display: block;
@@ -56,41 +64,6 @@ const TwitCard = ({ twit }) => {
   const handleOpenEmoji = () => setOpenEmoji(!openEmoji);
   const handleCloseEmoji = () => setOpenEmoji(false);
 
-  const [sentence, setSentence] = useState(null);//sentence는 윤리수치에 해당하는 문장이 담아진다.
-  const [isloading, setIsLoading] = useState(true);//로딩창의 띄어짐의 유무를 판단한다. default는 true이다.
-  const jwtToken = localStorage.getItem("jwt")
-  const ethicreveal = async()=>{
-    if (twit.sentence ===null) {
-      try {
-        const response = await fetch('http://localhost:8080/api/twits/request',{
-          method:'GET',
-          headers:{
-            'Content-Type': 'application/json',
-            'Authorization':`Bearer ${jwtToken}`,
-          },
-        });
-        console.log("response: ",response);
-        console.log("jwt: ",jwtToken);
-        if(response.status===201){
-          
-          setSentence(twit.sentence);
-          setIsLoading(false);
-        }
-      } catch (error) {
-        setIsLoading(false);
-      }
-    } else{
-      setSentence(twit.sentence);
-      setIsLoading(false);
-    }
-    
-  };
-
-  useEffect(() => {
-    ethicreveal();
-    console.log("ethicreveal: ",ethicreveal());
-  }, []);
-
   const dispatch = useDispatch();
   const { auth } = useSelector((store) => store);
   const [isLiked, setIsLiked] = useState(twit.liked);
@@ -98,6 +71,12 @@ const TwitCard = ({ twit }) => {
 
   const [isEditing, setIsEditing] = useState(false); // 편집 상태를 관리하는 상태 변수
   const [editedContent, setEditedContent] = useState(twit.content); // 편집된 내용을 관리하는 상태 변수
+
+  const [sentence, setSentence] = useState(twit.sentence);//sentence는 윤리수치에 해당하는 문장이 담아진다.
+  const [isLoading, setIsLoading] = useState(false);//로딩창의 띄어짐의 유무를 판단한다. default는 true이다.
+  const jwtToken = localStorage.getItem("jwt");
+
+  
 
   const [isEdited, setIsEdited] = useState(twit.edited);
   const [datetime, setDatetimes] = useState(twit.createdAt);
@@ -118,11 +97,6 @@ const TwitCard = ({ twit }) => {
   const handleCloseDeleteMenu = () => {
     setAnchorEl(null);
   };
-
-  const twitsWithoutSentence = twit.filter(twit => !twit.sentence);
-  twitsWithoutSentence.forEach(twit => {
-    console.log("no sentence",twit.id);
-  });
 
   const handleLikeTweet = (num) => {
     dispatch(likeTweet(twit.id));
@@ -178,6 +152,26 @@ const TwitCard = ({ twit }) => {
   //const [isEdited, setIsEdited] = useState(twit.isEdited);
   //const [edittimes, setEdittimes] = useState(twit.editedAt);
 
+  const updateTweet = (twit) => {
+    return async (dispatch) => {
+      console.log("twitContent", twit.content); // 넘어 온 것 확인
+      console.log("tr", twit);
+      setIsLoading(true);
+      dispatch({type:UPDATE_TWEET_REQUEST});
+      try {
+        const {data} = await api.post(`/api/twits/edit`, twit);
+        console.log("edited twit", data)
+        console.log("data.id: ",data.id);
+        console.log("data.id: ",data.content);
+  
+        const response = await ethicreveal(data.id,data.content);
+        dispatch({type:UPDATE_TWEET_SUCCESS,payload:data});
+      } catch (error) {
+        dispatch({type:UPDATE_TWEET_FAILURE,payload:error.message});
+      }
+    }
+  }
+
   const handleSaveClick = async () => {
     try {
       const currentTime = new Date();
@@ -200,12 +194,37 @@ const TwitCard = ({ twit }) => {
       setSelectedImage("");
       setSelectedVideo("");
       setIsEditing(false);
-      //console.log("edit test", twit);
-      window.location.reload();
+      console.log("edit test", twit);
+      //window.location.reload();
       handleCloseEditClick();
     } catch (error) {
       //console.error("Error updating twit:", error);
     }
+  };
+
+  const ethicreveal = async(twitid,twitcontent)=>{
+    try {
+      const response = await fetch("http://localhost:8080/api/ethic/reqsentence",{
+        method:'POST',
+        headers:{
+          'Content-Type': 'application/json',
+          'Authorization':`Bearer ${jwtToken}`,
+        },
+        body: JSON.stringify({
+          id: twitid,
+          content: twitcontent,
+        }),
+      });
+      console.log("response: ",response);
+      console.log("jwt: ",jwtToken);
+      if(response.status===200){
+        console.log("ethicresponse: ",response);
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Error fetching ethic data:", error);
+    }
+  
   };
 
   const handleCancelClick = () => {
@@ -216,7 +235,7 @@ const TwitCard = ({ twit }) => {
   };
 
   const handleSubmit = (values, actions) => {
-    dispatch(createTweet(values));
+    //dispatch(createTweet(values));
     actions.resetForm();
     setSelectedImage("");
     setSelectedVideo("");
@@ -403,15 +422,12 @@ const TwitCard = ({ twit }) => {
                   <p className="mb-2 p-0 ">
                     {isEditing ? editedContent : twit.content}
                   </p>
-
-                  
-                  {isloading ? (//로딩창을 띄우는 것과 윤리수치문장 sentence를 띄운다.
-                    <BounceLoader color={'#36D7B7'} loading={isloading} css={override} size={150} />
-                  ):(sentence && (
+                  {isLoading && (
                     <div>
-                      <p>{sentence}</p>
+                      Loading...
                     </div>
-                  ))}
+                  )}
+                  <p>{sentence}</p>
 
                   {twit.image && (
                     <img

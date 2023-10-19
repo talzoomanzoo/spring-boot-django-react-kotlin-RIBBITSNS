@@ -189,6 +189,13 @@ public class TwitServiceImplementation implements TwitService {
 
 		return twitRepository.findByRetwitUserContainsOrUser_IdAndIsTwitTrueOrderByCreatedAtDesc(user, user.getId());
 	}
+	
+	@Override
+	public List<Twit> getUsersReplies(Long userId) {
+		// TODO Auto-generated method stub
+		System.out.println("reply check Service"+ userId);
+		return twitRepository.findUsersReplies(userId);
+	} 
 
 	@Override
 	public List<Twit> findByLikesContainsUser(User user) {
@@ -207,10 +214,10 @@ public class TwitServiceImplementation implements TwitService {
 		return twitRepository.searchTwit(query);
 	}
 
-/*	@Override
+	@Override
 	public List<Twit> findTwitFollowedByReqUser(User user) {
 		// TODO Auto-generated method stub
 		System.out.println(user.getId());
 		return twitRepository.searchFollowedTwit(user.getId());
-	} */
+	}
 }

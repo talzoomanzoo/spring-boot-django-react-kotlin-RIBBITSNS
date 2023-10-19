@@ -3,7 +3,8 @@ import { Avatar, Button, Menu, MenuItem } from "@mui/material";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { followTwit, logout } from "../../Store/Auth/Action";
+import { logout } from "../../Store/Auth/Action";
+import { followTwit } from '../../Store/Tweet/Action';
 import { navigationMenu } from "../../Utils/NavigationMenu";
 
 const Navigation = () => {
