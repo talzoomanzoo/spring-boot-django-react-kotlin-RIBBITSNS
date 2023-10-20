@@ -1,15 +1,14 @@
 package com.hippoddung.ribbit.ui.viewmodel
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import com.hippoddung.ribbit.data.network.AuthRepository
 import com.hippoddung.ribbit.network.ApiResponse
-import com.hippoddung.ribbit.network.bodys.Auth
-import com.hippoddung.ribbit.network.bodys.AuthResponse
-import com.hippoddung.ribbit.network.bodys.SignUpRequestBody
+import com.hippoddung.ribbit.network.bodys.requestbody.AuthRequest
+import com.hippoddung.ribbit.network.bodys.requestbody.SignUpRequest
+import com.hippoddung.ribbit.network.bodys.responsebody.AuthResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -28,15 +27,15 @@ class AuthViewModel @Inject constructor(
         MutableLiveData<ApiResponse<AuthResponse>>()
     }
 
-    fun signUp(auth: SignUpRequestBody, coroutinesErrorHandler: CoroutinesErrorHandler) = baseRequest(
+    fun signUp(auth: SignUpRequest, coroutinesErrorHandler: CoroutinesErrorHandler) = baseRequest(
         authResponse, coroutinesErrorHandler
     ) {
         authRepository.signUp(auth)
     }
 
-    fun login(auth: Auth, coroutinesErrorHandler: CoroutinesErrorHandler) = baseRequest(
+    fun login(authRequest: AuthRequest, coroutinesErrorHandler: CoroutinesErrorHandler) = baseRequest(
         authResponse, coroutinesErrorHandler
     ) {
-        authRepository.login(auth)
+        authRepository.login(authRequest)
     }
 }

@@ -44,7 +44,9 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.hippoddung.ribbit.R
+import com.hippoddung.ribbit.ui.screens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.HomeScreen
+import com.hippoddung.ribbit.ui.screens.LoadingScreen
 import com.hippoddung.ribbit.ui.screens.ProfileScreen
 import com.hippoddung.ribbit.ui.screens.TwitCreateScreen
 import com.hippoddung.ribbit.ui.screens.authscreens.LoginScreen
@@ -62,6 +64,8 @@ enum class RibbitScreen(@StringRes val title: Int) {
     SignUpScreen(title = R.string.sign_up_screen),
     TwitCreateScreen(title = R.string.twit_create_screen),
     PickImageScreen(title = R.string.pick_image_screen),
+    LoadingScreen(title = R.string.loading_screen),
+    ErrorScreen(title = R.string.error_screen),
 }
 
 @Composable
@@ -72,10 +76,11 @@ fun RibbitApp(homeViewModel: HomeViewModel) {
     when (authViewModel.authUiState) {
         is AuthUiState.Login -> {
             RibbitScreen(navController, homeViewModel)
+            Log.d("HippoLog, RibbitApp", "Login")
         }
         is AuthUiState.Logout -> {
             AuthScreen(navController, authViewModel)
-            Log.d("HippoLog, RibbitApp", "Fail")
+            Log.d("HippoLog, RibbitApp", "Logout")
         }
     }
 }
@@ -104,6 +109,12 @@ fun RibbitScreen(
                 modifier = Modifier
             ) {
                 composable(route = RibbitScreen.HomeScreen.name) {
+//                    homeViewModel.getRibbitPosts(
+//                        object : CoroutinesErrorHandler {
+//                            override fun onError(message: String) {
+//                            }
+//                        }
+//                    )
                     HomeScreen(
                         navController = navController,
                         homeViewModel = homeViewModel
@@ -117,6 +128,12 @@ fun RibbitScreen(
                 }
                 composable(route = RibbitScreen.LogoutScreen.name) {
                     LogoutScreen()
+                }
+                composable(route = RibbitScreen.LoadingScreen.name) {
+                    LoadingScreen()
+                }
+                composable(route = RibbitScreen.ErrorScreen.name) {
+                    ErrorScreen()
                 }
             }
         }
@@ -147,7 +164,7 @@ fun AuthScreen(
                     LoginScreen(navController, authViewModel)
                 }
                 composable(route = RibbitScreen.SignUpScreen.name) {
-                    SignUpScreen()
+                    SignUpScreen(authViewModel)
                 }
             }
         }
@@ -178,7 +195,7 @@ fun HippoTopAppBar(
 }
 
 @Composable
-fun MainDropDownMenu(navController: NavHostController, modifier: Modifier = Modifier) {
+fun MainDropDownMenu(navController: NavHostController) {
     var isDropDownMenuExpanded by remember { mutableStateOf(false) }
 
     Button(
@@ -234,7 +251,7 @@ fun MainDropDownMenu(navController: NavHostController, modifier: Modifier = Modi
 }
 
 @Composable
-fun ProfileDropDownMenu(navController: NavHostController, modifier: Modifier = Modifier) {
+fun ProfileDropDownMenu(navController: NavHostController) {
     var isDropDownMenuExpanded by remember { mutableStateOf(false) }
 
     Button(

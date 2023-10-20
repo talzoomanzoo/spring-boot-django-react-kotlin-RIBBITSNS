@@ -2,8 +2,7 @@ package com.hippoddung.ribbit.data.network
 
 import com.hippoddung.ribbit.network.RibbitApiService
 import com.hippoddung.ribbit.network.apiRequestFlow
-import com.hippoddung.ribbit.network.bodys.RibbitPost
-import com.hippoddung.ribbit.network.bodys.TwitCreateRequest
+import com.hippoddung.ribbit.network.bodys.requestbody.TwitCreateRequest
 import javax.inject.Inject
 
 class RibbitRepository @Inject constructor(

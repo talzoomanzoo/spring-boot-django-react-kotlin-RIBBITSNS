@@ -1,8 +1,9 @@
-package com.hippoddung.ribbit.network.bodys
+package com.hippoddung.ribbit.network.bodys.requestbody
 
 import com.google.gson.annotations.SerializedName
+import com.hippoddung.ribbit.network.bodys.Verification
 
-data class SignUpRequestBody(
+data class SignUpRequest(
     val backgroundImage: String? = null,
     val bio: String? = null,
     val birthDate: String,

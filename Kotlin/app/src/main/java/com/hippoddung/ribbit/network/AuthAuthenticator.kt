@@ -1,7 +1,7 @@
 package com.hippoddung.ribbit.network
 
 import com.hippoddung.ribbit.data.local.TokenManager
-import com.hippoddung.ribbit.network.bodys.AuthResponse
+import com.hippoddung.ribbit.network.bodys.responsebody.AuthResponse
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator

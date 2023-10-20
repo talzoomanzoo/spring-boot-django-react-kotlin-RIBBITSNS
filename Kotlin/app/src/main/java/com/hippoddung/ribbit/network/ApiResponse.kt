@@ -1,7 +1,7 @@
 package com.hippoddung.ribbit.network
 
 import com.google.gson.Gson
-import com.hippoddung.ribbit.network.bodys.ErrorResponse
+import com.hippoddung.ribbit.network.bodys.responsebody.ErrorResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
