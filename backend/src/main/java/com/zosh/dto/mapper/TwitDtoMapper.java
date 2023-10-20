@@ -40,6 +40,7 @@ public class TwitDtoMapper {
 		twitDto.setRetwitUsersId(retwitUserId);
 		twitDto.setReplyTwits(toTwitDtos(twit.getReplyTwits(), reqUser));
 		twitDto.setVideo(twit.getVideo());
+		twitDto.setThumbnail(twit.getThumbnail());
 		
 		
 		return twitDto;
@@ -89,6 +90,7 @@ public class TwitDtoMapper {
 		twitDto.setEditedAt(twit.getEditedAt());
 		twitDto.setRetwitUsersId(retwitUserId);
 		twitDto.setVideo(twit.getVideo());
+		twitDto.setThumbnail(twit.getThumbnail());
 		
 		return twitDto;
 	}

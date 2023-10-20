@@ -77,7 +77,7 @@ const ProfileModel = ({ handleClose,open }) => {
     formik.setFieldValue(name,url);
     setUploading(false);
 
-  }
+  };
 
   return (
     <div>

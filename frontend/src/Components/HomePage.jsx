@@ -8,6 +8,7 @@ import Navigation from "./Navigation/Navigation";
 import Profile from "./Profile/Profile";
 import RightPart from "./RightPart/RightPart";
 import FollowTwit from "./FollowTwit/FollowTwit";
+import Lists from "./Lists/Lists";
 
 const HomePage = () => {
   const { twit, auth, theme } = useSelector((store) => store);
@@ -28,6 +29,7 @@ const HomePage = () => {
           <Route path="/" element={<HomeSection />}></Route>
           <Route path="/profile/:id" element={<Profile />}></Route>
           <Route path="/followTwit" element={<FollowTwit />}></Route>
+          <Route path="/lists" element={<Lists />}></Route>
           <Route path="/twit/:id" element={<TwitDetail />}></Route>
         </Routes>
       </Grid>

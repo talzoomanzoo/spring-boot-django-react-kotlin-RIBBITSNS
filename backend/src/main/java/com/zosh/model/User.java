@@ -62,6 +62,8 @@ public class User {
     
     private boolean is_req_user=false;
     
+    private boolean hasFollowedLists;
+    
     private LocalDateTime joinedAt; 
     
 //    @ManyToMany(mappedBy = "retwitUser",cascade = CascadeType.ALL)
@@ -86,5 +88,9 @@ public class User {
     //@ManyToMany(mappedBy = "followers")
     @ManyToMany(cascade = CascadeType.ALL) // followers와 followings 테이블 분리를 통해 null칸 폐기
     private List<User> followings=new ArrayList<>();
+    
+    @JsonIgnore
+    @ManyToMany(cascade=CascadeType.ALL)
+    private List<ListModel> followedLists=new ArrayList<>();
     
 }

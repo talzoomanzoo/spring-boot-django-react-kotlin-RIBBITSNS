@@ -69,6 +69,7 @@ const HomeSection = () => {
   useEffect(()=>{
     dispatch(getAllTweets())
   },[])
+  console.log("twit twits check", twit);
 
   const handleEmojiClick=(value)=>{
     const {emoji}=value;

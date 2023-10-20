@@ -45,10 +45,10 @@ public class TwitController {
 	public ResponseEntity<TwitDto> createTwit(@RequestBody Twit req, 
 			@RequestHeader("Authorization") String jwt) throws UserException, TwitException{
 		
-		System.out.println("content + "+req.getContent());
+		System.out.println("content + "+req);
 		User user=userService.findUserProfileByJwt(jwt);
 		Twit twit=twitService.createTwit(req, user);
-		System.out.println("edit + "+req.isEdited()+req.getEditedAt());
+		//System.out.println("edit + "+req.isEdited()+req.getEditedAt());
 		TwitDto twitDto=TwitDtoMapper.toTwitDto(twit,user);
 		
 		return new ResponseEntity<>(twitDto,HttpStatus.CREATED);

@@ -22,6 +22,8 @@ public class TwitDto {
 	
 	private String video;
 	
+	private String thumbnail;
+	
 	private UserDto user;
 	
 	private LocalDateTime createdAt;

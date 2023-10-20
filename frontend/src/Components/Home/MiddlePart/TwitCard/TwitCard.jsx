@@ -34,12 +34,14 @@ import {
 import { uploadToCloudinary } from "../../../../Utils/UploadToCloudinary";
 import BackdropComponent from "../../../Backdrop/Backdrop";
 import ReplyModal from "./ReplyModal";
+import * as VideoThumbnails from 'expo-video-thumbnails';
 
 const validationSchema = Yup.object().shape({
   content: Yup.string().required("Tweet text is required"),
 });
 
 const TwitCard = ({ twit }) => {
+  console.log("what twit", twit)
   const [selectedImage, setSelectedImage] = useState(twit.image);
   const [selectedVideo, setSelectedVideo] = useState(twit.video);
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -51,6 +53,7 @@ const TwitCard = ({ twit }) => {
   const { auth } = useSelector((store) => store);
   const [isLiked, setIsLiked] = useState(twit.liked);
   const [likes, setLikes] = useState(twit.totalLikes);
+  const [thumbnailIamge,  setThumbnailImage] = useState(null);
 
   const [isEditing, setIsEditing] = useState(false); // 편집 상태를 관리하는 상태 변수
   const [editedContent, setEditedContent] = useState(twit.content); // 편집된 내용을 관리하는 상태 변수
@@ -179,6 +182,7 @@ const TwitCard = ({ twit }) => {
       content: "",
       image: "",
       video: "",
+      thumbnail: "",
     },
     validationSchema,
     onSubmit: handleSubmit,
@@ -203,12 +207,29 @@ const TwitCard = ({ twit }) => {
   const handleSelectVideo = async (event) => {
     setUploadingImage(true);
     const videoUrl = await uploadToCloudinary(event.target.files[0], "video");
+    const thumbnailUrl= await uploadToCloudinary(generateThumbnail(videoUrl), "image");
+    console.log("thumbnailURL", thumbnailUrl);
     //console.log("e.tar.val.V", event.target.value);
     formik.setFieldValue("video", videoUrl);
+    formik.setFieldValue("thumbnail", thumbnailUrl);
     setSelectedVideo(videoUrl);
+    setThumbnailImage(thumbnailUrl);
     setUploadingImage(false);
   };
 
+  const generateThumbnail = async (videoUrl) => {
+    try {
+      const { uri } = await VideoThumbnails.getThumbnailAsync(
+        videoUrl,
+        {
+          time: 15000,
+        }
+      );
+      setThumbnailImage(uri);
+    } catch (e) {
+      console.warn(e);
+    }
+  };
   const currTimestamp = new Date().getTime();
   const datefinal = new Date(datetime).getTime();
   const timeAgo = getTime(datefinal, currTimestamp);
