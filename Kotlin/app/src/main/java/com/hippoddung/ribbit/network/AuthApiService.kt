@@ -1,7 +1,7 @@
 package com.hippoddung.ribbit.network
 
 import com.hippoddung.ribbit.network.bodys.Auth
-import com.hippoddung.ribbit.network.bodys.LoginResponse
+import com.hippoddung.ribbit.network.bodys.AuthResponse
 import com.hippoddung.ribbit.network.bodys.SignUpRequestBody
 import retrofit2.Response
 import retrofit2.http.Body
@@ -13,15 +13,15 @@ interface AuthApiService {
     @POST("auth/signin")
     suspend fun login(
         @Body auth: Auth
-    ): Response<LoginResponse>
+    ): Response<AuthResponse>
 
     @POST("auth/signup")
     suspend fun signUp(
         @Body auth: SignUpRequestBody
-    ): Response<LoginResponse>
+    ): Response<AuthResponse>
 
     @GET("auth/refresh")
     suspend fun refreshToken(
         @Header("Authorization") token: String,
-    ): Response<LoginResponse>
+    ): Response<AuthResponse>
 }

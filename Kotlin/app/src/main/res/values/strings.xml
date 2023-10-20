@@ -8,27 +8,28 @@
     <string name="Cancel">Cancel</string>
 
     <!--    Basics   -->
-    <string name="Text">Text</string>
+    <string name="text">Text</string>
 
     <!--    Screens   -->
-    <string name="Home_screen">HomeScreen</string>
-    <string name="Sign_up_screen">SingUpScreen</string>
-    <string name="Login_screen">LoginScreen</string>
-    <string name="Logout_screen">LogoutScreen</string>
-    <string name="Profile_screen">ProfileScreen</string>
-    <string name="Twit_create_screen">TwitCreateScreen</string>
+    <string name="home_screen">HomeScreen</string>
+    <string name="sign_up_screen">SingUpScreen</string>
+    <string name="login_screen">LoginScreen</string>
+    <string name="logout_screen">LogoutScreen</string>
+    <string name="profile_screen">ProfileScreen</string>
+    <string name="twit_create_screen">TwitCreateScreen</string>
+    <string name="pick_image_screen">PickImageScreen</string>
 
     <!--    LogIn   -->
-    <string name="Login">Login</string>
-    <string name="Email">Email</string>
-    <string name="PW">PW</string>
-    <string name="PW_check">PW Check</string>
-    <string name="Full_name">Full Name</string>
-    <string name="Birth_date">Birth Date</string>
-    <string name="Sign_up">Sign up</string>
+    <string name="login">Login</string>
+    <string name="email">Email</string>
+    <string name="pW">PW</string>
+    <string name="pW_check">PW Check</string>
+    <string name="full_name">Full Name</string>
+    <string name="birth_date">Birth Date</string>
+    <string name="sign_up">Sign up</string>
 
     <!--    TwitCreate   -->
-    <string name="Twit_create">Twit Create</string>
+    <string name="twit_create">Twit Create</string>
 
     <!--    TwitCreate   -->
     <string name="user_image">User Image</string>

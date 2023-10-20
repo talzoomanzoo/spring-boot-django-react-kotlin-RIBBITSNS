@@ -34,12 +34,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.hippoddung.ribbit.R
 import com.hippoddung.ribbit.network.bodys.RibbitPost
 import com.hippoddung.ribbit.ui.RibbitScreen
+import com.hippoddung.ribbit.ui.viewmodel.CoroutinesErrorHandler
 import com.hippoddung.ribbit.ui.viewmodel.HomeUiState
 import com.hippoddung.ribbit.ui.viewmodel.HomeViewModel
 
@@ -100,11 +102,14 @@ fun SuccessScreen(
     homeViewModel: HomeViewModel,
     modifier: Modifier
 ) {
+    homeViewModel.getRibbitPosts(
+        object : CoroutinesErrorHandler {
+            override fun onError(message: String) {
+            }
+        }
+    )
     Column {
-        Log.d("HippoLog, HomeScreen", "HomeUiState.Success")
-
         (homeViewModel.homeUiState as HomeUiState.Success).posts?.let {
-            Log.d("HippoLog, HomeScreen", "HomeUiState.Success.posts")
             PostsGridScreen(
                 it, modifier
             )
@@ -166,8 +171,10 @@ fun TextCard(post: RibbitPost, modifier: Modifier) {
                 style = MaterialTheme.typography.headlineSmall
             )
             if (post.image.isNotEmpty()) {
+                Log.d("HippoLog, HomeScreen, Image","${post.image}")
                 AsyncImage(
-                    model = ImageRequest.Builder(context = LocalContext.current).data(post.image).crossfade(true).build(),
+                    model = ImageRequest.Builder(context = LocalContext.current).data(post.image)
+                        .crossfade(true).build(),
                     error = painterResource(R.drawable.ic_broken_image),
                     placeholder = painterResource(R.drawable.loading_img),
                     contentDescription = stringResource(R.string.user_image),
@@ -176,28 +183,38 @@ fun TextCard(post: RibbitPost, modifier: Modifier) {
                 )
             }
             if (post.video.isNotEmpty()) {
-                AndroidView(
-                    factory = {
-                        val maxWidth: Int = 1000
-                        WebView(it)
-                            .apply {
-                                layoutParams = ViewGroup.LayoutParams(
-                                    maxWidth,
-                                    maxWidth
-                                )
-                                webViewClient = WebViewClient()
-                                settings.mediaPlaybackRequiresUserGesture = true
-                                settings.useWideViewPort = true
-                                settings.javaScriptEnabled = true
-                            }
-                            .apply {
-                                loadUrl(post.video)
-                                loadUrl("javascript:(function() { " + "let videos = document.getElementsByTagName('video'); " + "for(var i=0;i<videos.length;i++){ " + "videos[i].autoplay=false; " + "}})()")
-                            }
-                    },
-                    modifier = Modifier
-                )
+                RibbitVideo(post.video)
             }
         }
     }
+}
+
+@Composable
+fun RibbitVideo(video: String) {
+    val jsCode =
+        "javascript: function() { let videos = document.getElementsByTagName('video'); for(let i=0;i<videos.length;i++){ videos[i].autoplay='false'; }}()};" +
+                "javascript: const x = { document.getElementByName(\"media\").removeAttribute(\"autoplay\"); };"
+//    val video = "https://scontent.cdninstagram.com/v/t50.16885-16/10000000_295215923058216_2424649624308768222_n.mp4?_nc_ht=scontent.cdninstagram.com&_nc_cat=100&_nc_ohc=CPqU_m6gRZYAX-frll-&edm=APs17CUBAAAA&ccb=7-5&oh=00_AfD9-2tj5Zv4wLVnOJyPi1MUBhkfI1NgHoLsYpYdRNhpfg&oe=652EA093&_nc_sid=10d13b"
+    AndroidView(
+        factory = {
+            val maxWidth: Int = 1000
+            WebView(it)
+                .apply {
+                    layoutParams = ViewGroup.LayoutParams(
+                        maxWidth,
+                        maxWidth
+                    )
+                    webViewClient = WebViewClient()
+                    settings.mediaPlaybackRequiresUserGesture = true
+                    settings.useWideViewPort = true
+                    settings.javaScriptEnabled = true
+                    loadUrl(jsCode)
+                    evaluateJavascript(jsCode, null)
+                }
+        },
+        update = { webView ->
+            webView.loadUrl(video)
+        },
+        modifier = Modifier
+    )
 }

@@ -47,6 +47,7 @@ android {
     }
     buildFeatures {
         compose = true
+        viewBinding = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.7"
@@ -103,8 +104,11 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
     implementation("androidx.hilt:hilt-work:1.0.0")
     kapt("androidx.hilt:hilt-compiler:1.0.0")
-    // Coil: getImage from URL
+    // load Image, Video from URL
     implementation("io.coil-kt:coil-compose:2.4.0")
+    implementation("androidx.webkit:webkit:1.6.0")
+    // google play services ads
+    implementation("com.google.android.gms:play-services-ads:22.2.0")
 
     //Test and Debug
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")

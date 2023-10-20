@@ -57,11 +57,11 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = stringResource(R.string.Login),
+            text = stringResource(R.string.login),
             style = MaterialTheme.typography.displaySmall
         )
         Text(
-            text = stringResource(R.string.Login),
+            text = stringResource(R.string.login),
             modifier = Modifier
                 .padding(bottom = 16.dp)
                 .align(alignment = Alignment.Start)
@@ -96,7 +96,7 @@ fun LoginScreen(
                 },
                 modifier.padding(14.dp)
             ) {
-                Text(text = stringResource(R.string.Login))
+                Text(text = stringResource(R.string.login))
             }
         }
         Row(modifier) {
@@ -106,7 +106,7 @@ fun LoginScreen(
                 },
                 modifier.padding(14.dp)
             ) {
-                Text(text = stringResource(R.string.Sign_up))
+                Text(text = stringResource(R.string.sign_up))
             }
         }
         Spacer(modifier = Modifier.height(150.dp))
@@ -122,7 +122,7 @@ fun InputEmailField(
     TextField(
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-        label = { Text(stringResource(R.string.Email)) },
+        label = { Text(stringResource(R.string.email)) },
         value = value,
         onValueChange = onValueChange,
         modifier = modifier,
@@ -140,7 +140,7 @@ fun InputPWField(
         singleLine = true,
         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-        label = { Text(stringResource(R.string.PW)) },
+        label = { Text(stringResource(R.string.pW)) },
         value = value,
         onValueChange = onValueChange,
         trailingIcon = {
