@@ -98,6 +98,8 @@ dependencies {
     // DI to Compose
     implementation("com.google.dagger:hilt-android:${rootProject.extra["dagger_version"]}")
     implementation("com.google.dagger:hilt-android:${rootProject.extra["dagger_version"]}")
+    implementation("com.google.android.material:material:1.4.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     kapt("com.google.dagger:hilt-android-compiler:${rootProject.extra["dagger_version"]}")
     implementation("com.google.dagger:dagger:${rootProject.extra["dagger_version"]}")
     kapt("com.google.dagger:dagger-compiler:${rootProject.extra["dagger_version"]}")

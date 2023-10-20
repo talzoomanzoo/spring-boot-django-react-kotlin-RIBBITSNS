@@ -2,7 +2,6 @@ package com.hippoddung.ribbit.ui.viewmodel
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
@@ -65,7 +64,6 @@ class TwitsCreateViewModel @Inject constructor(
     ) {
         var imageUrl: String? = null
         var videoUrl: String? = null
-        var videoThumbnailUrl: String? = null
 
         twitsCreateUiState = TwitsCreateUiState.Loading
 
@@ -91,13 +89,10 @@ class TwitsCreateViewModel @Inject constructor(
                 uploadVideoCloudinaryUiState = UploadVideoCloudinaryUiState.Loading
                 val videoAbsolutePath = getFilePathFromUri(context, videoUri)
                 val videoFile = File(videoAbsolutePath)
-                runBlocking {
-                    launch { uploadVideoCloudinary(videoFile = videoFile) }
-                    // 성공하면 uploadVideoCloudinary 함수에서 UploadVideoCloudinaryUiState.Success 로 업데이트함
-                    launch { videoThumbnailUrl =
-                        getWebVideoThumbnail(videoUri)?.let { uploadVideoThumbnailCloudinary(it) }
-                    }
-                }
+
+                uploadVideoCloudinary(videoFile = videoFile)
+                // 성공하면 uploadVideoCloudinary 함수에서 UploadVideoCloudinaryUiState.Success 로 업데이트함
+
                 when (uploadVideoCloudinaryUiState) {
                     is UploadVideoCloudinaryUiState.Success -> {
                         videoUrl =
@@ -186,40 +181,5 @@ class TwitsCreateViewModel @Inject constructor(
                 Log.d("HippoLog, TwitCreateViewModel, Error", "${e.stackTrace}, ${e.message}")
             }
         }
-    }
-
-    suspend fun uploadVideoThumbnailCloudinary(image: Bitmap) : String? {
-        try {
-            val result = uploadCloudinaryRepository.uploadImageCloudinary(image)
-            return result.url
-
-        } catch (e: Exception) {
-            Log.d("HippoLog, TwitCreateViewModel, Error", "${e.stackTrace}, ${e.message}")
-            return null
-        }
-    }
-
-    fun getWebVideoThumbnail(uri: Uri): Bitmap? {
-        val thumbnailTime = 1
-        val retriever = MediaMetadataRetriever()
-
-        try {
-            retriever.setDataSource(uri.toString(), HashMap<String, String>())
-            return retriever.getFrameAtTime(
-                (thumbnailTime * 1000000).toLong(),
-                MediaMetadataRetriever.OPTION_CLOSEST
-            )
-        } catch (e: IllegalArgumentException) {
-            e.printStackTrace()
-        } catch (e: RuntimeException) {
-            e.printStackTrace()
-        } finally {
-            try {
-                retriever.release()
-            } catch (e: RuntimeException) {
-                e.printStackTrace()
-            }
-        }
-        return null
     }
 }

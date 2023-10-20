@@ -1,12 +1,9 @@
 package com.hippoddung.ribbit.ui.screens
 
 import android.annotation.SuppressLint
-import android.view.ViewGroup
-import android.webkit.WebChromeClient
-import android.webkit.WebView
-import android.webkit.WebViewClient
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
+import android.graphics.Bitmap
+import android.media.MediaMetadataRetriever
+import android.os.Build
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.PlayCircleOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -26,6 +24,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -46,15 +45,17 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.hippoddung.ribbit.R
 import com.hippoddung.ribbit.network.bodys.RibbitPost
 import com.hippoddung.ribbit.ui.RibbitScreen
+import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
+import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.HomeUiState
 import com.hippoddung.ribbit.ui.viewmodel.HomeViewModel
+
 
 @Composable
 fun HomeScreen(
@@ -63,11 +64,12 @@ fun HomeScreen(
     modifier: Modifier = Modifier
 ) {
     when (homeViewModel.homeUiState) {
+
         is HomeUiState.Loading -> LoadingScreen(
             modifier = modifier.fillMaxSize()
         )
 
-        is HomeUiState.Success -> SuccessScreen(
+        is HomeUiState.Success -> HomeSuccessScreen(
             navController = navController,
             homeViewModel = homeViewModel,
             modifier = modifier.fillMaxSize()
@@ -80,45 +82,15 @@ fun HomeScreen(
 }
 
 @Composable
-fun LoadingScreen(modifier: Modifier = Modifier) {
-    Image(
-        modifier = modifier.size(200.dp),
-        painter = painterResource(R.drawable.loading_img),
-        contentDescription = stringResource(id = R.string.loading)
-    )
-}
-
-@Composable
-fun ErrorScreen(modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(
-            modifier = modifier.size(200.dp),
-            painter = painterResource(R.drawable.ic_connection_error),
-            contentDescription = ""
-        )
-        Text(
-            text = stringResource(id = R.string.loading_failed),
-            modifier = Modifier.padding(16.dp)
-        )
-    }
-}
-
-@Composable
-fun SuccessScreen(
+fun HomeSuccessScreen(
     navController: NavHostController,
     homeViewModel: HomeViewModel,
     modifier: Modifier
 ) {
     Column {
-        (homeViewModel.homeUiState as HomeUiState.Success).posts?.let {
-            PostsGridScreen(
-                it, modifier
-            )
-        }
+        PostsGridScreen(
+            (homeViewModel.homeUiState as HomeUiState.Success).posts, modifier
+        )
     }
     Box(modifier = modifier) {
         FloatingActionButton(
@@ -177,6 +149,7 @@ fun RibbitCard(post: RibbitPost, modifier: Modifier) {
             if (post.image != null) {
                 RibbitImage(image = post.image)
             }
+
             if (post.video != null) {
                 RibbitVideo(post.video)
             }
@@ -252,36 +225,77 @@ fun RibbitImage(image: String) {
             error = painterResource(R.drawable.ic_broken_image),
             placeholder = painterResource(R.drawable.loading_img),
             contentDescription = stringResource(R.string.user_image),
-            contentScale = ContentScale.Crop,
-            alignment = Alignment.Center,
-            modifier = Modifier.size(300.dp)
+            contentScale = ContentScale.Inside,
+            modifier = Modifier
+                .size(300.dp)
+                .padding(8.dp)
         )
     }
 }
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
-fun RibbitVideo(video: String) {
-    AndroidView(
-        factory = {
-            val maxWidth: Int = 1000
-            val webView = WebView(it)
-            webView
-                .apply {
-                    layoutParams = ViewGroup.LayoutParams(
-                        maxWidth,
-                        maxWidth
-                    )
-                    webViewClient = WebViewClient()
-                    webChromeClient = WebChromeClient()
-                    settings.mediaPlaybackRequiresUserGesture = true
-                    settings.useWideViewPort = true
-                    settings.javaScriptEnabled = true
-                }
-        },
-        update = { webView ->
-            webView.loadUrl(video)
-        },
-        modifier = Modifier
-    )
+fun RibbitVideo(videoUrl: String) {
+    var isVideoPlayed by remember { mutableStateOf(false) }
+    val thumbnailImage = retriveThumbnailFromVideo(videoUrl)
+
+    if (isVideoPlayed) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            WebViewFullScreen(videoUrl)
+        }
+    } else {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            AsyncImage(
+                model = ImageRequest.Builder(context = LocalContext.current).data(thumbnailImage)
+                    .crossfade(true).build(),
+                error = painterResource(R.drawable.ic_broken_image),
+                placeholder = painterResource(R.drawable.loading_img),
+                contentDescription = stringResource(R.string.user_image),
+                contentScale = ContentScale.Crop,
+                alignment = Alignment.Center,
+                modifier = Modifier
+                    .size(300.dp)
+                    .padding(8.dp)
+            )
+            IconButton(
+                onClick = { isVideoPlayed = true },
+                modifier = Modifier
+                    .size(300.dp)
+                    .padding(8.dp)
+            ) {
+                Icon(
+                    Icons.Filled.PlayCircleOutline,
+                    "Video play button.",
+                    modifier = Modifier.fillMaxSize(),
+                    tint = Color.Magenta
+                )
+            }
+        }
+    }
+}
+
+@Throws(Throwable::class)
+fun retriveThumbnailFromVideo(videoUrl: String?): Bitmap? {
+    var bitmap: Bitmap? = null
+    var mediaMetadataRetriever: MediaMetadataRetriever? = null
+    try {
+        mediaMetadataRetriever = MediaMetadataRetriever()
+        if (Build.VERSION.SDK_INT >= 14) mediaMetadataRetriever.setDataSource(
+            videoUrl,
+            HashMap()
+        ) else mediaMetadataRetriever.setDataSource(videoUrl)
+        bitmap = mediaMetadataRetriever.frameAtTime
+    } catch (e: java.lang.Exception) {
+        e.printStackTrace()
+        throw Throwable("Exception in retriveVideoFrameFromVideo(String videoPath)" + e.message)
+    } finally {
+        mediaMetadataRetriever?.release()
+    }
+    return bitmap
 }

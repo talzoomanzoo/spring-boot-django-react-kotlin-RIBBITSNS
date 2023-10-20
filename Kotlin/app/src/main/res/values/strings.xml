@@ -35,4 +35,7 @@
 
     <!--    TwitCreate   -->
     <string name="user_image">User Image</string>
+    <string name="title_activity_fullscreen_web_view">FullscreenWebViewActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>

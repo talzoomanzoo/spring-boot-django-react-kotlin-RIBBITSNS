@@ -1,8 +1,8 @@
 package com.hippoddung.ribbit.network
 
 import com.hippoddung.ribbit.network.bodys.requestbody.AuthRequest
-import com.hippoddung.ribbit.network.bodys.responsebody.AuthResponse
 import com.hippoddung.ribbit.network.bodys.requestbody.SignUpRequest
+import com.hippoddung.ribbit.network.bodys.responsebody.AuthResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET

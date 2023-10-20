@@ -44,14 +44,16 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.hippoddung.ribbit.R
-import com.hippoddung.ribbit.ui.screens.ErrorScreen
+
 import com.hippoddung.ribbit.ui.screens.HomeScreen
-import com.hippoddung.ribbit.ui.screens.LoadingScreen
+
 import com.hippoddung.ribbit.ui.screens.ProfileScreen
 import com.hippoddung.ribbit.ui.screens.TwitCreateScreen
 import com.hippoddung.ribbit.ui.screens.authscreens.LoginScreen
 import com.hippoddung.ribbit.ui.screens.authscreens.LogoutScreen
 import com.hippoddung.ribbit.ui.screens.authscreens.SignUpScreen
+import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
+import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthUiState
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
 import com.hippoddung.ribbit.ui.viewmodel.HomeViewModel
@@ -77,6 +79,7 @@ fun RibbitApp(homeViewModel: HomeViewModel) {
         is AuthUiState.Login -> {
             RibbitScreen(navController, homeViewModel)
             Log.d("HippoLog, RibbitApp", "Login")
+            Log.d("HippoLog, RibbitApp","${homeViewModel.homeUiState}")
         }
         is AuthUiState.Logout -> {
             AuthScreen(navController, authViewModel)
