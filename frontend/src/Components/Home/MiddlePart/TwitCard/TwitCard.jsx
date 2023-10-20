@@ -31,7 +31,6 @@ import {
   likeTweet,
   updateTweet,
   viewPlus,
-  ethicreveal,
 } from "../../../../Store/Tweet/Action";
 import { uploadToCloudinary } from "../../../../Utils/UploadToCloudinary";
 import BackdropComponent from "../../../Backdrop/Backdrop";
@@ -45,12 +44,6 @@ import {
   UPDATE_TWEET_SUCCESS,
 
 } from "../../../../Store/Tweet/ActionType";
-
-const override = css`
-  display: block;
-  margin: 0 auto;
-  border-color: red;
-`;
 
 const validationSchema = Yup.object().shape({
   content: Yup.string().required("Tweet text is required"),
@@ -75,8 +68,6 @@ const TwitCard = ({ twit }) => {
   const [sentence, setSentence] = useState(twit.sentence);//sentence는 윤리수치에 해당하는 문장이 담아진다.
   const [isLoading, setIsLoading] = useState(false);//로딩창의 띄어짐의 유무를 판단한다. default는 true이다.
   const jwtToken = localStorage.getItem("jwt");
-
-  
 
   const [isEdited, setIsEdited] = useState(twit.edited);
   const [datetime, setDatetimes] = useState(twit.createdAt);
@@ -156,7 +147,6 @@ const TwitCard = ({ twit }) => {
     return async (dispatch) => {
       console.log("twitContent", twit.content); // 넘어 온 것 확인
       console.log("tr", twit);
-      setIsLoading(true);
       dispatch({type:UPDATE_TWEET_REQUEST});
       try {
         const {data} = await api.post(`/api/twits/edit`, twit);
@@ -164,7 +154,7 @@ const TwitCard = ({ twit }) => {
         console.log("data.id: ",data.id);
         console.log("data.id: ",data.content);
   
-        const response = await ethicreveal(data.id,data.content);
+        //const response = await ethicreveal(data.id,data.content);
         dispatch({type:UPDATE_TWEET_SUCCESS,payload:data});
       } catch (error) {
         dispatch({type:UPDATE_TWEET_FAILURE,payload:error.message});
@@ -174,20 +164,24 @@ const TwitCard = ({ twit }) => {
 
   const handleSaveClick = async () => {
     try {
+      setIsLoading(true);
       const currentTime = new Date();
       setEditedContent(editedContent);
       setSelectedImage(selectedImage);
       setSelectedVideo(selectedVideo);
       setIsEdited(true);
       setEdittimes(currentTime);
+      //setSentence(sentence);
 
       twit.content = editedContent;
       twit.image = selectedImage;
       twit.video = selectedVideo;
       twit.edited = true;
       twit.editedAt = currentTime;
+      //twit.sentence = sentence;
       //console.log("currTime", currentTime);
 
+      await ethicreveal(twit.id, twit.content);
       await dispatch(updateTweet(twit));
 
       setEditedContent("");
@@ -196,6 +190,7 @@ const TwitCard = ({ twit }) => {
       setIsEditing(false);
       console.log("edit test", twit);
       //window.location.reload();
+      setIsLoading(false);
       handleCloseEditClick();
     } catch (error) {
       //console.error("Error updating twit:", error);
@@ -218,8 +213,8 @@ const TwitCard = ({ twit }) => {
       console.log("response: ",response);
       console.log("jwt: ",jwtToken);
       if(response.status===200){
-        console.log("ethicresponse: ",response);
-        setIsLoading(false);
+        const responseData = await response.json();
+        setSentence(responseData.sentence);
       }
     } catch (error) {
       console.error("Error fetching ethic data:", error);
@@ -235,7 +230,7 @@ const TwitCard = ({ twit }) => {
   };
 
   const handleSubmit = (values, actions) => {
-    //dispatch(createTweet(values));
+    dispatch(createTweet(values));
     actions.resetForm();
     setSelectedImage("");
     setSelectedVideo("");
@@ -288,7 +283,13 @@ const TwitCard = ({ twit }) => {
 
   console.log("twitTest", twit);
   return (
+    
     <div className="">
+      {isLoading && (
+        <div>
+          Loading...
+        </div>
+      )}
       {auth.user?.id !== twit.user.id &&
       // auth.user notnull 일때, auth.user.id 가 twit.user.id 와 일치하지 않고,
         location.pathname === `/profile/${auth.user?.id}` && (
@@ -299,6 +300,7 @@ const TwitCard = ({ twit }) => {
           </div>
           // 해당 표시를 해라
         )}
+        
       <div className="flex space-x-5 "> 
         <Avatar
           onClick={() => navigate(`/profile/${twit.user.id}`)}
@@ -422,13 +424,11 @@ const TwitCard = ({ twit }) => {
                   <p className="mb-2 p-0 ">
                     {isEditing ? editedContent : twit.content}
                   </p>
-                  {isLoading && (
-                    <div>
-                      Loading...
-                    </div>
+                  
+                  {sentence &&(
+                    <p>{sentence}</p>
                   )}
-                  <p>{sentence}</p>
-
+                  
                   {twit.image && (
                     <img
                       className="w-[28rem] border border-gray-400 p-5 rounded-md"

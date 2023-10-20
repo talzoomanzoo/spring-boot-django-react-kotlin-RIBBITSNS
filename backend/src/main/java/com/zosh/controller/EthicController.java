@@ -68,6 +68,7 @@ public class EthicController {
 		
 		System.out.println("게시물 id: "+req.getId());
 		System.out.println("ethicdto: "+ethicdto.getEthicrate());
+		System.out.println("ethicdto sentence: "+ethicdto.getSentence());
 		return new ResponseEntity<>(ethicdto,HttpStatus.OK);
 
 	}

@@ -172,21 +172,6 @@ export const createTweet = (tweetData) => {
   };
 };
 
-// export const updateTweet = (twit) => {
-//   return async (dispatch) => {
-//     console.log("twitContent", twit.content); // 넘어 온 것 확인
-//     console.log("tr", twit);
-//     dispatch({type:UPDATE_TWEET_REQUEST});
-//     try {
-//       const {data} = await api.post(`/api/twits/edit`, twit);
-//       console.log("edited twit", data)
-//       dispatch({type:UPDATE_TWEET_SUCCESS,payload:data});
-//     } catch (error) {
-//       dispatch({type:UPDATE_TWEET_FAILURE,payload:error.message});
-//     }
-//   }
-// }
-
 export const createTweetReply = (tweetData) => {
   return async (dispatch) => {
     dispatch({type:REPLY_TWEET_REQUEST});
