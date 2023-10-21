@@ -98,6 +98,8 @@ dependencies {
     // DI to Compose
     implementation("com.google.dagger:hilt-android:${rootProject.extra["dagger_version"]}")
     implementation("com.google.dagger:hilt-android:${rootProject.extra["dagger_version"]}")
+    implementation("com.google.android.material:material:1.4.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     kapt("com.google.dagger:hilt-android-compiler:${rootProject.extra["dagger_version"]}")
     implementation("com.google.dagger:dagger:${rootProject.extra["dagger_version"]}")
     kapt("com.google.dagger:dagger-compiler:${rootProject.extra["dagger_version"]}")
@@ -109,6 +111,7 @@ dependencies {
     implementation("androidx.webkit:webkit:1.6.0")
     // google play services ads
     implementation("com.google.android.gms:play-services-ads:22.2.0")
+
 
     //Test and Debug
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")

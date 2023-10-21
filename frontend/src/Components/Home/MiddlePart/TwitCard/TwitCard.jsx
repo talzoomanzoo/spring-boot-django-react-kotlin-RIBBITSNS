@@ -184,9 +184,9 @@ const TwitCard = ({ twit }) => {
       await ethicreveal(twit.id, twit.content);
       await dispatch(updateTweet(twit));
 
-      setEditedContent("");
-      setSelectedImage("");
-      setSelectedVideo("");
+      //setEditedContent("");
+      //setSelectedImage("");
+      //setSelectedVideo("");
       setIsEditing(false);
       console.log("edit test", twit);
       //window.location.reload();

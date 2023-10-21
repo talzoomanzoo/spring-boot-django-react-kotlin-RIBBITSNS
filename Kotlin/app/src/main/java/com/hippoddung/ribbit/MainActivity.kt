@@ -12,8 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.Observer
 import com.hippoddung.ribbit.network.ApiResponse
-import com.hippoddung.ribbit.network.bodys.AuthResponse
 import com.hippoddung.ribbit.network.bodys.RibbitPost
+import com.hippoddung.ribbit.network.bodys.responsebody.AuthResponse
 import com.hippoddung.ribbit.ui.RibbitApp
 import com.hippoddung.ribbit.ui.theme.RibbitTheme
 import com.hippoddung.ribbit.ui.viewmodel.AuthUiState

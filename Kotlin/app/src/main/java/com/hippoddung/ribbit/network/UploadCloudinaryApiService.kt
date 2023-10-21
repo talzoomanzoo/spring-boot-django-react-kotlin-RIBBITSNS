@@ -1,8 +1,7 @@
 package com.hippoddung.ribbit.network
 
 
-import com.hippoddung.ribbit.network.bodys.UploadCloudinary
-import com.hippoddung.ribbit.network.bodys.UploadCloudinaryResponse
+import com.hippoddung.ribbit.network.bodys.responsebody.UploadCloudinaryResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.Multipart
@@ -13,7 +12,6 @@ const val CLOUDINARY_URL =
     "https://api.cloudinary.com/v1_1/dnbw04gbs/"
 
 interface UploadCloudinaryApiService {
-
     @Multipart
     @POST("image/upload")
     suspend fun uploadImageCloudinary(
@@ -22,10 +20,11 @@ interface UploadCloudinaryApiService {
         @Part("cloud_name") cloud_name: RequestBody
     ): UploadCloudinaryResponse
 
+    @Multipart
     @POST("video/upload")
-    suspend fun uploadVideoCloudinary(): UploadCloudinaryResponse
-
-//    const fileData=await res.json();
-//    console.log("url : ", fileData.url.toString());
-//    return fileData.url.toString();
+    suspend fun uploadVideoCloudinary(
+        @Part file: MultipartBody.Part,
+        @Part("upload_preset") upload_preset: RequestBody,
+        @Part("cloud_name") cloud_name: RequestBody
+    ): UploadCloudinaryResponse
 }

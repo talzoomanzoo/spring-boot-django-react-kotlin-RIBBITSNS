@@ -1,4 +1,4 @@
-package com.hippoddung.ribbit.network.bodys
+package com.hippoddung.ribbit.network.bodys.responsebody
 
 data class ErrorResponse(
     val code: Int,

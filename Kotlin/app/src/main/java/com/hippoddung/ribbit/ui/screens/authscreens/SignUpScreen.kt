@@ -31,23 +31,22 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.hippoddung.ribbit.R
-import com.hippoddung.ribbit.network.bodys.SignUpRequestBody
 import com.hippoddung.ribbit.network.bodys.Verification
+import com.hippoddung.ribbit.network.bodys.requestbody.SignUpRequest
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
 import com.hippoddung.ribbit.ui.viewmodel.CoroutinesErrorHandler
 
 @Composable
 fun SignUpScreen(
-    authViewModel: AuthViewModel = hiltViewModel(),
+    authViewModel: AuthViewModel,
     modifier: Modifier = Modifier) {
     var email by remember { mutableStateOf("") }
     var pW by remember { mutableStateOf("") }
     var pWCheck by remember { mutableStateOf("") }
     var fullName by remember { mutableStateOf("") }
     var birthDate by remember { mutableStateOf("") }
-    var user = SignUpRequestBody(
+    var user = SignUpRequest(
         email = email,
         password = pW,
         fullName = fullName,

@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.R
-import com.hippoddung.ribbit.network.bodys.Auth
+import com.hippoddung.ribbit.network.bodys.requestbody.AuthRequest
 import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
 import com.hippoddung.ribbit.ui.viewmodel.CoroutinesErrorHandler
@@ -47,7 +47,7 @@ fun LoginScreen(
 ) {
     var email by remember { mutableStateOf("") }
     var pW by remember { mutableStateOf("") }
-    var auth = Auth(email = email, password = pW)
+    var authRequest = AuthRequest(email = email, password = pW)
 
     Column(
         modifier = modifier
@@ -90,7 +90,7 @@ fun LoginScreen(
             Button(
                 onClick = {
                     authViewModel.login(
-                        auth,
+                        authRequest,
                         object : CoroutinesErrorHandler { override fun onError(message: String) { "Error! $message" } }
                     )
                 },

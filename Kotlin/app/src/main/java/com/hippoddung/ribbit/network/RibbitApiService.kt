@@ -1,8 +1,7 @@
 package com.hippoddung.ribbit.network
 
 import com.hippoddung.ribbit.network.bodys.RibbitPost
-import com.hippoddung.ribbit.network.bodys.TwitCreateRequest
-import com.hippoddung.ribbit.network.bodys.TwitCreateResponse
+import com.hippoddung.ribbit.network.bodys.requestbody.TwitCreateRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET

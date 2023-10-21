@@ -5,7 +5,6 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -21,12 +20,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.OndemandVideo
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextFieldDefaults.shape
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -36,44 +33,68 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.R
-import com.hippoddung.ribbit.network.bodys.TwitCreateRequest
 import com.hippoddung.ribbit.ui.RibbitScreen
-import com.hippoddung.ribbit.ui.viewmodel.HomeUiState
+import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
+import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
+import com.hippoddung.ribbit.ui.viewmodel.TwitsCreateUiState
 import com.hippoddung.ribbit.ui.viewmodel.TwitsCreateViewModel
-import com.hippoddung.ribbit.ui.viewmodel.UploadCloudinaryUiState
-import kotlinx.coroutines.runBlocking
 
 @Composable
 fun TwitCreateScreen(
     navController: NavHostController,
-    twitsCreateViewModel: TwitsCreateViewModel = hiltViewModel(),
+    modifier: Modifier = Modifier
+) {
+    val twitsCreateViewModel: TwitsCreateViewModel = hiltViewModel()
+    when (twitsCreateViewModel.twitsCreateUiState) {
+        is TwitsCreateUiState.Ready -> InputTwitScreen(
+            navController = navController,
+            twitsCreateViewModel = twitsCreateViewModel,
+            modifier = modifier.fillMaxSize()
+        )
+
+        is TwitsCreateUiState.Success ->
+            navController.navigate(RibbitScreen.HomeScreen.name)
+
+        is TwitsCreateUiState.Loading -> LoadingScreen(
+            modifier = modifier.fillMaxSize()
+        )
+
+        is TwitsCreateUiState.Error -> ErrorScreen(
+            modifier = modifier.fillMaxSize()
+        )
+    }
+}
+
+@Composable
+fun InputTwitScreen(
+    navController: NavHostController,
+    twitsCreateViewModel: TwitsCreateViewModel,
     modifier: Modifier = Modifier
 ) {
     var inputText by remember { mutableStateOf("") }
-    var imageUrl: String = ""
-    var videoUrl: String = ""
+    val context = LocalContext.current
+
 
     var imageUri by remember { mutableStateOf<Uri?>(null) }
-    val context = LocalContext.current
+    var videoUri by remember { mutableStateOf<Uri?>(null) }
     val bitmap = remember { mutableStateOf<Bitmap?>(null) }
-    val launcher = rememberLauncherForActivityResult(
+    val imageLauncher = rememberLauncherForActivityResult(
         contract =
         ActivityResultContracts.GetContent()
     ) { uri: Uri? -> imageUri = uri }
+    val videoLauncher = rememberLauncherForActivityResult(
+        contract =
+        ActivityResultContracts.GetContent()
+    ) { uri: Uri? -> videoUri = uri }
 
     Column(
         modifier = modifier
@@ -117,58 +138,38 @@ fun TwitCreateScreen(
                 }
             }
         }
-        Row(modifier) {
+        Row() {
             Button(
-                onClick = { launcher.launch("image/*") },
-                modifier.padding(14.dp)
+                onClick = { imageLauncher.launch("image/*") },
+                Modifier.padding(14.dp)
             ) {
                 Icon(Icons.Filled.Image, "Pick Image button.")
             }
             Button(
-                onClick = { },
-                modifier.padding(14.dp)
+                onClick = { videoLauncher.launch("video/*") },
+                Modifier.padding(14.dp)
             ) {
-                Text(text = stringResource(R.string.text))
+                Icon(Icons.Filled.OndemandVideo, "Pick Video button.")
             }
         }
-        Row(modifier) {
+        Row() {
             Button(
                 onClick = { navController.navigate(RibbitScreen.HomeScreen.name) },
-                modifier.padding(14.dp)
+                Modifier.padding(14.dp)
             ) {
                 Text(text = stringResource(R.string.Cancel))
             }
             Button(
                 onClick = {
-                    if (bitmap.value != null) {
-                        runBlocking {
-                            val imageUrlResponse = twitsCreateViewModel.uploadImageCloudinary(image = bitmap.value!!)
-                            Log.d("HippoLog, TwitCreateScreen", "image: ${bitmap.value}")
-                            Log.d(
-                                "HippoLog, TwitCreateScreen",
-                                "uploadCloudinaryUiState: ${twitsCreateViewModel.uploadCloudinaryUiState}"
-                            )
-
-                            when (twitsCreateViewModel.uploadCloudinaryUiState) {
-                                is UploadCloudinaryUiState.Success -> {
-                                    imageUrl = imageUrlResponse
-                                    Log.d("HippoLog, TwitCreateScreen", "imageUrl: $imageUrl")
-                                }
-                                else -> null
-                            }
-                            twitsCreateViewModel.twitCreate(
-                                TwitCreateRequest(
-                                    content = inputText,
-                                    image = imageUrl,
-                                    video = videoUrl
-                                )
-                            )
-                            navController.navigate(RibbitScreen.HomeScreen.name)
-                        }
-                    }
-                    navController.navigate(RibbitScreen.HomeScreen.name)
+                    val image = bitmap.value
+                    twitsCreateViewModel.createTwit(
+                        context = context,
+                        image = image,
+                        videoUri = videoUri,
+                        inputText = inputText,
+                    )
                 },
-                modifier.padding(14.dp)
+                Modifier.padding(14.dp)
             ) {
                 Text(text = stringResource(R.string.twit_create))
             }

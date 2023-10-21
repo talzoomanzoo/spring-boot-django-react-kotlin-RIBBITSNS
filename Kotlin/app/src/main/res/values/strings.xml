@@ -11,6 +11,8 @@
     <string name="text">Text</string>
 
     <!--    Screens   -->
+    <string name="loading_screen">LoadingScreen</string>
+    <string name="error_screen">ErrorScreen</string>
     <string name="home_screen">HomeScreen</string>
     <string name="sign_up_screen">SingUpScreen</string>
     <string name="login_screen">LoginScreen</string>
@@ -33,4 +35,7 @@
 
     <!--    TwitCreate   -->
     <string name="user_image">User Image</string>
+    <string name="title_activity_fullscreen_web_view">FullscreenWebViewActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>

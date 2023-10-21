@@ -6,7 +6,7 @@ data class RibbitPost(
     val edited: Boolean,
     val editedAt: String? = null,
     val id: Int = 0,
-    val image: String = "",
+    val image: String? = null,
     val liked: Boolean = false,
     val replyTwits: List<String>? = null,
     val retwit: Boolean = false,
@@ -15,6 +15,6 @@ data class RibbitPost(
     val totalReplies: Int = 0,
     val totalRetweets: Int = 0,
     val user: User,
-    val video: String = "",
+    val video: String? = null,
     val viewCount: Int
 )
