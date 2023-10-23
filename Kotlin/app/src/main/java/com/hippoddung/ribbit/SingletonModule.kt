@@ -9,7 +9,9 @@ import com.hippoddung.ribbit.network.AuthApiService
 import com.hippoddung.ribbit.network.AuthAuthenticator
 import com.hippoddung.ribbit.network.AuthInterceptor
 import com.hippoddung.ribbit.network.BASE_URL
+import com.hippoddung.ribbit.network.CLOUDINARY_URL
 import com.hippoddung.ribbit.network.RibbitApiService
+import com.hippoddung.ribbit.network.UploadCloudinaryApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -78,4 +80,14 @@ class SingletonModule {
             .client(okHttpClient)
             .build()
             .create(RibbitApiService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideUploadCloudinaryApiService(): UploadCloudinaryApiService =
+        Retrofit.Builder()
+            .baseUrl(CLOUDINARY_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(OkHttpClient.Builder().build())
+            .build()
+            .create(UploadCloudinaryApiService::class.java)
 }
