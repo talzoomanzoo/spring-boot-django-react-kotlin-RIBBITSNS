@@ -50,6 +50,7 @@ const validationSchema = Yup.object().shape({
 });
 
 const TwitCard = ({ twit }) => {
+  console.log("what twit", twit)
   const [selectedImage, setSelectedImage] = useState(twit.image);
   const [selectedVideo, setSelectedVideo] = useState(twit.video);
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -266,12 +267,11 @@ const TwitCard = ({ twit }) => {
   const handleSelectVideo = async (event) => {
     setUploadingImage(true);
     const videoUrl = await uploadToCloudinary(event.target.files[0], "video");
-    //console.log("e.tar.val.V", event.target.value);
+    console.log("e.tar.val.V", event.target.files);
     formik.setFieldValue("video", videoUrl);
     setSelectedVideo(videoUrl);
     setUploadingImage(false);
   };
-
   const currTimestamp = new Date().getTime();
   const datefinal = new Date(datetime).getTime();
   const timeAgo = getTime(datefinal, currTimestamp);
