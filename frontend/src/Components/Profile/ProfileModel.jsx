@@ -44,7 +44,7 @@ const ProfileModel = ({ handleClose,open }) => {
     initialValues: {
       fullName: "",
       website: "",
-      location: "",
+      // location: "",
       bio: "",
       backgroundImage:"",
       image:"",
@@ -55,11 +55,10 @@ const ProfileModel = ({ handleClose,open }) => {
   });
 
   useEffect(()=>{
-
     formik.setValues({
       fullName: auth.user.fullName || "",
       website: auth.user.website || "",
-      location: auth.user.location || "",
+      // location: auth.user.location || "",
       bio: auth.user.bio || "",
       backgroundImage: auth.user.backgroundImage || "",
       image: auth.user.image || "",
@@ -180,7 +179,7 @@ const ProfileModel = ({ handleClose,open }) => {
                   }
                   helperText={formik.touched.website && formik.errors.website}
                 />
-                <TextField
+                {/* <TextField
                   fullWidth
                   id="location"
                   name="location"
@@ -191,7 +190,7 @@ const ProfileModel = ({ handleClose,open }) => {
                     formik.touched.location && Boolean(formik.errors.location)
                   }
                   helperText={formik.touched.location && formik.errors.location}
-                />
+                /> */}
                 <TextField
                   fullWidth
                   id="education"

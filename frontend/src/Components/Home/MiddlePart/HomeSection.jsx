@@ -106,7 +106,7 @@ const HomeSection = () => {
                 <div>
                   {selectedImage && <img className="w-[28rem]" src={selectedImage} alt="" />}
 
-                  {selsectedVideo  && <video autoPlay controls src={twit.video}/>}
+                  {selsectedVideo  && <video controls src={twit.video}/>}
                 </div>
               )}
 

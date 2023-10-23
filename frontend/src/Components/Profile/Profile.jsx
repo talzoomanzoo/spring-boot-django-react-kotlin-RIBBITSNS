@@ -14,10 +14,15 @@ import {
   Divider,
 } from "@mui/material";
 import Tab from "@mui/material/Tab";
+import { useFormik } from "formik";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { FollowUserAction, findUserById } from "../../Store/Auth/Action";
+import {
+  FollowUserAction,
+  findUserById,
+  updateUserProfile,
+} from "../../Store/Auth/Action";
 import {
   findTwitsByLikesContainUser,
   getUsersReplies,
@@ -30,14 +35,17 @@ import ProfileModel from "./ProfileModel";
 
 const Profile = () => {
   const { kakao } = window;
-  const [tabValue, setTabValue] = React.useState("1");
+  const [address, setAddress] = useState("");
+  const [tabValue, setTabValue] = useState("1");
   const { auth, twit, theme } = useSelector((store) => store);
-  const [openProfileModel, setOpenProfileModel] = useState();
+  const [openProfileModel, setOpenProfileModel] = useState(false);
   const [openSnackBar, setOpenSnackBar] = useState(false);
   const [followersClicked, setFollowersClicked] = useState(false);
   const [followingsClicked, setFollowingsClicked] = useState(false);
   const followersListRef = useRef(null);
   const [showLocation, setShowLocation] = useState(false);
+  const [isLocationSaved, setIsLocationSaved] = useState(false);
+  const [map, setmap] = useState(false);
 
   const param = useParams();
   const dispatch = useDispatch();
@@ -55,6 +63,7 @@ const Profile = () => {
       dispatch(getUsersReplies(param.id));
     }
   };
+
   useEffect(() => {
     dispatch(getUsersTweets(param.id));
   }, [param.id, twit.retwit]);
@@ -112,30 +121,164 @@ const Profile = () => {
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
-  }, []);
+  }, [auth.user]);
 
   const Maplocation = () => {
-    const initializeMap = () => {
-      var container = document.getElementById("map");
-      var options = {
-        center: new kakao.maps.LatLng(37.365264512305174, 127.10676860117488),
-        level: 3,
-      };
-      var map = new kakao.maps.Map(container, options);
+    const [searchKeyword, setSearchKeyword] = useState(""); // 검색어 상태
+    const [map, setMap] = useState(null);
+    const [notification, setNotification] = useState(null);
+
+
+    useEffect(() => {
+      const container = document.getElementById("map");
+
+      if (container) {
+        const options = {
+          center: new kakao.maps.LatLng(37.5662952, 126.9757567), // 서울시청을 기본 중심으로 설정
+          level: 3, // 초기 지도 확대 레벨
+        };
+
+        // 사용자의 현재 위치를 가져오기
+        if ("geolocation" in navigator) {
+          navigator.geolocation.getCurrentPosition((position) => {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            options.center = new kakao.maps.LatLng(latitude, longitude);
+
+            const newMap = new kakao.maps.Map(container, options);
+            setMap(newMap); // 지도 상태 업데이트
+
+            // 나머지 코드는 그대로 유지
+            const infowindow = new kakao.maps.InfoWindow({ zIndex: 1 });
+            const places = new kakao.maps.services.Places();
+            const searchButton = document.getElementById("search-button");
+
+            searchButton.addEventListener("click", () => {
+              places.keywordSearch(searchKeyword, function (data, status) {
+                if (status === kakao.maps.services.Status.OK) {
+                  const bounds = new kakao.maps.LatLngBounds();
+
+                  for (let i = 0; i < data.length; i++) {
+                    const place = data[i];
+                    displayMarker(place);
+                    bounds.extend(new kakao.maps.LatLng(place.y, place.x));
+                  }
+
+                  // 모든 마커가 보이도록 중심좌표와 레벨 설정
+                  map.setBounds(bounds);
+                } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
+                  setNotification("검색 결과가 존재하지 않습니다.");
+                } else if (status === kakao.maps.services.Status.ERROR) {
+                  setNotification("검색 결과 중 오류가 발생했습니다.");
+                }
+              });
+            });
+
+            function displayMarker(place) {
+              const marker = new kakao.maps.Marker({
+                map: newMap,
+                position: new kakao.maps.LatLng(place.y, place.x),
+              });
+
+              kakao.maps.event.addListener(marker, "click", function () {
+                const markerPosition = marker.getPosition();
+                newMap.setLevel(3); // 레벨을 3으로 설정
+                newMap.setCenter(markerPosition); // 클릭한 마커를 중심으로 지도 재설정
+
+                infowindow.setContent(
+                  '<div style="padding:5px;font-size:12px;">' +
+                    place.place_name +
+                    "</div>"
+                );
+                infowindow.open(newMap, marker);
+              });
+            }
+          });
+        }
+      }
+    }, [searchKeyword]);
+
+    useEffect(() => {
+      if (map) {
+        // 지도 타입 컨트롤을 생성하고 지도에 추가
+        const mapTypeControl = new kakao.maps.MapTypeControl();
+        map.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);
+
+        // 지도 줌 컨트롤을 생성하고 지도에 추가
+        const zoomControl = new kakao.maps.ZoomControl();
+        map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+      }
+    }, [map]);
+
+    const handleSearchKeyPress = (event) => {
+      if (event.key === "Enter") {
+        // Enter 키가 눌렸을 때 검색 버튼 클릭 이벤트를 호출
+        document.getElementById("search-button").click();
+      } else {
+        alert("키워드를 입력해주세요!");
+        return;
+      }
+    };
+
+    const handleSearchClick = () => {
+      if (!searchKeyword.trim()) {
+        alert("키워드를 입력해주세요!");
+        return;
+      }
     };
 
     useEffect(() => {
-      if (showLocation) {
-        initializeMap();
+      if (notification) {
+        alert(notification);
+        setNotification(null); // 알림을 표시한 후 상태 초기화
       }
-    }, [showLocation]);
+    }, [notification]);
 
     return (
       <div>
-        <div id="map" style={{ width: "500px", height: "400px" }}></div>
+        <div>
+          <input
+            type="text"
+            placeholder="Search for a location"
+            value={searchKeyword}
+            onChange={(e) => setSearchKeyword(e.target.value)}
+            onKeyPress={handleSearchKeyPress} // Enter 키 핸들러 추가
+          />
+          <button id="search-button" onClick={handleSearchClick}>
+            Search
+          </button>
+        </div>
+        <div>
+          <div id="map" style={{ width: "100%", height: "400px" }}></div>
+        </div>
       </div>
     );
   };
+
+  const toggleMap = (values) => {
+    console.log(values);
+    if (isLocationSaved) {
+      // 이미 위치가 저장된 경우, 저장된 위치를 업데이트하거나 다른 작업 수행
+      // 여기서는 updateUserProfile(values)를 호출하여 위치를 업데이트합니다.
+      dispatch(updateUserProfile(values));
+    } else {
+      setShowLocation(!showLocation);
+    }
+    setIsLocationSaved(!isLocationSaved); // 저장 상태를 토글
+  };
+
+  const formik = useFormik({
+    initialValues: {
+      location: "",
+    },
+    onSubmit: toggleMap,
+  });
+
+  useEffect(() => {
+    formik.setValues({
+      location: auth.user.location || address,
+    });
+  }, [auth.user]);
 
   return (
     <React.Fragment>
@@ -219,16 +362,28 @@ const Profile = () => {
                 </div>
               ) : null}
 
-              {auth.findUser?.location ? (
+              {/* {auth.findUser?.location ? (
                 <div className="flex items-center text-gray-500">
                   <>
-                    <button onClick={Maplocation}>
+                    <button onClick={toggleMap}>
                       <LocationOnIcon />
                     </button>
                     <p className="ml-2">{auth.findUser.location}</p>
                   </>
                 </div>
-              ) : null}
+              ) : null} */}
+
+              <div className="flex items-center text-gray-500">
+                <form onSubmit={formik.handleSubmit}>
+                  <button onClick={toggleMap}>
+                    <LocationOnIcon />
+                  </button>
+                </form>
+                <p className="text-gray-500">
+                  {auth.findUser?.location || address}
+                </p>
+              </div>
+
               {auth.findUser?.joinedAt ? (
                 <div className="flex items-center text-gray-500">
                   <>
@@ -246,14 +401,11 @@ const Profile = () => {
             </div>
             <div className="flex items-center space-x-5">
               <div className="flex items-center space-x-1 font-semibold">
-                <span
-                  onClick={handleFollowingsClick} // followers 텍스트 클릭 시 handleFollowersClick 함수 실행
-                  className="text-gray-500"
-                >
+                <span onClick={handleFollowingsClick} className="text-gray-500">
                   {auth.findUser?.followings?.length} followings
                 </span>
 
-                {followingsClicked && ( // followersClicked 상태에 따라 followers 리스트를 렌더링합니다.
+                {followingsClicked && (
                   <div
                     ref={followersListRef}
                     className={` overflow-y-scroll hideScrollbar absolute z-50 bg-white border rounded-md p-3 w-30 ${
@@ -291,14 +443,11 @@ const Profile = () => {
               </div>
 
               <div className="flex items-center space-x-1 font-semibold">
-                <span
-                  onClick={handleFollowersClick} // followers 텍스트 클릭 시 handleFollowersClick 함수 실행
-                  className="text-gray-500"
-                >
+                <span onClick={handleFollowersClick} className="text-gray-500">
                   {auth.findUser?.followers?.length} followers
                 </span>
 
-                {followersClicked && ( // followersClicked 상태에 따라 followers 리스트를 렌더링합니다.
+                {followersClicked && (
                   <div
                     ref={followersListRef}
                     className={` overflow-y-scroll hideScrollbar absolute z-50 bg-white border rounded-md p-3 w-30 ${
@@ -338,6 +487,7 @@ const Profile = () => {
           </div>
         </div>
       </section>
+      {showLocation && <Maplocation />}
       <section>
         <Box sx={{ width: "100%", typography: "body1", marginTop: "20px" }}>
           <TabContext value={tabValue}>
@@ -394,6 +544,7 @@ const Profile = () => {
         <ProfileModel
           open={openProfileModel}
           handleClose={handleCloseProfileModel}
+          // location={address}
         />
       </section>
       <section>

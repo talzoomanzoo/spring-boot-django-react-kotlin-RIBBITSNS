@@ -342,6 +342,8 @@ const TwitCard = ({ twit }) => {
                           <video
                             className="max-h-[40rem] p-5"
                             controls
+                            // autoPlay
+                            // muted
                             src={selectedVideo}
                           />
                         </div>
@@ -366,6 +368,8 @@ const TwitCard = ({ twit }) => {
                       <video
                         className="max-h-[40rem] p-5"
                         controls
+                        // autoPlay
+                        // muted
                         src={twit.video}
                       />
                     </div>
