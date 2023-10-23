@@ -1,0 +1,5 @@
+ai/ckpt/multi/checkpoint-06000에 넣을 바이너리 파일
+https://drive.google.com/drive/folders/1JC8hBB0XDoe7hg2Qkdb3DR77YN7m3lZK?usp=share_link
+
+ai/model 디렉토리에 넣은 바이너리 파일
+https://drive.google.com/drive/folders/19t4enzf6laUvb0C-d7K1MwxjbWrf2zbO?usp=share_link

@@ -1,6 +1,7 @@
 // actions.js
 
 import { api } from "../../Config/apiConfig";
+//import { ethicreveal } from "../../Components/Home/MiddlePart/TwitCard/TwitCard";
 import {
   FIND_TWEET_BY_ID_FAILURE,
   FIND_TWEET_BY_ID_REQUEST,
@@ -160,29 +161,16 @@ export const createTweet = (tweetData) => {
     dispatch(createTweetRequest());
     try {
       const {data} = await api.post("/api/twits/create", tweetData);
-      console.log("created twit ",data)
+      console.log("tweetData: ",tweetData);
+      console.log("created twit ",data);
       dispatch(createTweetSuccess(data));
+      console.log("data.id: ",data.id);
+      console.log("data.id: ",data.content);
     } catch (error) {
       dispatch(createTweetFailure(error.message));
     }
   };
 };
-
-
-export const updateTweet = (twit) => {
-  return async (dispatch) => {
-    console.log("twitContent", twit.content); // 넘어 온 것 확인
-    console.log("tr", twit);
-    dispatch({type:UPDATE_TWEET_REQUEST});
-    try {
-      const {data} = await api.post(`/api/twits/edit`, twit);
-      console.log("edited twit", data)
-      dispatch({type:UPDATE_TWEET_SUCCESS,payload:data});
-    } catch (error) {
-      dispatch({type:UPDATE_TWEET_FAILURE,payload:error.message});
-    }
-  }
-}
 
 export const createTweetReply = (tweetData) => {
   return async (dispatch) => {
@@ -272,7 +260,7 @@ export const followTwit = () => async (dispatch) => {
 
 export const getTime = (datetime, currTimestamp) => {
   const totalMilliseconds = currTimestamp - datetime;
-  console.log("totalMilliseconds+", totalMilliseconds);
+  //console.log("totalMilliseconds+", totalMilliseconds);
   const totalSeconds = Math.floor(totalMilliseconds / 1000);
   const totalMinutes = Math.floor(totalSeconds / 60);
   const totalHours = Math.floor(totalMinutes / 60);
