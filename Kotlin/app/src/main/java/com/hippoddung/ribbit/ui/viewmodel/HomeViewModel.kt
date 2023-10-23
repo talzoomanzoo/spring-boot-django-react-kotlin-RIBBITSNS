@@ -22,8 +22,6 @@ class HomeViewModel @Inject constructor(
     private val ribbitRepository: RibbitRepository
 ) : BaseViewModel() {
     var homeUiState: HomeUiState by mutableStateOf(HomeUiState.Loading)
-        private set
-
     val homeResponse: MutableLiveData<ApiResponse<List<RibbitPost>>> by lazy {
         MutableLiveData<ApiResponse<List<RibbitPost>>>()
     }
@@ -41,6 +39,7 @@ class HomeViewModel @Inject constructor(
     fun getRibbitPosts(coroutinesErrorHandler: CoroutinesErrorHandler) = baseRequest(
         homeResponse, coroutinesErrorHandler
     ) {
+        Log.d("HippoLog, HomeViewModel", "getRibbitPosts")
         ribbitRepository.getPosts()
     }
 
