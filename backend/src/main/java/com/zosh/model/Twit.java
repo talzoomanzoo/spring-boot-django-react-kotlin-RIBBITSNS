@@ -53,7 +53,7 @@ public class Twit {
     private int viewCount;
 
     private String image; 
-    private String video; 
+    private String video;
     
     @Column(nullable = false)
     private boolean isEdited = false; 
