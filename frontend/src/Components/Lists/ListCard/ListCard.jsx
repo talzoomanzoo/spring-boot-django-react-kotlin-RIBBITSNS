@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useSelector } from 'react-redux/es/hooks/useSelector';
 import ListsModel2 from '../ListsModel2';
+import { memo } from "react";
 
-const ListCard = ({ list }) => {
+const ListCard = memo(({ list }) => {
     const navigate = useNavigate();
     const [openListsModel, setOpenListsModel] = useState();
     const handleCloseListsModel = () => setOpenListsModel(false);
@@ -38,6 +39,6 @@ const ListCard = ({ list }) => {
             </section>
         </div>
     )
-};
+});
 
 export default ListCard;

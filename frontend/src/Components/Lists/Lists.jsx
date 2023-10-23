@@ -20,7 +20,7 @@ const Lists = () => {
 
     useEffect(() => {
         dispatch(getAllLists())
-    }, [])
+    }, [list.list])
 
     console.log("list Lists check",    
                 list);
@@ -56,7 +56,8 @@ const Lists = () => {
                 />
             </section>
 
-            <section className={`${theme.currentTheme === "dark" ? "pt-14" : ""} space-y-5`}>
+            <section
+                className={`${theme.currentTheme === "dark" ? "pt-14" : ""} space-y-5`}>
                 {list?.lists?.map((item) => (
                     <ListCard 
                         list={item} />

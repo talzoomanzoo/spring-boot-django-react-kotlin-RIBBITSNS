@@ -19,7 +19,7 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { createRoot } from 'react-dom/client';
 import React from "react";
-import { useParams } from "react-router-dom";
+import { memo } from "react";
 
 const style = {
     position: "absolute",
@@ -36,7 +36,7 @@ const style = {
     overflow: "scroll-y",
 };
 
-const ListsModel2 = ({ list, handleClose, open }) => {
+const ListsModel2 = memo(({ list, handleClose, open }) => {
     //const param=useParams();
     const [uploading, setUploading] = useState(false);
     const [search, setSearch] = useState("");
@@ -44,9 +44,6 @@ const ListsModel2 = ({ list, handleClose, open }) => {
     const navigate = useNavigate();
     const { theme, auth } = useSelector((store) => store);
     const [followingsClicked, setFollowingsClicked] = useState(false);
-    //const domNode = document.getElementById('lists');
-    //const element = createRoot(domNode);
-    // console.log("domNode check", domNode)
 
     const handleSubmit = (values) => {
         dispatch(updateListModel(values))
@@ -73,9 +70,19 @@ const ListsModel2 = ({ list, handleClose, open }) => {
             backgroundImage: list.backgroundImage || "",
         });
 
-    }, [])
+
+        if (document.getElementById("element") != null ) {
+            const domNode2 = document.getElementById("element");
+            const element1 = createRoot(domNode2);
+            element1.render(<Element list={list} />);
+        } else {
+            console.log("not exists");
+        };
+
+    }, [list.followings])
 
     const handleImageChange = async (event) => {
+
         setUploading(true)
         const { name } = event.target;
         const file = event.target.files[0];
@@ -101,61 +108,63 @@ const ListsModel2 = ({ list, handleClose, open }) => {
 
     const handleAddUser = (listId, userId) => {
         dispatch(addUserAction(listId, userId));
-        //element.render();
-        //dispatch(getUserAction(listId));
+        // const domNode = document.getElementById('lists');
+        // const element = createRoot(domNode);
+        // console.log("domNode check", domNode);
+        // element.render();
+        dispatch(getUserAction(listId));
 
-        const domNode2 = document.getElementById("element");
-        const element1 = createRoot(domNode2);
-        console.log("handleAddUserlist check", list);
-        element1.render();
+
+        //console.log("handleAddUserlist check", list);
         setSearch("");
         //console.log("add user id", userId);
-        //console.log("add list id", listId)
+        //console.log("add list id", listId);
     }
 
     const handleFollowingsClick = () => {
         setFollowingsClicked(!followingsClicked);
     };
 
-    console.log("list followings check", list);
-    console.log("auth userSearchcheck1", auth.userSearchResult);
+    //console.log("list followings check", list);
+    //console.log("auth userSearchcheck1", auth.userSearchResult);
 
-    function Element({ list }) {
+    const Element = memo(({ list }) => {
         console.log("element list check", list);
         return (
+            <div className="customeScrollbar overflow-y-scroll  overflow-x-hidden h-[80vh]">
+                <section
+                    className={`${theme.currentTheme === "dark" ? "pt-14" : ""} space-y-5`}
+                >
 
-            <section
-                className={`${theme.currentTheme === "dark" ? "pt-14" : ""} space-y-5`}
-                style={{ marginTop: 20 }}
-            >
-
-                {list.followings?.map((item) => (
-                    <div
-                        onClick={() => {
-                            if (Array.isArray(item)) {
-                                item.forEach((i) => navigateToProfile(i));
-                            } else {
-                                navigateToProfile(item.id);
-                            }
-                            handleFollowingsClick();
-                        }}
-                        className="flex items-center hover:bg-slate-800 p-3 cursor-pointer"
-                        key={item.id}
-                    >
-                        <Avatar alt={item.fullName} src={item.image} />
-                        <div className="ml-2">
-                            <p>{item.fullName}</p>
-                            <p className="text-sm text-gray-400">
-                                @
-                                {item.fullName.split(" ").join("_").toLowerCase()}
-                            </p>
+                    {list.followings?.map((item) => (
+                        <div
+                            style={{ paddingRight: 300 }}
+                            onClick={() => {
+                                if (Array.isArray(item)) {
+                                    item.forEach((i) => navigateToProfile(i));
+                                } else {
+                                    navigateToProfile(item.id);
+                                }
+                                handleFollowingsClick();
+                            }}
+                            className="flex items-center hover:bg-slate-800 p-3 cursor-pointer"
+                            key={item.id}
+                        >
+                            <Avatar alt={item.fullName} src={item.image} />
+                            <div className="ml-2">
+                                <p>{item.fullName}</p>
+                                <p className="text-sm text-gray-400">
+                                    @
+                                    {item.fullName.split(" ").join("_").toLowerCase()}
+                                </p>
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
 
-            </section>
+                </section>
+            </div>
         );
-    }
+    });
 
     return (
         <div>
@@ -274,7 +283,7 @@ const ListsModel2 = ({ list, handleClose, open }) => {
                                                             style={{ marginLeft: 20 }}
                                                             className="flex float-right hover:bg-slate-800 absolute right-0 cursor-pointer"
                                                             //absolute right-0
-                                                            onClick={() => { handleAddUser(list.id, item.id) }}>
+                                                            onClick={() => { handleAddUser(list.id, item.id, list) }}>
                                                         </RemoveIcon>
                                                     )
                                                     : (
@@ -282,7 +291,7 @@ const ListsModel2 = ({ list, handleClose, open }) => {
                                                             style={{ marginLeft: 20 }}
                                                             className="flex float-right hover:bg-slate-800 absolute right-0 cursor-pointer"
                                                             //absolute right-0
-                                                            onClick={() => { handleAddUser(list.id, item.id) }}>
+                                                            onClick={() => { handleAddUser(list.id, item.id, list) }}>
                                                         </AddIcon>
                                                     )}
                                             </div>
@@ -292,7 +301,6 @@ const ListsModel2 = ({ list, handleClose, open }) => {
                             </div>
 
                             {/* 여기 */}
-
                             <div id="element">
                                 <div>
                                     <Element list={list} />
@@ -306,5 +314,5 @@ const ListsModel2 = ({ list, handleClose, open }) => {
             </Modal>
         </div>
     )
-}
+});
 export default ListsModel2;

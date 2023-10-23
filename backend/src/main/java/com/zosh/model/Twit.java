@@ -54,7 +54,6 @@ public class Twit {
 
     private String image; 
     private String video;
-    private String thumbnail;
     
     @Column(nullable = false)
     private boolean isEdited = false; 
