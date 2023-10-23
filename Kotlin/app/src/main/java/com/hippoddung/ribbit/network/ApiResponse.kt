@@ -1,5 +1,6 @@
 package com.hippoddung.ribbit.network
 
+import android.util.Log
 import com.google.gson.Gson
 import com.hippoddung.ribbit.network.bodys.responsebody.ErrorResponse
 import kotlinx.coroutines.Dispatchers
@@ -32,6 +33,7 @@ fun <T> apiRequestFlow(call: suspend () -> Response<T>): Flow<ApiResponse<T>> = 
             if (response.isSuccessful) {
                 response.body()?.let { data ->
                     emit(ApiResponse.Success(data))
+                    Log.d("HippoLog, ApiResponse", "${response.isSuccessful}")
                 }
             } else {
                 response.errorBody()?.let { error ->
