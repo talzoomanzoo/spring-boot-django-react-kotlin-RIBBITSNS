@@ -31,23 +31,22 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.hippoddung.ribbit.R
-import com.hippoddung.ribbit.network.bodys.SignUpRequestBody
 import com.hippoddung.ribbit.network.bodys.Verification
+import com.hippoddung.ribbit.network.bodys.requestbody.SignUpRequest
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
 import com.hippoddung.ribbit.ui.viewmodel.CoroutinesErrorHandler
 
 @Composable
 fun SignUpScreen(
-    authViewModel: AuthViewModel = hiltViewModel(),
+    authViewModel: AuthViewModel,
     modifier: Modifier = Modifier) {
     var email by remember { mutableStateOf("") }
     var pW by remember { mutableStateOf("") }
     var pWCheck by remember { mutableStateOf("") }
     var fullName by remember { mutableStateOf("") }
     var birthDate by remember { mutableStateOf("") }
-    var user = SignUpRequestBody(
+    var user = SignUpRequest(
         email = email,
         password = pW,
         fullName = fullName,
@@ -63,11 +62,11 @@ fun SignUpScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = stringResource(R.string.Sign_up),
+            text = stringResource(R.string.sign_up),
             style = MaterialTheme.typography.displaySmall
         )
         Text(
-            text = stringResource(R.string.Sign_up),
+            text = stringResource(R.string.sign_up),
             modifier = Modifier
                 .padding(bottom = 16.dp)
                 .align(alignment = Alignment.Start)
@@ -123,7 +122,7 @@ fun SignUpScreen(
                 },
                 modifier.padding(14.dp)
             ) {
-                Text(text = stringResource(R.string.Sign_up))
+                Text(text = stringResource(R.string.sign_up))
             }
         }
         Spacer(modifier = Modifier.height(150.dp))
@@ -139,7 +138,7 @@ fun InputFullNameField(
     TextField(
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-        label = { Text(stringResource(R.string.Full_name)) },
+        label = { Text(stringResource(R.string.full_name)) },
         value = value,
         onValueChange = onValueChange,
         modifier = modifier,
@@ -157,7 +156,7 @@ fun InputPWCheckField(
         singleLine = true,
         visualTransformation = if (passwordCheckVisible) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-        label = { Text(stringResource(R.string.PW_check)) },
+        label = { Text(stringResource(R.string.pW_check)) },
         value = value,
         onValueChange = onValueChange,
         trailingIcon = {
@@ -185,7 +184,7 @@ fun InputBirthDateField(
     TextField(
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-        label = { Text(stringResource(R.string.Birth_date)) },
+        label = { Text(stringResource(R.string.birth_date)) },
         value = value,
         onValueChange = onValueChange,
         modifier = modifier,

@@ -8,11 +8,10 @@ const FollowTwit = () => {
   useEffect(() => {
     dispatch(followTwit());
   }, []); // [검사하고자 하는 특정 값]
-  console.log("followTwittwit", twit);
-  return (
+return (
     <div className="space-y-5">
-      <section>
-        <h1 className="py-5 text-xl font-bold opacity-90">Follow Twits</h1>
+        <section>
+        <h1 className="py-5 text-xl font-bold opacity-90">Following Twits</h1>
       </section>
       <section
         className={`${theme.currentTheme === "dark" ? "pt-14" : ""} space-y-5`}

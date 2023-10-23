@@ -1,7 +1,8 @@
 package com.hippoddung.ribbit.network
 
+import android.util.Log
 import com.google.gson.Gson
-import com.hippoddung.ribbit.network.bodys.ErrorResponse
+import com.hippoddung.ribbit.network.bodys.responsebody.ErrorResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -10,19 +11,19 @@ import kotlinx.coroutines.withTimeoutOrNull
 import retrofit2.Response
 
 sealed class ApiResponse<out T> {
-    object Loading: ApiResponse<Nothing>()
+    object Loading : ApiResponse<Nothing>()
 
     data class Success<out T>(
         val data: T
-    ): ApiResponse<T>()
+    ) : ApiResponse<T>()
 
     data class Failure(
         val errorMessage: String,
         val code: Int,
-    ): ApiResponse<Nothing>()
+    ) : ApiResponse<Nothing>()
 }
 
-fun<T> apiRequestFlow(call: suspend () -> Response<T>): Flow<ApiResponse<T>> = flow {
+fun <T> apiRequestFlow(call: suspend () -> Response<T>): Flow<ApiResponse<T>> = flow {
     emit(ApiResponse.Loading)
 
     withTimeoutOrNull(20000L) {
@@ -32,16 +33,18 @@ fun<T> apiRequestFlow(call: suspend () -> Response<T>): Flow<ApiResponse<T>> = f
             if (response.isSuccessful) {
                 response.body()?.let { data ->
                     emit(ApiResponse.Success(data))
+                    Log.d("HippoLog, ApiResponse", "${response.isSuccessful}")
                 }
             } else {
                 response.errorBody()?.let { error ->
                     error.close()
-                    val parsedError: ErrorResponse = Gson().fromJson(error.charStream(), ErrorResponse::class.java)
+                    val parsedError: ErrorResponse =
+                        Gson().fromJson(error.charStream(), ErrorResponse::class.java)
                     emit(ApiResponse.Failure(parsedError.message, parsedError.code))
                 }
             }
         } catch (e: Exception) {
-            emit(ApiResponse.Failure(e.message ?: e.toString(), 400))
+            emit(ApiResponse.Failure(e.message ?: e.toString(), response.code()))
         }
     } ?: emit(ApiResponse.Failure("Timeout! Please try again.", 408))
 }.flowOn(Dispatchers.IO)

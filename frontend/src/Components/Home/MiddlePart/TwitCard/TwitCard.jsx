@@ -18,10 +18,11 @@ import {
 } from "@mui/material";
 import EmojiPicker from "emoji-picker-react";
 import { useFormik } from "formik";
-import React, { useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
+import { css } from '@emotion/react';
 import {
   createRetweet,
   createTweet,
@@ -34,12 +35,22 @@ import {
 import { uploadToCloudinary } from "../../../../Utils/UploadToCloudinary";
 import BackdropComponent from "../../../Backdrop/Backdrop";
 import ReplyModal from "./ReplyModal";
+import { BounceLoader } from 'react-spinners';//npm install react-spinners --save 명령어로 설치진행
+import axios from 'axios';
+import { api } from "../../../../Config/apiConfig";
+import {
+  UPDATE_TWEET_FAILURE,
+  UPDATE_TWEET_REQUEST,
+  UPDATE_TWEET_SUCCESS,
+
+} from "../../../../Store/Tweet/ActionType";
 
 const validationSchema = Yup.object().shape({
   content: Yup.string().required("Tweet text is required"),
 });
 
 const TwitCard = ({ twit }) => {
+  console.log("what twit", twit)
   const [selectedImage, setSelectedImage] = useState(twit.image);
   const [selectedVideo, setSelectedVideo] = useState(twit.video);
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -54,6 +65,10 @@ const TwitCard = ({ twit }) => {
 
   const [isEditing, setIsEditing] = useState(false); // 편집 상태를 관리하는 상태 변수
   const [editedContent, setEditedContent] = useState(twit.content); // 편집된 내용을 관리하는 상태 변수
+
+  const [sentence, setSentence] = useState(twit.sentence);//sentence는 윤리수치에 해당하는 문장이 담아진다.
+  const [isLoading, setIsLoading] = useState(false);//로딩창의 띄어짐의 유무를 판단한다. default는 true이다.
+  const jwtToken = localStorage.getItem("jwt");
 
   const [isEdited, setIsEdited] = useState(twit.edited);
   const [datetime, setDatetimes] = useState(twit.createdAt);
@@ -129,34 +144,83 @@ const TwitCard = ({ twit }) => {
   //const [isEdited, setIsEdited] = useState(twit.isEdited);
   //const [edittimes, setEdittimes] = useState(twit.editedAt);
 
+  const updateTweet = (twit) => {
+    return async (dispatch) => {
+      console.log("twitContent", twit.content); // 넘어 온 것 확인
+      console.log("tr", twit);
+      dispatch({type:UPDATE_TWEET_REQUEST});
+      try {
+        const {data} = await api.post(`/api/twits/edit`, twit);
+        console.log("edited twit", data)
+        console.log("data.id: ",data.id);
+        console.log("data.id: ",data.content);
+  
+        //const response = await ethicreveal(data.id,data.content);
+        dispatch({type:UPDATE_TWEET_SUCCESS,payload:data});
+      } catch (error) {
+        dispatch({type:UPDATE_TWEET_FAILURE,payload:error.message});
+      }
+    }
+  }
+
   const handleSaveClick = async () => {
     try {
+      setIsLoading(true);
       const currentTime = new Date();
       setEditedContent(editedContent);
       setSelectedImage(selectedImage);
       setSelectedVideo(selectedVideo);
       setIsEdited(true);
       setEdittimes(currentTime);
+      //setSentence(sentence);
 
       twit.content = editedContent;
       twit.image = selectedImage;
       twit.video = selectedVideo;
       twit.edited = true;
       twit.editedAt = currentTime;
+      //twit.sentence = sentence;
       //console.log("currTime", currentTime);
 
+      await ethicreveal(twit.id, twit.content);
       await dispatch(updateTweet(twit));
 
-      setEditedContent("");
-      setSelectedImage("");
-      setSelectedVideo("");
+      //setEditedContent("");
+      //setSelectedImage("");
+      //setSelectedVideo("");
       setIsEditing(false);
-      //console.log("edit test", twit);
-      window.location.reload();
+      console.log("edit test", twit);
+      //window.location.reload();
+      setIsLoading(false);
       handleCloseEditClick();
     } catch (error) {
       //console.error("Error updating twit:", error);
     }
+  };
+
+  const ethicreveal = async(twitid,twitcontent)=>{
+    try {
+      const response = await fetch("http://localhost:8080/api/ethic/reqsentence",{
+        method:'POST',
+        headers:{
+          'Content-Type': 'application/json',
+          'Authorization':`Bearer ${jwtToken}`,
+        },
+        body: JSON.stringify({
+          id: twitid,
+          content: twitcontent,
+        }),
+      });
+      console.log("response: ",response);
+      console.log("jwt: ",jwtToken);
+      if(response.status===200){
+        const responseData = await response.json();
+        setSentence(responseData.sentence);
+      }
+    } catch (error) {
+      console.error("Error fetching ethic data:", error);
+    }
+  
   };
 
   const handleCancelClick = () => {
@@ -203,12 +267,11 @@ const TwitCard = ({ twit }) => {
   const handleSelectVideo = async (event) => {
     setUploadingImage(true);
     const videoUrl = await uploadToCloudinary(event.target.files[0], "video");
-    //console.log("e.tar.val.V", event.target.value);
+    console.log("e.tar.val.V", event.target.files);
     formik.setFieldValue("video", videoUrl);
     setSelectedVideo(videoUrl);
     setUploadingImage(false);
   };
-
   const currTimestamp = new Date().getTime();
   const datefinal = new Date(datetime).getTime();
   const timeAgo = getTime(datefinal, currTimestamp);
@@ -220,7 +283,13 @@ const TwitCard = ({ twit }) => {
 
   console.log("twitTest", twit);
   return (
+    
     <div className="">
+      {isLoading && (
+        <div>
+          Loading...
+        </div>
+      )}
       {auth.user?.id !== twit.user.id &&
       // auth.user notnull 일때, auth.user.id 가 twit.user.id 와 일치하지 않고,
         location.pathname === `/profile/${auth.user?.id}` && (
@@ -231,6 +300,7 @@ const TwitCard = ({ twit }) => {
           </div>
           // 해당 표시를 해라
         )}
+        
       <div className="flex space-x-5 "> 
         <Avatar
           onClick={() => navigate(`/profile/${twit.user.id}`)}
@@ -356,6 +426,11 @@ const TwitCard = ({ twit }) => {
                   <p className="mb-2 p-0 ">
                     {isEditing ? editedContent : twit.content}
                   </p>
+                  
+                  {sentence &&(
+                    <p>{sentence}</p>
+                  )}
+                  
                   {twit.image && (
                     <img
                       className="w-[28rem] border border-gray-400 p-5 rounded-md"

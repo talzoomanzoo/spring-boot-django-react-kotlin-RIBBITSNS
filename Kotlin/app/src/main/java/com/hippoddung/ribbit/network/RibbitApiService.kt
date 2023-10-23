@@ -1,25 +1,23 @@
 package com.hippoddung.ribbit.network
 
 import com.hippoddung.ribbit.network.bodys.RibbitPost
-import com.hippoddung.ribbit.network.bodys.TwitCreateRequest
-import com.hippoddung.ribbit.network.bodys.TwitCreateResponse
+import com.hippoddung.ribbit.network.bodys.requestbody.TwitCreateRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 
 const val BASE_URL =
-    "http://43.201.96.151:8080/"
+    "http://54.180.124.128:8080/"
 
 interface RibbitApiService {
     @GET("api/twits/")
-    suspend fun getPosts(): List<RibbitPost>
-
+    suspend fun getPosts(): Response<List<RibbitPost>>
 
     @POST("api/twits/create")
     suspend fun twitCreate(
         @Body twitCreateRequest: TwitCreateRequest
-    ): TwitCreateResponse
+    )
 }
 
 //    @GET("auth/refresh")

@@ -4,6 +4,7 @@ package com.hippoddung.ribbit.ui
 
 import android.util.Log
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
@@ -33,50 +34,64 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
 import com.hippoddung.ribbit.R
+
 import com.hippoddung.ribbit.ui.screens.HomeScreen
-import com.hippoddung.ribbit.ui.screens.authscreens.LoginScreen
+
 import com.hippoddung.ribbit.ui.screens.ProfileScreen
-import com.hippoddung.ribbit.ui.screens.authscreens.SignUpScreen
 import com.hippoddung.ribbit.ui.screens.TwitCreateScreen
+import com.hippoddung.ribbit.ui.screens.authscreens.LoginScreen
 import com.hippoddung.ribbit.ui.screens.authscreens.LogoutScreen
+import com.hippoddung.ribbit.ui.screens.authscreens.SignUpScreen
+import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
+import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthUiState
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
 import com.hippoddung.ribbit.ui.viewmodel.HomeViewModel
 
 enum class RibbitScreen(@StringRes val title: Int) {
-    HomeScreen(title = R.string.Home_screen),
-    LoginScreen(title = R.string.Login_screen),
-    LogoutScreen(title = R.string.Logout_screen),
-    ProfileScreen(title = R.string.Profile_screen),
-    SignUpScreen(title = R.string.Sign_up_screen),
-    TwitCreateScreen(title = R.string.Twit_create_screen),
+    HomeScreen(title = R.string.home_screen),
+    LoginScreen(title = R.string.login_screen),
+    LogoutScreen(title = R.string.logout_screen),
+    ProfileScreen(title = R.string.profile_screen),
+    SignUpScreen(title = R.string.sign_up_screen),
+    TwitCreateScreen(title = R.string.twit_create_screen),
+    PickImageScreen(title = R.string.pick_image_screen),
+    LoadingScreen(title = R.string.loading_screen),
+    ErrorScreen(title = R.string.error_screen),
 }
 
 @Composable
-fun RibbitApp() {
+fun RibbitApp(homeViewModel: HomeViewModel) {
     val authViewModel: AuthViewModel = hiltViewModel()
     val navController: NavHostController = rememberNavController()
 
-    when(authViewModel.authUiState) {
+    when (authViewModel.authUiState) {
         is AuthUiState.Login -> {
-            RibbitScreen(navController)
+            RibbitScreen(navController, homeViewModel)
+            Log.d("HippoLog, RibbitApp", "Login")
+            Log.d("HippoLog, RibbitApp","${homeViewModel.homeUiState}")
         }
         is AuthUiState.Logout -> {
             AuthScreen(navController, authViewModel)
-            Log.d("HippoLog, RibbitApp","Fail")
+            Log.d("HippoLog, RibbitApp", "Logout")
         }
     }
 }
 
 @Composable
 fun RibbitScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    homeViewModel: HomeViewModel
 ) {
 //    val backStackEntry by navController.currentBackStackEntryAsState()
 //    val currentScreen = RibbitScreen.valueOf(backStackEntry?.destination?.route ?: RibbitScreen.SignUpScreen.name)
@@ -97,7 +112,12 @@ fun RibbitScreen(
                 modifier = Modifier
             ) {
                 composable(route = RibbitScreen.HomeScreen.name) {
-                    val homeViewModel: HomeViewModel = hiltViewModel()
+//                    homeViewModel.getRibbitPosts(
+//                        object : CoroutinesErrorHandler {
+//                            override fun onError(message: String) {
+//                            }
+//                        }
+//                    )
                     HomeScreen(
                         navController = navController,
                         homeViewModel = homeViewModel
@@ -111,6 +131,12 @@ fun RibbitScreen(
                 }
                 composable(route = RibbitScreen.LogoutScreen.name) {
                     LogoutScreen()
+                }
+                composable(route = RibbitScreen.LoadingScreen.name) {
+                    LoadingScreen()
+                }
+                composable(route = RibbitScreen.ErrorScreen.name) {
+                    ErrorScreen()
                 }
             }
         }
@@ -141,7 +167,7 @@ fun AuthScreen(
                     LoginScreen(navController, authViewModel)
                 }
                 composable(route = RibbitScreen.SignUpScreen.name) {
-                    SignUpScreen()
+                    SignUpScreen(authViewModel)
                 }
             }
         }
@@ -149,23 +175,30 @@ fun AuthScreen(
 }
 
 @Composable
-fun HippoTopAppBar(scrollBehavior: TopAppBarScrollBehavior,navController: NavHostController, modifier: Modifier = Modifier) {
-    CenterAlignedTopAppBar(
-        scrollBehavior = scrollBehavior,
-        title = {
-            Text(
-                text = stringResource(R.string.app_name),
-                style = MaterialTheme.typography.headlineSmall,
-            )
-        },
-        navigationIcon = { MainDropDownMenu(navController) },
-        actions = { ProfileDropDownMenu(navController) },
-        modifier = modifier
-    )
+fun HippoTopAppBar(
+    scrollBehavior: TopAppBarScrollBehavior,
+    navController: NavHostController,
+    modifier: Modifier = Modifier
+) {
+    Column {
+        CenterAlignedTopAppBar(
+            scrollBehavior = scrollBehavior,
+            title = {
+                Text(
+                    text = stringResource(R.string.app_name),
+                    style = MaterialTheme.typography.headlineSmall,
+                )
+            },
+            navigationIcon = { MainDropDownMenu(navController) },
+            actions = { ProfileDropDownMenu(navController) },
+            modifier = modifier
+        )
+        AdBanner()
+    }
 }
 
 @Composable
-fun MainDropDownMenu(navController: NavHostController, modifier: Modifier = Modifier) {
+fun MainDropDownMenu(navController: NavHostController) {
     var isDropDownMenuExpanded by remember { mutableStateOf(false) }
 
     Button(
@@ -185,7 +218,7 @@ fun MainDropDownMenu(navController: NavHostController, modifier: Modifier = Modi
             onClick = {
                 navController.navigate(RibbitScreen.HomeScreen.name)
                 isDropDownMenuExpanded = false
-                      },
+            },
             text = {
                 Text(
                     text = "Home",
@@ -200,7 +233,7 @@ fun MainDropDownMenu(navController: NavHostController, modifier: Modifier = Modi
             onClick = {
                 println("Hello 5")
                 isDropDownMenuExpanded = false
-                      },
+            },
             text = {
                 Text(
                     text = "Print Hello 5",
@@ -221,7 +254,7 @@ fun MainDropDownMenu(navController: NavHostController, modifier: Modifier = Modi
 }
 
 @Composable
-fun ProfileDropDownMenu(navController: NavHostController, modifier: Modifier = Modifier) {
+fun ProfileDropDownMenu(navController: NavHostController) {
     var isDropDownMenuExpanded by remember { mutableStateOf(false) }
 
     Button(
@@ -268,4 +301,21 @@ fun ProfileDropDownMenu(navController: NavHostController, modifier: Modifier = M
             }
         )
     }
+}
+
+@Composable
+fun AdBanner(modifier: Modifier = Modifier) {
+    AndroidView(
+        modifier = modifier,
+        factory = { context ->
+            AdView(context).apply {
+                setAdSize(AdSize.FULL_BANNER)
+                // Use test ad unit ID
+                adUnitId = "ca-app-pub-3940256099942544/6300978111"
+            }
+        },
+        update = { adView ->
+            adView.loadAd(AdRequest.Builder().build())
+        }
+    )
 }
