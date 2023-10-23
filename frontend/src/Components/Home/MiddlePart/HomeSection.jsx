@@ -8,14 +8,35 @@ import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
-import { createTweet, getAllTweets } from "../../../Store/Tweet/Action";
+import { getAllTweets } from "../../../Store/Tweet/Action";
 import { uploadToCloudinary } from "../../../Utils/UploadToCloudinary";
 import BackdropComponent from "../../Backdrop/Backdrop";
 import TwitCard from "./TwitCard/TwitCard";
+import { api } from "../../../Config/apiConfig";
+import { BounceLoader } from 'react-spinners';
 // import ImageIcon from '@mui/icons-material/Image';
+import {
+  TWEET_CREATE_FAILURE,
+  TWEET_CREATE_REQUEST,
+  TWEET_CREATE_SUCCESS,
+} from "../../../Store/Tweet/ActionType";
 
 const validationSchema = Yup.object().shape({
   content: Yup.string().required("Tweet text is required"),
+});
+
+const createTweetRequest = () => ({
+  type: TWEET_CREATE_REQUEST,
+});
+
+const createTweetSuccess = (data) => ({
+  type: TWEET_CREATE_SUCCESS,
+  payload: data,
+});
+
+const createTweetFailure = (error) => ({
+  type: TWEET_CREATE_FAILURE,
+  payload: error,
 });
 
 const HomeSection = () => {
@@ -23,6 +44,8 @@ const HomeSection = () => {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
   const [selsectedVideo,setSelectedVideo]=useState("");
+  const [isLoading, setIsLoading] = useState(false); //로딩창 추가
+
   const dispatch = useDispatch();
   const {twit,auth,theme}=useSelector(store=>store);
   const jwt=localStorage.getItem("jwt")
@@ -30,16 +53,68 @@ const HomeSection = () => {
   const [openEmoji,setOpenEmoji]=useState(false);
   const handleOpenEmoji=()=>setOpenEmoji(!openEmoji)
   const handleCloseEmoji=()=>setOpenEmoji(false);
+  const jwtToken = localStorage.getItem("jwt");
 
-  const handleSubmit = (values,actions) => {
-    dispatch(createTweet(values))
-    actions.resetForm();
-    setSelectedImage("")
-    setSelectedVideo("")
-    handleCloseEmoji()
-    window.location.reload();
+  const HomeCreateTweet = (tweetData) => {
+    return async (dispatch) => {
+      setIsLoading(true);
+      dispatch(createTweetRequest());
+      try {
+        const {data} = await api.post("http://localhost:8080/api/twits/create", tweetData);
+        console.log("tweetData: ",tweetData);
+        console.log("created twit ",data);
+        dispatch(createTweetSuccess(data));
+        console.log("data.id: ",data.id);
+        console.log("data.id: ",data.content);
+  
+        const response = await ethicreveal(data.id,data.content);
+      } catch (error) {
+        dispatch(createTweetFailure(error.message));
+      } finally {
+        setIsLoading(false); // 로딩 완료
+      }
+    };
   };
 
+  const [refreshTwits, setRefreshTwits] = useState(0);
+
+  const handleSubmit = (values,actions) => {
+    dispatch(HomeCreateTweet(values));
+    console.log("values: ",values);
+    actions.resetForm();
+    setSelectedImage("");
+    setSelectedVideo("");
+    handleCloseEmoji();
+    
+   // window.location.reload();
+  };
+
+  
+  const ethicreveal = async(twitid,twitcontent)=>{
+    try {
+      const response = await fetch("http://localhost:8080/api/ethic/reqsentence",{
+        method:'POST',
+        headers:{
+          'Content-Type': 'application/json',
+          'Authorization':`Bearer ${jwtToken}`,
+        },
+        body: JSON.stringify({
+          id: twitid,
+          content: twitcontent,
+        }),
+      });
+      console.log("response: ",response);
+      console.log("jwt: ",jwtToken);
+      if(response.status===200){
+        console.log("ethicresponse: ",response);
+        setIsLoading(false);
+        setRefreshTwits((prev) => prev + 1);
+      }
+    } catch (error) {
+      console.error("Error fetching ethic data:", error);
+    }
+  
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -67,8 +142,8 @@ const HomeSection = () => {
   };
 
   useEffect(()=>{
-    dispatch(getAllTweets())
-  },[])
+    dispatch(getAllTweets());
+  },[refreshTwits])
 
   const handleEmojiClick=(value)=>{
     const {emoji}=value;
@@ -76,6 +151,7 @@ const HomeSection = () => {
   }
 
   
+
   return (
     <div className="space-y-5">
       <section>
@@ -168,10 +244,17 @@ const HomeSection = () => {
       </section>
 {/* 여기까지가 맨 위 빈칸 */}
       {/* 여기서부터 twit 불러오는 twit section */}
-      <section className={`${theme.currentTheme==="dark"?"pt-14":""} space-y-5`}>
-        {twit.twits?.map((item) => (
-          <TwitCard twit={item} />
-        ))}
+      <section className={`${theme.currentTheme === "dark" ? "pt-14" : ""} space-y-5`}>
+        {isLoading && (
+          <div>
+            Loading...
+          </div>
+        )}
+        {twit.twits && twit.twits.length > 0 ? (
+          twit.twits.map((item) => <TwitCard twit={item} key={item.id}/>)
+        ) : (
+          <div>No tweets available.</div>
+        )}
       </section>
 
       <section>
