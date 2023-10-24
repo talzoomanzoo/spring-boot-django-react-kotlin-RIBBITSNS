@@ -2,7 +2,6 @@ package com.hippoddung.ribbit.network
 
 import com.hippoddung.ribbit.network.bodys.RibbitPost
 import com.hippoddung.ribbit.network.bodys.requestbody.TwitCreateRequest
-import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -12,7 +11,7 @@ const val BASE_URL =
 
 interface RibbitApiService {
     @GET("api/twits/")
-    suspend fun getPosts(): Response<List<RibbitPost>>
+    suspend fun getPosts(): List<RibbitPost>
 
     @POST("api/twits/create")
     suspend fun twitCreate(

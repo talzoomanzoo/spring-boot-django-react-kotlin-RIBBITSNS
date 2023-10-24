@@ -14,7 +14,6 @@ import com.hippoddung.ribbit.data.network.UploadCloudinaryRepository
 import com.hippoddung.ribbit.network.bodys.requestbody.TwitCreateRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.io.IOException
 import javax.inject.Inject
@@ -39,14 +38,12 @@ sealed interface UploadVideoCloudinaryUiState {
     data class Error(val error: Exception) : UploadVideoCloudinaryUiState
     object None : UploadVideoCloudinaryUiState
 }
-
 @HiltViewModel
 class TwitsCreateViewModel @Inject constructor(
     private val ribbitRepository: RibbitRepository,
     private val uploadCloudinaryRepository: UploadCloudinaryRepository
 ) : BaseViewModel() {
     var twitsCreateUiState: TwitsCreateUiState by mutableStateOf(TwitsCreateUiState.Ready)
-        private set
     var uploadImageCloudinaryUiState: UploadImageCloudinaryUiState by mutableStateOf(
         UploadImageCloudinaryUiState.None
     )
@@ -57,20 +54,17 @@ class TwitsCreateViewModel @Inject constructor(
         private set
 
     fun createTwit(
-        context: Context,
         image: Bitmap?,
-        videoUri: Uri?,
+        videoFile: File?,
         inputText: String
     ) {
         var imageUrl: String? = null
         var videoUrl: String? = null
 
-        twitsCreateUiState = TwitsCreateUiState.Loading
-
-        runBlocking {
+        viewModelScope.launch {
+            twitsCreateUiState = TwitsCreateUiState.Loading
             uploadImageCloudinaryUiState = UploadImageCloudinaryUiState.None
             uploadVideoCloudinaryUiState = UploadVideoCloudinaryUiState.None
-
             if (image != null) {
                 uploadImageCloudinaryUiState = UploadImageCloudinaryUiState.Loading
                 uploadImageCloudinary(image = image)
@@ -81,14 +75,11 @@ class TwitsCreateViewModel @Inject constructor(
                         imageUrl =
                             (uploadImageCloudinaryUiState as UploadImageCloudinaryUiState.Success).imageUrl
                     }
-
                     else -> {}
                 }
-            }
-            if (videoUri != null) {
+            }else{}
+            if (videoFile != null) {
                 uploadVideoCloudinaryUiState = UploadVideoCloudinaryUiState.Loading
-                val videoAbsolutePath = getFilePathFromUri(context, videoUri)
-                val videoFile = File(videoAbsolutePath)
 
                 uploadVideoCloudinary(videoFile = videoFile)
                 // 성공하면 uploadVideoCloudinary 함수에서 UploadVideoCloudinaryUiState.Success 로 업데이트함
@@ -101,21 +92,20 @@ class TwitsCreateViewModel @Inject constructor(
 
                     else -> {}
                 }
-            }
+            }else{}
 
-            twitCreate(
-                TwitCreateRequest(
-                    content = inputText,
-                    image = imageUrl,
-                    video = videoUrl,
-//                    videoThumbnail =videoThumbnailUrl
-                )
-            )
+
             if (((uploadImageCloudinaryUiState is UploadImageCloudinaryUiState.Success) or (uploadImageCloudinaryUiState is (UploadImageCloudinaryUiState.None))
                         and (uploadVideoCloudinaryUiState is UploadVideoCloudinaryUiState.Success) or (uploadVideoCloudinaryUiState is UploadVideoCloudinaryUiState.None))
             ) {
-                twitsCreateUiState = TwitsCreateUiState.Success
-            }
+                twitCreate(
+                    TwitCreateRequest(
+                        content = inputText,
+                        image = imageUrl,
+                        video = videoUrl
+                    )
+                )
+            }else{}
         }
     }
 
@@ -130,7 +120,6 @@ class TwitsCreateViewModel @Inject constructor(
             it.moveToFirst()
             return it.getString(columnIndex)
         }
-
         return null
     }
 
@@ -147,6 +136,7 @@ class TwitsCreateViewModel @Inject constructor(
             }
         }
         twitsCreateUiState = TwitsCreateUiState.Success
+
     }
 
     suspend fun uploadImageCloudinary(image: Bitmap?) {
@@ -163,7 +153,7 @@ class TwitsCreateViewModel @Inject constructor(
                 uploadImageCloudinaryUiState = UploadImageCloudinaryUiState.Error(e)
                 Log.d("HippoLog, TwitCreateViewModel, Error", "${e.stackTrace}, ${e.message}")
             }
-        }
+        }else{}
     }
 
     suspend fun uploadVideoCloudinary(videoFile: File?) {
@@ -180,6 +170,6 @@ class TwitsCreateViewModel @Inject constructor(
                 uploadVideoCloudinaryUiState = UploadVideoCloudinaryUiState.Error(e)
                 Log.d("HippoLog, TwitCreateViewModel, Error", "${e.stackTrace}, ${e.message}")
             }
-        }
+        }else{}
     }
 }

@@ -61,22 +61,22 @@ import com.hippoddung.ribbit.ui.viewmodel.HomeViewModel
 fun HomeScreen(
     navController: NavHostController,
     homeViewModel: HomeViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier.fillMaxSize()
 ) {
     when (homeViewModel.homeUiState) {
 
         is HomeUiState.Loading -> LoadingScreen(
-            modifier = modifier.fillMaxSize()
+            modifier = modifier
         )
 
         is HomeUiState.Success -> HomeSuccessScreen(
             navController = navController,
             homeViewModel = homeViewModel,
-            modifier = modifier.fillMaxSize()
+            modifier = modifier
         )
 
         is HomeUiState.Error -> ErrorScreen(
-            modifier = modifier.fillMaxSize()
+            modifier = modifier
         )
     }
 }
@@ -87,7 +87,7 @@ fun HomeSuccessScreen(
     homeViewModel: HomeViewModel,
     modifier: Modifier
 ) {
-    Column {
+    Box(modifier = modifier) {
         PostsGridScreen(
             (homeViewModel.homeUiState as HomeUiState.Success).posts, modifier
         )
@@ -107,8 +107,12 @@ fun HomeSuccessScreen(
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun PostsGridScreen(posts: List<RibbitPost>, modifier: Modifier) {
+    val comparator = compareByDescending<RibbitPost>{it.id}
+    val sortedRibbitPost = remember(posts, comparator) {
+        posts.sortedWith(comparator)
+    }   // LazyColumn items에 List를 바로 주는 것이 아니라 Comparator로 정렬하여 remember로 기억시켜서 recomposition을 방지하여 성능을 올린다.
     LazyColumn(modifier = modifier) {
-        items(posts) { post ->
+        items(sortedRibbitPost) { post ->
             RibbitCard(
                 post = post,
                 modifier = modifier.padding(8.dp)
@@ -148,11 +152,11 @@ fun RibbitCard(post: RibbitPost, modifier: Modifier) {
             )
             if (post.image != null) {
                 RibbitImage(image = post.image)
-            }
+            }else{}
 
             if (post.video != null) {
                 RibbitVideo(post.video)
-            }
+            }else{}
         }
     }
 }
