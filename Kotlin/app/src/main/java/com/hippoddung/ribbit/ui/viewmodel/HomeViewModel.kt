@@ -1,5 +1,8 @@
 package com.hippoddung.ribbit.ui.viewmodel
 
+import android.graphics.Bitmap
+import android.media.MediaMetadataRetriever
+import android.os.Build
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -8,9 +11,12 @@ import androidx.lifecycle.viewModelScope
 import com.hippoddung.ribbit.data.network.RibbitRepository
 import com.hippoddung.ribbit.network.bodys.RibbitPost
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
+import java.util.concurrent.Executors
+import java.util.concurrent.Future
 import javax.inject.Inject
 
 sealed interface HomeUiState {
@@ -43,9 +49,8 @@ class HomeViewModel @Inject constructor(
 //        Log.d("HippoLog, HomeViewModel", "getRibbitPosts")
 //        ribbitRepository.getPosts()
 //    }
-
     fun getRibbitPosts() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             homeUiState = HomeUiState.Loading
             homeUiState = try {
                 HomeUiState.Success(ribbitRepository.getPosts())

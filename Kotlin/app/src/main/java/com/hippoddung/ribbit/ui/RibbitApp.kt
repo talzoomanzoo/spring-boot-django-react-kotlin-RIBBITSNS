@@ -36,14 +36,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdSize
-import com.google.android.gms.ads.AdView
 import com.hippoddung.ribbit.R
 import com.hippoddung.ribbit.ui.screens.HomeScreen
 import com.hippoddung.ribbit.ui.screens.ProfileScreen
@@ -203,7 +199,7 @@ fun HippoTopAppBar(
             actions = { ProfileDropDownMenu(navController) },
             modifier = modifier
         )
-        AdBanner()
+//        AdBanner() // 불러오는 중 TimeOut이 자주 발생
     }
 }
 
@@ -313,19 +309,19 @@ fun ProfileDropDownMenu(navController: NavHostController) {
     }
 }
 
-@Composable
-fun AdBanner(modifier: Modifier = Modifier) {
-    AndroidView(
-        modifier = modifier,
-        factory = { context ->
-            AdView(context).apply {
-                setAdSize(AdSize.FULL_BANNER)
-                // Use test ad unit ID
-                adUnitId = "ca-app-pub-3940256099942544/6300978111"
-            }
-        },
-        update = { adView ->
-            adView.loadAd(AdRequest.Builder().build())
-        }
-    )
-}
+//@Composable
+//fun AdBanner(modifier: Modifier = Modifier) {
+//    AndroidView(
+//        modifier = modifier,
+//        factory = { context ->
+//            AdView(context).apply {
+//                setAdSize(AdSize.FULL_BANNER)
+//                // Use test ad unit ID
+//                adUnitId = "ca-app-pub-3940256099942544/6300978111"
+//            }
+//        },
+//        update = { adView ->
+//            adView.loadAd(AdRequest.Builder().build())
+//        }
+//    )
+//}

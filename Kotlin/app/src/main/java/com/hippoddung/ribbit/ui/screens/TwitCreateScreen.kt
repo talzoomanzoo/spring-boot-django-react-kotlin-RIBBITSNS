@@ -49,6 +49,7 @@ import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.HomeViewModel
 import com.hippoddung.ribbit.ui.viewmodel.TwitsCreateUiState
 import com.hippoddung.ribbit.ui.viewmodel.TwitsCreateViewModel
+import kotlinx.coroutines.runBlocking
 import java.io.File
 
 @Composable
@@ -67,14 +68,17 @@ fun TwitCreateScreen(
         )
 
         is TwitsCreateUiState.Success -> {
-            Log.d("HippoLog, TwitCreateScreen", "${twitsCreateViewModel.twitsCreateUiState}")
-            navController.navigate(RibbitScreen.HomeScreen.name)
+            runBlocking {
+                homeViewModel.getRibbitPosts()
+                navController.navigate(RibbitScreen.HomeScreen.name)
+            }
             twitsCreateViewModel.twitsCreateUiState = TwitsCreateUiState.Ready
+            Log.d("HippoLog, TwitCreateScreen", "${twitsCreateViewModel.twitsCreateUiState}")
         }
 
         is TwitsCreateUiState.Loading -> {
-            Log.d("HippoLog, TwitCreateScreen", "${twitsCreateViewModel.twitsCreateUiState}")
             LoadingScreen()
+            Log.d("HippoLog, TwitCreateScreen", "${twitsCreateViewModel.twitsCreateUiState}")
         }
 
         is TwitsCreateUiState.Error -> ErrorScreen(
@@ -186,13 +190,11 @@ fun InputTwitScreen(
             }
             Button(
                 onClick = {
-                    twitsCreateViewModel.twitsCreateUiState = TwitsCreateUiState.Loading
                     twitsCreateViewModel.createTwit(
                         image = bitmap.value,
                         videoFile = videoFile,
                         inputText = inputText,
                     )
-                    homeViewModel.getRibbitPosts()
                 },
                 Modifier.padding(14.dp)
             ) {
