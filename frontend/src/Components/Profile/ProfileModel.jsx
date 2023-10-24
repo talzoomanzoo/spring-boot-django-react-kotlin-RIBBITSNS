@@ -120,7 +120,7 @@ const ProfileModel = ({ handleClose,open }) => {
     formik.setFieldValue(name,url);
     setUploading(false);
 
-  }
+  };
 
   const handleAIImageChange = async (event) => {//ai이미지를 cloudinary로 업로드하는 함수이다.
     setUploading(true);

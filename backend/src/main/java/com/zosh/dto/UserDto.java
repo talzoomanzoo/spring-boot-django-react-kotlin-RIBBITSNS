@@ -44,6 +44,8 @@ public class UserDto {
     
     private List<UserDto>followings=new ArrayList<>();
     
+    private boolean hasFollowedLists;
+    
     private boolean followed;
     
     private boolean isVerified;
