@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import com.hippoddung.ribbit.data.local.AuthManager
 import com.hippoddung.ribbit.data.local.TokenManager
 import com.hippoddung.ribbit.network.AuthApiService
 import com.hippoddung.ribbit.network.AuthAuthenticator
@@ -32,6 +33,10 @@ class SingletonModule {
     @Singleton
     @Provides
     fun provideTokenManager(@ApplicationContext context: Context): TokenManager = TokenManager(context)
+
+    @Singleton
+    @Provides
+    fun provideAuthManager(@ApplicationContext context: Context): AuthManager = AuthManager(context)
 
     @Singleton
     @Provides

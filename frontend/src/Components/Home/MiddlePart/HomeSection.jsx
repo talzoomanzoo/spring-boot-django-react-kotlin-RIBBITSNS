@@ -132,7 +132,7 @@ const HomeSection = () => {
     setSelectedImage(imgUrl);
     setUploadingImage(false);
   };
-
+  
   const handleSelectVideo = async (event) => {
     setUploadingImage(true);
     const videoUrl = await uploadToCloudinary(event.target.files[0],"video");

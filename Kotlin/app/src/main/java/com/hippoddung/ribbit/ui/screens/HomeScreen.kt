@@ -2,8 +2,12 @@ package com.hippoddung.ribbit.ui.screens
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
+import android.graphics.drawable.Icon
 import android.media.MediaMetadataRetriever
 import android.os.Build
+import android.util.Log
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,8 +19,12 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChatBubbleOutline
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.PlayCircleOutline
+import androidx.compose.material.icons.filled.RemoveRedEye
+import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -25,6 +33,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,6 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -55,28 +65,34 @@ import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.HomeUiState
 import com.hippoddung.ribbit.ui.viewmodel.HomeViewModel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import java.util.concurrent.Callable
+import java.util.concurrent.Executors
+import java.util.concurrent.Future
 
 
 @Composable
 fun HomeScreen(
     navController: NavHostController,
     homeViewModel: HomeViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier.fillMaxSize()
 ) {
     when (homeViewModel.homeUiState) {
 
         is HomeUiState.Loading -> LoadingScreen(
-            modifier = modifier.fillMaxSize()
+            modifier = modifier
         )
 
         is HomeUiState.Success -> HomeSuccessScreen(
             navController = navController,
             homeViewModel = homeViewModel,
-            modifier = modifier.fillMaxSize()
+            modifier = modifier
         )
 
         is HomeUiState.Error -> ErrorScreen(
-            modifier = modifier.fillMaxSize()
+            modifier = modifier
         )
     }
 }
@@ -87,9 +103,9 @@ fun HomeSuccessScreen(
     homeViewModel: HomeViewModel,
     modifier: Modifier
 ) {
-    Column {
+    Box(modifier = modifier) {
         PostsGridScreen(
-            (homeViewModel.homeUiState as HomeUiState.Success).posts, modifier
+            (homeViewModel.homeUiState as HomeUiState.Success).posts, homeViewModel = homeViewModel, modifier
         )
     }
     Box(modifier = modifier) {
@@ -106,11 +122,16 @@ fun HomeSuccessScreen(
 
 @SuppressLint("UnrememberedMutableState")
 @Composable
-fun PostsGridScreen(posts: List<RibbitPost>, modifier: Modifier) {
+fun PostsGridScreen(posts: List<RibbitPost>, homeViewModel: HomeViewModel, modifier: Modifier) {
+    val comparator = compareByDescending<RibbitPost> { it.id }
+    val sortedRibbitPost = remember(posts, comparator) {
+        posts.sortedWith(comparator)
+    }   // LazyColumn items에 List를 바로 주는 것이 아니라 Comparator로 정렬하여 remember로 기억시켜서 recomposition을 방지하여 성능을 올린다.
     LazyColumn(modifier = modifier) {
-        items(posts) { post ->
+        items(sortedRibbitPost) {
             RibbitCard(
-                post = post,
+                post = it,
+                homeViewModel = homeViewModel,
                 modifier = modifier.padding(8.dp)
             )
         }
@@ -119,13 +140,16 @@ fun PostsGridScreen(posts: List<RibbitPost>, modifier: Modifier) {
 
 @SuppressLint("SetJavaScriptEnabled", "JavascriptInterface")
 @Composable
-fun RibbitCard(post: RibbitPost, modifier: Modifier) {
+fun RibbitCard(post: RibbitPost, homeViewModel: HomeViewModel, modifier: Modifier) {
+    var isRetwited by remember { mutableStateOf(false) }
+    var isLiked by remember { mutableStateOf(false) }
+
     Card(
         shape = MaterialTheme.shapes.medium,
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         modifier = modifier.fillMaxWidth()
     ) {
-        Column(modifier = Modifier.padding(8.dp)) {
+        Column(modifier = modifier) {
             Row {
                 Text(
                     text = "No." + post.id.toString(),
@@ -134,7 +158,7 @@ fun RibbitCard(post: RibbitPost, modifier: Modifier) {
                     style = MaterialTheme.typography.headlineSmall
                 )
                 Text(
-                    text = "@" + post.user.email,
+                    text = post.user.email,
                     fontSize = 14.sp,
                     modifier = Modifier.padding(4.dp),
                     style = MaterialTheme.typography.headlineSmall
@@ -143,15 +167,70 @@ fun RibbitCard(post: RibbitPost, modifier: Modifier) {
             Text(
                 text = post.content,
                 fontSize = 14.sp,
-                modifier = Modifier.padding(4.dp),
+                modifier = modifier.padding(4.dp),
                 style = MaterialTheme.typography.headlineSmall
             )
             if (post.image != null) {
                 RibbitImage(image = post.image)
+            } else {
             }
 
             if (post.video != null) {
-                RibbitVideo(post.video)
+                RibbitVideo(post.video, homeViewModel = homeViewModel)
+            } else {
+            }
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                IconButton(
+                    onClick = { " /*TODO*/ " }, content = {
+                        Icon(
+                            imageVector = Icons.Default.ChatBubbleOutline,
+                            contentDescription = "totalLikes"
+                        )
+                    }
+                )
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    IconToggleButton(
+                        checked = isRetwited,
+                        onCheckedChange = { isRetwited = it },
+                        content = {
+                            Icon(
+                                imageVector = Icons.Default.Repeat,
+                                contentDescription = "totalLikes"
+                            )
+                        }
+                    )
+                    Text(text = "${post.totalRetweets}")
+                }
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    IconToggleButton(
+                        checked = isLiked,
+                        onCheckedChange = { isLiked = it },
+                        content = {
+                            Icon(
+                                imageVector = Icons.Default.Favorite,
+                                contentDescription = "totalLikes"
+                            )
+                        }
+                    )
+                    Text(text = "${post.totalLikes}")
+                }
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(imageVector = Icons.Default.RemoveRedEye, contentDescription = "viewCount")
+                    Text(text = "${post.viewCount}")
+                }
             }
         }
     }
@@ -235,9 +314,11 @@ fun RibbitImage(image: String) {
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
-fun RibbitVideo(videoUrl: String) {
+fun RibbitVideo(videoUrl: String, homeViewModel: HomeViewModel) {
     var isVideoPlayed by remember { mutableStateOf(false) }
-    val thumbnailImage = retriveThumbnailFromVideo(videoUrl)
+
+    var thumbnailImage = retrieveThumbnailFromVideo(videoUrl)
+
 
     if (isVideoPlayed) {
         Box(
@@ -251,18 +332,17 @@ fun RibbitVideo(videoUrl: String) {
             contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxSize()
         ) {
-            AsyncImage(
-                model = ImageRequest.Builder(context = LocalContext.current).data(thumbnailImage)
-                    .crossfade(true).build(),
-                error = painterResource(R.drawable.ic_broken_image),
-                placeholder = painterResource(R.drawable.loading_img),
-                contentDescription = stringResource(R.string.user_image),
-                contentScale = ContentScale.Crop,
-                alignment = Alignment.Center,
-                modifier = Modifier
-                    .size(300.dp)
-                    .padding(8.dp)
-            )
+            if (thumbnailImage != null) {
+                AsyncImage(
+                    model = ImageRequest.Builder(context = LocalContext.current).data(thumbnailImage)
+                        .crossfade(true).build(),
+                    error = painterResource(R.drawable.ic_broken_image),
+                    placeholder = painterResource(R.drawable.loading_img),
+                    contentDescription = "thumbnailImage",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
             IconButton(
                 onClick = { isVideoPlayed = true },
                 modifier = Modifier
@@ -280,22 +360,27 @@ fun RibbitVideo(videoUrl: String) {
     }
 }
 
-@Throws(Throwable::class)
-fun retriveThumbnailFromVideo(videoUrl: String?): Bitmap? {
-    var bitmap: Bitmap? = null
-    var mediaMetadataRetriever: MediaMetadataRetriever? = null
-    try {
-        mediaMetadataRetriever = MediaMetadataRetriever()
-        if (Build.VERSION.SDK_INT >= 14) mediaMetadataRetriever.setDataSource(
-            videoUrl,
-            HashMap()
-        ) else mediaMetadataRetriever.setDataSource(videoUrl)
-        bitmap = mediaMetadataRetriever.frameAtTime
-    } catch (e: java.lang.Exception) {
-        e.printStackTrace()
-        throw Throwable("Exception in retriveVideoFrameFromVideo(String videoPath)" + e.message)
-    } finally {
-        mediaMetadataRetriever?.release()
-    }
-    return bitmap
+fun retrieveThumbnailFromVideo(videoUrl: String?): Future<Bitmap> {
+    val executor = Executors.newFixedThreadPool(10)
+    val future: Future<Bitmap> = executor.submit(Callable<Bitmap> {
+        var bitmap: Bitmap? = null
+        var mediaMetadataRetriever: MediaMetadataRetriever? = null
+        try {
+            Log.d("HippoLog, HomeScreen, retrieve", "Thread - ${Thread.currentThread().name}")
+            mediaMetadataRetriever = MediaMetadataRetriever()
+            if (Build.VERSION.SDK_INT >= 14) {
+                mediaMetadataRetriever.setDataSource(videoUrl, HashMap())
+            } else {
+                mediaMetadataRetriever.setDataSource(videoUrl)
+            }
+            bitmap = mediaMetadataRetriever.getFrameAtTime(1000000)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.e("HippoLog, HomeScreen, retrieve", "Exception in retrieveThumbnailFromVideo: ${e.message}")
+        } finally {
+            mediaMetadataRetriever?.release()
+        }
+        return@Callable bitmap
+    })
+    return future
 }
