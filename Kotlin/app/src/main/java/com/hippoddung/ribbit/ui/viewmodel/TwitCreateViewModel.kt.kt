@@ -13,6 +13,7 @@ import com.hippoddung.ribbit.data.network.RibbitRepository
 import com.hippoddung.ribbit.data.network.UploadCloudinaryRepository
 import com.hippoddung.ribbit.network.bodys.requestbody.TwitCreateRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
@@ -38,6 +39,7 @@ sealed interface UploadVideoCloudinaryUiState {
     data class Error(val error: Exception) : UploadVideoCloudinaryUiState
     object None : UploadVideoCloudinaryUiState
 }
+
 @HiltViewModel
 class TwitsCreateViewModel @Inject constructor(
     private val ribbitRepository: RibbitRepository,
@@ -61,7 +63,7 @@ class TwitsCreateViewModel @Inject constructor(
         var imageUrl: String? = null
         var videoUrl: String? = null
 
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             twitsCreateUiState = TwitsCreateUiState.Loading
             uploadImageCloudinaryUiState = UploadImageCloudinaryUiState.None
             uploadVideoCloudinaryUiState = UploadVideoCloudinaryUiState.None
@@ -75,9 +77,11 @@ class TwitsCreateViewModel @Inject constructor(
                         imageUrl =
                             (uploadImageCloudinaryUiState as UploadImageCloudinaryUiState.Success).imageUrl
                     }
+
                     else -> {}
                 }
-            }else{}
+            } else {
+            }
             if (videoFile != null) {
                 uploadVideoCloudinaryUiState = UploadVideoCloudinaryUiState.Loading
 
@@ -92,7 +96,8 @@ class TwitsCreateViewModel @Inject constructor(
 
                     else -> {}
                 }
-            }else{}
+            } else {
+            }
 
 
             if (((uploadImageCloudinaryUiState is UploadImageCloudinaryUiState.Success) or (uploadImageCloudinaryUiState is (UploadImageCloudinaryUiState.None))
@@ -105,7 +110,8 @@ class TwitsCreateViewModel @Inject constructor(
                         video = videoUrl
                     )
                 )
-            }else{}
+            } else {
+            }
         }
     }
 
@@ -124,7 +130,7 @@ class TwitsCreateViewModel @Inject constructor(
     }
 
     fun twitCreate(twitCreateRequest: TwitCreateRequest) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 ribbitRepository.twitCreate(twitCreateRequest)
             } catch (e: IOException) {
@@ -140,36 +146,43 @@ class TwitsCreateViewModel @Inject constructor(
     }
 
     suspend fun uploadImageCloudinary(image: Bitmap?) {
-        UploadImageCloudinaryUiState.None
-        if (image != null) {
-            UploadImageCloudinaryUiState.Loading
-            try {
-                val result = uploadCloudinaryRepository.uploadImageCloudinary(image)
-                Log.d("HippoLog, TwitCreateViewModel, result", "$result")
-                uploadImageCloudinaryUiState = UploadImageCloudinaryUiState.Success(
-                    imageUrl = result.url
-                )
-            } catch (e: Exception) {
-                uploadImageCloudinaryUiState = UploadImageCloudinaryUiState.Error(e)
-                Log.d("HippoLog, TwitCreateViewModel, Error", "${e.stackTrace}, ${e.message}")
+        viewModelScope.launch(Dispatchers.IO) {
+            UploadImageCloudinaryUiState.None
+            if (image != null) {
+                UploadImageCloudinaryUiState.Loading
+                try {
+                    val result = uploadCloudinaryRepository.uploadImageCloudinary(image)
+                    Log.d("HippoLog, TwitCreateViewModel, result", "$result")
+                    uploadImageCloudinaryUiState = UploadImageCloudinaryUiState.Success(
+                        imageUrl = result.url
+                    )
+                } catch (e: Exception) {
+                    uploadImageCloudinaryUiState = UploadImageCloudinaryUiState.Error(e)
+                    Log.d("HippoLog, TwitCreateViewModel, Error", "${e.stackTrace}, ${e.message}")
+                }
+            } else {
             }
-        }else{}
+        }
     }
 
     suspend fun uploadVideoCloudinary(videoFile: File?) {
-        UploadVideoCloudinaryUiState.None
-        if (videoFile != null) {
-            UploadVideoCloudinaryUiState.Loading
-            try {
-                val result = uploadCloudinaryRepository.uploadVideoCloudinary(videoFile = videoFile)
-                Log.d("HippoLog, TwitCreateViewModel, result", "$result")
-                uploadVideoCloudinaryUiState = UploadVideoCloudinaryUiState.Success(
-                    videoUrl = result.url
-                )
-            } catch (e: Exception) {
-                uploadVideoCloudinaryUiState = UploadVideoCloudinaryUiState.Error(e)
-                Log.d("HippoLog, TwitCreateViewModel, Error", "${e.stackTrace}, ${e.message}")
+        viewModelScope.launch(Dispatchers.IO) {
+            UploadVideoCloudinaryUiState.None
+            if (videoFile != null) {
+                UploadVideoCloudinaryUiState.Loading
+                try {
+                    val result =
+                        uploadCloudinaryRepository.uploadVideoCloudinary(videoFile = videoFile)
+                    Log.d("HippoLog, TwitCreateViewModel, result", "$result")
+                    uploadVideoCloudinaryUiState = UploadVideoCloudinaryUiState.Success(
+                        videoUrl = result.url
+                    )
+                } catch (e: Exception) {
+                    uploadVideoCloudinaryUiState = UploadVideoCloudinaryUiState.Error(e)
+                    Log.d("HippoLog, TwitCreateViewModel, Error", "${e.stackTrace}, ${e.message}")
+                }
+            } else {
             }
-        }else{}
+        }
     }
 }

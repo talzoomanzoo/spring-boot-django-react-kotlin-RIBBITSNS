@@ -59,8 +59,7 @@ console.log("plan ",plan)
             <div className="w-[80%] space-y-10 hideScrollbar overflow-y-scroll  overflow-x-hidden ">
               <div className="p-5  rounded-md flex items-center justify-between bg-black shadow-lg">
                 <h1 className="text-xl pr-5">
-                  Blue subscribers with a verified phone number will get a blue
-                  checkmark once approved.
+                  그린 가입자는 승인이 되면 '그린체크' 표시가 나타납니다.
                 </h1>
                 <img
                   className="w-24 h-24"

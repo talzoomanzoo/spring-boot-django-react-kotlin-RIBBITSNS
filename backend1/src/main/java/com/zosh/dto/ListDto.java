@@ -27,5 +27,7 @@ public class ListDto {
 	
 	private String backgroundImage;
 	
+	private boolean privateMode;
+	
 	private List<UserDto> followings=new ArrayList<>();
 }
