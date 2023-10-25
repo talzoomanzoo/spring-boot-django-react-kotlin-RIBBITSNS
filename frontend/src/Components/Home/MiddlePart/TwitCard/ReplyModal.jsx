@@ -6,7 +6,7 @@ import * as Yup from "yup";
 import { createTweetReply } from "../../../../Store/Tweet/Action";
 
 const validationSchema = Yup.object().shape({
-  content: Yup.string().required("Tweet text is required"),
+  content: Yup.string().required("내용이 없습니다"),
 });
 
 const style = {
@@ -104,7 +104,7 @@ const ReplyModal = ({ handleClose, twitData, open }) => {
                     <input
                       type="text"
                       name="content"
-                      placeholder="What is happening?"
+                      placeholder="뭔 일 있음?"
                       className={`border-none outline-none text-l bg-transparent `}
                       {...formik.getFieldProps("content")}
                     />
@@ -141,14 +141,14 @@ const ReplyModal = ({ handleClose, twitData, open }) => {
                       <Button
                         type="submit"
                         sx={{
-                          bgcolor: "#1d9bf0",
+                          bgcolor: "#42c924",
                           borderRadius: "20px",
                           paddingY: "8px",
                           paddingX: "20px",
-                          color: "white",
+                          color: "green",
                         }}
                       >
-                        Tweet
+                      RIBBIT
                       </Button>
                     </div>
                   </div>

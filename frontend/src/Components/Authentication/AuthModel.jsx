@@ -44,7 +44,7 @@ const AuthModel = ({ handleClose, isOpen }) => {
       >
         <Box sx={style}>
           <h1 className="text-center font-bold text-3xl pb-20">
-            Create your account
+            계정 생성
           </h1>
           {/* <form onSubmit={formik.handleSubmit}>
         <Grid container spacing={2}>
@@ -177,9 +177,9 @@ const AuthModel = ({ handleClose, isOpen }) => {
           {location.pathname === "/signup" ? <SignupForm /> : <SigninForm />}
 
           <h1 className="text-center py-5 font-semibold text-lg text-gray-500">
-            {location.pathname === "/singin"
-              ? "If you don't have account ?"
-              : "Already have account ?"}
+            {location.pathname === "/signup"
+              ? "이미 계정이 있으신가요?"
+              : "계정이 없으신가요?"}
           </h1>
 
           <Button

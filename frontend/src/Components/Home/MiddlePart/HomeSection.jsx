@@ -22,7 +22,7 @@ import {
 } from "../../../Store/Tweet/ActionType";
 
 const validationSchema = Yup.object().shape({
-  content: Yup.string().required("Tweet text is required"),
+  content: Yup.string().required("내용이 없습니다"),
 });
 
 const createTweetRequest = () => ({
@@ -155,9 +155,10 @@ const HomeSection = () => {
   return (
     <div className="space-y-5">
       <section>
-        <h1 className="py-5 text-xl font-bold opacity-90">Home</h1>
+        <h1 className="py-5 text-xl font-bold opacity-90">홈</h1>
       </section>
-      <section className={`pb-10 ${theme.currentTheme==="dark"?" bg-[#151515] p-10 rounded-md mb-10":""}`}>
+      <section className={`pb-10 `}>
+      {/* ${theme.currentTheme==="dark"?" bg-[#151515] p-10 rounded-md mb-10":""} */}
         <div className="flex space-x-5 ">
           <Avatar
             alt="Avatar"
@@ -169,7 +170,7 @@ const HomeSection = () => {
                 <input
                   type="text"
                   name="content"
-                  placeholder="What is happening?"
+                  placeholder="뭔 일 있음?"
                   className={`border-none outline-none text-xl bg-transparent `}
                   {...formik.getFieldProps("content")}
                 />
@@ -188,8 +189,8 @@ const HomeSection = () => {
 
               <div className="flex justify-between items-center mt-5">
                 <div className="flex space-x-5 items-center">
-                  <label className="flex items-center space-x-2  rounded-md cursor-pointer">
-                    <ImageIcon className="text-[#1d9bf0]" />
+                  <label className="flex items-center space-x-2 rounded-md cursor-pointer">
+                    <ImageIcon className="text-[#42c924]" />
                     <input
                       type="file"
                       name="imageFile"
@@ -199,7 +200,7 @@ const HomeSection = () => {
                   </label>
 
                   <label className="flex items-center space-x-2  rounded-md cursor-pointer">
-                    <SlideshowIcon className="text-[#1d9bf0]" />
+                    <SlideshowIcon className="text-[#42c924]" />
                     <input
                       type="file"
                       name="videoFile"
@@ -208,9 +209,9 @@ const HomeSection = () => {
                     />
                   </label>
 
-                  <FmdGoodIcon className="text-[#1d9bf0]" />
+                  <FmdGoodIcon className="text-[#42c924]" />
                   <div className="relative">
-                     <TagFacesIcon onClick={handleOpenEmoji} className="text-[#1d9bf0] cursor-pointer" />
+                     <TagFacesIcon onClick={handleOpenEmoji} className="text-[#42c924] cursor-pointer" />
                      {openEmoji && <div className="absolute top-10 z-50 ">
                       <EmojiPicker 
                       theme={theme.currentTheme}
@@ -227,14 +228,14 @@ const HomeSection = () => {
                     type="submit"
                     variant="contained"
                     sx={{
-                      bgcolor: "#1d9bf0",
+                      bgcolor: "#42c924",
                       borderRadius: "20px",
                       paddingY: "8px",
                       paddingX: "20px",
                       color: "white",
                     }}
                   >
-                    Tweet
+                    Ribbit
                   </Button>
                 </div>
               </div>
@@ -244,7 +245,7 @@ const HomeSection = () => {
       </section>
 {/* 여기까지가 맨 위 빈칸 */}
       {/* 여기서부터 twit 불러오는 twit section */}
-      <section className={`${theme.currentTheme === "dark" ? "pt-14" : ""} space-y-5`}>
+      <section className={`space-y-5`}>
         {isLoading && (
           <div>
             Loading...
@@ -253,7 +254,7 @@ const HomeSection = () => {
         {twit.twits && twit.twits.length > 0 ? (
           twit.twits.map((item) => <TwitCard twit={item} key={item.id}/>)
         ) : (
-          <div>No tweets available.</div>
+          <div>게시된 리빗이 없습니다.</div>
         )}
       </section>
 
