@@ -1,6 +1,6 @@
-import { Avatar, IconButton, Modal } from "@mui/material";
+import { IconButton, Modal } from "@mui/material";
 import { useFormik } from "formik";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
 import {
@@ -11,11 +11,16 @@ import {
     from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import BackdropComponent from "../Backdrop/Backdrop";
-import { createListModel, addUserAction } from "../../Store/List/Action";
-import { searchUser } from "../../Store/Auth/Action";
+import {
+    createListModel,
+    addUserAction,
+    //setPrivate,
+}
+    from "../../Store/List/Action";
 import { useNavigate } from "react-router-dom";
-import AddIcon from '@mui/icons-material/Add';
-import SearchIcon from "@mui/icons-material/Search";
+import { Switch } from 'react-native';
+//npm install --save react-native-infinite-scroll --save --legacy-peer-deps
+//npm install react-native-web
 
 const style = {
     position: "absolute",
@@ -93,6 +98,12 @@ const ListsModel = ({ handleClose, open }) => {
         console.log("add list id", listId)
     }
 
+    const [isEnabled, setIsEnabled] = useState(false);
+    const toggleSwitch = () => {
+        setIsEnabled(previousState => !previousState);
+        //dispatch(setPrivate());
+    };
+
     return (
         <div>
             <Modal
@@ -108,9 +119,9 @@ const ListsModel = ({ handleClose, open }) => {
                                 <IconButton onClick={handleClose} aria-label="delete">
                                     <CloseIcon />
                                 </IconButton>
-                                <p>Add List</p>
+                                <p>리스트 수정</p>
                             </div>
-                            <Button type="submit">Save</Button>
+                            <Button type="submit">저장</Button>
                         </div>
 
                         <div className="customeScrollbar overflow-y-scroll  overflow-x-hidden h-[80vh]">
@@ -134,10 +145,10 @@ const ListsModel = ({ handleClose, open }) => {
                                         />
                                     </div>
                                 </div>
-
                                 <div className="w-full transform -translate-y-20 translate-x-4 h-[3rem]">
                                 </div>
                             </div>
+
                             <div className="space-y-3">
                                 <TextField
                                     fullWidth
@@ -161,8 +172,51 @@ const ListsModel = ({ handleClose, open }) => {
                                     helperText={formik.touched.description && formik.errors.description}
                                 />
                             </div>
+
+                            <div
+                                className="space-y-3"
+                                style={{ marginTop: 10 }}>
+
+                                <hr
+                                    style={{
+                                        background: 'grey',
+                                        color: 'grey',
+                                        borderColor: 'grey',
+                                        height: '1px',
+                                    }}
+                                />
+
+                                <div
+                                    className="flex items-center justify-between font-xl"
+                                > 비공개 리스트 활성화
+
+                                    <Switch
+                                        style={{
+                                            marginTop: 10,
+                                            marginRight: 20,
+                                        }}
+                                        trackColor={{ false: '#767577', true: '#81b0ff' }}
+                                        thumbColor={isEnabled ? '#f5dd4b' : '#f4f3f4'}
+                                        ios_backgroundColor="#3e3e3e"
+                                        onValueChange={toggleSwitch}
+                                        value={isEnabled}
+                                    />
+                                </div>
+
+                                <hr
+                                    style={{
+                                        marginTop: 20,
+                                        background: 'grey',
+                                        color: 'grey',
+                                        borderColor: 'grey',
+                                        height: '1px',
+                                    }}
+                                />
+
+                            </div>
+
                         </div>
-                        <BackdropComponent open={uploading}/>
+                        <BackdropComponent open={uploading} />
                     </form>
                 </Box>
             </Modal>

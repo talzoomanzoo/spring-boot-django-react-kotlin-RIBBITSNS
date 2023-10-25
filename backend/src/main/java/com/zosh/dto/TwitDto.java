@@ -43,6 +43,8 @@ public class TwitDto {
     private boolean isRetwit;
     
     private boolean isReply;
+
+	private String location;
     
     private List<Long> retwitUsersId;
     

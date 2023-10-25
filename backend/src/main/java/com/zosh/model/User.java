@@ -62,7 +62,7 @@ public class User {
     
     private boolean is_req_user=false;
     
-    private boolean hasFollowedLists;
+//    private boolean hasFollowedLists;
     
     private LocalDateTime joinedAt; 
     

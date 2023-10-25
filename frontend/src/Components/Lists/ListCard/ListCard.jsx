@@ -25,7 +25,7 @@ const ListCard = memo(({ list }) => {
                         //onClick={() => navigate(`/lists/${list.id}`)}
                         onClick={handleOpenListsModel}
                         className="flex cursor-pointer items-center space-x-2">
-                        <span class = "font-semibold">{list.listName}</span>
+                        <span class="text-xl">{list.listName}</span>
                     </div>
                 </div>
             </div>

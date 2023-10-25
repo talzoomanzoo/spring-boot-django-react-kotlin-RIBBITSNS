@@ -23,12 +23,6 @@ public class ListServiceImplementation implements ListService{
 		this.listRepository = listRepository;
 		this.userRepository = userRepository;
 	}
-
-	@Override
-	public List<ListModel> findAllList() {
-		// TODO Auto-generated method stub
-		return listRepository.findAllByOrderByCreatedAtDesc();
-	}
 	
 	@Override
 	public ListModel findById(Long listId) throws ListException {
@@ -86,4 +80,41 @@ public class ListServiceImplementation implements ListService{
 		return listModel;
 	}
 
+	@Override
+	public void deleteListById(Long listId, Long userId) throws ListException, UserException {
+		// TODO Auto-generated method stub
+		ListModel listModel = findById(listId);
+		listRepository.deleteById(listModel.getId());
+	}
+
+//	@Override
+//	public List<ListModel> findAllList() {
+//		// TODO Auto-generated method stub
+//		return listRepository.findAllByOrderByCreatedAtDesc();
+//	}
+	
+	@Override
+	public List<ListModel> findAllPublicListByReqUser(User user) {
+		// TODO Auto-generated method stub
+		return listRepository.findPublicOrderByCreatedAtDesc();
+	}
+
+	@Override
+	public ListModel setPrivateById(Long listId, Long userId) throws ListException, UserException {
+		// TODO Auto-generated method stub
+		ListModel listModel = findById(listId);
+		if (listModel.isPrivateMode() == false) {
+			listModel.setPrivateMode(true);
+		} else {
+			listModel.setPrivateMode(false);
+		}
+		listRepository.save(listModel);
+		return listModel;
+	}
+
+	@Override
+	public List<ListModel> findAllPrivateListByReqUser(User user) {
+		// TODO Auto-generated method stub
+		return listRepository.findPrivateOrderByCreatedAtDesc(user.getId());
+	}
 }

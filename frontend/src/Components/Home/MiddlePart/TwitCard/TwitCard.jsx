@@ -18,39 +18,33 @@ import {
 } from "@mui/material";
 import EmojiPicker from "emoji-picker-react";
 import { useFormik } from "formik";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
-import { css } from '@emotion/react';
+import { api } from "../../../../Config/apiConfig";
 import {
   createRetweet,
   createTweet,
   deleteTweet,
   getTime,
   likeTweet,
-  updateTweet,
-  viewPlus,
+  viewPlus
 } from "../../../../Store/Tweet/Action";
-import { uploadToCloudinary } from "../../../../Utils/UploadToCloudinary";
-import BackdropComponent from "../../../Backdrop/Backdrop";
-import ReplyModal from "./ReplyModal";
-import { BounceLoader } from 'react-spinners';//npm install react-spinners --save 명령어로 설치진행
-import axios from 'axios';
-import { api } from "../../../../Config/apiConfig";
 import {
   UPDATE_TWEET_FAILURE,
   UPDATE_TWEET_REQUEST,
   UPDATE_TWEET_SUCCESS,
-
 } from "../../../../Store/Tweet/ActionType";
+import { uploadToCloudinary } from "../../../../Utils/UploadToCloudinary";
+import BackdropComponent from "../../../Backdrop/Backdrop";
+import ReplyModal from "./ReplyModal";
 
 const validationSchema = Yup.object().shape({
-  content: Yup.string().required("Tweet text is required"),
+  content: Yup.string().required("내용이 없습니다"),
 });
 
 const TwitCard = ({ twit }) => {
-  console.log("what twit", twit)
   const [selectedImage, setSelectedImage] = useState(twit.image);
   const [selectedVideo, setSelectedVideo] = useState(twit.video);
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -267,11 +261,12 @@ const TwitCard = ({ twit }) => {
   const handleSelectVideo = async (event) => {
     setUploadingImage(true);
     const videoUrl = await uploadToCloudinary(event.target.files[0], "video");
-    console.log("e.tar.val.V", event.target.files);
+    //console.log("e.tar.val.V", event.target.value);
     formik.setFieldValue("video", videoUrl);
     setSelectedVideo(videoUrl);
     setUploadingImage(false);
   };
+
   const currTimestamp = new Date().getTime();
   const datefinal = new Date(datetime).getTime();
   const timeAgo = getTime(datefinal, currTimestamp);
@@ -331,7 +326,7 @@ const TwitCard = ({ twit }) => {
               {twit.user.verified && (
                 <img
                   className="ml-2 w-5 h-5"
-                  src="https://abs.twimg.com/responsive-web/client-web/verification-card-v2@3x.8ebee01a.png"
+                  src="https://waifu2x.booru.pics/outfiles/a2936a8caed993f9e006506b1afc9ace572e8d66_s2_n2_y1.png"
                   alt=""
                 />
               )}
@@ -412,6 +407,8 @@ const TwitCard = ({ twit }) => {
                           <video
                             className="max-h-[40rem] p-5"
                             controls
+                            // autoPlay
+                            // muted
                             src={selectedVideo}
                           />
                         </div>
@@ -441,6 +438,8 @@ const TwitCard = ({ twit }) => {
                       <video
                         className="max-h-[40rem] p-5"
                         controls
+                        // autoPlay
+                        // muted
                         src={twit.video}
                       />
                     </div>
@@ -454,7 +453,7 @@ const TwitCard = ({ twit }) => {
                 {isEditing && (
                   <>
                     <label className="flex items-center space-x-2 rounded-md cursor-pointer">
-                      <ImageIcon className="text-[#1d9bf0]" />
+                      <ImageIcon className="text-[#42c924]" />
                       <input
                         type="file"
                         name="imageFile"
@@ -463,7 +462,7 @@ const TwitCard = ({ twit }) => {
                       />
                     </label>
                     <label className="flex items-center space-x-2 rounded-md cursor-pointer">
-                      <SlideshowIcon className="text-[#1d9bf0]" />
+                      <SlideshowIcon className="text-[#42c924]" />
                       <input
                         type="file"
                         name="videoFile"
@@ -471,11 +470,11 @@ const TwitCard = ({ twit }) => {
                         onChange={handleSelectVideo}
                       />
                     </label>
-                    <FmdGoodIcon className="text-[#1d9bf0]" />
+                    <FmdGoodIcon className="text-[#42c924]" />
                     <div className="relative">
                       <TagFacesIcon
                         onClick={handleOpenEmoji}
-                        className="text-[#1d9bf0] cursor-pointer"
+                        className="text-[#42c924] cursor-pointer"
                       />
                       {openEmoji && (
                         <div className="absolute top-10 z-50 ">

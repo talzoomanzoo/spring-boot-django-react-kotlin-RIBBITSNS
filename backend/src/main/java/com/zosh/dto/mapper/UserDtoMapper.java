@@ -26,7 +26,7 @@ public class UserDtoMapper {
 		userDto.setLocation(user.getLocation());
 		userDto.setVerified(UserUtil.isVerified(user.getVerification().getEndsAt()));
 		userDto.setJoinedAt(user.getJoinedAt());
-		userDto.setHasFollowedLists(user.isHasFollowedLists());
+		//userDto.setHasFollowedLists(user.isHasFollowedLists());
 		return userDto;
 	}
 	
@@ -40,7 +40,7 @@ public class UserDtoMapper {
 			userDto.setEmail(user.getEmail());
 			userDto.setFullName(user.getFullName());
 			userDto.setImage(user.getImage());
-			userDto.setHasFollowedLists(user.isHasFollowedLists());
+			//userDto.setHasFollowedLists(user.isHasFollowedLists());
 			userDtos.add(userDto);
 		}
 		return userDtos;

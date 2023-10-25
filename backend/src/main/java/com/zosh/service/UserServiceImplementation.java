@@ -3,6 +3,7 @@ package com.zosh.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.zosh.config.JwtProvider;
@@ -15,11 +16,11 @@ import com.zosh.repository.UserRepository;
 
 @Service
 public class UserServiceImplementation implements UserService {
-	
-	private UserRepository userRepository;
-	private ListRepository listRepository;
-	private JwtProvider jwtProvider;
-	
+	private final UserRepository userRepository;
+	private final ListRepository listRepository;
+	private final JwtProvider jwtProvider;
+
+	@Autowired
 	public UserServiceImplementation(
 			UserRepository userRepository,
 			ListRepository listRepository,
