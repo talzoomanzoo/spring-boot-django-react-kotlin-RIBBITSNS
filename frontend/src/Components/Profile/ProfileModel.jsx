@@ -119,7 +119,7 @@ const ProfileModel = ({ handleClose,open }) => {
     formik.setFieldValue(name,url);
     setUploading(false);
 
-  };
+  }
 
   const handleAIImageChange = async (event) => {//ai이미지를 cloudinary로 업로드하는 함수이다.
     setUploading(true);
@@ -154,10 +154,10 @@ const ProfileModel = ({ handleClose,open }) => {
                 <IconButton onClick={handleClose} aria-label="delete">
                   <CloseIcon />
                 </IconButton>
-                <p>Edit Profile</p>
+                <p>프로필 변경</p>
               </div>
 
-              <Button type="submit">Save</Button>
+              <Button type="submit">저장</Button>
             </div>
 
             <div className="customeScrollbar overflow-y-scroll  overflow-x-hidden h-[80vh]">
@@ -167,7 +167,7 @@ const ProfileModel = ({ handleClose,open }) => {
                     <img
                       src={
                         formik.values.backgroundImage ||
-                        "https://cdn.pixabay.com/photo/2018/10/16/15/01/background-image-3751623_1280.jpg"
+                        "https://png.pngtree.com/thumb_back/fw800/background/20230304/pngtree-green-base-vector-smooth-background-image_1770922.jpg"
                       }
                       alt="Img"
                       className="w-full h-[12rem] object-cover object-center"
@@ -206,8 +206,8 @@ const ProfileModel = ({ handleClose,open }) => {
                     />
                   </div>
                   <div style={{ position: 'absolute', top: '109px', right: '250px' }}>
-                    <Button onClick={() => fileInputRef.current.click()}>로컬 저장소</Button>
-                    <Button onClick={openInputAiKeywordModal}>AI 이미지</Button>
+                    <Button onClick={() => fileInputRef.current.click()}>내 보관함</Button>
+                    <Button onClick={openInputAiKeywordModal}>AI 프로필</Button>
                   </div>
                 </div>
               </div>
@@ -216,7 +216,7 @@ const ProfileModel = ({ handleClose,open }) => {
                   fullWidth
                   id="fullName"
                   name="fullName"
-                  label="Full Name"
+                  label="이름"
                   value={formik.values.fullName}
                   onChange={formik.handleChange}
                   error={formik.touched.name && Boolean(formik.errors.fullName)}
@@ -228,7 +228,7 @@ const ProfileModel = ({ handleClose,open }) => {
                   rows={4}
                   id="bio"
                   name="bio"
-                  label="Bio"
+                  label="자기소개"
                   value={formik.values.bio}
                   onChange={formik.handleChange}
                   error={formik.touched.bio && Boolean(formik.errors.bio)}
@@ -238,7 +238,7 @@ const ProfileModel = ({ handleClose,open }) => {
                   fullWidth
                   id="website"
                   name="website"
-                  label="Website"
+                  label="링크"
                   value={formik.values.website}
                   onChange={formik.handleChange}
                   error={
@@ -250,7 +250,7 @@ const ProfileModel = ({ handleClose,open }) => {
                   fullWidth
                   id="location"
                   name="location"
-                  label="Location"
+                  label="내 위치"
                   value={formik.values.location}
                   onChange={formik.handleChange}
                   error={
@@ -262,7 +262,7 @@ const ProfileModel = ({ handleClose,open }) => {
                   fullWidth
                   id="education"
                   name="education"
-                  label="Education"
+                  label="학교"
                   value={formik.values.education}
                   onChange={formik.handleChange}
                   error={
@@ -274,7 +274,7 @@ const ProfileModel = ({ handleClose,open }) => {
                   fullWidth
                   id="birthDate"
                   name="birthDate"
-                  label="Birth Date (XXXX-XX-XX)"
+                  label="생년월일 (XXXX-XX-XX)"
                   value={formik.values.birthDate}
                   onChange={formik.handleChange}
                   error={
@@ -306,7 +306,7 @@ const ProfileModel = ({ handleClose,open }) => {
             }}
           >
             <div className="image-source-options">
-              <p>Enter a keyword to generate an AI image:</p>
+              <p>키워드를 입력해주세요!</p>
               <input
                 type="text"
                 value={keyword}
@@ -330,11 +330,11 @@ const ProfileModel = ({ handleClose,open }) => {
                 <a
                   href={`http://localhost:8080/download`}
                   download="generated_image.jpg"
-                >이미지 다운로드</a>
+                >이미지 저장</a>
                 <button onClick={handleAIImageChange}>이미지 선택</button>
               </div>
             )}
-            <button onClick={handleGenerateImage}>이미지 생성</button>
+            <button onClick={handleGenerateImage}>AI 프로필 생성</button>
           </Box>
         </div>
       </Modal>

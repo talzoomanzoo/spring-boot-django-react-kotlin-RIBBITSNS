@@ -16,7 +16,7 @@ interface RibbitApiService {
     @POST("api/twits/create")
     suspend fun twitCreate(
         @Body twitCreateRequest: TwitCreateRequest
-    )
+    ): RibbitPost
 }
 
 //    @GET("auth/refresh")

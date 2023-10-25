@@ -6,10 +6,10 @@ import * as Yup from "yup";
 import { loginUser } from "../../Store/Auth/Action";
 
 const validationSchema = Yup.object().shape({
-  email: Yup.string().email("Invalid email").required("Email is required"),
+  email: Yup.string().email("잘못된 이메일입니다.").required("필수 항목입니다."),
   password: Yup.string()
-    .required("Password is required")
-    .min(6, "Password must be at least 6 characters"),
+    .required("필수 항목입니다.")
+    .min(6, "비밀번호는 6자리 이상 가능합니다."),
 });
 
 const SigninForm = () => {
@@ -34,7 +34,7 @@ const SigninForm = () => {
           <TextField
             className="w-full"
             name="email"
-            label="Email"
+            label="이메일"
             fullWidth
             variant="outlined"
             size="large"
@@ -48,7 +48,7 @@ const SigninForm = () => {
         <Grid item xs={12}>
           <TextField
             name="password"
-            label="Password"
+            label="비밀번호"
             fullWidth
             variant="outlined"
             size="large"
@@ -68,12 +68,12 @@ const SigninForm = () => {
               width: "100%",
               borderRadius: "29px",
               py: "15px",
-              bgcolor: "#1d9bf0",
+              bgcolor: "#008000",
             }}
             variant="contained"
             size="large"
           >
-            Signin
+            로그인
           </Button>
         </Grid>
       </Grid>

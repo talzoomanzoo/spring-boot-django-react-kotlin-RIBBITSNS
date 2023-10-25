@@ -49,6 +49,7 @@ import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.HomeViewModel
 import com.hippoddung.ribbit.ui.viewmodel.TwitsCreateUiState
 import com.hippoddung.ribbit.ui.viewmodel.TwitsCreateViewModel
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.io.File
 
@@ -60,30 +61,34 @@ fun TwitCreateScreen(
     modifier: Modifier = Modifier
 ) {
     when (twitsCreateViewModel.twitsCreateUiState) {
-        is TwitsCreateUiState.Ready -> InputTwitScreen(
-            navController = navController,
-            twitsCreateViewModel = twitsCreateViewModel,
-            homeViewModel = homeViewModel,
-            modifier = modifier.fillMaxSize()
-        )
+        is TwitsCreateUiState.Ready -> {
+            Log.d("HippoLog, TwitCreateScreen", "Ready")
+            InputTwitScreen(
+                navController = navController,
+                twitsCreateViewModel = twitsCreateViewModel,
+                homeViewModel = homeViewModel,
+                modifier = modifier.fillMaxSize()
+            )
+        }
 
         is TwitsCreateUiState.Success -> {
+            Log.d("HippoLog, TwitCreateScreen", "Success")
             runBlocking {
-                homeViewModel.getRibbitPosts()
-                navController.navigate(RibbitScreen.HomeScreen.name)
+                launch {  homeViewModel.getRibbitPosts()}
+                launch { navController.navigate(RibbitScreen.HomeScreen.name) }
             }
             twitsCreateViewModel.twitsCreateUiState = TwitsCreateUiState.Ready
-            Log.d("HippoLog, TwitCreateScreen", "${twitsCreateViewModel.twitsCreateUiState}")
         }
 
         is TwitsCreateUiState.Loading -> {
+            Log.d("HippoLog, TwitCreateScreen", "Loading")
             LoadingScreen()
-            Log.d("HippoLog, TwitCreateScreen", "${twitsCreateViewModel.twitsCreateUiState}")
         }
 
-        is TwitsCreateUiState.Error -> ErrorScreen(
-            modifier = modifier.fillMaxSize()
-        )
+        is TwitsCreateUiState.Error -> {
+            Log.d("HippoLog, TwitCreateScreen", "Error")
+            ErrorScreen(modifier = modifier.fillMaxSize())
+        }
     }
 }
 

@@ -16,7 +16,7 @@ const ListTop = memo(({ list }) => {
             className="space-y-3"
             style={{ marginTop: 10 }}>
 
-            Public Lists
+            공계 리스트
             <hr
                 style={{
                     marginTop: 10,

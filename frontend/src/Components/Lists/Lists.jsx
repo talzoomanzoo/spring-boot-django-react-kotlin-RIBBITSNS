@@ -30,8 +30,9 @@ const Lists = () => {
     return (
         <div id="lists" className="space-y-5">
             <section
-                className={`z-50 flex items-center sticky top-0 ${theme.currentTheme === "light" ? "bg-white" : "bg-[#0D0D0D]"
-                    } bg-opacity-95`}
+                className={`z-50 flex items-center sticky top-0 bg-opacity-95`}
+                // ${theme.currentTheme === "light" ? "bg-white" : "bg-[#0D0D0D]"
+                //     } 
             >
                 <div className="z-50 flex items-center sticky top-0 space-x-5">
                     <KeyboardBackspaceIcon
@@ -40,7 +41,7 @@ const Lists = () => {
                     />
                     <h1 className="py-5 text-xl font-bold opacity-90 ml-5">
                         {/* ml-5: margin-left 3rem 크기 */}
-                        Lists
+                        리스트
                     </h1>
                 </div>
                 <div
@@ -48,7 +49,7 @@ const Lists = () => {
                     onClick={handleOpenListsModel} //리스트 추가
                 >
                     <PlaylistAddIcon />
-                    <> Add List </>
+                    <> 리스트 추가 </>
                 </div>
             </section>
 
@@ -64,7 +65,7 @@ const Lists = () => {
                 className="space-y-3"
                 style={{ marginTop: 10 }}>
 
-                Public Lists
+                공개 리스트
                 <hr
                     style={{
                         marginTop: 10,
@@ -76,7 +77,7 @@ const Lists = () => {
                 />
 
                 <section
-                    className={`${theme.currentTheme === "dark" ? "pt-14" : ""} space-y-5`}>
+                    className={`space-y-5`}>
                     {list?.lists?.map((item) => (
                         !item.privateMode ? (
                             <ListCard
@@ -91,7 +92,7 @@ const Lists = () => {
             <div
                 className="space-y-3"
                 style={{ marginTop: 10 }}>
-                Private Lists
+                비공개 리스트
                 <hr
                     className="overflow-y-scroll hideScrollbar border-gray-700 h-[20vh] w-full rounded-md"
                     style={{
@@ -104,7 +105,7 @@ const Lists = () => {
                 />
 
                 <section
-                    className={`${theme.currentTheme === "dark" ? "pt-14" : ""} space-y-5`}>
+                    className={`space-y-5`}>
                     {list?.lists?.map((item) => (
                         item.privateMode ? (
                             <ListCard

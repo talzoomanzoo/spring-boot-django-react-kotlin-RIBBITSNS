@@ -52,6 +52,7 @@ class HomeViewModel @Inject constructor(
     fun getRibbitPosts() {
         viewModelScope.launch(Dispatchers.IO) {
             homeUiState = HomeUiState.Loading
+            Log.d("HippoLog, HomeViewModel", "$homeUiState")
             homeUiState = try {
                 HomeUiState.Success(ribbitRepository.getPosts())
             } catch (e: IOException) {
