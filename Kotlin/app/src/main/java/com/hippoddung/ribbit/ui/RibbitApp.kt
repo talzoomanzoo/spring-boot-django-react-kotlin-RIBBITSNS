@@ -76,17 +76,18 @@ fun RibbitApp(
 ) {
     when (authViewModel.authUiState) {
         is AuthUiState.Login -> {
-            RibbitScreen(homeViewModel, authViewModel, tokenViewModel, twitsCreateViewModel)
             Log.d("HippoLog, RibbitApp", "Login")
-            Log.d("HippoLog, RibbitApp","${homeViewModel.homeUiState}")
+            RibbitScreen(homeViewModel, authViewModel, tokenViewModel, twitsCreateViewModel)
         }
+
         is AuthUiState.Logout -> {
-            AuthScreen(authViewModel)
             Log.d("HippoLog, RibbitApp", "Logout")
+            AuthScreen(authViewModel)
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RibbitScreen(
     homeViewModel: HomeViewModel,
@@ -99,44 +100,43 @@ fun RibbitScreen(
     val navController: NavHostController = rememberNavController()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = { HippoTopAppBar(homeViewModel = homeViewModel,scrollBehavior = scrollBehavior, navController = navController) }
+    NavHost(
+        navController = navController,
+        startDestination = RibbitScreen.HomeScreen.name,
+        modifier = Modifier
     ) {
-        Surface(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(it)
-        ) {
-            NavHost(
-                navController = navController,
-                startDestination = RibbitScreen.HomeScreen.name,
-                modifier = Modifier
-            ) {
-                composable(route = RibbitScreen.HomeScreen.name) {
+        composable(route = RibbitScreen.HomeScreen.name) {
 //                    homeViewModel.getRibbitPosts() // recompositon시 계속 실행됨. 여기 함수를 두면 안 됨.
-//                    Log.d("HippoLog, RibbitApp", "${homeViewModel.homeUiState}")
-                    HomeScreen(
-                        navController = navController,
-                        homeViewModel = homeViewModel
-                    )
-                }
-                composable(route = RibbitScreen.ProfileScreen.name) {
-                    ProfileScreen()
-                }
-                composable(route = RibbitScreen.TwitCreateScreen.name) {
-                    TwitCreateScreen(twitsCreateViewModel = twitsCreateViewModel, homeViewModel = homeViewModel,navController = navController)
-                }
-                composable(route = RibbitScreen.LogoutScreen.name) {
-                    LogoutScreen(authViewModel = authViewModel, tokenViewModel = tokenViewModel)
-                }
-                composable(route = RibbitScreen.LoadingScreen.name) {
-                    LoadingScreen()
-                }
-                composable(route = RibbitScreen.ErrorScreen.name) {
-                    ErrorScreen()
-                }
-            }
+            Log.d("HippoLog, RibbitApp, RibbitScreen", "HomeScreen")
+            HomeScreen(
+                scrollBehavior = scrollBehavior,
+                navController = navController,
+                homeViewModel = homeViewModel
+            )
+        }
+        composable(route = RibbitScreen.ProfileScreen.name) {
+            Log.d("HippoLog, RibbitApp, RibbitScreen", "ProfileScreen")
+            ProfileScreen()
+        }
+        composable(route = RibbitScreen.TwitCreateScreen.name) {
+            Log.d("HippoLog, RibbitApp, RibbitScreen", "TwitCreateScreen")
+            TwitCreateScreen(
+                twitsCreateViewModel = twitsCreateViewModel,
+                homeViewModel = homeViewModel,
+                navController = navController
+            )
+        }
+        composable(route = RibbitScreen.LogoutScreen.name) {
+            Log.d("HippoLog, RibbitApp, RibbitScreen", "LogoutScreen")
+            LogoutScreen(authViewModel = authViewModel, tokenViewModel = tokenViewModel)
+        }
+        composable(route = RibbitScreen.LoadingScreen.name) {
+            Log.d("HippoLog, RibbitApp, RibbitScreen", "LoadingScreen")
+            LoadingScreen()
+        }
+        composable(route = RibbitScreen.ErrorScreen.name) {
+            Log.d("HippoLog, RibbitApp, RibbitScreen", "ErrorScreen")
+            ErrorScreen()
         }
     }
 }
@@ -162,166 +162,14 @@ fun AuthScreen(
                 modifier = Modifier
             ) {
                 composable(route = RibbitScreen.LoginScreen.name) {
+                    Log.d("HippoLog, RibbitApp, AuthScreen", "LoginScreen")
                     LoginScreen(navController, authViewModel)
                 }
                 composable(route = RibbitScreen.SignUpScreen.name) {
+                    Log.d("HippoLog, RibbitApp, AuthScreen", "SignUpScreen")
                     SignUpScreen(authViewModel)
                 }
             }
         }
     }
 }
-
-@Composable
-fun HippoTopAppBar(
-    homeViewModel: HomeViewModel,
-    scrollBehavior: TopAppBarScrollBehavior,
-    navController: NavHostController,
-    modifier: Modifier = Modifier
-) {
-    Column {
-        CenterAlignedTopAppBar(
-            scrollBehavior = scrollBehavior,
-            title = {
-                Box {
-                    TextButton(onClick = {
-                        navController.navigate(RibbitScreen.HomeScreen.name)
-                        homeViewModel.getRibbitPosts()
-                    }){
-                        Text(
-                            text = stringResource(R.string.app_name),
-                            style = MaterialTheme.typography.headlineSmall,
-                        )
-                    }
-                }
-            },
-            navigationIcon = { MainDropDownMenu(navController) },
-            actions = { ProfileDropDownMenu(navController) },
-            modifier = modifier
-        )
-//        AdBanner() // 불러오는 중 TimeOut이 자주 발생
-    }
-}
-
-@Composable
-fun MainDropDownMenu(navController: NavHostController) {
-    var isDropDownMenuExpanded by remember { mutableStateOf(false) }
-
-    OutlinedButton(
-        onClick = { isDropDownMenuExpanded = true }
-    ) {
-        Text(text = "Menu")
-    }
-
-    DropdownMenu(
-        expanded = isDropDownMenuExpanded,
-        onDismissRequest = { isDropDownMenuExpanded = false },
-        modifier = Modifier
-            .wrapContentSize()
-            .padding(4.dp)
-    ) {
-        DropdownMenuItem(
-            onClick = {
-                navController.navigate(RibbitScreen.HomeScreen.name)
-                isDropDownMenuExpanded = false
-            },
-            text = {
-                Text(
-                    text = "Home",
-                    color = Color.Blue,
-                    fontStyle = FontStyle.Italic,
-                    fontSize = 14.sp,
-                    style = TextStyle(shadow = Shadow(Color.Black))
-                )
-            }
-        )
-        DropdownMenuItem(
-            onClick = {
-                println("Hello 5")
-                isDropDownMenuExpanded = false
-            },
-            text = {
-                Text(
-                    text = "Print Hello 5",
-                    color = Color.Blue,
-                    fontStyle = FontStyle.Italic,
-                    fontSize = 14.sp,
-                    style = TextStyle(
-                        shadow = Shadow(
-                            color = Color.Black,
-                            offset = Offset(3f, 3f),
-                            blurRadius = 3f
-                        )
-                    )
-                )
-            }
-        )
-    }
-}
-
-@Composable
-fun ProfileDropDownMenu(navController: NavHostController) {
-    var isDropDownMenuExpanded by remember { mutableStateOf(false) }
-
-    OutlinedButton(
-        onClick = { isDropDownMenuExpanded = true }
-    ) {
-        Text(text = "Profile")
-    }
-
-    DropdownMenu(
-        expanded = isDropDownMenuExpanded,
-        onDismissRequest = { isDropDownMenuExpanded = false },
-        modifier = Modifier
-            .wrapContentSize()
-            .padding(4.dp)
-    ) {
-        DropdownMenuItem(
-            onClick = {
-                navController.navigate(RibbitScreen.ProfileScreen.name)
-                isDropDownMenuExpanded = false
-            },
-            text = {
-                Text(
-                    text = "My Profile",
-                    color = Color.Blue,
-                    fontStyle = FontStyle.Italic,
-                    fontSize = 14.sp,
-                    style = TextStyle(shadow = Shadow(Color.Black))
-                )
-            }
-        )
-        DropdownMenuItem(
-            onClick = {
-                navController.navigate(RibbitScreen.LogoutScreen.name)
-                isDropDownMenuExpanded = false
-            },
-            text = {
-                Text(
-                    text = "Log out",
-                    color = Color.Blue,
-                    fontStyle = FontStyle.Italic,
-                    fontSize = 14.sp,
-                    style = TextStyle(shadow = Shadow(Color.Black))
-                )
-            }
-        )
-    }
-}
-
-//@Composable
-//fun AdBanner(modifier: Modifier = Modifier) {
-//    AndroidView(
-//        modifier = modifier,
-//        factory = { context ->
-//            AdView(context).apply {
-//                setAdSize(AdSize.FULL_BANNER)
-//                // Use test ad unit ID
-//                adUnitId = "ca-app-pub-3940256099942544/6300978111"
-//            }
-//        },
-//        update = { adView ->
-//            adView.loadAd(AdRequest.Builder().build())
-//        }
-//    )
-//}
