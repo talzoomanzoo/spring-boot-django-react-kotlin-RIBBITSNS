@@ -54,7 +54,7 @@ fun WebViewFullScreen(videoUrl: String) {
                             if (this.customView != null) {
                                 onHideCustomView()
                                 return
-                            }
+                            }else{}
                             this.customView = view
                             (activity.window.decorView as FrameLayout).addView(
                                 this.customView

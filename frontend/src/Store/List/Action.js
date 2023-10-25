@@ -7,6 +7,9 @@ import {
     GET_LISTS_REQUEST,
     GET_LISTS_SUCCESS,
     GET_LISTS_FAILURE,
+    GET_PRIVATE_REQUEST,
+    GET_PRIVATE_SUCCESS,
+    GET_PRIVATE_FAILURE,
     UPDATE_LIST_REQUEST,
     UPDATE_LIST_SUCCESS,
     UPDATE_LIST_FAILURE,
@@ -16,7 +19,27 @@ import {
     GET_USER_REQUEST,
     GET_USER_SUCCESS,
     GET_USER_FAILURE,
+    LIST_DELETE_REQUEST,
+    LIST_DELETE_SUCCESS,
+    LIST_DELETE_FAILURE,
+    SET_PRIVATE_REQUEST,
+    SET_PRIVATE_SUCCESS,
+    SET_PRIVATE_FAILURE,
 } from "./ActionType";
+
+export const deleteListRequest=() => ({
+    type: LIST_DELETE_REQUEST,
+});
+
+export const deleteListSuccess=(listId) => ({
+    type: LIST_DELETE_SUCCESS,
+    payload: listId,
+});
+
+export const deleteListFailure=(error) => ({
+    type: LIST_DELETE_FAILURE,
+    payload: error,
+});
 
 export const createListRequest= () => ({
     type:LIST_CREATE_REQUEST,
@@ -30,6 +53,19 @@ export const createListSuccess=(data) => ({
 export const createListFailure=(error) => ({
     type: LIST_CREATE_FAILURE,
     payload:error,
+})
+export const getPrivateListsRequest = () => ({
+    type:GET_PRIVATE_REQUEST,
+})
+
+export const getPrivateListsSuccess = (lists) => ({
+    type:GET_PRIVATE_SUCCESS,
+    payload: lists,
+})
+
+export const getPrivateListsFailure = (error) => ({
+    type: GET_PRIVATE_FAILURE,
+    payload: error,
 })
 
 export const getAllListsRequest = () => ({
@@ -103,6 +139,17 @@ export const getUserAction = (listId) => async (dispatch) => {
     }
 }
 
+export const setPrivate= (listId) => async(dispatch) => {
+    dispatch({type: SET_PRIVATE_REQUEST})
+    try {
+        const response = await api.post(`/api/lists/${listId}/setPrivate`);
+        const list = response.data;
+        dispatch({type: SET_PRIVATE_SUCCESS, payload: list});
+    } catch (error) {
+        dispatch({type: SET_PRIVATE_FAILURE, payload: error.message});
+    }
+}
+
 
 export const getAllLists = () => {
     return async (dispatch) => {
@@ -113,6 +160,32 @@ export const getAllLists = () => {
             dispatch(getAllListsSuccess(response.data));
         } catch (error) {
             dispatch(getAllListsFailure(error.message));
+        }
+    };
+};
+
+export const getPrivateLists = () => {
+    return async (dispatch) => {
+        dispatch(getPrivateListsRequest());
+        try {
+            const response = await api.get("/api/lists/private");
+            console.log("all lists", response.data)
+            dispatch(getPrivateListsSuccess(response.data));
+        } catch (error) {
+            dispatch(getPrivateListsFailure(error.message));
+        }
+    }
+}
+
+export const deleteList = (listId) => {
+    return async (dispatch) => {
+        dispatch(deleteListRequest());
+        try{
+            await api.delete(`/api/lists/${listId}`);
+            dispatch(deleteListSuccess(listId));
+            console.log("delete list", listId);
+        } catch (error) {
+            dispatch(deleteListFailure(error.message));
         }
     };
 };

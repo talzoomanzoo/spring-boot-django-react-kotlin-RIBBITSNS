@@ -4,8 +4,10 @@ import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import ListsModel from "./ListsModel";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ListBottom from "./ListCard/ListBottom";
+import ListTop from "./ListCard/LIstTop";
 import ListCard from "./ListCard/ListCard";
-import { getAllLists } from "../../Store/List/Action";
+import { getAllLists, getPrivateLists } from "../../Store/List/Action";
 
 const Lists = () => {
     const dispatch = useDispatch();
@@ -17,13 +19,14 @@ const Lists = () => {
     const [openListsModel, setOpenListsModel] = useState();
     const handleCloseListsModel = () => setOpenListsModel(false);
     const handleOpenListsModel = () => setOpenListsModel(true);
+    console.log("list Lists check",
+        list);
 
     useEffect(() => {
-        dispatch(getAllLists())
+        dispatch(getAllLists());
     }, [list.list])
 
-    console.log("list Lists check",    
-                list);
+
     return (
         <div id="lists" className="space-y-5">
             <section
@@ -56,13 +59,61 @@ const Lists = () => {
                 />
             </section>
 
-            <section
-                className={`${theme.currentTheme === "dark" ? "pt-14" : ""} space-y-5`}>
-                {list?.lists?.map((item) => (
-                    <ListCard 
-                        list={item} />
-                ))}
-            </section>
+            {/* ListTop */}
+            <div
+                className="space-y-3"
+                style={{ marginTop: 10 }}>
+
+                Public Lists
+                <hr
+                    style={{
+                        marginTop: 10,
+                        background: 'grey',
+                        color: 'grey',
+                        borderColor: 'grey',
+                        height: '1px',
+                    }}
+                />
+
+                <section
+                    className={`${theme.currentTheme === "dark" ? "pt-14" : ""} space-y-5`}>
+                    {list?.lists?.map((item) => (
+                        !item.privateMode ? (
+                            <ListCard
+                                style={{ marginTop: 10 }}
+                                list={item} />
+                        ) : null
+                    ))}
+                </section>
+            </div>
+
+            {/* ListBottom */}
+            <div
+                className="space-y-3"
+                style={{ marginTop: 10 }}>
+                Private Lists
+                <hr
+                    className="overflow-y-scroll hideScrollbar border-gray-700 h-[20vh] w-full rounded-md"
+                    style={{
+                        marginTop: 10,
+                        background: 'grey',
+                        color: 'grey',
+                        borderColor: 'grey',
+                        height: '1px',
+                    }}
+                />
+
+                <section
+                    className={`${theme.currentTheme === "dark" ? "pt-14" : ""} space-y-5`}>
+                    {list?.lists?.map((item) => (
+                        item.privateMode ? (
+                            <ListCard
+                                style={{ marginTop: 10 }}
+                                list={item} />
+                        ) : null
+                    ))}
+                </section>
+            </div>
         </div>
     )
 };

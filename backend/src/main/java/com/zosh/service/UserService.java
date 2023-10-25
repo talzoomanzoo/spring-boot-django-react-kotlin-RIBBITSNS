@@ -2,10 +2,15 @@ package com.zosh.service;
 
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import com.zosh.exception.ListException;
 import com.zosh.exception.UserException;
 import com.zosh.model.User;
 
+import io.swagger.v3.oas.annotations.servers.Server;
+
+@Service
 public interface UserService {
 
 	public User findUserById(Long userId) throws UserException;
