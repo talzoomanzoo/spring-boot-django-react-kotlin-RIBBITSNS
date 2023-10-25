@@ -30,4 +30,6 @@ public interface TwitRepository extends JpaRepository<Twit, Long> {
 	@Query("SELECT t FROM Twit t JOIN t.user u WHERE u.id IN (SELECT f.id FROM User u2 JOIN u2.followings f WHERE u2.id = :userId)")
 	public List<Twit> searchFollowedTwit(Long userId);
 
+	List<Twit> findByRetwitUser(User user);
+	
 }

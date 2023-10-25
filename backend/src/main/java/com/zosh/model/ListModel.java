@@ -39,6 +39,6 @@ public class ListModel {
 	private String backgroundImage;
 	
 	@JsonIgnore
-	@ManyToMany(cascade=CascadeType.ALL)
+	@ManyToMany
 	private List<User> followings=new ArrayList<>();
 }

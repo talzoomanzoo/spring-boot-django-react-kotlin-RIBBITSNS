@@ -39,6 +39,24 @@ const Navigation = () => {
     setopenwithdrawl(false);
   };
 
+  const jwtToken = localStorage.getItem("jwt");
+  const accountwithdrawal = async()=>{
+    try {
+      const response = await fetch("http://localhost:8080/api/users/withdraw",{
+        method:'POST',
+        headers:{
+          'Authorization':`Bearer ${jwtToken}`,
+        },
+      });
+      if(response.status === 200){
+        localStorage.removeItem("jwt");
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error("Failed to delete:", error);
+    }
+  };
+
   return (
     <div className="h-screen sticky top-0 ">
       <div>
@@ -123,7 +141,7 @@ const Navigation = () => {
           <p id="description">
             정말로 탈퇴하시겠습니까? 탈퇴하시는 순간 모든 게시물을 삭제 되어집니다.
           </p>
-          <Button >확인</Button>
+          <Button onClick={accountwithdrawal}>확인</Button>
           <Button onClick={handleclosewithdrawl}>취소</Button>
         </div>
      </Modal>
