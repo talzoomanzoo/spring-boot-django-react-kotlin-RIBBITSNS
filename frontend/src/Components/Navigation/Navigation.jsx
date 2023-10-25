@@ -63,7 +63,7 @@ const Navigation = () => {
         <div className="py-5">
           <img
             className="w-10"
-            src="https://waifu2x.booru.pics/outfiles/a2936a8caed993f9e006506b1afc9ace572e8d66_s2_n2_y1.png"
+            src="https://cdn.pixabay.com/photo/2023/10/25/08/19/08-19-05-334_1280.png"
             alt=""
             onClick={()=> navigate(`/`)}
           />
