@@ -31,6 +31,7 @@ import {
 } from "../../Store/Tweet/Action";
 import TwitCard from "../Home/MiddlePart/TwitCard/TwitCard";
 import SnackbarComponent from "../Snackbar/SnackbarComponent";
+import "./Map.css";
 import ProfileModel from "./ProfileModel";
 
 const Profile = () => {
@@ -45,8 +46,6 @@ const Profile = () => {
   const followersListRef = useRef(null);
   const [showLocation, setShowLocation] = useState(false);
   const [isLocationSaved, setIsLocationSaved] = useState(false);
-  const [map, setmap] = useState(false);
-
   const param = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -123,80 +122,38 @@ const Profile = () => {
     };
   }, [auth.user]);
 
-  const Maplocation = () => {
-    const [searchKeyword, setSearchKeyword] = useState(""); // 검색어 상태
+  const MapLocation = () => {
+    const [searchKeyword, setSearchKeyword] = useState("");
     const [map, setMap] = useState(null);
-    const [notification, setNotification] = useState(null);
-
+    const [searchResults, setSearchResults] = useState([]);
+    const [markers, setMarkers] = useState([]);
+    const infowindow = new kakao.maps.InfoWindow({ zIndex: 1 });
+    const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
+    const itemsPerPage = 10;
+    const [currentMarkers, setCurrentMarkers] = useState([]);
+    const [hoveredMarkerIndex, setHoveredMarkerIndex] = useState(null);
 
     useEffect(() => {
       const container = document.getElementById("map");
 
       if (container) {
         const options = {
-          center: new kakao.maps.LatLng(37.5662952, 126.9757567), // 서울시청을 기본 중심으로 설정
-          level: 3, // 초기 지도 확대 레벨
+          center: new kakao.maps.LatLng(37.5662952, 126.9757567),
+          level: 3,
         };
 
-        // 사용자의 현재 위치를 가져오기
         if ("geolocation" in navigator) {
           navigator.geolocation.getCurrentPosition((position) => {
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
             options.center = new kakao.maps.LatLng(latitude, longitude);
 
-            const newMap = new kakao.maps.Map(container, options);
-            setMap(newMap); // 지도 상태 업데이트
-
-            // 나머지 코드는 그대로 유지
-            const infowindow = new kakao.maps.InfoWindow({ zIndex: 1 });
-            const places = new kakao.maps.services.Places();
-            const searchButton = document.getElementById("search-button");
-
-            searchButton.addEventListener("click", () => {
-              places.keywordSearch(searchKeyword, function (data, status) {
-                if (status === kakao.maps.services.Status.OK) {
-                  const bounds = new kakao.maps.LatLngBounds();
-
-                  for (let i = 0; i < data.length; i++) {
-                    const place = data[i];
-                    displayMarker(place);
-                    bounds.extend(new kakao.maps.LatLng(place.y, place.x));
-                  }
-
-                  // 모든 마커가 보이도록 중심좌표와 레벨 설정
-                  map.setBounds(bounds);
-                } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
-                  setNotification("검색 결과가 존재하지 않습니다.");
-                } else if (status === kakao.maps.services.Status.ERROR) {
-                  setNotification("검색 결과 중 오류가 발생했습니다.");
-                }
-              });
-            });
-
-            function displayMarker(place) {
-              const marker = new kakao.maps.Marker({
-                map: newMap,
-                position: new kakao.maps.LatLng(place.y, place.x),
-              });
-
-              kakao.maps.event.addListener(marker, "click", function () {
-                const markerPosition = marker.getPosition();
-                newMap.setLevel(3); // 레벨을 3으로 설정
-                newMap.setCenter(markerPosition); // 클릭한 마커를 중심으로 지도 재설정
-
-                infowindow.setContent(
-                  '<div style="padding:5px;font-size:12px;">' +
-                    place.place_name +
-                    "</div>"
-                );
-                infowindow.open(newMap, marker);
-              });
-            }
+            const map = new kakao.maps.Map(container, options);
+            setMap(map);
           });
         }
       }
-    }, [searchKeyword]);
+    }, []);
 
     useEffect(() => {
       if (map) {
@@ -210,46 +167,215 @@ const Profile = () => {
       }
     }, [map]);
 
-    const handleSearchKeyPress = (event) => {
-      if (event.key === "Enter") {
-        // Enter 키가 눌렸을 때 검색 버튼 클릭 이벤트를 호출
-        document.getElementById("search-button").click();
-      } else {
-        alert("키워드를 입력해주세요!");
-        return;
-      }
-    };
+    function getListItem(index, places) {
+      return (
+        <div className="item" key={index}>
+          <span className={"markerbg marker_" + (index + 1)}></span>
+          <div className="info">
+            <h5>{places.place_name}</h5>
+            {places.road_address_name ? (
+              <div>
+                <span>{places.road_address_name}</span>
+                <span className="jibun gray">{places.address_name}</span>
+              </div>
+            ) : (
+              <span>{places.address_name}</span>
+            )}
+            <span className="tel">{places.phone}</span>
+          </div>
+        </div>
+      );
+    }
 
-    const handleSearchClick = () => {
+    const handleSearch = () => {
       if (!searchKeyword.trim()) {
         alert("키워드를 입력해주세요!");
         return;
       }
+
+      // 현재 열려 있는 infowindow를 닫음
+      infowindow.close();
+
+      // 이전 마커들을 제거
+      currentMarkers.forEach((marker) => {
+        marker.setMap(null);
+      });
+
+      const places = new kakao.maps.services.Places();
+      places.keywordSearch(searchKeyword, function (data, status) {
+        if (status === kakao.maps.services.Status.OK) {
+          const bounds = new kakao.maps.LatLngBounds();
+          const newMarkers = data.map((place) => {
+            return displayMarker(place);
+          });
+
+          newMarkers.forEach((marker) => {
+            bounds.extend(marker.getPosition());
+          });
+
+          // 검색 결과와 새로운 마커 배열을 업데이트
+          setSearchResults(data);
+          setCurrentMarkers(newMarkers);
+          setCurrentPage(1);
+          map.setBounds(bounds);
+        }
+      });
     };
 
-    useEffect(() => {
-      if (notification) {
-        alert(notification);
-        setNotification(null); // 알림을 표시한 후 상태 초기화
-      }
-    }, [notification]);
+    const createSearchResultItem = (result, index) => {
+      let infowindow = null;
+
+      const handleMouseEnter = () => {
+        const marker = currentMarkers[index];
+        if (marker) {
+          if (infowindow) {
+            infowindow.close();
+          }
+          infowindow = new kakao.maps.InfoWindow({
+            content:
+              '<div style="padding:5px;font-size:12px;">' +
+              result.place_name +
+              "</div>",
+            position: marker.getPosition(),
+          });
+          infowindow.open(map, marker);
+        }
+      };
+
+      const handleMouseLeave = () => {
+        if (infowindow) {
+          infowindow.close();
+        }
+      };
+
+      const handleItemClick = (place) => {
+        // 나머지 동작 처리 (맵 재설정 또는 기타 작업)
+        const marker = currentMarkers[index];
+        if (marker) {
+          const markerPosition = marker.getPosition();
+          map.setLevel(3); // 레벨을 3으로 설정
+          map.setCenter(markerPosition); // 클릭한 마커를 중심으로 지도 재설정
+          console.log("New Address:", place.address_name); // 주소 확인
+        }
+      };
+
+      return (
+        <li
+          className={getMarkerItemClassName(index)}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          onClick={handleItemClick}
+        >
+          {getListItem(indexOfFirstItem + index, result)}
+        </li>
+      );
+    };
+
+    const displayMarker = (place) => {
+      console.log("Place Object:", place); // place 객체 내용 확인
+      const marker = new kakao.maps.Marker({
+        map: map,
+        position: new kakao.maps.LatLng(place.y, place.x),
+      });
+
+      // 마커를 markers 배열에 추가
+      setMarkers((prevMarkers) => [...prevMarkers, marker]);
+
+      // 마우스가 마커 위에 올라갈 때
+      kakao.maps.event.addListener(marker, "mouseover", function () {
+        infowindow.close(); // 기존 infowindow를 닫음
+        infowindow.setContent(
+          '<div style="padding:5px;font-size:12px;">' +
+            place.place_name +
+            "</div>"
+        );
+        infowindow.open(map, marker);
+      });
+
+      kakao.maps.event.addListener(marker, "click", function () {
+        const markerPosition = marker.getPosition();
+        map.setLevel(3); // 레벨을 3으로 설정
+        map.setCenter(markerPosition); // 클릭한 마커를 중심으로 지도 재설정
+        setAddress(place.place_name); // 주소 업데이트
+      });
+
+      // 마우스가 마커에서 벗어날 때
+      kakao.maps.event.addListener(marker, "mouseout", function () {
+        infowindow.close(); // infowindow를 닫음
+      });
+      return marker; // 마커를 반환
+    };
+
+    // CSS 클래스를 조작하여 마커 강조 및 투명 처리
+    const getMarkerItemClassName = (index) => {
+      return `item ${index === hoveredMarkerIndex ? "hovered" : ""}`;
+    };
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = searchResults.slice(indexOfFirstItem, indexOfLastItem);
+
+    const handlePageClick = (pageNumber) => {
+      setCurrentPage(pageNumber);
+    };
+
+    // 계산된 총 페이지 수
+    const totalPageCount = Math.ceil(searchResults.length / itemsPerPage);
+
+    // 페이지 번호 목록 생성
+    const pageNumbers = [];
+    for (let i = 1; i <= totalPageCount; i++) {
+      pageNumbers.push(i);
+    }
 
     return (
-      <div>
-        <div>
-          <input
-            type="text"
-            placeholder="Search for a location"
-            value={searchKeyword}
-            onChange={(e) => setSearchKeyword(e.target.value)}
-            onKeyPress={handleSearchKeyPress} // Enter 키 핸들러 추가
-          />
-          <button id="search-button" onClick={handleSearchClick}>
-            Search
-          </button>
-        </div>
-        <div>
-          <div id="map" style={{ width: "100%", height: "400px" }}></div>
+      <div className="map_wrap">
+        <div
+          id="map"
+          style={{
+            width: "100%",
+            height: "100%",
+            position: "relative",
+            overflow: "hidden",
+          }}
+        ></div>
+
+        <div id="menu_wrap" className="bg_white">
+          <div className="option">
+            <div>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleSearch();
+                }}
+              >
+                <input
+                  type="text"
+                  value={searchKeyword}
+                  placeholder="장소·주소 검색"
+                  onChange={(e) => setSearchKeyword(e.target.value)}
+                  id="keyword"
+                  size="15"
+                />
+                <button type="submit">검색하기</button>
+              </form>
+            </div>
+          </div>
+          <hr />
+
+          <ul id="placesList">
+            {currentItems.map((result, index) =>
+              createSearchResultItem(result, index)
+            )}
+          </ul>
+          <div id="pagination">
+            <ul className="page-numbers">
+              {pageNumbers.map((number) => (
+                <li key={number} onClick={() => handlePageClick(number)}>
+                  {number}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     );
@@ -269,16 +395,18 @@ const Profile = () => {
 
   const formik = useFormik({
     initialValues: {
-      location: "",
+      location: address,
     },
     onSubmit: toggleMap,
   });
 
   useEffect(() => {
+    // address가 변경될 때마다 location 필드를 업데이트
+    console.log("Address Updated:", address); // 주소 확인
     formik.setValues({
-      location: auth.user.location || address,
+      location: address,
     });
-  }, [auth.user]);
+  }, [address]);
 
   return (
     <React.Fragment>
@@ -361,17 +489,6 @@ const Profile = () => {
                   </>
                 </div>
               ) : null}
-
-              {/* {auth.findUser?.location ? (
-                <div className="flex items-center text-gray-500">
-                  <>
-                    <button onClick={toggleMap}>
-                      <LocationOnIcon />
-                    </button>
-                    <p className="ml-2">{auth.findUser.location}</p>
-                  </>
-                </div>
-              ) : null} */}
 
               <div className="flex items-center text-gray-500">
                 <form onSubmit={formik.handleSubmit}>
@@ -487,7 +604,7 @@ const Profile = () => {
           </div>
         </div>
       </section>
-      {showLocation && <Maplocation />}
+      {showLocation && <MapLocation />}
       <section>
         <Box sx={{ width: "100%", typography: "body1", marginTop: "20px" }}>
           <TabContext value={tabValue}>

@@ -18,32 +18,27 @@ import {
 } from "@mui/material";
 import EmojiPicker from "emoji-picker-react";
 import { useFormik } from "formik";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
-import { css } from '@emotion/react';
+import { api } from "../../../../Config/apiConfig";
 import {
   createRetweet,
   createTweet,
   deleteTweet,
   getTime,
   likeTweet,
-  updateTweet,
-  viewPlus,
+  viewPlus
 } from "../../../../Store/Tweet/Action";
-import { uploadToCloudinary } from "../../../../Utils/UploadToCloudinary";
-import BackdropComponent from "../../../Backdrop/Backdrop";
-import ReplyModal from "./ReplyModal";
-import { BounceLoader } from 'react-spinners';//npm install react-spinners --save 명령어로 설치진행
-import axios from 'axios';
-import { api } from "../../../../Config/apiConfig";
 import {
   UPDATE_TWEET_FAILURE,
   UPDATE_TWEET_REQUEST,
   UPDATE_TWEET_SUCCESS,
-
 } from "../../../../Store/Tweet/ActionType";
+import { uploadToCloudinary } from "../../../../Utils/UploadToCloudinary";
+import BackdropComponent from "../../../Backdrop/Backdrop";
+import ReplyModal from "./ReplyModal";
 
 const validationSchema = Yup.object().shape({
   content: Yup.string().required("Tweet text is required"),
