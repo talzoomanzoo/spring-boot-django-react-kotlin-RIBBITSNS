@@ -4,9 +4,6 @@ import {
   FIND_USER_BY_ID_FILURE,
   FIND_USER_BY_ID_REQUEST,
   FIND_USER_BY_ID_SUCCESS,
-  FOLLOW_TWIT_FAILURE,
-  FOLLOW_TWIT_REQUEST,
-  FOLLOW_TWIT_SUCCESS,
   FOLLOW_USER_FAILURE,
   FOLLOW_USER_REQUEST,
   FOLLOW_USER_SUCCESS,
@@ -29,6 +26,9 @@ import {
   UPDATE_USER_FAILURE,
   UPDATE_USER_REQUEST,
   UPDATE_USER_SUCCESS,
+  // ADD_USER_USERDTO_REQUEST,
+  // ADD_USER_USERDTO_SUCCESS,
+  // ADD_USER_USERDTO_FAILURE,
 } from "./ActionType";
 
 const initialState = {
@@ -51,10 +51,11 @@ const authReducer = (state = initialState, action) => {
     case REGISTER_REQUEST:
     case GET_PROFILE_REUEST: //LOGIN_REQUEST, REGISTER_REQUEST, GET_PROFILE_REUEST 등의 요청 액션은 로딩 상태를 true로 설정하고 오류를 초기화합니다.
     case FIND_USER_BY_ID_REQUEST:
-    case  FOLLOW_TWIT_REQUEST:
     case SEARCH_TWIT_REQUEST:
     case FOLLOW_USER_REQUEST:
       return { ...state, loading: true, error: null };
+    // case ADD_USER_USERDTO_REQUEST:
+    //   return { ...state, loading: true, error: null };
     case SEARCH_USER_REQUEST: //검색 결과 배열을 초기화하고 로딩 상태를 true로 설정합니다.
       return { ...state, userSearchResult: [], loading: true, error: null };
 
@@ -84,14 +85,6 @@ const authReducer = (state = initialState, action) => {
         findUser: action.payload,
         error: null,
       };
-    
-    case  FOLLOW_TWIT_SUCCESS:
-      return {
-        ...state,
-        loading:false,
-        findUser:action.payload,
-        error:null,
-      }
 
     case SEARCH_USER_SUCCESS: //검색 결과를 업데이트합니다.
       return {
@@ -116,14 +109,21 @@ const authReducer = (state = initialState, action) => {
         findUser: action.payload,
         error: null,
       };
-
+    
+    // case ADD_USER_USERDTO_SUCCESS:
+    //   return {
+    //     ...state,
+    //     loading:false,
+    //     findUser: action.payload,
+    //     error: null,
+    //   }
     case LOGIN_FAILURE:
     case REGISTER_FAILURE:
     case GET_PROFILE_FAILURE:
     case UPDATE_USER_FAILURE:
     case FIND_USER_BY_ID_FILURE:
-    case  FOLLOW_TWIT_FAILURE:
     case FOLLOW_USER_FAILURE:
+    // case ADD_USER_USERDTO_FAILURE:
     case SEARCH_USER_FAILURE: //실패 액션(*_FAILURE)은 오류 정보를 업데이트하고 로딩 상태를 false로 설정합니다.
       return { ...state, loading: false, error: action.payload };
     case SEARCH_TWIT_FAILURE:

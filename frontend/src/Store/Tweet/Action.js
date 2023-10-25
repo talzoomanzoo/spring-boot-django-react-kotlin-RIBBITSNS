@@ -1,10 +1,14 @@
-// actions.js
+ // actions.js
 
 import { api } from "../../Config/apiConfig";
+//import { ethicreveal } from "../../Components/Home/MiddlePart/TwitCard/TwitCard";
 import {
   FIND_TWEET_BY_ID_FAILURE,
   FIND_TWEET_BY_ID_REQUEST,
   FIND_TWEET_BY_ID_SUCCESS,
+  FOLLOW_TWIT_FAILURE,
+  FOLLOW_TWIT_REQUEST,
+  FOLLOW_TWIT_SUCCESS,
   GET_ALL_TWEETS_FAILURE,
   GET_ALL_TWEETS_REQUEST,
   GET_ALL_TWEETS_SUCCESS,
@@ -35,6 +39,9 @@ import {
   VIEW_PLUS_FAILURE,
   VIEW_PLUS_REQUEST,
   VIEW_PLUS_SUCCESS,
+  GET_USERS_REPLIES_REQUEST,
+  GET_USERS_REPLIES_SUCCESS,
+  GET_USERS_REPLIES_FAILURE,
 } from "./ActionType";
 
 export const createTweetRequest = () => ({
@@ -110,6 +117,19 @@ export const getUsersTweets = (userId) => {
   };
 };
 
+export const getUsersReplies = (userId) => {
+  return async (dispatch) => {
+    dispatch({type:GET_USERS_REPLIES_REQUEST});
+    try {
+      const response = await api.get(`/api/twits/user/${userId}/replies`);
+      console.log("users replies", response.data)
+      dispatch({type:GET_USERS_REPLIES_SUCCESS, payload:response.data});
+    } catch (error) {
+      dispatch({type:GET_USERS_REPLIES_FAILURE, payload:error.message});
+    }
+  }
+}
+
 export const findTwitsByLikesContainUser = (userId) => {
   return async (dispatch) => {
     dispatch({type:USER_LIKE_TWEET_REQUEST});
@@ -141,29 +161,16 @@ export const createTweet = (tweetData) => {
     dispatch(createTweetRequest());
     try {
       const {data} = await api.post("/api/twits/create", tweetData);
-      console.log("created twit ",data)
+      console.log("tweetData: ",tweetData);
+      console.log("created twit ",data);
       dispatch(createTweetSuccess(data));
+      console.log("data.id: ",data.id);
+      console.log("data.id: ",data.content);
     } catch (error) {
       dispatch(createTweetFailure(error.message));
     }
   };
 };
-
-
-export const updateTweet = (twit) => {
-  return async (dispatch) => {
-    console.log("twitContent", twit.content); // 넘어 온 것 확인
-    console.log("tr", twit);
-    dispatch({type:UPDATE_TWEET_REQUEST});
-    try {
-      const {data} = await api.post(`/api/twits/edit`, twit);
-      console.log("edited twit", data)
-      dispatch({type:UPDATE_TWEET_SUCCESS,payload:data});
-    } catch (error) {
-      dispatch({type:UPDATE_TWEET_FAILURE,payload:error.message});
-    }
-  }
-}
 
 export const createTweetReply = (tweetData) => {
   return async (dispatch) => {
@@ -237,9 +244,23 @@ export const deleteTweet = (tweetId) => {
   };
 };
 
+export const followTwit = () => async (dispatch) => {
+  dispatch({type:FOLLOW_TWIT_REQUEST})
+  try {
+    const response = await api.get(`/api/twits/followTwit`);
+    const user = response.data;
+    dispatch({type:FOLLOW_TWIT_SUCCESS, payload:user});
+    console.log("find by twit user -: ", user);
+  } catch (error) {
+    dispatch({type:FOLLOW_TWIT_FAILURE, payload:error.message});
+  }
+};
+
+
+
 export const getTime = (datetime, currTimestamp) => {
   const totalMilliseconds = currTimestamp - datetime;
-  console.log("totalMilliseconds+", totalMilliseconds);
+  //console.log("totalMilliseconds+", totalMilliseconds);
   const totalSeconds = Math.floor(totalMilliseconds / 1000);
   const totalMinutes = Math.floor(totalSeconds / 60);
   const totalHours = Math.floor(totalMinutes / 60);

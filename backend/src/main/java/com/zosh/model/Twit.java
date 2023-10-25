@@ -7,7 +7,6 @@ import java.util.List;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,7 +23,7 @@ public class Twit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne//(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id") // 외래키를 매핑할 때 사용; name 속성에는 매핑할 외래키 이름 지정
     private User user;
 
@@ -53,13 +52,19 @@ public class Twit {
     private int viewCount;
 
     private String image; 
-    private String video; 
+    private String video;
     
     @Column(nullable = false)
     private boolean isEdited = false; 
+
+    private String location;
     
     private boolean isReply; 
     private boolean isTwit; 
     private boolean is_liked = false; 
     private boolean is_retwit = false;
+    
+    private String ethicrate; //윤리수치 저장
+    private int label; //수치중 가장 큰것을 라벨값으로 저장
+    private String sentence;//라벨값에 알맞는 문장을 입력
 }

@@ -13,6 +13,9 @@ public interface TwitService {
 	
 	public Twit createTwit(Twit req,User user)throws UserException, TwitException;
 	
+	public Twit inputethic(Long twitId, String ethicrate) throws TwitException;
+	//sns게시물에 윤리수치를 집어넣는 서비스이다.
+	
 	public List<Twit> findAllTwit();
 	
 	public Twit retwit(Long twitId, User user) throws UserException, TwitException;
@@ -31,9 +34,11 @@ public interface TwitService {
 	
 	public List<Twit> getUsersTwit(User user);
 	
+	public List<Twit> getUsersReplies(Long userId);
+	
 	public List<Twit> findByLikesContainsUser(User user);
 
-	//public List<Twit> findTwitFollowedByReqUser(User user);
+	public List<Twit> findTwitFollowedByReqUser(User user);
 
 	public Twit updateView(Twit twit) throws TwitException;
 	

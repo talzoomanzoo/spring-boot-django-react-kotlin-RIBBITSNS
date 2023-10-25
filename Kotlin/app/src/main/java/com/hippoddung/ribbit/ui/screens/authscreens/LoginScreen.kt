@@ -31,10 +31,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.R
-import com.hippoddung.ribbit.network.bodys.Auth
+import com.hippoddung.ribbit.network.bodys.requestbody.AuthRequest
 import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
 import com.hippoddung.ribbit.ui.viewmodel.CoroutinesErrorHandler
@@ -42,12 +41,12 @@ import com.hippoddung.ribbit.ui.viewmodel.CoroutinesErrorHandler
 @Composable
 fun LoginScreen(
     navController: NavHostController,
-    authViewModel: AuthViewModel = hiltViewModel(),
+    authViewModel: AuthViewModel,
     modifier: Modifier = Modifier
 ) {
     var email by remember { mutableStateOf("") }
     var pW by remember { mutableStateOf("") }
-    var auth = Auth(email = email, password = pW)
+    var authRequest = AuthRequest(email = email, password = pW)
 
     Column(
         modifier = modifier
@@ -57,11 +56,11 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = stringResource(R.string.Login),
+            text = stringResource(R.string.login),
             style = MaterialTheme.typography.displaySmall
         )
         Text(
-            text = stringResource(R.string.Login),
+            text = stringResource(R.string.login),
             modifier = Modifier
                 .padding(bottom = 16.dp)
                 .align(alignment = Alignment.Start)
@@ -90,13 +89,13 @@ fun LoginScreen(
             Button(
                 onClick = {
                     authViewModel.login(
-                        auth,
+                        authRequest,
                         object : CoroutinesErrorHandler { override fun onError(message: String) { "Error! $message" } }
                     )
                 },
                 modifier.padding(14.dp)
             ) {
-                Text(text = stringResource(R.string.Login))
+                Text(text = stringResource(R.string.login))
             }
         }
         Row(modifier) {
@@ -106,7 +105,7 @@ fun LoginScreen(
                 },
                 modifier.padding(14.dp)
             ) {
-                Text(text = stringResource(R.string.Sign_up))
+                Text(text = stringResource(R.string.sign_up))
             }
         }
         Spacer(modifier = Modifier.height(150.dp))
@@ -122,7 +121,7 @@ fun InputEmailField(
     TextField(
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-        label = { Text(stringResource(R.string.Email)) },
+        label = { Text(stringResource(R.string.email)) },
         value = value,
         onValueChange = onValueChange,
         modifier = modifier,
@@ -140,7 +139,7 @@ fun InputPWField(
         singleLine = true,
         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-        label = { Text(stringResource(R.string.PW)) },
+        label = { Text(stringResource(R.string.pW)) },
         value = value,
         onValueChange = onValueChange,
         trailingIcon = {

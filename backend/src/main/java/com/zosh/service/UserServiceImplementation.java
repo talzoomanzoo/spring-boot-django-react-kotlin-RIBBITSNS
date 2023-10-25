@@ -1,25 +1,33 @@
 package com.zosh.service;
 
 import java.util.List;
+import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.zosh.config.JwtProvider;
+import com.zosh.exception.ListException;
 import com.zosh.exception.UserException;
+import com.zosh.model.ListModel;
 import com.zosh.model.User;
+import com.zosh.repository.ListRepository;
 import com.zosh.repository.UserRepository;
 
 @Service
 public class UserServiceImplementation implements UserService {
-	
-	private UserRepository userRepository;
-	private JwtProvider jwtProvider;
-	
+	private final UserRepository userRepository;
+	private final ListRepository listRepository;
+	private final JwtProvider jwtProvider;
+
+	@Autowired
 	public UserServiceImplementation(
 			UserRepository userRepository,
+			ListRepository listRepository,
 			JwtProvider jwtProvider) {
 		
 		this.userRepository=userRepository;
+		this.listRepository=listRepository;
 		this.jwtProvider=jwtProvider;
 		
 	}
@@ -102,6 +110,26 @@ public class UserServiceImplementation implements UserService {
 	public List<User> searchUser(String query) {
 	
 		return userRepository.searchUser(query);
+	}
+
+	public ListModel findById(Long listId) throws ListException {
+		// TODO Auto-generated method stub
+		ListModel listModel = listRepository.findById(listId)
+				.orElseThrow(()-> new ListException("List Not Found with Id" + listId));
+		return listModel;
+	}
+	@Override
+	public User followList(Long userId, Long listId) throws UserException, ListException {
+		// TODO Auto-generated method stub
+		User user=findUserById(userId);
+		ListModel listModel=findById(listId);
+		if (user.getFollowedLists().contains(listModel) ) {
+			user.getFollowedLists().remove(listModel);
+		} else {
+			user.getFollowedLists().add(listModel);
+		}
+		userRepository.save(user);
+		return user;
 	}
 
 }

@@ -13,27 +13,27 @@ import * as Yup from "yup";
 import { registerUser } from "../../Store/Auth/Action";
 
 const validationSchema = Yup.object().shape({
-  fullName: Yup.string().required("Full Name is required"),
-  email: Yup.string().email("Invalid email").required("Email is required"),
+  fullName: Yup.string().required("필수 항목입니다."),
+  email: Yup.string().email("잘못된 이메일").required("필수 항목입니다."),
   password: Yup.string()
-    .required("Password is required")
-    .min(6, "Password must be at least 6 characters"),
+    .required("필수 항목입니다.")
+    .min(6, "비밀번호는 6자리 이상 가능합니다."),
 });
 
 const days = Array.from({ length: 31 }, (_, i) => i + 1);
 const months = [
-  { value: "01", label: "January" },
-  { value: "02", label: "February" },
-  { value: "03", label: "March" },
-  { value: "04", label: "April" },
-  { value: "05", label: "May" },
-  { value: "06", label: "June" },
-  { value: "07", label: "July" },
-  { value: "08", label: "August" },
-  { value: "09", label: "September" },
-  { value: "10", label: "October" },
-  { value: "11", label: "November" },
-  { value: "12", label: "December" },
+  { value: "01", label: "1월" },
+  { value: "02", label: "2월" },
+  { value: "03", label: "3월" },
+  { value: "04", label: "4월" },
+  { value: "05", label: "5월" },
+  { value: "06", label: "6월" },
+  { value: "07", label: "7월" },
+  { value: "08", label: "8월" },
+  { value: "09", label: "9월" },
+  { value: "10", label: "10월" },
+  { value: "11", label: "11월" },
+  { value: "12", label: "12월" },
 ];
 const currentYear = new Date().getFullYear();
 const years = Array.from({ length: 100 }, (_, i) => currentYear - i);
@@ -77,7 +77,7 @@ const SignupForm = () => {
         <Grid item xs={12}>
           <TextField
             name="fullName"
-            label="Full Name"
+            label="이름"
             fullWidth
             variant="outlined"
             size="large"
@@ -92,7 +92,7 @@ const SignupForm = () => {
           <TextField
             className="w-full"
             name="email"
-            label="Email"
+            label="이메일"
             fullWidth
             variant="outlined"
             size="large"
@@ -106,7 +106,7 @@ const SignupForm = () => {
         <Grid item xs={12}>
           <TextField
             name="password"
-            label="Password"
+            label="비밀번호"
             fullWidth
             variant="outlined"
             size="large"
@@ -119,7 +119,7 @@ const SignupForm = () => {
           />
         </Grid>
         <Grid item xs={4}>
-          <InputLabel>Date</InputLabel>
+          <InputLabel>일</InputLabel>
           <Select
             name="day"
             value={formik.values.birthDate.day}
@@ -138,7 +138,7 @@ const SignupForm = () => {
           </Select>
         </Grid>
         <Grid item xs={4}>
-          <InputLabel>Month</InputLabel>
+          <InputLabel>월</InputLabel>
           <Select
             name="month"
             value={formik.values.birthDate.month}
@@ -157,7 +157,7 @@ const SignupForm = () => {
           </Select>
         </Grid>
         <Grid item xs={4}>
-          <InputLabel>Year</InputLabel>
+          <InputLabel>년</InputLabel>
           <Select
             name="year"
             value={formik.values.birthDate.year}
@@ -187,12 +187,12 @@ const SignupForm = () => {
               width: "100%",
               borderRadius: "29px",
               py: "15px",
-              bgcolor: "#1d9bf0",
+              bgcolor: "#008000",
             }}
             variant="contained"
             size="large"
           >
-            Signup
+            가입하기
           </Button>
         </Grid>
       </Grid>

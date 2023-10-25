@@ -42,7 +42,7 @@ open class BaseViewModel : ViewModel() {
         mJob?.let {
             if (it.isActive) {
                 it.cancel()
-            }
+            }else{}
         }
     }
 }

@@ -4,18 +4,21 @@ package com.hippoddung.ribbit.ui
 
 import android.util.Log
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
@@ -33,58 +36,72 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.hippoddung.ribbit.R
 import com.hippoddung.ribbit.ui.screens.HomeScreen
-import com.hippoddung.ribbit.ui.screens.authscreens.LoginScreen
 import com.hippoddung.ribbit.ui.screens.ProfileScreen
-import com.hippoddung.ribbit.ui.screens.authscreens.SignUpScreen
 import com.hippoddung.ribbit.ui.screens.TwitCreateScreen
+import com.hippoddung.ribbit.ui.screens.authscreens.LoginScreen
 import com.hippoddung.ribbit.ui.screens.authscreens.LogoutScreen
+import com.hippoddung.ribbit.ui.screens.authscreens.SignUpScreen
+import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
+import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthUiState
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
 import com.hippoddung.ribbit.ui.viewmodel.HomeViewModel
+import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
+import com.hippoddung.ribbit.ui.viewmodel.TwitsCreateViewModel
 
 enum class RibbitScreen(@StringRes val title: Int) {
-    HomeScreen(title = R.string.Home_screen),
-    LoginScreen(title = R.string.Login_screen),
-    LogoutScreen(title = R.string.Logout_screen),
-    ProfileScreen(title = R.string.Profile_screen),
-    SignUpScreen(title = R.string.Sign_up_screen),
-    TwitCreateScreen(title = R.string.Twit_create_screen),
+    HomeScreen(title = R.string.home_screen),
+    LoginScreen(title = R.string.login_screen),
+    LogoutScreen(title = R.string.logout_screen),
+    ProfileScreen(title = R.string.profile_screen),
+    SignUpScreen(title = R.string.sign_up_screen),
+    TwitCreateScreen(title = R.string.twit_create_screen),
+    PickImageScreen(title = R.string.pick_image_screen),
+    LoadingScreen(title = R.string.loading_screen),
+    ErrorScreen(title = R.string.error_screen),
 }
 
 @Composable
-fun RibbitApp() {
-    val authViewModel: AuthViewModel = hiltViewModel()
-    val navController: NavHostController = rememberNavController()
-
-    when(authViewModel.authUiState) {
+fun RibbitApp(
+    homeViewModel: HomeViewModel,
+    authViewModel: AuthViewModel,
+    tokenViewModel: TokenViewModel,
+    twitsCreateViewModel: TwitsCreateViewModel
+) {
+    when (authViewModel.authUiState) {
         is AuthUiState.Login -> {
-            RibbitScreen(navController)
+            RibbitScreen(homeViewModel, authViewModel, tokenViewModel, twitsCreateViewModel)
+            Log.d("HippoLog, RibbitApp", "Login")
+            Log.d("HippoLog, RibbitApp","${homeViewModel.homeUiState}")
         }
         is AuthUiState.Logout -> {
-            AuthScreen(navController, authViewModel)
-            Log.d("HippoLog, RibbitApp","Fail")
+            AuthScreen(authViewModel)
+            Log.d("HippoLog, RibbitApp", "Logout")
         }
     }
 }
 
 @Composable
 fun RibbitScreen(
-    navController: NavHostController
+    homeViewModel: HomeViewModel,
+    authViewModel: AuthViewModel,
+    tokenViewModel: TokenViewModel,
+    twitsCreateViewModel: TwitsCreateViewModel
 ) {
 //    val backStackEntry by navController.currentBackStackEntryAsState()
 //    val currentScreen = RibbitScreen.valueOf(backStackEntry?.destination?.route ?: RibbitScreen.SignUpScreen.name)
+    val navController: NavHostController = rememberNavController()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = { HippoTopAppBar(scrollBehavior = scrollBehavior, navController = navController) }
+        topBar = { HippoTopAppBar(homeViewModel = homeViewModel,scrollBehavior = scrollBehavior, navController = navController) }
     ) {
         Surface(
             modifier = Modifier
@@ -97,20 +114,27 @@ fun RibbitScreen(
                 modifier = Modifier
             ) {
                 composable(route = RibbitScreen.HomeScreen.name) {
-                    val homeViewModel: HomeViewModel = hiltViewModel()
+//                    homeViewModel.getRibbitPosts() // recompositon시 계속 실행됨. 여기 함수를 두면 안 됨.
+//                    Log.d("HippoLog, RibbitApp", "${homeViewModel.homeUiState}")
                     HomeScreen(
                         navController = navController,
-                        homeUiState = homeViewModel.homeUiState
+                        homeViewModel = homeViewModel
                     )
                 }
                 composable(route = RibbitScreen.ProfileScreen.name) {
                     ProfileScreen()
                 }
                 composable(route = RibbitScreen.TwitCreateScreen.name) {
-                    TwitCreateScreen(navController)
+                    TwitCreateScreen(twitsCreateViewModel = twitsCreateViewModel, homeViewModel = homeViewModel,navController = navController)
                 }
                 composable(route = RibbitScreen.LogoutScreen.name) {
-                    LogoutScreen()
+                    LogoutScreen(authViewModel = authViewModel, tokenViewModel = tokenViewModel)
+                }
+                composable(route = RibbitScreen.LoadingScreen.name) {
+                    LoadingScreen()
+                }
+                composable(route = RibbitScreen.ErrorScreen.name) {
+                    ErrorScreen()
                 }
             }
         }
@@ -119,9 +143,9 @@ fun RibbitScreen(
 
 @Composable
 fun AuthScreen(
-    navController: NavHostController,
     authViewModel: AuthViewModel
 ) {
+    val navController: NavHostController = rememberNavController()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold(
@@ -141,7 +165,7 @@ fun AuthScreen(
                     LoginScreen(navController, authViewModel)
                 }
                 composable(route = RibbitScreen.SignUpScreen.name) {
-                    SignUpScreen()
+                    SignUpScreen(authViewModel)
                 }
             }
         }
@@ -149,26 +173,41 @@ fun AuthScreen(
 }
 
 @Composable
-fun HippoTopAppBar(scrollBehavior: TopAppBarScrollBehavior,navController: NavHostController, modifier: Modifier = Modifier) {
-    CenterAlignedTopAppBar(
-        scrollBehavior = scrollBehavior,
-        title = {
-            Text(
-                text = stringResource(R.string.app_name),
-                style = MaterialTheme.typography.headlineSmall,
-            )
-        },
-        navigationIcon = { MainDropDownMenu(navController) },
-        actions = { ProfileDropDownMenu(navController) },
-        modifier = modifier
-    )
+fun HippoTopAppBar(
+    homeViewModel: HomeViewModel,
+    scrollBehavior: TopAppBarScrollBehavior,
+    navController: NavHostController,
+    modifier: Modifier = Modifier
+) {
+    Column {
+        CenterAlignedTopAppBar(
+            scrollBehavior = scrollBehavior,
+            title = {
+                Box {
+                    TextButton(onClick = {
+                        navController.navigate(RibbitScreen.HomeScreen.name)
+                        homeViewModel.getRibbitPosts()
+                    }){
+                        Text(
+                            text = stringResource(R.string.app_name),
+                            style = MaterialTheme.typography.headlineSmall,
+                        )
+                    }
+                }
+            },
+            navigationIcon = { MainDropDownMenu(navController) },
+            actions = { ProfileDropDownMenu(navController) },
+            modifier = modifier
+        )
+//        AdBanner() // 불러오는 중 TimeOut이 자주 발생
+    }
 }
 
 @Composable
-fun MainDropDownMenu(navController: NavHostController, modifier: Modifier = Modifier) {
+fun MainDropDownMenu(navController: NavHostController) {
     var isDropDownMenuExpanded by remember { mutableStateOf(false) }
 
-    Button(
+    OutlinedButton(
         onClick = { isDropDownMenuExpanded = true }
     ) {
         Text(text = "Menu")
@@ -185,7 +224,7 @@ fun MainDropDownMenu(navController: NavHostController, modifier: Modifier = Modi
             onClick = {
                 navController.navigate(RibbitScreen.HomeScreen.name)
                 isDropDownMenuExpanded = false
-                      },
+            },
             text = {
                 Text(
                     text = "Home",
@@ -200,7 +239,7 @@ fun MainDropDownMenu(navController: NavHostController, modifier: Modifier = Modi
             onClick = {
                 println("Hello 5")
                 isDropDownMenuExpanded = false
-                      },
+            },
             text = {
                 Text(
                     text = "Print Hello 5",
@@ -221,10 +260,10 @@ fun MainDropDownMenu(navController: NavHostController, modifier: Modifier = Modi
 }
 
 @Composable
-fun ProfileDropDownMenu(navController: NavHostController, modifier: Modifier = Modifier) {
+fun ProfileDropDownMenu(navController: NavHostController) {
     var isDropDownMenuExpanded by remember { mutableStateOf(false) }
 
-    Button(
+    OutlinedButton(
         onClick = { isDropDownMenuExpanded = true }
     ) {
         Text(text = "Profile")
@@ -269,3 +308,20 @@ fun ProfileDropDownMenu(navController: NavHostController, modifier: Modifier = M
         )
     }
 }
+
+//@Composable
+//fun AdBanner(modifier: Modifier = Modifier) {
+//    AndroidView(
+//        modifier = modifier,
+//        factory = { context ->
+//            AdView(context).apply {
+//                setAdSize(AdSize.FULL_BANNER)
+//                // Use test ad unit ID
+//                adUnitId = "ca-app-pub-3940256099942544/6300978111"
+//            }
+//        },
+//        update = { adView ->
+//            adView.loadAd(AdRequest.Builder().build())
+//        }
+//    )
+//}

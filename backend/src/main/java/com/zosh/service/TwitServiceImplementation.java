@@ -5,6 +5,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.zosh.exception.TwitException;
 import com.zosh.exception.UserException;
 import com.zosh.model.Twit;
@@ -33,6 +36,52 @@ public class TwitServiceImplementation implements TwitService {
 		twit.setTwit(true);
 		twit.setVideo(req.getVideo());
 
+		return twitRepository.save(twit);
+	}
+	
+	@Override
+	public Twit inputethic(Long twitId, String ethicrate) throws TwitException {
+		
+		Twit twit = findById(twitId);
+		twit.setEthicrate(ethicrate);
+		//윤리수치를 가지고 온다.
+		
+		JsonObject object = JsonParser.parseString(ethicrate).getAsJsonObject();
+		JsonArray array = object.getAsJsonArray("result");
+		JsonArray values =array.get(0).getAsJsonArray();
+		//json타입에 배열로 가지고 와서 해당 배열을 읽어 values에 넣는다.
+		
+		int maxindex = 0;
+		double maxvalue = values.get(0).getAsDouble();
+		
+		for (int i = 1; i < values.size(); i++) {
+			double value = values.get(i).getAsDouble();
+			if(value > maxvalue) {
+				maxvalue = value;
+				maxindex = i;
+			}
+		}
+		twit.setLabel(maxindex);
+		//수치 중 가장 큰 value의 인덱스를 maxindex에 넣는다.
+		
+		String sentence="";
+		if (maxindex == 0) {
+			sentence="과격한 감정이 느껴지네여.";
+		} else if (maxindex == 1) {
+			sentence="흠, 성적인 감정이 느껴지는것 같네여.";
+		} else if (maxindex == 2) {
+			sentence="진정하세여! 욕은 안되여!!";
+		} else if (maxindex == 3) {
+			sentence="차별이 느껴지네여, 좀 더 평등하게 생각해봐여!";
+		} else if (maxindex == 4) {
+			sentence="오늘 당신의 감정은 평온 하군여.";
+		}
+		//maxindex에 해당하는 문장을 선택한다.
+		//0: '폭력',1: '선정',2: '욕설',3: '차별',4: '정상'
+		
+		twit.setSentence(sentence);
+		//해당 문장을 입력한다.
+		
 		return twitRepository.save(twit);
 	}
 
@@ -140,6 +189,13 @@ public class TwitServiceImplementation implements TwitService {
 
 		return twitRepository.findByRetwitUserContainsOrUser_IdAndIsTwitTrueOrderByCreatedAtDesc(user, user.getId());
 	}
+	
+	@Override
+	public List<Twit> getUsersReplies(Long userId) {
+		// TODO Auto-generated method stub
+		System.out.println("reply check Service"+ userId);
+		return twitRepository.findUsersReplies(userId);
+	} 
 
 	@Override
 	public List<Twit> findByLikesContainsUser(User user) {
@@ -158,10 +214,10 @@ public class TwitServiceImplementation implements TwitService {
 		return twitRepository.searchTwit(query);
 	}
 
-/*	@Override
+	@Override
 	public List<Twit> findTwitFollowedByReqUser(User user) {
 		// TODO Auto-generated method stub
 		System.out.println(user.getId());
 		return twitRepository.searchFollowedTwit(user.getId());
-	} */
+	}
 }

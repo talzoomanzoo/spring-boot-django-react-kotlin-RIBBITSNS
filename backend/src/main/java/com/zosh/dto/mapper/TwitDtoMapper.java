@@ -40,7 +40,11 @@ public class TwitDtoMapper {
 		twitDto.setRetwitUsersId(retwitUserId);
 		twitDto.setReplyTwits(toTwitDtos(twit.getReplyTwits(), reqUser));
 		twitDto.setVideo(twit.getVideo());
+		twitDto.setLocation(twit.getLocation());
 		
+		twitDto.setEthicrate(twit.getEthicrate());
+		twitDto.setLabel(twit.getLabel());
+		twitDto.setSentence(twit.getSentence());
 		
 		return twitDto;
 	}
@@ -89,6 +93,11 @@ public class TwitDtoMapper {
 		twitDto.setEditedAt(twit.getEditedAt());
 		twitDto.setRetwitUsersId(retwitUserId);
 		twitDto.setVideo(twit.getVideo());
+		twitDto.setLocation(twit.getLocation());
+		
+		twitDto.setEthicrate(twit.getEthicrate());
+		twitDto.setLabel(twit.getLabel());
+		twitDto.setSentence(twit.getSentence());
 		
 		return twitDto;
 	}

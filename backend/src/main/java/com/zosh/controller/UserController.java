@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -16,10 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.zosh.dto.UserDto;
 import com.zosh.dto.mapper.UserDtoMapper;
+import com.zosh.exception.ListException;
 import com.zosh.exception.UserException;
+import com.zosh.model.ListModel;
 import com.zosh.model.User;
-import com.zosh.service.TwitService;
+import com.zosh.service.ListService;
 import com.zosh.service.UserService;
+import com.zosh.util.ListUtil;
 import com.zosh.util.UserUtil;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,10 +37,11 @@ public class UserController {
 @Autowired
 private UserService userService;
 @Autowired
-private TwitService twitService;
+private ListService listService;
 	
-	public UserController(UserService userService) {
+	public UserController(UserService userService, ListService listService) {
 		this.userService=userService;
+		this.listService=listService;
 	}
 	
 	@GetMapping("/profile")
@@ -71,18 +76,6 @@ private TwitService twitService;
 		userDto.setFollowed(UserUtil.isFollowedByReqUser(reqUser, user));
 		return new ResponseEntity<>(userDto,HttpStatus.ACCEPTED);
 	}
-	
-/*	@GetMapping("/followTwit")
-	public ResponseEntity<List<TwitDto>> getUserFollowTwit(@RequestHeader("Authorization") String jwt) throws UserException{
-		User reqUser=userService.findUserProfileByJwt(jwt);
-		System.out.println("reqUser + " + reqUser);
-		List<Twit> twits=twitService.findTwitFollowedByReqUser(reqUser);
-		System.out.println("twits + " + twits);
-		
-		List<TwitDto> twitDtos=TwitDtoMapper.toTwitDtos(twits, reqUser);
-		return new ResponseEntity<>(twitDtos, HttpStatus.ACCEPTED);
-		
-	} */
 	
 	@GetMapping("/search1")
 	public ResponseEntity<List<UserDto>> searchUserHandler(@RequestParam String query, 
@@ -126,4 +119,17 @@ private TwitService twitService;
 		userDto.setFollowed(UserUtil.isFollowedByReqUser(user, updatedUser));
 		return new ResponseEntity<>(userDto,HttpStatus.ACCEPTED);
 	}
+	
+//	@PostMapping("/{listId}/add2/{userId}")
+//	public ResponseEntity<UserDto> addUserHandler2(@PathVariable Long userId,
+//			@PathVariable Long listId,
+//			@RequestHeader("Authorization") String jwt)
+//		throws ListException, UserException {
+//		User updatedUser = userService.followList(userId, listId); // List가 추가하는 user
+//		UserDto userDto=UserDtoMapper.toUserDto(updatedUser);
+//		ListModel updatedList=listService.addUser(userId, listId);
+//		userDto.setFollowedLists(ListUtil.isFollowedByReqList(updatedList, updatedUser));
+//		System.out.println("ListUtilCheck2 " + userDto.isFollowedLists());
+//		return new ResponseEntity<>(userDto, HttpStatus.ACCEPTED);
+//	}
 }

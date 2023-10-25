@@ -1,7 +1,7 @@
 package com.hippoddung.ribbit.network
 
 import com.hippoddung.ribbit.data.local.TokenManager
-import com.hippoddung.ribbit.network.bodys.LoginResponse
+import com.hippoddung.ribbit.network.bodys.responsebody.AuthResponse
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator
@@ -41,7 +41,7 @@ class AuthAuthenticator @Inject constructor(
 
             if (!newToken.isSuccessful || newToken.body() == null) { //Couldn't refresh the token, so restart the login process
                 tokenManager.deleteToken()
-            }
+            }else{}
 
             newToken.body()?.let {
                 tokenManager.saveToken(it.jwt)
@@ -52,7 +52,7 @@ class AuthAuthenticator @Inject constructor(
         }
     }
 
-    private suspend fun getNewToken(refreshToken: String?): retrofit2.Response<LoginResponse> {
+    private suspend fun getNewToken(refreshToken: String?): retrofit2.Response<AuthResponse> {
         val loggingInterceptor = HttpLoggingInterceptor()
         loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
         val okHttpClient = OkHttpClient.Builder().addInterceptor(loggingInterceptor).build()

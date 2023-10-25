@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
 data class User(
     val backgroundImage: String? = null,
     val bio: String? = null,
-    val birthDate: String,
+    val birthDate: String? = null,
     val email: String,
     val followed: Boolean = false,
     val followers: List<String>? = null,
