@@ -12,4 +12,6 @@ class RibbitRepository @Inject constructor(
     suspend fun twitCreate(twitCreateRequest: TwitCreateRequest) {
         ribbitApiService.twitCreate(twitCreateRequest)
     }
+
+    suspend fun deletePost(postId: Int) = ribbitApiService.deletePost(postId)
 }
