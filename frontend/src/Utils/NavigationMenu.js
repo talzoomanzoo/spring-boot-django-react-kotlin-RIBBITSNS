@@ -10,48 +10,48 @@ import VerifiedIcon from '@mui/icons-material/Verified';
 
 export const navigationMenu=[
     {
-        title:"Home",
+        title:"홈",
         icon:<HomeIcon/>,
         path:"/"
     },
     {
-        title: "Explore",
+        title: "탐색",
         icon:<ExploreIcon/>,
         path:"/explore"
     },
     {
-        title: "Notifications",
+        title: "알림",
         icon:<NotificationsIcon/>,
         path:"/notifications"
     },
     {
-        title:"Messages" ,
+        title:"메시지" ,
         icon:<MessageIcon/>,
         path:"/messages"
     },
     {
-        title:"Lists" ,
+        title:"리스트" ,
         icon:<ListAltIcon/>,
         path:"/lists"
     },
     {
-        title:"Communities" ,
+        title:"커뮤니티" ,
         icon:<GroupIcon/>,
         path:"/communities"
     },
     {
-        title: "Verified",
+        title: "그린체크",
         icon:<VerifiedIcon/>,
         path:"/verified"
     },
     {
-        title:"Profile" ,
+        title:"프로필" ,
         icon:<AccountCircleIcon/>,
         path:"/profile"
         
     },
     {
-        title:"More" ,
+        title:"더보기" ,
         icon:<PendingIcon/>,
         path:"/more"
     },

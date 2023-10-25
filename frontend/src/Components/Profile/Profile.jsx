@@ -121,7 +121,7 @@ const Profile = () => {
     <React.Fragment>
       <section
         className={`z-50 flex items-center sticky top-0 ${
-          theme.currentTheme === "light" ? "bg-white" : "bg-[#0D0D0D]"
+          theme.currentTheme === "light" ? "light" : "dark"
         } bg-opacity-95`}
       >
         <KeyboardBackspaceIcon
@@ -137,7 +137,7 @@ const Profile = () => {
           className="w-[100%] h-[15rem] object-cover"
           src={
             auth.findUser?.backgroundImage ||
-            "https://cdn.pixabay.com/photo/2018/10/16/15/01/background-image-3751623_1280.jpg"
+            "https://png.pngtree.com/thumb_back/fw800/background/20230304/pngtree-green-base-vector-smooth-background-image_1770922.jpg"
           }
           alt=""
         />
@@ -158,7 +158,7 @@ const Profile = () => {
               variant="outlined"
               className="rounded-full"
             >
-              Edit Profile
+              프로필 변경
             </Button>
           ) : (
             <Button
@@ -234,11 +234,12 @@ const Profile = () => {
                 {followingsClicked && ( // followersClicked 상태에 따라 followers 리스트를 렌더링합니다.
                   <div
                     ref={followersListRef}
-                    className={` overflow-y-scroll hideScrollbar absolute z-50 bg-white border rounded-md p-3 w-30 ${
-                      theme.currentTheme === "light"
-                        ? "bg-white"
-                        : "bg-[#151515] border"
-                    }`}
+                    className={` overflow-y-scroll hideScrollbar absolute z-50 bg-white border rounded-md p-3 w-30 `}
+                    // ${
+                    //   theme.currentTheme === "light"
+                    //     ? "bg-white"
+                    //     : "bg-[#151515] border"
+                    // }
                   >
                     {auth.findUser?.followings &&
                       auth.findUser?.followings.map((item) => (
@@ -279,7 +280,8 @@ const Profile = () => {
                 {followersClicked && ( // followersClicked 상태에 따라 followers 리스트를 렌더링합니다.
                   <div
                     ref={followersListRef}
-                    className={` overflow-y-scroll hideScrollbar absolute z-50 bg-white border rounded-md p-3 w-30 ${
+                    className={` overflow-y-scroll hideScrollbar absolute z-50 bg-white border rounded-md p-3 w-30 
+                    ${
                       theme.currentTheme === "light"
                         ? "bg-white"
                         : "bg-[#151515] border"
@@ -324,10 +326,10 @@ const Profile = () => {
                 onChange={handleTabChange}
                 aria-label="lab API tabs example"
               >
-                <Tab label="Tweets" value="1" />
-                <Tab label="Replies" value="2" />
-                <Tab label="Media" value="3" />
-                <Tab label="Likes" value="4" />
+                <Tab label="리빗" value="1" />
+                <Tab label="댓글" value="2" />
+                <Tab label="미디어" value="3" />
+                <Tab label="좋아요" value="4" />
               </TabList>
             </Box>
 

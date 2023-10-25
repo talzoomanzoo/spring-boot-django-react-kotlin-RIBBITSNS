@@ -64,7 +64,7 @@ console.log("plan ",plan)
                 </h1>
                 <img
                   className="w-24 h-24"
-                  src="https://abs.twimg.com/responsive-web/client-web/verification-card-v2@3x.8ebee01a.png"
+                  src="https://cdn.pixabay.com/photo/2016/01/20/18/59/confirmation-1152155_1280.png"
                   alt=""
                 />
               </div>
@@ -72,17 +72,17 @@ console.log("plan ",plan)
               <div className="flex justify-between border rounded-full px-5 py-3">
                 <div>
                   {" "}
-                  <span className={`${plan==="yearly"?"text-white":"text-gray-400"} cursor-pointer`} onClick={()=>setPlan("yearly")}>Anunalluy </span>{" "}
-                  <span  onClick={()=>setPlan("monthly")} className="text-green-500 text-sm ml-5">SAVE 12%</span>
+                  <span className={`${plan==="yearly"?"text-white":"text-gray-400"} cursor-pointer`} onClick={()=>setPlan("yearly")}>매년</span>{" "}
+                  <span  onClick={()=>setPlan("monthly")} className="text-green-500 text-sm ml-5">SAVE 90%</span>
                 </div>
-                <p onClick={()=>setPlan("monthly")} className={`${plan==="monthly"?"text-white":"text-gray-400"} cursor-pointer`}>Monthly</p>
+                <p onClick={()=>setPlan("monthly")} className={`${plan==="monthly"?"text-white":"text-gray-400"} cursor-pointer`}>월간</p>
               </div>
 
               <div className="space-y-3">
                 <div className="flex items-center space-x-5">
                   <FiberManualRecordIcon sx={{ width: "7px", height: "7px" }} />
                   <p className=" text-xs">
-                    Prioritized rankings in conversations and search
+                  대화 및 검색에서 우선 순위 지정
                   </p>
                 </div>
                 <div className="flex items-center space-x-5">
@@ -95,35 +95,35 @@ console.log("plan ",plan)
                     }}
                   />
                   <p className=" text-xs">
-                    See approximately twice as many Tweets between ads in your
-                    For You and Following timelines.
+                  귀하를 위한 광고와 팔로우 타임라인의 광고 사이에 
+                  약 2배 더 많은 리빗이 표시
                   </p>
                 </div>
                 <div className="flex items-center space-x-5">
                   <FiberManualRecordIcon sx={{ width: "7px", height: "7px" }} />
                   <p className=" text-xs">
-                    Add bold and italic text in your Tweets.
+                  리빗에 굵은 기울임꼴 텍스트를 추가
                   </p>
                 </div>
                 <div className="flex items-center space-x-5">
                   <FiberManualRecordIcon sx={{ width: "7px", height: "7px" }} />
                   <p className=" text-xs">
-                    Post longer videos and 1080p video uploads.
+                  더 긴 동영상과 1080p 동영상 업로드를 게시
                   </p>
                 </div>
 
                 <div className="flex items-center space-x-5">
                   <FiberManualRecordIcon sx={{ width: "7px", height: "7px" }} />
                   <p className=" text-xs">
-                    All the existing Blue features, including Edit Tweet,
-                    Bookmark Folders and early access to new features.
+                  리빗 편집, 폴더 북마크 및 새로운 기능에 대한 
+                    조기 액세스를 포함한 모든 그린 기능이 가능
                   </p>
                 </div>
               </div>
 
               <div onClick={makePayment} className=" cursor-pointer flex justify-center bg-white text-black rounded-full px-5 py-3">
-                <span className="line-through italic">₹7,800.00</span>{" "}
-                <span className="px-5">₹6,800/year</span>
+                <span className="line-through italic">126,000₩</span>{" "}
+                <span className="px-5">100,000₩/year</span>
               </div>
             </div>
           </div>

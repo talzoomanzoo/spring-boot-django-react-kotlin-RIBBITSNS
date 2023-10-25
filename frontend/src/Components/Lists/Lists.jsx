@@ -27,8 +27,9 @@ const Lists = () => {
     return (
         <div id="lists" className="space-y-5">
             <section
-                className={`z-50 flex items-center sticky top-0 ${theme.currentTheme === "light" ? "bg-white" : "bg-[#0D0D0D]"
-                    } bg-opacity-95`}
+                className={`z-50 flex items-center sticky top-0 bg-opacity-95`}
+                // ${theme.currentTheme === "light" ? "bg-white" : "bg-[#0D0D0D]"
+                //     } 
             >
                 <div className="z-50 flex items-center sticky top-0 space-x-5">
                     <KeyboardBackspaceIcon
@@ -37,7 +38,7 @@ const Lists = () => {
                     />
                     <h1 className="py-5 text-xl font-bold opacity-90 ml-5">
                         {/* ml-5: margin-left 3rem 크기 */}
-                        Lists
+                        리스트
                     </h1>
                 </div>
                 <div
@@ -45,7 +46,7 @@ const Lists = () => {
                     onClick={handleOpenListsModel} //리스트 추가
                 >
                     <PlaylistAddIcon />
-                    <> Add List </>
+                    <> 리스트 추가 </>
                 </div>
             </section>
 
@@ -57,7 +58,8 @@ const Lists = () => {
             </section>
 
             <section
-                className={`${theme.currentTheme === "dark" ? "pt-14" : ""} space-y-5`}>
+                className={`space-y-5`}> 
+                {/* ${theme.currentTheme === "dark" ? "pt-14" : ""}  */}
                 {list?.lists?.map((item) => (
                     <ListCard 
                         list={item} />

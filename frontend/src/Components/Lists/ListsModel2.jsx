@@ -133,7 +133,7 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
         return (
             <div className="customeScrollbar overflow-y-scroll  overflow-x-hidden h-[80vh]">
                 <section
-                    className={`${theme.currentTheme === "dark" ? "pt-14" : ""} space-y-5`}
+                    className={`space-y-5`}
                 >
 
                     {list.followings?.map((item) => (
@@ -181,9 +181,9 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
                                 <IconButton onClick={handleClose} aria-label="delete">
                                     <CloseIcon />
                                 </IconButton>
-                                <p>Edit List</p>
+                                <p>리스트 수정</p>
                             </div>
-                            <Button type="submit">Save</Button>
+                            <Button type="submit">저장</Button>
                         </div>
 
                         <div className="customeScrollbar overflow-y-scroll  overflow-x-hidden h-[80vh]">
@@ -241,7 +241,7 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
                                     value={search}
                                     onChange={handleSearchUser}
                                     type="text"
-                                    placeholder="Search User to Add or Remove"
+                                    placeholder="사용자를 검색하여 추가하거나 삭제할 수 있습니다."
                                     className={`py-3 rounded-full onutline-none text-gray-500 w-full pl-12 ${theme.currentTheme === "light" ? "bg-slate-300" : "bg-[#151515]"
                                         }`}
                                 />

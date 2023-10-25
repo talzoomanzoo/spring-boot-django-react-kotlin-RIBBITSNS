@@ -36,13 +36,14 @@ const Navigation = () => {
         <div className="py-5">
           <img
             className="w-10"
-            src="https://cdn.pixabay.com/photo/2013/06/07/09/53/twitter-117595_1280.png"
+            src="https://waifu2x.booru.pics/outfiles/a2936a8caed993f9e006506b1afc9ace572e8d66_s2_n2_y1.png"
             alt=""
+            onClick={()=> navigate(`/`)}
           />
         </div>
         <div className="space-y-6">
           {navigationMenu.map((item) => (
-            <div onClick={()=> item.title==="Profile"?navigate(`/profile/${auth.user?.id}`): navigate(`${item.path}`)} className="cursor-pointer flex space-x-3 items-center">
+            <div onClick={()=> item.title==="프로필"?navigate(`/profile/${auth.user?.id}`): navigate(`${item.path}`)} className="cursor-pointer flex space-x-3 items-center">
               {item.icon}
               <p className="text-xl">{item.title}</p>
             </div>
@@ -55,13 +56,13 @@ const Navigation = () => {
               width: "100%",
               borderRadius: "29px",
               py: "15px",
-              bgcolor: "#1d9bf0",
+              bgcolor: "#42c924",
             }}
             variant="contained"
             size="large"
             onClick={()=>handleFollowTwit()}
           >
-            Tweet
+            ribbit
           </Button>
         </div>
       </div>
@@ -70,7 +71,7 @@ const Navigation = () => {
      <div className="flex items-center space-x-3">
         <Avatar
           alt="Remy Sharp"
-          src="https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_960_720.png"
+          src="https://cdn.pixabay.com/photo/2023/10/24/01/42/01-42-37-630_1280.png"
         />
 
         <div>
@@ -96,7 +97,7 @@ const Navigation = () => {
           'aria-labelledby': 'basic-button',
         }}
       >
-        <MenuItem onClick={handleLogout}>Logout</MenuItem>
+        <MenuItem onClick={handleLogout}>로그아웃</MenuItem>
       </Menu>
     
      </div>

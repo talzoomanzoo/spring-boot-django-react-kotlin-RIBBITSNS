@@ -108,9 +108,9 @@ const ListsModel = ({ handleClose, open }) => {
                                 <IconButton onClick={handleClose} aria-label="delete">
                                     <CloseIcon />
                                 </IconButton>
-                                <p>Add List</p>
+                                <p>리스트 수정</p>
                             </div>
-                            <Button type="submit">Save</Button>
+                            <Button type="submit">저장</Button>
                         </div>
 
                         <div className="customeScrollbar overflow-y-scroll  overflow-x-hidden h-[80vh]">
