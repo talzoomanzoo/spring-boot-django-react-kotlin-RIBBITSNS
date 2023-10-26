@@ -1,6 +1,6 @@
 import FmdGoodIcon from "@mui/icons-material/FmdGood";
 import ImageIcon from "@mui/icons-material/Image";
-import SlideshowIcon from '@mui/icons-material/Slideshow';
+import SlideshowIcon from "@mui/icons-material/Slideshow";
 import TagFacesIcon from "@mui/icons-material/TagFaces";
 import { Avatar, Button } from "@mui/material";
 import EmojiPicker from "emoji-picker-react";
@@ -8,19 +8,18 @@ import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
+import { api } from "../../../Config/apiConfig";
 import { getAllTweets } from "../../../Store/Tweet/Action";
 import { uploadToCloudinary } from "../../../Utils/UploadToCloudinary";
 import BackdropComponent from "../../Backdrop/Backdrop";
 import TwitCard from "./TwitCard/TwitCard";
-import { api } from "../../../Config/apiConfig";
-import { BounceLoader } from 'react-spinners';
 // import ImageIcon from '@mui/icons-material/Image';
 import {
   TWEET_CREATE_FAILURE,
   TWEET_CREATE_REQUEST,
   TWEET_CREATE_SUCCESS,
 } from "../../../Store/Tweet/ActionType";
-
+import Maplocation from "../../Profile/Maplocation";
 
 const validationSchema = Yup.object().shape({
   content: Yup.string().required("내용이 없습니다"),
@@ -41,34 +40,45 @@ const createTweetFailure = (error) => ({
 });
 
 const HomeSection = () => {
-
   const [uploadingImage, setUploadingImage] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
   const [selsectedVideo, setSelectedVideo] = useState("");
   const [thumbnail, setThumbnail] = useState("");
   const [isLoading, setIsLoading] = useState(false); //로딩창 추가
-
+  const [isLocationFormOpen, setLocationFormOpen] = useState(false);
   const dispatch = useDispatch();
-  const { twit, auth, theme } = useSelector(store => store);
-  const jwt = localStorage.getItem("jwt")
+  const { twit, auth, theme } = useSelector((store) => store);
+  const jwt = localStorage.getItem("jwt");
 
   const [openEmoji, setOpenEmoji] = useState(false);
-  const handleOpenEmoji = () => setOpenEmoji(!openEmoji)
+  const handleOpenEmoji = () => setOpenEmoji(!openEmoji);
   const handleCloseEmoji = () => setOpenEmoji(false);
   const jwtToken = localStorage.getItem("jwt");
+  const [address, setAddress] = useState("");
+
+  const handleMapLocation = (newAddress) => {
+    setAddress(newAddress);
+  };
+
+  const handleToggleLocationForm = () => {
+    setLocationFormOpen((prev) => !prev);
+  };
 
   const [refreshTwits, setRefreshTwits] = useState(0);
-  
+
   useEffect(() => {
     dispatch(getAllTweets());
-  }, [refreshTwits])
+  }, [refreshTwits]);
 
   const HomeCreateTweet = (tweetData) => {
     return async (dispatch) => {
       setIsLoading(true);
       dispatch(createTweetRequest());
       try {
-        const { data } = await api.post("http://localhost:8080/api/twits/create", tweetData);
+        const { data } = await api.post(
+          "http://localhost:8080/api/twits/create",
+          tweetData
+        );
         console.log("tweetData: ", tweetData);
         console.log("created twit ", data);
         dispatch(createTweetSuccess(data));
@@ -95,20 +105,22 @@ const HomeSection = () => {
     // window.location.reload();
   };
 
-
   const ethicreveal = async (twitid, twitcontent) => {
     try {
-      const response = await fetch("http://localhost:8080/api/ethic/reqsentence", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${jwtToken}`,
-        },
-        body: JSON.stringify({
-          id: twitid,
-          content: twitcontent,
-        }),
-      });
+      const response = await fetch(
+        "http://localhost:8080/api/ethic/reqsentence",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${jwtToken}`,
+          },
+          body: JSON.stringify({
+            id: twitid,
+            content: twitcontent,
+          }),
+        }
+      );
       console.log("response: ", response);
       console.log("jwt: ", jwtToken);
       if (response.status === 200) {
@@ -119,7 +131,6 @@ const HomeSection = () => {
     } catch (error) {
       console.error("Error fetching ethic data:", error);
     }
-
   };
 
   const formik = useFormik({
@@ -127,7 +138,7 @@ const HomeSection = () => {
       content: "",
       image: "",
       video: "",
-     // thumbnail: "",
+      // thumbnail: "",
     },
     validationSchema,
     onSubmit: handleSubmit,
@@ -140,8 +151,6 @@ const HomeSection = () => {
     setUploadingImage(false);
   };
 
-
-
   const handleSelectVideo = async (event) => {
     setUploadingImage(true);
     const videoUrl = await uploadToCloudinary(event.target.files[0], "video");
@@ -152,10 +161,8 @@ const HomeSection = () => {
 
   const handleEmojiClick = (value) => {
     const { emoji } = value;
-    formik.setFieldValue("content", formik.values.content + emoji)
-  }
-
-
+    formik.setFieldValue("content", formik.values.content + emoji);
+  };
 
   return (
     <div className="space-y-5">
@@ -165,13 +172,10 @@ const HomeSection = () => {
       <section className={`pb-10 `}>
         {/* ${theme.currentTheme==="dark"?" bg-[#151515] p-10 rounded-md mb-10":""} */}
         <div className="flex space-x-5 ">
-          <Avatar
-            alt="Avatar"
-            src={auth.user?.image}
-          />
+          <Avatar alt="Avatar" src={auth.user?.image} />
           <div className="w-full">
             <form onSubmit={formik.handleSubmit}>
-              <div >
+              <div>
                 <input
                   type="text"
                   name="content"
@@ -186,7 +190,9 @@ const HomeSection = () => {
 
               {!uploadingImage && (
                 <div>
-                  {selectedImage && <img className="w-[28rem]" src={selectedImage} alt="" />}
+                  {selectedImage && (
+                    <img className="w-[28rem]" src={selectedImage} alt="" />
+                  )}
 
                   {selsectedVideo && <video controls src={twit.video} />}
                 </div>
@@ -214,17 +220,27 @@ const HomeSection = () => {
                     />
                   </label>
 
-                  <FmdGoodIcon className="text-[#42c924]" />
-                  <div className="relative">
-                    <TagFacesIcon onClick={handleOpenEmoji} className="text-[#42c924] cursor-pointer" />
-                    {openEmoji && <div className="absolute top-10 z-50 ">
-                      <EmojiPicker
-                        theme={theme.currentTheme}
-                        onEmojiClick={handleEmojiClick}
-                        lazyLoadEmojis={true}
-                      />
+                  <label className="flex items-center space-x-2 rounded-md cursor-pointer">
+                    <FmdGoodIcon
+                      className="text-[#42c924]"
+                      onClick={handleToggleLocationForm}
+                    />
+                  </label>
 
-                    </div>}
+                  <div className="relative">
+                    <TagFacesIcon
+                      onClick={handleOpenEmoji}
+                      className="text-[#42c924] cursor-pointer"
+                    />
+                    {openEmoji && (
+                      <div className="absolute top-10 z-50 ">
+                        <EmojiPicker
+                          theme={theme.currentTheme}
+                          onEmojiClick={handleEmojiClick}
+                          lazyLoadEmojis={true}
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -248,14 +264,11 @@ const HomeSection = () => {
           </div>
         </div>
       </section>
-      {/* 여기까지가 맨 위 빈칸 */}
-      {/* 여기서부터 twit 불러오는 twit section */}
+      {isLocationFormOpen && (
+        <Maplocation onLocationChange={handleMapLocation} />
+      )}
       <section className={`space-y-5`}>
-        {isLoading && (
-          <div>
-            Loading...
-          </div>
-        )}
+        {isLoading && <div>Loading...</div>}
         {twit.twits && twit.twits.length > 0 ? (
           twit.twits.map((item) => <TwitCard twit={item} key={item.id} />)
         ) : (

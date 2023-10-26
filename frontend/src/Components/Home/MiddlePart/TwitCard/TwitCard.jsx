@@ -18,20 +18,18 @@ import {
 } from "@mui/material";
 import EmojiPicker from "emoji-picker-react";
 import { useFormik } from "formik";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { api } from "../../../../Config/apiConfig";
-import { getAllTweets } from "../../../../Store/Tweet/Action";
-import { changeTheme } from "../../../../Store/Theme/Action";
 import {
   createRetweet,
   createTweet,
   deleteTweet,
   getTime,
   likeTweet,
-  viewPlus
+  viewPlus,
 } from "../../../../Store/Tweet/Action";
 import {
   UPDATE_TWEET_FAILURE,
@@ -40,6 +38,7 @@ import {
 } from "../../../../Store/Tweet/ActionType";
 import { uploadToCloudinary } from "../../../../Utils/UploadToCloudinary";
 import BackdropComponent from "../../../Backdrop/Backdrop";
+import Maplocation from "../../../Profile/Maplocation";
 import ReplyModal from "./ReplyModal";
 
 const validationSchema = Yup.object().shape({
@@ -62,8 +61,8 @@ const TwitCard = ({ twit }) => {
   const [isEditing, setIsEditing] = useState(false); // 편집 상태를 관리하는 상태 변수
   const [editedContent, setEditedContent] = useState(twit.content); // 편집된 내용을 관리하는 상태 변수
 
-  const [sentence, setSentence] = useState(twit.sentence);//sentence는 윤리수치에 해당하는 문장이 담아진다.
-  const [isLoading, setIsLoading] = useState(false);//로딩창의 띄어짐의 유무를 판단한다. default는 true이다.
+  const [sentence, setSentence] = useState(twit.sentence); //sentence는 윤리수치에 해당하는 문장이 담아진다.
+  const [isLoading, setIsLoading] = useState(false); //로딩창의 띄어짐의 유무를 판단한다. default는 true이다.
   const jwtToken = localStorage.getItem("jwt");
 
   const [isEdited, setIsEdited] = useState(twit.edited);
@@ -78,6 +77,16 @@ const TwitCard = ({ twit }) => {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const openDeleteMenu = Boolean(anchorEl);
+  const [isLocationFormOpen, setLocationFormOpen] = useState(false);
+  const [address, setAddress] = useState("");
+
+  const handleMapLocation = (newAddress) => {
+    setAddress(newAddress);
+  };
+
+  const handleToggleLocationForm = () => {
+    setLocationFormOpen((prev) => !prev);
+  };
 
   const handleOpenDeleteMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -159,7 +168,7 @@ const TwitCard = ({ twit }) => {
       dispatch({ type: UPDATE_TWEET_REQUEST });
       try {
         const { data } = await api.post(`/api/twits/edit`, twit);
-        console.log("edited twit", data)
+        console.log("edited twit", data);
         console.log("data.id: ", data.id);
         console.log("data.id: ", data.content);
 
@@ -168,8 +177,8 @@ const TwitCard = ({ twit }) => {
       } catch (error) {
         dispatch({ type: UPDATE_TWEET_FAILURE, payload: error.message });
       }
-    }
-  }
+    };
+  };
 
   const handleSaveClick = async () => {
     try {
@@ -231,7 +240,6 @@ const TwitCard = ({ twit }) => {
     } catch (error) {
       console.error("Error fetching ethic data:", error);
     }
-
   };
 
   const handleCancelClick = () => {
@@ -295,13 +303,8 @@ const TwitCard = ({ twit }) => {
 
   console.log("twitTest", twit);
   return (
-
     <div className="">
-      {isLoading && (
-        <div>
-          Loading...
-        </div>
-      )}
+      {isLoading && <div>Loading...</div>}
       {auth.user?.id !== twit.user.id &&
         // auth.user notnull 일때, auth.user.id 가 twit.user.id 와 일치하지 않고,
         location.pathname === `/profile/${auth.user?.id}` && (
@@ -490,7 +493,14 @@ const TwitCard = ({ twit }) => {
                         onChange={handleSelectVideo}
                       />
                     </label>
-                    <FmdGoodIcon className="text-[#42c924]" />
+
+                    <label className="flex items-center space-x-2 rounded-md cursor-pointer">
+                      <FmdGoodIcon
+                        className="text-[#42c924]"
+                        onClick={handleToggleLocationForm}
+                      />
+                    </label>
+
                     <div className="relative">
                       <TagFacesIcon
                         onClick={handleOpenEmoji}
@@ -510,6 +520,9 @@ const TwitCard = ({ twit }) => {
                 )}
               </div>
             </div>
+            {isLocationFormOpen && (
+              <Maplocation onLocationChange={handleMapLocation} />
+            )}
             <div className="py-5 flex flex-wrap justify-between items-center">
               {!isEditing && (
                 <>
@@ -565,7 +578,6 @@ const TwitCard = ({ twit }) => {
       <section>
         <BackdropComponent open={uploadingImage} />
       </section>
-
     </div>
   );
 };
