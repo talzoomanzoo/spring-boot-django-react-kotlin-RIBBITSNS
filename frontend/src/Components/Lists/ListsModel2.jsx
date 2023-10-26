@@ -122,6 +122,14 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
         // console.log("domNode check", domNode);
         // element.render();
         dispatch(getUserAction(listId));
+        if (document.getElementById("element") != null) {
+            const domNode = document.getElementById("element");
+            const element1 = createRoot(domNode);
+            element1.render(<Element listVal={list} />);
+        } else {
+            console.log("not exists");
+        };
+        dispatch(getUserAction(listId));
         //console.log("handleAddUserlist check", list);
         setSearch("");
         //console.log("add user id", userId);
@@ -391,5 +399,3 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
     )
 });
 export default ListsModel2;
-// fdjsklfjdklsfjsklj
-// sdlkfjsdklfj
