@@ -1,4 +1,4 @@
-import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
+import ListIcon from '@mui/icons-material/List';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useSelector } from 'react-redux/es/hooks/useSelector';
@@ -14,7 +14,7 @@ const ListCard = memo(({ list }) => {
 
     return (
         <div class="flex space-x-5">
-            <FormatListBulletedIcon
+            <ListIcon
                 //onClick={() => navigate(`/lists/${list.id}`)}
                 onClick={handleOpenListsModel}
                 className="cursor-pointer"

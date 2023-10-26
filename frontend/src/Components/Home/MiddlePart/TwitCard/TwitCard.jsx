@@ -18,11 +18,13 @@ import {
 } from "@mui/material";
 import EmojiPicker from "emoji-picker-react";
 import { useFormik } from "formik";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { api } from "../../../../Config/apiConfig";
+import { getAllTweets } from "../../../../Store/Tweet/Action";
+import { changeTheme } from "../../../../Store/Theme/Action";
 import {
   createRetweet,
   createTweet,
@@ -53,7 +55,7 @@ const TwitCard = ({ twit }) => {
   const handleCloseEmoji = () => setOpenEmoji(false);
 
   const dispatch = useDispatch();
-  const { auth } = useSelector((store) => store);
+  const { theme, auth } = useSelector((store) => store);
   const [isLiked, setIsLiked] = useState(twit.liked);
   const [likes, setLikes] = useState(twit.totalLikes);
 
@@ -97,31 +99,43 @@ const TwitCard = ({ twit }) => {
   const handleCloseReplyModel = () => setOpenReplyModel(false);
 
   const handleOpenReplyModel = () => setOpenReplyModel(true);
+    
   //const handleNavigateToTwitDetial = () => navigate(`/twit/${twit.id}`);
 
   const handleNavigateToTwitDetial = () => {
     if (!isEditing) {
       navigate(`/twit/${twit.id}`);
       dispatch(viewPlus(twit.id));
-      window.location.reload();
+      //window.location.reload();
+      setRefreshTwits((prev) => prev + 1);
     }
   };
+  
+  const [refreshTwits, setRefreshTwits] = useState(0);
+
+  // useEffect(()=>{
+  //   dispatch(getAllTweets());
+  // },[refreshTwits])
 
   const handleDeleteTwit = async () => {
+
     try {
       dispatch(deleteTweet(twit.id));
       handleCloseDeleteMenu();
-      window.location.reload();
+      //window.location.reload();
+      //setRefreshTwits((prev) => prev + 1);
       
       const currentId = window.location.pathname.replace(/^\/twit\//, "");
       if (location.pathname === `/twit/${currentId}`) {
-        window.location.reload();
+        //window.location.reload();
+        setRefreshTwits((prev) => prev + 1);
       } else {
         navigate(".", { replace: true });
       }
     } catch (error) {
       console.error("게시글 삭제 중 오류 발생:", error);
     }
+
   };
 
   const handleEditClick = () => {
@@ -185,12 +199,14 @@ const TwitCard = ({ twit }) => {
       setIsEditing(false);
       console.log("edit test", twit);
       //window.location.reload();
+      //setRefreshTwits((prev) => prev + 1);
       setIsLoading(false);
       handleCloseEditClick();
     } catch (error) {
       //console.error("Error updating twit:", error);
     }
   };
+
 
   const ethicreveal = async(twitid,twitcontent)=>{
     try {
@@ -210,6 +226,7 @@ const TwitCard = ({ twit }) => {
       if(response.status===200){
         const responseData = await response.json();
         setSentence(responseData.sentence);
+        setRefreshTwits((prev) => prev + 1);
       }
     } catch (error) {
       console.error("Error fetching ethic data:", error);
@@ -326,7 +343,7 @@ const TwitCard = ({ twit }) => {
               {twit.user.verified && (
                 <img
                   className="ml-2 w-5 h-5"
-                  src="https://waifu2x.booru.pics/outfiles/a2936a8caed993f9e006506b1afc9ace572e8d66_s2_n2_y1.png"
+                  src="https://cdn.pixabay.com/photo/2023/10/25/08/19/08-19-05-334_1280.png"
                   alt=""
                 />
               )}
@@ -352,19 +369,19 @@ const TwitCard = ({ twit }) => {
               >
                 {isEditing ? (
                   <div>
-                    <MenuItem onClick={handleSaveClick}>Save</MenuItem>
-                    <MenuItem onClick={handleCancelClick}>Cancel</MenuItem>
+                    <MenuItem onClick={handleSaveClick}>저장</MenuItem>
+                    <MenuItem onClick={handleCancelClick}>취소</MenuItem>
                   </div>
                 ) : (
                   <div>
                     {twit.user.id === auth.user.id && (
-                      <MenuItem onClick={handleDeleteTwit}>Delete</MenuItem>
+                      <MenuItem onClick={handleDeleteTwit}>삭제</MenuItem>
                     )}
                     {twit.user.id === auth.user.id && (
-                      <MenuItem onClick={handleEditClick}>Edit</MenuItem>
+                      <MenuItem onClick={handleEditClick}>수정</MenuItem>
                     )}
                     <MenuItem onClick={handleNavigateToTwitDetial}>
-                      Details
+                      자세히
                     </MenuItem>
                   </div>
                 )}
@@ -379,7 +396,10 @@ const TwitCard = ({ twit }) => {
             >
               {isEditing ? (
                 <div>
-                  <TextareaAutosize
+                  <TextareaAutosize className={ `${theme.currentTheme === "light"
+                ? "bg-white"
+                : "bg-[#151515]"
+              }`}
                     minRows={0}
                     maxRows={0}
                     value={editedContent}
