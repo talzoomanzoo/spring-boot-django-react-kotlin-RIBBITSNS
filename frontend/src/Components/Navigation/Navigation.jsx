@@ -1,6 +1,6 @@
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { Avatar, Button, Menu, MenuItem } from "@mui/material";
-import React from "react";
+import { Avatar, Button, Menu, MenuItem, Modal } from "@mui/material";
+import React,{useState} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../Store/Auth/Action";
@@ -29,6 +29,33 @@ const Navigation = () => {
     navigate(`/followTwit`)
     dispatch(followTwit())
   }
+
+  const [openwithdrawl, setopenwithdrawl] = useState(false);
+  const handleopenwithdrawl = () => {
+    setopenwithdrawl(true);
+  };
+
+  const handleclosewithdrawl = () => {
+    setopenwithdrawl(false);
+  };
+
+  const jwtToken = localStorage.getItem("jwt");
+  const accountwithdrawal = async()=>{
+    try {
+      const response = await fetch("http://localhost:8080/api/users/withdraw",{
+        method:'POST',
+        headers:{
+          'Authorization':`Bearer ${jwtToken}`,
+        },
+      });
+      if(response.status === 200){
+        localStorage.removeItem("jwt");
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error("Failed to delete:", error);
+    }
+  };
 
   return (
     <div className="h-screen sticky top-0 ">
@@ -98,9 +125,28 @@ const Navigation = () => {
         }}
       >
         <MenuItem onClick={handleLogout}>로그아웃</MenuItem>
+        <MenuItem onClick={handleopenwithdrawl}>회원탈퇴</MenuItem>
       </Menu>
     
      </div>
+     <Modal
+        open={openwithdrawl}
+        onClose={handleclosewithdrawl}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+     >
+        <div className="withdrawal-modal" style={{ background: "white", padding: "20px", borderRadius: "8px" }}>
+          <p id="description">
+            정말로 탈퇴하시겠습니까? 탈퇴하시는 순간 모든 게시물을 삭제 되어집니다.
+          </p>
+          <Button onClick={accountwithdrawal}>확인</Button>
+          <Button onClick={handleclosewithdrawl}>취소</Button>
+        </div>
+     </Modal>
+     
     </div>
   );
 };

@@ -81,12 +81,13 @@ public class User {
     private Varification verification;
     
     @JsonIgnore
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany//(cascade = CascadeType.ALL)
     private List<User> followers=new ArrayList<>();
     
     @JsonIgnore
     //@ManyToMany(mappedBy = "followers")
-    @ManyToMany(cascade = CascadeType.ALL) // followers와 followings 테이블 분리를 통해 null칸 폐기
+    //@ManyToMany(cascade = CascadeType.ALL) // followers와 followings 테이블 분리를 통해 null칸 폐기
+    @ManyToMany
     private List<User> followings=new ArrayList<>();
     
     @JsonIgnore

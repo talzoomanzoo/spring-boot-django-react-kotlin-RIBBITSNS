@@ -17,4 +17,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	@Query("SELECT DISTINCT u FROM User u WHERE u.fullName LIKE %:query% OR u.email LIKE %:query%")
 	public List<User> searchUser(@Param("query") String query);
 
+	List<User> findByFollowers(User user);
+	List<User> findByFollowings(User user);
 }

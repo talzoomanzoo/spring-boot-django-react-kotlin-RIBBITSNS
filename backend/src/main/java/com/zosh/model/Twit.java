@@ -37,7 +37,7 @@ public class Twit {
     @JoinColumn(name = "twit_id")
     private List<Twit> replyTwits = new ArrayList<>(); //여러개의 twit에 하나의 reply 리스트
 
-    @ManyToMany
+    @ManyToMany//(cascade = CascadeType.ALL)
     private List<User> retwitUser = new ArrayList<>();
 
     @ManyToOne // 붙는 엔티티가 M, 상대가 1
