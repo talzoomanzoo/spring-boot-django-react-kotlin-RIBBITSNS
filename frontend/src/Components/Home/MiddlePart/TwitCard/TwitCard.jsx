@@ -29,7 +29,7 @@ import {
   deleteTweet,
   getTime,
   likeTweet,
-  viewPlus
+  viewPlus,
 } from "../../../../Store/Tweet/Action";
 import {
   UPDATE_TWEET_FAILURE,
@@ -38,6 +38,7 @@ import {
 } from "../../../../Store/Tweet/ActionType";
 import { uploadToCloudinary } from "../../../../Utils/UploadToCloudinary";
 import BackdropComponent from "../../../Backdrop/Backdrop";
+import Maplocation from "../../../Profile/Maplocation";
 import ReplyModal from "./ReplyModal";
 
 const validationSchema = Yup.object().shape({
@@ -60,8 +61,8 @@ const TwitCard = ({ twit }) => {
   const [isEditing, setIsEditing] = useState(false); // 편집 상태를 관리하는 상태 변수
   const [editedContent, setEditedContent] = useState(twit.content); // 편집된 내용을 관리하는 상태 변수
 
-  const [sentence, setSentence] = useState(twit.sentence);//sentence는 윤리수치에 해당하는 문장이 담아진다.
-  const [isLoading, setIsLoading] = useState(false);//로딩창의 띄어짐의 유무를 판단한다. default는 true이다.
+  const [sentence, setSentence] = useState(twit.sentence); //sentence는 윤리수치에 해당하는 문장이 담아진다.
+  const [isLoading, setIsLoading] = useState(false); //로딩창의 띄어짐의 유무를 판단한다. default는 true이다.
   const jwtToken = localStorage.getItem("jwt");
 
   const [isEdited, setIsEdited] = useState(twit.edited);
@@ -76,6 +77,16 @@ const TwitCard = ({ twit }) => {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const openDeleteMenu = Boolean(anchorEl);
+  const [isLocationFormOpen, setLocationFormOpen] = useState(false);
+  const [address, setAddress] = useState("");
+
+  const handleMapLocation = (newAddress) => {
+    setAddress(newAddress);
+  };
+
+  const handleToggleLocationForm = () => {
+    setLocationFormOpen((prev) => !prev);
+  };
 
   const handleOpenDeleteMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -112,7 +123,7 @@ const TwitCard = ({ twit }) => {
       dispatch(deleteTweet(twit.id));
       handleCloseDeleteMenu();
       window.location.reload();
-      
+
       const currentId = window.location.pathname.replace(/^\/twit\//, "");
       if (location.pathname === `/twit/${currentId}`) {
         window.location.reload();
@@ -142,20 +153,20 @@ const TwitCard = ({ twit }) => {
     return async (dispatch) => {
       console.log("twitContent", twit.content); // 넘어 온 것 확인
       console.log("tr", twit);
-      dispatch({type:UPDATE_TWEET_REQUEST});
+      dispatch({ type: UPDATE_TWEET_REQUEST });
       try {
-        const {data} = await api.post(`/api/twits/edit`, twit);
-        console.log("edited twit", data)
-        console.log("data.id: ",data.id);
-        console.log("data.id: ",data.content);
-  
+        const { data } = await api.post(`/api/twits/edit`, twit);
+        console.log("edited twit", data);
+        console.log("data.id: ", data.id);
+        console.log("data.id: ", data.content);
+
         //const response = await ethicreveal(data.id,data.content);
-        dispatch({type:UPDATE_TWEET_SUCCESS,payload:data});
+        dispatch({ type: UPDATE_TWEET_SUCCESS, payload: data });
       } catch (error) {
-        dispatch({type:UPDATE_TWEET_FAILURE,payload:error.message});
+        dispatch({ type: UPDATE_TWEET_FAILURE, payload: error.message });
       }
-    }
-  }
+    };
+  };
 
   const handleSaveClick = async () => {
     try {
@@ -192,29 +203,31 @@ const TwitCard = ({ twit }) => {
     }
   };
 
-  const ethicreveal = async(twitid,twitcontent)=>{
+  const ethicreveal = async (twitid, twitcontent) => {
     try {
-      const response = await fetch("http://localhost:8080/api/ethic/reqsentence",{
-        method:'POST',
-        headers:{
-          'Content-Type': 'application/json',
-          'Authorization':`Bearer ${jwtToken}`,
-        },
-        body: JSON.stringify({
-          id: twitid,
-          content: twitcontent,
-        }),
-      });
-      console.log("response: ",response);
-      console.log("jwt: ",jwtToken);
-      if(response.status===200){
+      const response = await fetch(
+        "http://localhost:8080/api/ethic/reqsentence",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${jwtToken}`,
+          },
+          body: JSON.stringify({
+            id: twitid,
+            content: twitcontent,
+          }),
+        }
+      );
+      console.log("response: ", response);
+      console.log("jwt: ", jwtToken);
+      if (response.status === 200) {
         const responseData = await response.json();
         setSentence(responseData.sentence);
       }
     } catch (error) {
       console.error("Error fetching ethic data:", error);
     }
-  
   };
 
   const handleCancelClick = () => {
@@ -278,15 +291,10 @@ const TwitCard = ({ twit }) => {
 
   console.log("twitTest", twit);
   return (
-    
     <div className="">
-      {isLoading && (
-        <div>
-          Loading...
-        </div>
-      )}
+      {isLoading && <div>Loading...</div>}
       {auth.user?.id !== twit.user.id &&
-      // auth.user notnull 일때, auth.user.id 가 twit.user.id 와 일치하지 않고,
+        // auth.user notnull 일때, auth.user.id 가 twit.user.id 와 일치하지 않고,
         location.pathname === `/profile/${auth.user?.id}` && (
           // 현재 url의 pathname이 /profile/${auth.user?.id} 이면
           <div className="flex items-center font-semibold text-gray-700 py-2">
@@ -295,8 +303,8 @@ const TwitCard = ({ twit }) => {
           </div>
           // 해당 표시를 해라
         )}
-        
-      <div className="flex space-x-5 "> 
+
+      <div className="flex space-x-5 ">
         <Avatar
           onClick={() => navigate(`/profile/${twit.user.id}`)}
           alt="Avatar"
@@ -421,11 +429,9 @@ const TwitCard = ({ twit }) => {
                   <p className="mb-2 p-0 ">
                     {isEditing ? editedContent : twit.content}
                   </p>
-                  
-                  {sentence &&(
-                    <p>{sentence}</p>
-                  )}
-                  
+
+                  {sentence && <p>{sentence}</p>}
+
                   {twit.image && (
                     <img
                       className="w-[28rem] border border-gray-400 p-5 rounded-md"
@@ -470,7 +476,14 @@ const TwitCard = ({ twit }) => {
                         onChange={handleSelectVideo}
                       />
                     </label>
-                    <FmdGoodIcon className="text-[#42c924]" />
+
+                    <label className="flex items-center space-x-2 rounded-md cursor-pointer">
+                      <FmdGoodIcon
+                        className="text-[#42c924]"
+                        onClick={handleToggleLocationForm}
+                      />
+                    </label>
+
                     <div className="relative">
                       <TagFacesIcon
                         onClick={handleOpenEmoji}
@@ -490,6 +503,9 @@ const TwitCard = ({ twit }) => {
                 )}
               </div>
             </div>
+            {isLocationFormOpen && (
+              <Maplocation onLocationChange={handleMapLocation} />
+            )}
             <div className="py-5 flex flex-wrap justify-between items-center">
               {!isEditing && (
                 <>
@@ -533,7 +549,7 @@ const TwitCard = ({ twit }) => {
                   </div>
                 </>
               )}
-            </div> 
+            </div>
           </div>
         </div>
       </div>
@@ -543,11 +559,10 @@ const TwitCard = ({ twit }) => {
         open={openReplyModel}
         handleClose={handleCloseReplyModel}
       />
-      
+
       <section>
         <BackdropComponent open={uploadingImage} />
       </section>
-
     </div>
   );
 };

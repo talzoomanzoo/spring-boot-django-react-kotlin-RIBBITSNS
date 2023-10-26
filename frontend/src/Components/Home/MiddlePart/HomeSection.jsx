@@ -8,18 +8,19 @@ import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
+import { api } from "../../../Config/apiConfig";
 import { getAllTweets } from "../../../Store/Tweet/Action";
 import { uploadToCloudinary } from "../../../Utils/UploadToCloudinary";
 import BackdropComponent from "../../Backdrop/Backdrop";
 import TwitCard from "./TwitCard/TwitCard";
-import { api } from "../../../Config/apiConfig";
-import { BounceLoader } from 'react-spinners';
 // import ImageIcon from '@mui/icons-material/Image';
 import {
   TWEET_CREATE_FAILURE,
   TWEET_CREATE_REQUEST,
   TWEET_CREATE_SUCCESS,
 } from "../../../Store/Tweet/ActionType";
+import Maplocation from "../../Profile/Maplocation";
+
 
 const validationSchema = Yup.object().shape({
   content: Yup.string().required("내용이 없습니다"),
@@ -45,7 +46,7 @@ const HomeSection = () => {
   const [selectedImage, setSelectedImage] = useState("");
   const [selsectedVideo,setSelectedVideo]=useState("");
   const [isLoading, setIsLoading] = useState(false); //로딩창 추가
-
+  const [isLocationFormOpen, setLocationFormOpen] = useState(false);
   const dispatch = useDispatch();
   const {twit,auth,theme}=useSelector(store=>store);
   const jwt=localStorage.getItem("jwt")
@@ -54,6 +55,16 @@ const HomeSection = () => {
   const handleOpenEmoji=()=>setOpenEmoji(!openEmoji)
   const handleCloseEmoji=()=>setOpenEmoji(false);
   const jwtToken = localStorage.getItem("jwt");
+  const [address, setAddress] = useState("");
+
+
+  const handleMapLocation = (newAddress) => {
+    setAddress(newAddress);
+  };
+
+  const handleToggleLocationForm = () => {
+    setLocationFormOpen((prev) => !prev);
+  };
 
   const HomeCreateTweet = (tweetData) => {
     return async (dispatch) => {
@@ -209,7 +220,13 @@ const HomeSection = () => {
                     />
                   </label>
 
-                  <FmdGoodIcon className="text-[#42c924]" />
+                  <label className="flex items-center space-x-2 rounded-md cursor-pointer">
+                      <FmdGoodIcon
+                        className="text-[#42c924]"
+                        onClick={handleToggleLocationForm}
+                      />
+                    </label>
+                  
                   <div className="relative">
                      <TagFacesIcon onClick={handleOpenEmoji} className="text-[#42c924] cursor-pointer" />
                      {openEmoji && <div className="absolute top-10 z-50 ">
@@ -243,6 +260,9 @@ const HomeSection = () => {
           </div>
         </div>
       </section>
+      {isLocationFormOpen && (
+              <Maplocation onLocationChange={handleMapLocation} />
+            )}
 {/* 여기까지가 맨 위 빈칸 */}
       {/* 여기서부터 twit 불러오는 twit section */}
       <section className={`space-y-5`}>
