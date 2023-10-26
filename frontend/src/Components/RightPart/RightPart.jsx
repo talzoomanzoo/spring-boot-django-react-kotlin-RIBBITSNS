@@ -1,7 +1,9 @@
 import Brightness4Icon from "@mui/icons-material/Brightness4";
+import NightsStayIcon from '@mui/icons-material/NightsStay';
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import SearchIcon from "@mui/icons-material/Search";
 import { Avatar, Button } from "@mui/material";
+import NotesIcon from '@mui/icons-material/Notes';
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { changeTheme } from "../../Store/Theme/Action";
@@ -43,6 +45,9 @@ const RightPart = () => {
   //     pg: 
   //   })
   // }
+  const [refreshTwits, setRefreshTwits] = useState(0);
+
+  console.log("auth.tweetSearchResult", auth.tweetSearchResult);
 
   const handleNavigateToTwit = (i) => {
     navigate(`/twit/${i.id}`);
@@ -50,8 +55,10 @@ const RightPart = () => {
   };
 
   const handleChangeTheme = () => {
+    // setRefreshTwits((prev) => prev + 1);
     dispatch(changeTheme(theme.currentTheme === "light" ? "dark" : "light"));
     window.location.reload();
+    //setRefreshTwits((prev) => prev + 1);  
   };
 
   // const handleSearchUser = (event) => {
@@ -79,23 +86,14 @@ const RightPart = () => {
               // onChange={handleSearchUser}
               type="text"
               placeholder="사용자 검색"
-            className={`py-3 rounded-full outline-none text-gray-500 w-full pl-12
-            ${theme.currentTheme === "light"
-                ? "bg-white"
-                : "bg-[#151515]"
-              }`}
+            className={`py-3 rounded-full outline-none text-gray- w-full pl-12 ${theme.currentTheme === "light" ? "bg-white" : "bg-[#151515]"}`}
             />
           <span className="absolute top-0 left-0 pl-3 pt-3">
-            <SearchIcon className="text-gray-500" />
+            <SearchIcon className="text-gray-400" />
           </span>
           {search && (
             <div
-              className={` overflow-y-scroll hideScrollbar absolute z-50 top-14  border-gray-700 h-[40vh] w-full rounded-md 
-              ${theme.currentTheme === "light"
-                  ? "bg-white"
-                  : "bg-[#151515] border"
-                }
-              `}
+              className={` overflow-y-scroll hideScrollbar absolute z-50 top-14  border-gray-400 h-[40vh] w-full rounded-md ${theme.currentTheme === "light" ? "bg-[#dbd9d9]" : "bg-[#151515] border"}`}
 
             >
               {auth.userSearchResult && auth.userSearchResult.map((item) => (
@@ -127,18 +125,25 @@ const RightPart = () => {
                       item.forEach((i) => handleNavigateToTwit(i));
                     } else {
                       handleNavigateToTwit(item);
+                      // navigateToProfile(item.id);
                     }
                   }}
                   className="flex items-center hover:bg-slate-800 p-3 cursor-pointer"
                   key={item.id} // 각 항목에 고유한 키를 제공합니다.
                 >
-                  <p>{item.content}</p>
+                  <NotesIcon alt={item.fullName}/>
+                  <div className="ml-2">
+                    <p>{item.content}</p>
+                    <p className="text-sm text-gray-400">
+                    @{item.user.fullName.split(" ").join("_").toLowerCase()}
+                    </p>
+                    </div>
                 </div>
               ))}
             </div>
           )}
 
-          <Brightness4Icon
+          <NightsStayIcon
             onClick={handleChangeTheme}
             className="ml-3 cursor-pointer"
           />
