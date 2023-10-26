@@ -86,13 +86,6 @@ public class ListServiceImplementation implements ListService{
 		ListModel listModel = findById(listId);
 		listRepository.deleteById(listModel.getId());
 	}
-	
-	@Override
-	public void deleteListFollowings(Long listId, Long userId) throws ListException, UserException {
-		// TODO Auto-generated method stub
-		ListModel listModel = findById(listId);
-		listRepository.deleteFollowingsById(listModel.getId());
-	}
 
 	@Override
 	public List<ListModel> findAllList(User user) {

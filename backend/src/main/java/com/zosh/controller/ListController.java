@@ -107,8 +107,6 @@ private UserRepository userRepository;
 			@RequestHeader("Authorization") String jwt) throws ListException, UserException {
 		
 		User user = userService.findUserProfileByJwt(jwt);
-		
-		listService.deleteListFollowings(listId, user.getId());
 		listService.deleteListById(listId, user.getId());
 		
 		ApiResponse res = new ApiResponse();

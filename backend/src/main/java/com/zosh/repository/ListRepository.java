@@ -3,6 +3,7 @@ package com.zosh.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import com.zosh.model.ListModel;
@@ -16,7 +17,4 @@ public interface ListRepository extends JpaRepository<ListModel, Long>{
 	
 	@Query("SELECT l from ListModel l JOIN l.user u WHERE l.privateMode=false OR u.id= :userId ORDER BY l.createdAt DESC")
 	List<ListModel> findAllOrderByCreatedAtDesc(Long userId);
-	
-	@Query("UPDATE ListModel l SET l.followings = null WHERE l.id = :listId")
-	List<ListModel> deleteFollowingsById(Long listId);
 }

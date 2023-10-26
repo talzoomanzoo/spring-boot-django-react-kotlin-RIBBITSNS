@@ -21,7 +21,5 @@ public interface ListService {
 	
 	public void deleteListById(Long listId, Long userId) throws ListException, UserException;
 	
-	public void deleteListFollowings(Long listId, Long userId) throws ListException, UserException;
-	
 	public ListModel setPrivateById(Long listId, Long userId) throws ListException, UserException;
 }
