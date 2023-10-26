@@ -66,7 +66,7 @@ const Authentication = () => {
           marginTop: "300px",
           marginLeft: "20%",
         }}
-        src="https://cdn.pixabay.com/photo/2023/10/25/08/19/08-19-05-334_1280.png" alt="" />
+        src="https://cdn.pixabay.com/photo/2023/10/26/06/44/06-44-04-156_1280.png" alt="" />
         </Grid>
         <Grid className="px-10" item lg={5} xs={12}>
           <div className="py-10">

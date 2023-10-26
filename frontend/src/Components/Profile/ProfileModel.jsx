@@ -307,7 +307,7 @@ const ProfileModel = ({ handleClose,open }) => {
           >
             <div className="image-source-options">
               <p>키워드를 입력해주세요!</p>
-              <input
+              <TextField
                 type="text"
                 value={keyword}
                 onChange={handleKeywordChange}

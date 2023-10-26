@@ -289,7 +289,8 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
                                     >
                                         {auth.userSearchResult && auth.userSearchResult.map((item) => (
                                             <div
-                                                className="flex float items-center">
+                                                className={` flex float items-center ${theme.currentTheme === "light" ? "hover:bg-[#008000]" : "hover:bg-[#dbd9d9]"} 
+                                                ${theme.currentTheme === "light" ? "text-black hover:text-white" : "text-white  hover:text-black"}`}>
                                                 <div
                                                     style={{ paddingRight: 300 }}
                                                     onClick={() => {
@@ -299,13 +300,14 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
                                                             navigateToProfile(item.id);
                                                         }
                                                     }}
-                                                    className="py-3 flex float-left justify-content w-full hover:bg-slate-800 p-3 cursor-pointer"
+                                                    className={`py-3 flex float-left justify-content w-full
+                                                    p-3 cursor-pointer`}
                                                     key={item.id}
                                                 >
                                                     <Avatar alt={item.fullName} src={item.image} />
                                                     <div className="ml-2">
                                                         <p>{item.fullName}</p>
-                                                        <p className="text-sm text-gray-400">
+                                                        <p className="text-sm">
                                                             @{item.fullName.split(" ").join("_").toLowerCase()}
                                                         </p>
                                                     </div>
@@ -313,8 +315,9 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
                                                 {item.hasFollowedLists ?
                                                     (
                                                         <RemoveIcon
+                                                            id="remveIcon"
                                                             //style={{ marginLeft: 0 }}
-                                                            className="flex float-right hover:bg-slate-800 absolute right-5 cursor-pointer"
+                                                            className="flex float-right absolute right-5 cursor-pointer"
                                                             //absolute right-0
                                                             onClick={() => { handleAddUser(list.id, item.id, list) }}>
                                                         </RemoveIcon>
@@ -322,7 +325,7 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
                                                     : (
                                                         <AddIcon
                                                             //style={{ marginLeft: 0 }}
-                                                            className="flex float-right hover:bg-slate-800 absolute right-5 cursor-pointer"
+                                                            className={`flex float-right absolute right-5 cursor-pointer`}
                                                             //absolute right-0
                                                             onClick={() => { handleAddUser(list.id, item.id, list) }}>
                                                         </AddIcon>
