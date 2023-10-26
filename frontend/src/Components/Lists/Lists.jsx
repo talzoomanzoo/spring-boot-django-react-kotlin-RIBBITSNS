@@ -12,7 +12,7 @@ import { getAllLists, getPrivateLists } from "../../Store/List/Action";
 const Lists = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { list, theme } = useSelector(store => store);
+    const { list } = useSelector(store => store);
     const handleBack = () => {
         navigate(-1);
     };
@@ -25,7 +25,6 @@ const Lists = () => {
     useEffect(() => {
         dispatch(getAllLists());
     }, [list.list])
-
 
     return (
         <div id="lists" className="space-y-5">
@@ -64,7 +63,6 @@ const Lists = () => {
             <div
                 className="space-y-3"
                 style={{ marginTop: 10 }}>
-
                 공개 리스트
                 <hr
                     style={{
@@ -75,7 +73,6 @@ const Lists = () => {
                         height: '1px',
                     }}
                 />
-
                 <section
                     className={`space-y-5`}>
                     {list?.lists?.map((item) => (
@@ -86,6 +83,7 @@ const Lists = () => {
                         ) : null
                     ))}
                 </section>
+
             </div>
 
             {/* ListBottom */}
@@ -103,7 +101,6 @@ const Lists = () => {
                         height: '1px',
                     }}
                 />
-
                 <section
                     className={`space-y-5`}>
                     {list?.lists?.map((item) => (
@@ -114,6 +111,7 @@ const Lists = () => {
                         ) : null
                     ))}
                 </section>
+                
             </div>
         </div>
     )
