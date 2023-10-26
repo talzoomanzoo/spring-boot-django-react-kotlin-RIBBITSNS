@@ -34,12 +34,19 @@ sealed interface HomeUiState {
     object Loading : HomeUiState
 }
 
+sealed interface TwitIdUiState {
+    data class Success(val post: RibbitPost) : TwitIdUiState
+    data class Error(val errorCode: String) : TwitIdUiState
+    object Loading : TwitIdUiState
+}
+
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val ribbitRepository: RibbitRepository
 ) : BaseViewModel() {
     var homeUiState: HomeUiState by mutableStateOf(HomeUiState.Loading)
     var deletePostUiState: DeletePostUiState by mutableStateOf(DeletePostUiState.Ready)
+    var twitIdUiState: TwitIdUiState by mutableStateOf(TwitIdUiState.Loading)
 //    val homeResponse: MutableLiveData<ApiResponse<List<RibbitPost>>> by lazy {
 //        MutableLiveData<ApiResponse<List<RibbitPost>>>()
 //    }
@@ -109,6 +116,32 @@ class HomeViewModel @Inject constructor(
                 }
             }
             Log.d("HippoLog, HomeViewModel", "deleteRibbitPost")
+        }
+    }
+
+    fun getPostIdPosts(postId:Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            twitIdUiState = TwitIdUiState.Loading
+            Log.d("HippoLog, HomeViewModel", "getTwitIdPosts, $homeUiState")
+            twitIdUiState = try {
+                TwitIdUiState.Success(ribbitRepository.getPostIdPosts(postId))
+            } catch (e: IOException) {
+                Log.d("HippoLog, HomeViewModel", "${e.stackTrace}, ${e.message}")
+                TwitIdUiState.Error(e.message.toString())
+
+            } catch (e: ExceptionInInitializerError) {
+                Log.d("HippoLog, HomeViewModel", "${e.stackTrace}, ${e.message}")
+                TwitIdUiState.Error(e.message.toString())
+
+            } catch (e: HttpException) {
+                Log.d("HippoLog, HomeViewModel", "${e.stackTrace}, ${e.code()}, $e")
+                if (e.code() == 500) {
+                    TwitIdUiState.Error(e.code().toString())
+                } else {
+                    TwitIdUiState.Error(e.message.toString())
+                }
+            }
+            Log.d("HippoLog, HomeViewModel", "getTwitIdPosts, $homeUiState")
         }
     }
 

@@ -23,6 +23,7 @@ import com.hippoddung.ribbit.R
 import com.hippoddung.ribbit.ui.screens.homescreen.HomeScreen
 import com.hippoddung.ribbit.ui.screens.ProfileScreen
 import com.hippoddung.ribbit.ui.screens.TwitCreateScreen
+import com.hippoddung.ribbit.ui.screens.TwitIdScreen
 import com.hippoddung.ribbit.ui.screens.authscreens.LoginScreen
 import com.hippoddung.ribbit.ui.screens.authscreens.LogoutScreen
 import com.hippoddung.ribbit.ui.screens.authscreens.SignUpScreen
@@ -38,6 +39,7 @@ import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
 enum class RibbitScreen(@StringRes val title: Int) {
     HomeScreen(title = R.string.home_screen),
+    TwitIdScreen(title = R.string.twit_id_screen),
     LoginScreen(title = R.string.login_screen),
     LogoutScreen(title = R.string.logout_screen),
     ProfileScreen(title = R.string.profile_screen),
@@ -93,6 +95,16 @@ fun RibbitScreen(
             homeViewModel.getRibbitPosts() // recompositon시 계속 실행됨. 여기 함수를 두면 안 됨. (수정: 반복 recomposition을 해결하여 상관 없음.)
             Log.d("HippoLog, RibbitApp, RibbitScreen", "HomeScreen")
             HomeScreen(
+                scrollBehavior = scrollBehavior,
+                navController = navController,
+                homeViewModel = homeViewModel,
+                authViewModel = authViewModel,
+                userId = ((userViewModel.userUiState as UserUiState.Exist).user.id)!!   // 유저 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 것으로 가정한다.
+            )
+        }
+        composable(route = RibbitScreen.TwitIdScreen.name) {
+            Log.d("HippoLog, RibbitApp, RibbitScreen", "TwitIdScreen")
+            TwitIdScreen(
                 scrollBehavior = scrollBehavior,
                 navController = navController,
                 homeViewModel = homeViewModel,

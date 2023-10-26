@@ -106,7 +106,8 @@ fun RibbitDropDownMenu(
             }
             DropdownMenuItem(
                 onClick = {
-                    navController.navigate(RibbitScreen.HomeScreen.name)
+                    homeViewModel.getPostIdPosts(post.id)
+                    navController.navigate(RibbitScreen.TwitIdScreen.name)
                     isDropDownMenuExpanded = false
                 },
                 text = {
