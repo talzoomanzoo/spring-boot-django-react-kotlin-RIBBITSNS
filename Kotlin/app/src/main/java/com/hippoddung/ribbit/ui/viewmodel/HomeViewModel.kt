@@ -15,6 +15,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
+import java.net.SocketTimeoutException
+import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import javax.inject.Inject
@@ -31,6 +33,7 @@ sealed interface HomeUiState {
     data class Error(val errorCode: String) : HomeUiState
     object Loading : HomeUiState
 }
+
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val ribbitRepository: RibbitRepository
@@ -51,7 +54,7 @@ class HomeViewModel @Inject constructor(
 //        )
 //    }
 
-//    fun getRibbitPosts(coroutinesErrorHandler: CoroutinesErrorHandler) = baseRequest(
+    //    fun getRibbitPosts(coroutinesErrorHandler: CoroutinesErrorHandler) = baseRequest(
 //        homeResponse, coroutinesErrorHandler
 //    ) {
 //        Log.d("HippoLog, HomeViewModel", "getRibbitPosts")
@@ -71,11 +74,11 @@ class HomeViewModel @Inject constructor(
                 Log.d("HippoLog, HomeViewModel", "${e.stackTrace}, ${e.message}")
                 HomeUiState.Error(e.message.toString())
 
-            } catch (e: HttpException){
+            } catch (e: HttpException) {
                 Log.d("HippoLog, HomeViewModel", "${e.stackTrace}, ${e.code()}, $e")
-                if (e.code() == 500){
+                if (e.code() == 500) {
                     HomeUiState.Error(e.code().toString())
-                }else {
+                } else {
                     HomeUiState.Error(e.message.toString())
                 }
             }
@@ -83,7 +86,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun deleteRibbitPost(postId: Int){
+    fun deleteRibbitPost(postId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             Log.d("HippoLog, HomeViewModel", "deleteRibbitPost, $postId")
             try {
@@ -97,15 +100,58 @@ class HomeViewModel @Inject constructor(
                 Log.d("HippoLog, HomeViewModel", "${e.stackTrace}, ${e.message}")
                 DeletePostUiState.Error(e.message.toString())
 
-            } catch (e: HttpException){
+            } catch (e: HttpException) {
                 Log.d("HippoLog, HomeViewModel", "${e.stackTrace}, ${e.code()}, $e")
-                if (e.code() == 500){
+                if (e.code() == 500) {
                     DeletePostUiState.Error(e.code().toString())
-                }else {
+                } else {
                     DeletePostUiState.Error(e.message.toString())
                 }
             }
             Log.d("HippoLog, HomeViewModel", "deleteRibbitPost")
         }
+    }
+
+    //suspend fun retrieveThumbnailFromVideo(videoUrl: String?): Bitmap? {
+    fun retrieveThumbnailFromVideo(videoUrl: String?): Future<Bitmap> {
+        val executor = Executors.newFixedThreadPool(2)
+        val future: Future<Bitmap> = executor.submit(Callable<Bitmap> {
+            var retrievalCount = 0
+            val maxRetrievalCount = 2 // Adjust this value as needed
+            if (retrievalCount >= maxRetrievalCount) {
+                // You've reached the limit, so return null or handle it as needed
+                return@Callable null
+            }
+            var bitmap: Bitmap? = null
+            var mediaMetadataRetriever: MediaMetadataRetriever? = null
+            mediaMetadataRetriever = MediaMetadataRetriever()
+            if (Build.VERSION.SDK_INT >= 14) {
+                mediaMetadataRetriever.setDataSource(videoUrl, HashMap())
+            } else {
+                mediaMetadataRetriever.setDataSource(videoUrl)
+            }
+            try {
+                Log.d("HippoLog, HomeScreen, retrieve", "Thread - ${Thread.currentThread().name}")
+                bitmap = mediaMetadataRetriever.getFrameAtTime(100000)
+            } catch (e: SocketTimeoutException) {
+                Log.d(
+                    "HippoLog, HomeScreen, retrieve, Exception",
+                    "Exception in retrieveThumbnailFromVideo: ${e.message}"
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.d(
+                    "HippoLog, HomeScreen, retrieve, Exception",
+                    "Exception in retrieveThumbnailFromVideo: ${e.message}"
+                )
+            } finally {
+                mediaMetadataRetriever.release()
+            }
+            retrievalCount++
+//    return bitmap
+            return@Callable bitmap
+        }
+        )
+        return future
     }
 }

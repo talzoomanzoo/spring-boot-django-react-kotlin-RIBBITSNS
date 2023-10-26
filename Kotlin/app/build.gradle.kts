@@ -1,11 +1,15 @@
 @file:Suppress("UnstableApiUsage")
 
+//import com.google.protobuf.gradle.* // ProtoDataStore 쓰려다가 필요 없을 것 같아서 중단.
+
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
+//    id("com.google.protobuf") version "0.9.1"
 }
 
 android {
@@ -84,8 +88,12 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:${rootProject.extra["lifecycle_version"]}")
     // Navigation
     implementation("androidx.navigation:navigation-compose:2.6.0")
-    // DataStore
+    // Preferences DataStore
     implementation("androidx.datastore:datastore-preferences:1.0.0")
+    // Proto DataStore
+//    implementation("androidx.datastore:datastore:1.0.0")
+//    implementation("com.google.protobuf:protobuf-javalite:3.18.0")
+
     // Work
     implementation("androidx.work:work-runtime-ktx:2.8.1")
     // Retrofit with Kotlin serialization Converter
@@ -122,3 +130,18 @@ dependencies {
 kapt {
     correctErrorTypes = true
 }
+
+//protobuf {
+//    protoc {
+//        artifact = "com.google.potobuf:protoc:3.21.7"
+//    }
+//    generateProtoTasks {
+//        all().forEach { task ->
+//            task.builtins{
+//                java{
+//                    "lite"
+//                }
+//            }
+//        }
+//    }
+//}

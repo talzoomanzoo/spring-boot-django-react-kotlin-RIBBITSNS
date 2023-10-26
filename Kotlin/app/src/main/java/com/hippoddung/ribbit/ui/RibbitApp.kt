@@ -2,7 +2,9 @@
 
 package com.hippoddung.ribbit.ui
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -31,6 +33,8 @@ import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
 import com.hippoddung.ribbit.ui.viewmodel.HomeViewModel
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.TwitsCreateViewModel
+import com.hippoddung.ribbit.ui.viewmodel.UserUiState
+import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
 enum class RibbitScreen(@StringRes val title: Int) {
     HomeScreen(title = R.string.home_screen),
@@ -43,17 +47,19 @@ enum class RibbitScreen(@StringRes val title: Int) {
     ErrorScreen(title = R.string.error_screen)
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RibbitApp(
     homeViewModel: HomeViewModel,
     authViewModel: AuthViewModel,
     tokenViewModel: TokenViewModel,
-    twitsCreateViewModel: TwitsCreateViewModel
+    twitsCreateViewModel: TwitsCreateViewModel,
+    userViewModel: UserViewModel
 ) {
     when (authViewModel.authUiState) {
         is AuthUiState.Login -> {
             Log.d("HippoLog, RibbitApp", "Login")
-            RibbitScreen(homeViewModel, authViewModel, tokenViewModel, twitsCreateViewModel)
+            RibbitScreen(homeViewModel, authViewModel, tokenViewModel, twitsCreateViewModel, userViewModel)
         }
 
         is AuthUiState.Logout -> {
@@ -63,13 +69,15 @@ fun RibbitApp(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RibbitScreen(
     homeViewModel: HomeViewModel,
     authViewModel: AuthViewModel,
     tokenViewModel: TokenViewModel,
-    twitsCreateViewModel: TwitsCreateViewModel
+    twitsCreateViewModel: TwitsCreateViewModel,
+    userViewModel: UserViewModel
 ) {
 //    val backStackEntry by navController.currentBackStackEntryAsState()
 //    val currentScreen = RibbitScreen.valueOf(backStackEntry?.destination?.route ?: RibbitScreen.SignUpScreen.name)
@@ -82,17 +90,19 @@ fun RibbitScreen(
         modifier = Modifier
     ) {
         composable(route = RibbitScreen.HomeScreen.name) {
-//                    homeViewModel.getRibbitPosts() // recompositon시 계속 실행됨. 여기 함수를 두면 안 됨.
+            homeViewModel.getRibbitPosts() // recompositon시 계속 실행됨. 여기 함수를 두면 안 됨. (수정: 반복 recomposition을 해결하여 상관 없음.)
             Log.d("HippoLog, RibbitApp, RibbitScreen", "HomeScreen")
             HomeScreen(
                 scrollBehavior = scrollBehavior,
                 navController = navController,
-                homeViewModel = homeViewModel
+                homeViewModel = homeViewModel,
+                authViewModel = authViewModel,
+                userId = ((userViewModel.userUiState as UserUiState.Exist).user.id)!!   // 유저 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 것으로 가정한다.
             )
         }
         composable(route = RibbitScreen.ProfileScreen.name) {
             Log.d("HippoLog, RibbitApp, RibbitScreen", "ProfileScreen")
-            ProfileScreen()
+            ProfileScreen(userViewModel)
         }
         composable(route = RibbitScreen.TwitCreateScreen.name) {
             Log.d("HippoLog, RibbitApp, RibbitScreen", "TwitCreateScreen")

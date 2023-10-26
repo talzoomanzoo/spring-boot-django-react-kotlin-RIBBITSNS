@@ -26,11 +26,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.network.bodys.RibbitPost
 import com.hippoddung.ribbit.ui.RibbitScreen
-import com.hippoddung.ribbit.ui.screens.appbars.HippoTopAppBar
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
+import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
 import com.hippoddung.ribbit.ui.viewmodel.HomeUiState
 import com.hippoddung.ribbit.ui.viewmodel.HomeViewModel
+import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -40,6 +41,8 @@ fun HomeScreen(
     scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
     homeViewModel: HomeViewModel,
+    authViewModel: AuthViewModel,
+    userId: Int,
     modifier: Modifier = Modifier.fillMaxSize()
 ) {
     when (homeViewModel.homeUiState) {
@@ -54,9 +57,11 @@ fun HomeScreen(
             val ribbitPosts = (homeViewModel.homeUiState as HomeUiState.Success).posts
             HomeSuccessScreen(
                 homeViewModel = homeViewModel,
+                authViewModel = authViewModel,
                 scrollBehavior = scrollBehavior,
                 navController = navController,
                 ribbitPosts = ribbitPosts,
+                userId = userId,
                 modifier = modifier
             )
         }
@@ -76,9 +81,11 @@ fun HomeScreen(
 @Composable
 fun HomeSuccessScreen(
     homeViewModel: HomeViewModel,
+    authViewModel: AuthViewModel,
     scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
     ribbitPosts: List<RibbitPost>,
+    userId: Int,
     modifier: Modifier
 ) {
     Scaffold(
@@ -86,8 +93,9 @@ fun HomeSuccessScreen(
         // scrollBehavior에 따라 리컴포지션이 트리거되는 것으로 추측, 해결할 방법을 찾아야 함.
         // navigation 위(RibbitApp)에 있던 scrollBehavior을 navigation 하위에 있는 HomeScreen으로 옮겨서 해결.
         topBar = {
-            HippoTopAppBar(
+            HomeTopAppBar(
                 homeViewModel = homeViewModel,
+                authViewModel = authViewModel,
                 scrollBehavior = scrollBehavior,
                 navController = navController
             )
@@ -100,7 +108,11 @@ fun HomeSuccessScreen(
         ) {
             Box(modifier = modifier) {
                 PostsGridScreen(
-                    posts = ribbitPosts, homeViewModel = homeViewModel, navController = navController, modifier
+                    posts = ribbitPosts,
+                    homeViewModel = homeViewModel,
+                    userId = userId,
+                    navController = navController,
+                    modifier = modifier
                 )
             }
             Box(modifier = modifier) {
@@ -123,7 +135,12 @@ fun HomeSuccessScreen(
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("UnrememberedMutableState")
 @Composable
-fun PostsGridScreen(posts: List<RibbitPost>, homeViewModel: HomeViewModel, navController: NavHostController,modifier: Modifier) {
+fun PostsGridScreen(posts: List<RibbitPost>,
+                    homeViewModel: HomeViewModel,
+                    userId: Int,
+                    navController: NavHostController,
+                    modifier: Modifier
+) {
     val comparator = compareByDescending<RibbitPost> { it.id }
     val sortedRibbitPost = remember(posts, comparator) {
         posts.sortedWith(comparator)
@@ -133,6 +150,7 @@ fun PostsGridScreen(posts: List<RibbitPost>, homeViewModel: HomeViewModel, navCo
             RibbitCard(
                 post = it,
                 homeViewModel = homeViewModel,
+                userId = userId,
                 navcontroller = navController,
                 modifier = modifier.padding(8.dp)
             )

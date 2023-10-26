@@ -32,7 +32,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.network.bodys.RibbitPost
+import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
 import com.hippoddung.ribbit.ui.viewmodel.HomeViewModel
+import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -40,14 +42,23 @@ import java.time.format.DateTimeFormatter
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("SetJavaScriptEnabled", "JavascriptInterface")
 @Composable
-fun RibbitCard(post: RibbitPost, homeViewModel: HomeViewModel, navcontroller: NavHostController, modifier: Modifier) {
+fun RibbitCard(post: RibbitPost,
+               homeViewModel: HomeViewModel,
+               userId: Int,
+               navcontroller: NavHostController,
+               modifier: Modifier = Modifier
+) {
+    Log.d("HippoLog, RibbitCard", "RibbitCard")
     Card(
         shape = MaterialTheme.shapes.medium,
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         modifier = modifier.fillMaxWidth()
     ) {
         Column(modifier = modifier) {
-            CardTopBar(post = post, homeViewModel = homeViewModel, navController = navcontroller)
+            CardTopBar(post = post,
+                homeViewModel = homeViewModel,
+                userId = userId,
+                navController = navcontroller)
             Text(
                 text = post.content,
                 fontSize = 14.sp,
@@ -60,7 +71,8 @@ fun RibbitCard(post: RibbitPost, homeViewModel: HomeViewModel, navcontroller: Na
             }
 
             if (post.video != null) {
-                RibbitVideo(post.video)
+                Log.d("HippoLog, RibbitCard", "RibbitVideo")
+                RibbitVideo(post.video, homeViewModel = homeViewModel)
             } else {
             }
             CardBottomBar(post = post)
