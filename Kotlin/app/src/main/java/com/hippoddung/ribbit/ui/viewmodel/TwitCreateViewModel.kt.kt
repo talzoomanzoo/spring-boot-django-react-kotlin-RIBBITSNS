@@ -115,6 +115,19 @@ class TwitsCreateViewModel @Inject constructor(
         }
     }
 
+    suspend fun twitCreate(twitCreateRequest: TwitCreateRequest) {
+            try {
+                ribbitRepository.twitCreate(twitCreateRequest)
+            } catch (e: IOException) {
+                twitsCreateUiState = TwitsCreateUiState.Error
+                println(e.stackTrace)
+            } catch (e: ExceptionInInitializerError) {
+                twitsCreateUiState = TwitsCreateUiState.Error
+                println(e.stackTrace)
+            }
+        twitsCreateUiState = TwitsCreateUiState.Success
+    }
+
     fun getFilePathFromUri(context: Context, uri: Uri): String? {
         // The column containing the file path
         val projection = arrayOf(MediaStore.Video.Media.DATA)
@@ -127,22 +140,6 @@ class TwitsCreateViewModel @Inject constructor(
             return it.getString(columnIndex)
         }
         return null
-    }
-
-    fun twitCreate(twitCreateRequest: TwitCreateRequest) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                ribbitRepository.twitCreate(twitCreateRequest)
-            } catch (e: IOException) {
-                twitsCreateUiState = TwitsCreateUiState.Error
-                println(e.stackTrace)
-            } catch (e: ExceptionInInitializerError) {
-                twitsCreateUiState = TwitsCreateUiState.Error
-                println(e.stackTrace)
-            }
-        }
-        twitsCreateUiState = TwitsCreateUiState.Success
-
     }
 
     suspend fun uploadImageCloudinary(image: Bitmap?) {

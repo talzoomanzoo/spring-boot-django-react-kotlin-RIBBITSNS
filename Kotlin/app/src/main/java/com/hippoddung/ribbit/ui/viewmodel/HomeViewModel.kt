@@ -19,6 +19,13 @@ import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import javax.inject.Inject
 
+sealed interface DeletePostUiState {
+    object Ready : DeletePostUiState
+    object Success : DeletePostUiState
+    data class Error(val errorCode: String) : DeletePostUiState
+    object Loading : DeletePostUiState
+}
+
 sealed interface HomeUiState {
     data class Success(val posts: List<RibbitPost>) : HomeUiState
     data class Error(val errorCode: String) : HomeUiState
@@ -29,6 +36,7 @@ class HomeViewModel @Inject constructor(
     private val ribbitRepository: RibbitRepository
 ) : BaseViewModel() {
     var homeUiState: HomeUiState by mutableStateOf(HomeUiState.Loading)
+    var deletePostUiState: DeletePostUiState by mutableStateOf(DeletePostUiState.Ready)
 //    val homeResponse: MutableLiveData<ApiResponse<List<RibbitPost>>> by lazy {
 //        MutableLiveData<ApiResponse<List<RibbitPost>>>()
 //    }
@@ -52,6 +60,7 @@ class HomeViewModel @Inject constructor(
     fun getRibbitPosts() {
         viewModelScope.launch(Dispatchers.IO) {
             homeUiState = HomeUiState.Loading
+            Log.d("HippoLog, HomeViewModel", "getRibbitPosts, $homeUiState")
             homeUiState = try {
                 HomeUiState.Success(ribbitRepository.getPosts())
             } catch (e: IOException) {
@@ -70,7 +79,33 @@ class HomeViewModel @Inject constructor(
                     HomeUiState.Error(e.message.toString())
                 }
             }
-            Log.d("HippoLog, HomeViewModel", "$homeUiState")
+            Log.d("HippoLog, HomeViewModel", "getRibbitPosts, $homeUiState")
+        }
+    }
+
+    fun deleteRibbitPost(postId: Int){
+        viewModelScope.launch(Dispatchers.IO) {
+            Log.d("HippoLog, HomeViewModel", "deleteRibbitPost, $postId")
+            try {
+                deletePostUiState = DeletePostUiState.Loading
+                ribbitRepository.deletePost(postId)
+            } catch (e: IOException) {
+                Log.d("HippoLog, HomeViewModel", "${e.stackTrace}, ${e.message}")
+                DeletePostUiState.Error(e.message.toString())
+
+            } catch (e: ExceptionInInitializerError) {
+                Log.d("HippoLog, HomeViewModel", "${e.stackTrace}, ${e.message}")
+                DeletePostUiState.Error(e.message.toString())
+
+            } catch (e: HttpException){
+                Log.d("HippoLog, HomeViewModel", "${e.stackTrace}, ${e.code()}, $e")
+                if (e.code() == 500){
+                    DeletePostUiState.Error(e.code().toString())
+                }else {
+                    DeletePostUiState.Error(e.message.toString())
+                }
+            }
+            Log.d("HippoLog, HomeViewModel", "deleteRibbitPost")
         }
     }
 }

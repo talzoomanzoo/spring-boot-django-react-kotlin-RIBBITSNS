@@ -1,6 +1,7 @@
 package com.hippoddung.ribbit
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -50,6 +51,7 @@ class MainActivity @Inject constructor() : ComponentActivity() {
             }
         }
         val tokenObserver = Observer<String?> { token ->
+            Log.d("HippoLog, MainActivity", "tokenObserver")
             when (token) {
                 null -> {
                     tokenViewModel.tokenUiState = TokenUiState.Lack
@@ -84,6 +86,7 @@ class MainActivity @Inject constructor() : ComponentActivity() {
         tokenViewModel.token.observe(this, tokenObserver)
 
         val authObserver = Observer<ApiResponse<AuthResponse>> { response ->
+            Log.d("HippoLog, MainActivity", "authObserver")
             // Update the UI, in this case, a TextView.
             when (response) {
                 is ApiResponse.Failure -> {}

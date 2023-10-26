@@ -54,7 +54,7 @@ const TwitCard = ({ twit }) => {
   const handleCloseEmoji = () => setOpenEmoji(false);
 
   const dispatch = useDispatch();
-  const { auth } = useSelector((store) => store);
+  const { theme, auth } = useSelector((store) => store);
   const [isLiked, setIsLiked] = useState(twit.liked);
   const [likes, setLikes] = useState(twit.totalLikes);
 
@@ -108,31 +108,43 @@ const TwitCard = ({ twit }) => {
   const handleCloseReplyModel = () => setOpenReplyModel(false);
 
   const handleOpenReplyModel = () => setOpenReplyModel(true);
+
   //const handleNavigateToTwitDetial = () => navigate(`/twit/${twit.id}`);
 
   const handleNavigateToTwitDetial = () => {
     if (!isEditing) {
       navigate(`/twit/${twit.id}`);
       dispatch(viewPlus(twit.id));
-      window.location.reload();
+      //window.location.reload();
+      setRefreshTwits((prev) => prev + 1);
     }
   };
 
+  const [refreshTwits, setRefreshTwits] = useState(0);
+
+  // useEffect(()=>{
+  //   dispatch(getAllTweets());
+  // },[refreshTwits])
+
   const handleDeleteTwit = async () => {
+
     try {
       dispatch(deleteTweet(twit.id));
       handleCloseDeleteMenu();
-      window.location.reload();
+      //window.location.reload();
+      //setRefreshTwits((prev) => prev + 1);
 
       const currentId = window.location.pathname.replace(/^\/twit\//, "");
       if (location.pathname === `/twit/${currentId}`) {
-        window.location.reload();
+        //window.location.reload();
+        setRefreshTwits((prev) => prev + 1);
       } else {
         navigate(".", { replace: true });
       }
     } catch (error) {
       console.error("게시글 삭제 중 오류 발생:", error);
     }
+
   };
 
   const handleEditClick = () => {
@@ -196,6 +208,7 @@ const TwitCard = ({ twit }) => {
       setIsEditing(false);
       console.log("edit test", twit);
       //window.location.reload();
+      //setRefreshTwits((prev) => prev + 1);
       setIsLoading(false);
       handleCloseEditClick();
     } catch (error) {
@@ -203,27 +216,26 @@ const TwitCard = ({ twit }) => {
     }
   };
 
+
   const ethicreveal = async (twitid, twitcontent) => {
     try {
-      const response = await fetch(
-        "http://localhost:8080/api/ethic/reqsentence",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${jwtToken}`,
-          },
-          body: JSON.stringify({
-            id: twitid,
-            content: twitcontent,
-          }),
-        }
-      );
+      const response = await fetch("http://localhost:8080/api/ethic/reqsentence", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${jwtToken}`,
+        },
+        body: JSON.stringify({
+          id: twitid,
+          content: twitcontent,
+        }),
+      });
       console.log("response: ", response);
       console.log("jwt: ", jwtToken);
       if (response.status === 200) {
         const responseData = await response.json();
         setSentence(responseData.sentence);
+        setRefreshTwits((prev) => prev + 1);
       }
     } catch (error) {
       console.error("Error fetching ethic data:", error);
@@ -334,7 +346,7 @@ const TwitCard = ({ twit }) => {
               {twit.user.verified && (
                 <img
                   className="ml-2 w-5 h-5"
-                  src="https://waifu2x.booru.pics/outfiles/a2936a8caed993f9e006506b1afc9ace572e8d66_s2_n2_y1.png"
+                  src="https://cdn.pixabay.com/photo/2023/10/25/08/19/08-19-05-334_1280.png"
                   alt=""
                 />
               )}
@@ -360,19 +372,19 @@ const TwitCard = ({ twit }) => {
               >
                 {isEditing ? (
                   <div>
-                    <MenuItem onClick={handleSaveClick}>Save</MenuItem>
-                    <MenuItem onClick={handleCancelClick}>Cancel</MenuItem>
+                    <MenuItem onClick={handleSaveClick}>저장</MenuItem>
+                    <MenuItem onClick={handleCancelClick}>취소</MenuItem>
                   </div>
                 ) : (
                   <div>
                     {twit.user.id === auth.user.id && (
-                      <MenuItem onClick={handleDeleteTwit}>Delete</MenuItem>
+                      <MenuItem onClick={handleDeleteTwit}>삭제</MenuItem>
                     )}
                     {twit.user.id === auth.user.id && (
-                      <MenuItem onClick={handleEditClick}>Edit</MenuItem>
+                      <MenuItem onClick={handleEditClick}>수정</MenuItem>
                     )}
                     <MenuItem onClick={handleNavigateToTwitDetial}>
-                      Details
+                      자세히
                     </MenuItem>
                   </div>
                 )}
@@ -387,7 +399,10 @@ const TwitCard = ({ twit }) => {
             >
               {isEditing ? (
                 <div>
-                  <TextareaAutosize
+                  <TextareaAutosize className={`${theme.currentTheme === "light"
+                    ? "bg-white"
+                    : "bg-[#151515]"
+                    }`}
                     minRows={0}
                     maxRows={0}
                     value={editedContent}
@@ -430,7 +445,9 @@ const TwitCard = ({ twit }) => {
                     {isEditing ? editedContent : twit.content}
                   </p>
 
-                  {sentence && <p>{sentence}</p>}
+                  {sentence && (
+                    <p>{sentence}</p>
+                  )}
 
                   {twit.image && (
                     <img
@@ -518,9 +535,8 @@ const TwitCard = ({ twit }) => {
                     {/* twit 객체의 totalReplies 속성 값이 0보다 큰 경우에만 해당 값을 포함하는 <p> 태그로 래핑 시도*/}
                   </div>
                   <div
-                    className={`${
-                      isRetwit ? "text-pink-600" : "text-gray-600"
-                    } space-x-3 flex items-center`}
+                    className={`${isRetwit ? "text-pink-600" : "text-gray-600"
+                      } space-x-3 flex items-center`}
                   >
                     <RepeatIcon
                       className={` cursor-pointer`}
@@ -529,9 +545,8 @@ const TwitCard = ({ twit }) => {
                     {retwit > 0 && <p>{retwit}</p>}
                   </div>
                   <div
-                    className={`${
-                      isLiked ? "text-pink-600" : "text-gray-600"
-                    } space-x-3 flex items-center `}
+                    className={`${isLiked ? "text-pink-600" : "text-gray-600"
+                      } space-x-3 flex items-center `}
                   >
                     {isLiked ? (
                       <FavoriteIcon onClick={() => handleLikeTweet(-1)} />

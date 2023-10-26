@@ -42,7 +42,7 @@ const Authentication = () => {
         <Grid className="hidden lg:block" item lg={7}>
           <img  
             className="w-full h-screen"
-            src="https://waifu2x.booru.pics/outfiles/c93add9837053c38a730e9b7d0573174df72cd27_s2_n2_y1.jpg"
+            src="https://cdn.pixabay.com/photo/2018/04/14/05/26/green-3318343_1280.jpg"
             alt=""
           />
 
@@ -66,7 +66,7 @@ const Authentication = () => {
           marginTop: "300px",
           marginLeft: "20%",
         }}
-        src="https://waifu2x.booru.pics/outfiles/a2936a8caed993f9e006506b1afc9ace572e8d66_s2_n2_y1.png" alt="" />
+        src="https://cdn.pixabay.com/photo/2023/10/26/06/44/06-44-04-156_1280.png" alt="" />
         </Grid>
         <Grid className="px-10" item lg={5} xs={12}>
           <div className="py-10">
