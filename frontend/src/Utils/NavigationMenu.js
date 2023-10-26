@@ -1,17 +1,20 @@
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import ExploreIcon from '@mui/icons-material/Explore';
 import GroupIcon from '@mui/icons-material/Group';
-import HomeIcon from '@mui/icons-material/Home';
-import ListAltIcon from '@mui/icons-material/ListAlt';
-import MessageIcon from '@mui/icons-material/Message';
+import HouseIcon from '@mui/icons-material/House';
+import ListIcon from '@mui/icons-material/List';
+import ChatIcon from '@mui/icons-material/Chat';
+import ForumIcon from '@mui/icons-material/Forum';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import PendingIcon from '@mui/icons-material/Pending';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import VerifiedIcon from '@mui/icons-material/Verified';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import GroupsIcon from '@mui/icons-material/Groups';
 
 export const navigationMenu=[
     {
         title:"홈",
-        icon:<HomeIcon/>,
+        icon:<HouseIcon/>,
         path:"/"
     },
     {
@@ -26,33 +29,33 @@ export const navigationMenu=[
     },
     {
         title:"메시지" ,
-        icon:<MessageIcon/>,
+        icon:<ForumIcon/>,
         path:"/messages"
     },
     {
         title:"리스트" ,
-        icon:<ListAltIcon/>,
+        icon:<ListIcon/>,
         path:"/lists"
     },
     {
         title:"커뮤니티" ,
-        icon:<GroupIcon/>,
+        icon:<GroupsIcon/>,
         path:"/communities"
     },
     {
         title: "그린체크",
-        icon:<VerifiedIcon/>,
+        icon:<CheckCircleIcon/>,
         path:"/verified"
     },
     {
         title:"프로필" ,
-        icon:<AccountCircleIcon/>,
+        icon:<AccountBoxIcon/>,
         path:"/profile"
         
     },
     {
         title:"더보기" ,
-        icon:<PendingIcon/>,
+        icon:<MoreHorizIcon/>,
         path:"/more"
     },
 ]

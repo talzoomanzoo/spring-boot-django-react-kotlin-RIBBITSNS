@@ -34,10 +34,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name="User Management", description = "Endpoints for managing user profiles and information")
 public class UserController {
 
-@Autowired
-private UserService userService;
-@Autowired
-private ListService listService;
+	@Autowired
+	private UserService userService;
+	@Autowired
+	private ListService listService;
 	
 	public UserController(UserService userService, ListService listService) {
 		this.userService=userService;
@@ -132,4 +132,18 @@ private ListService listService;
 //		System.out.println("ListUtilCheck2 " + userDto.isFollowedLists());
 //		return new ResponseEntity<>(userDto, HttpStatus.ACCEPTED);
 //	}
+	
+	@PostMapping("/withdraw")
+	public ResponseEntity<UserDto> accountwithdraw(@RequestHeader("Authorization") String jwt) 
+			throws UserException{
+		System.out.println("jwt: "+jwt);
+
+		User user=userService.findUserProfileByJwt(jwt);
+		System.out.println("user.getid: "+user.getId());
+		
+		
+		userService.deleteaccount(user);
+		
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
 }

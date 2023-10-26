@@ -9,9 +9,10 @@ import Lists from "./Lists/Lists";
 import Navigation from "./Navigation/Navigation";
 import Profile from "./Profile/Profile";
 import RightPart from "./RightPart/RightPart";
+import Chatroom from "./Chat/Chat";
 
 const HomePage = () => {
-  const { list, twit, auth, theme } = useSelector((store) => store);
+  const { theme } = useSelector((store) => store);
   return (
     <Grid container className="px-5 lg:px-36 justify-between" xs={12}>
       <Grid item xs={0} lg={2.5} className="hidden lg:block  w-full relative">
@@ -29,6 +30,7 @@ const HomePage = () => {
           <Route path="/" element={<HomeSection />}></Route>
           <Route path="/profile/:id" element={<Profile />}></Route>
           <Route path="/followTwit" element={<FollowTwit />}></Route>
+          <Route path="/messages" element={<Chatroom />}></Route>
           <Route path="/lists" element={<Lists />}></Route>
           <Route path="/twit/:id" element={<TwitDetail />}></Route>
         </Routes>

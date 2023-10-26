@@ -63,19 +63,10 @@ const ListsModel = ({ handleClose, open }) => {
             listName: "",
             description: "",
             backgroundImage: "",
+            privateMode: false,
         },
         onSubmit: handleSubmit,
     });
-
-    // useEffect(() => {
-
-    //     formik.setValues({
-    //         listName: || "", 
-    //         description: || "",
-    //         backgroundImage: || "",
-    //     });
-
-    // }, []) // list controller 따로 만들어야 함
 
     const handleImageChange = async (event) => {
         setUploading(true)
@@ -99,9 +90,10 @@ const ListsModel = ({ handleClose, open }) => {
     }
 
     const [isEnabled, setIsEnabled] = useState(false);
+
     const toggleSwitch = () => {
         setIsEnabled(previousState => !previousState);
-        //dispatch(setPrivate());
+        //dispatch(setPrivate(list.id));
     };
 
     return (
@@ -113,7 +105,7 @@ const ListsModel = ({ handleClose, open }) => {
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
-                    <form onSubmit={formik.handleSubmit}>
+                    <form onSubmit={formik.handleSubmit}> 
                         <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-3">
                                 <IconButton onClick={handleClose} aria-label="delete">

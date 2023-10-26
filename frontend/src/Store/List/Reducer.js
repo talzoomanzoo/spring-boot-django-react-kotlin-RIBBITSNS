@@ -20,9 +20,6 @@ import {
     SET_PRIVATE_REQUEST,
     SET_PRIVATE_SUCCESS,
     SET_PRIVATE_FAILURE,
-    GET_PRIVATE_REQUEST,
-    GET_PRIVATE_SUCCESS,
-    GET_PRIVATE_FAILURE,
 } from "./ActionType";
 
 const initialState = {
@@ -38,7 +35,6 @@ const listReducer = (state = initialState, action) => {
         action.type
     ) {
         case GET_LISTS_REQUEST:
-        case GET_PRIVATE_REQUEST:
         case LIST_CREATE_REQUEST:
         case SET_PRIVATE_REQUEST:
         case UPDATE_LIST_REQUEST:
@@ -56,7 +52,6 @@ const listReducer = (state = initialState, action) => {
             };
         case LIST_DELETE_REQUEST:
         case GET_LISTS_FAILURE:
-        case GET_PRIVATE_FAILURE:
         case LIST_CREATE_FAILURE:
         case SET_PRIVATE_FAILURE:
         case UPDATE_LIST_FAILURE:
@@ -89,13 +84,6 @@ const listReducer = (state = initialState, action) => {
             return {
                 ...state,
                 loading:false,
-                lists: action.payload,
-                error: null,
-            };
-        case GET_PRIVATE_SUCCESS:
-            return {
-                ...state,
-                loading: false,
                 lists: action.payload,
                 error: null,
             };

@@ -26,7 +26,8 @@ const TwitDetail = () => {
   return (
     <div>
         <section
-        className={`z-50 flex items-center sticky top-0 ${
+        className={`z-50 flex items-center sticky top-0 
+        ${
           theme.currentTheme === "light" ? "bg-white" : "bg-[#0D0D0D]"
           // theme, 즉 themeReducer의 initialState 속성의 currentTheme 변경
           // 속성이 light이면,전자 아니면 후자
@@ -36,8 +37,8 @@ const TwitDetail = () => {
           className="cursor-pointer"
           onClick={handleBack}
         />
-        <h1 className="py-5 text-xl font-bold opacity-90 ml-5">
-          {"Twit"}
+        <h1 className="py-5 text-xl font-bold opacity-90 ml-5 ${}">
+          {"리빗"}
         </h1>
       </section>
        {twit.twit && <TwitCard twit={twit.twit}/>}

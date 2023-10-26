@@ -25,4 +25,7 @@ public interface UserService {
 	
 	public List<User> searchUser(String query);
 	
+	
+	public void deleteaccount(User user) throws UserException;//계정삭제
+	
 }

@@ -7,9 +7,6 @@ import {
     GET_LISTS_REQUEST,
     GET_LISTS_SUCCESS,
     GET_LISTS_FAILURE,
-    GET_PRIVATE_REQUEST,
-    GET_PRIVATE_SUCCESS,
-    GET_PRIVATE_FAILURE,
     UPDATE_LIST_REQUEST,
     UPDATE_LIST_SUCCESS,
     UPDATE_LIST_FAILURE,
@@ -53,19 +50,6 @@ export const createListSuccess=(data) => ({
 export const createListFailure=(error) => ({
     type: LIST_CREATE_FAILURE,
     payload:error,
-})
-export const getPrivateListsRequest = () => ({
-    type:GET_PRIVATE_REQUEST,
-})
-
-export const getPrivateListsSuccess = (lists) => ({
-    type:GET_PRIVATE_SUCCESS,
-    payload: lists,
-})
-
-export const getPrivateListsFailure = (error) => ({
-    type: GET_PRIVATE_FAILURE,
-    payload: error,
 })
 
 export const getAllListsRequest = () => ({
@@ -163,19 +147,6 @@ export const getAllLists = () => {
         }
     };
 };
-
-export const getPrivateLists = () => {
-    return async (dispatch) => {
-        dispatch(getPrivateListsRequest());
-        try {
-            const response = await api.get("/api/lists/private");
-            console.log("all lists", response.data)
-            dispatch(getPrivateListsSuccess(response.data));
-        } catch (error) {
-            dispatch(getPrivateListsFailure(error.message));
-        }
-    }
-}
 
 export const deleteList = (listId) => {
     return async (dispatch) => {
