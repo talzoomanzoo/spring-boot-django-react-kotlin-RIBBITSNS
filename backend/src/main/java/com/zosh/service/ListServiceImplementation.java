@@ -87,18 +87,12 @@ public class ListServiceImplementation implements ListService{
 		listRepository.deleteById(listModel.getId());
 	}
 
-//	@Override
-//	public List<ListModel> findAllList() {
-//		// TODO Auto-generated method stub
-//		return listRepository.findAllByOrderByCreatedAtDesc();
-//	}
-	
 	@Override
-	public List<ListModel> findAllPublicListByReqUser(User user) {
+	public List<ListModel> findAllList(User user) {
 		// TODO Auto-generated method stub
-		return listRepository.findPublicOrderByCreatedAtDesc();
+		return listRepository.findAllOrderByCreatedAtDesc(user.getId());
 	}
-
+	
 	@Override
 	public ListModel setPrivateById(Long listId, Long userId) throws ListException, UserException {
 		// TODO Auto-generated method stub
@@ -110,11 +104,5 @@ public class ListServiceImplementation implements ListService{
 		}
 		listRepository.save(listModel);
 		return listModel;
-	}
-
-	@Override
-	public List<ListModel> findAllPrivateListByReqUser(User user) {
-		// TODO Auto-generated method stub
-		return listRepository.findPrivateOrderByCreatedAtDesc(user.getId());
 	}
 }

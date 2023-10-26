@@ -58,16 +58,8 @@ private UserRepository userRepository;
 			throws ListException, UserException{
 		
 		User reqUser=userService.findUserProfileByJwt(jwt);
-		List<ListModel> listModels= listService.findAllPublicListByReqUser(reqUser);
-		List<ListDto> listDtos=ListDtoMapper.toListDtos(listModels,reqUser);
-		return new ResponseEntity<>(listDtos, HttpStatus.ACCEPTED);
-	}
-	
-	@GetMapping("/private")
-	public ResponseEntity<List<ListDto>> getAllPrivateLists(@RequestHeader("Authorization") String jwt)
-		throws ListException, UserException{
-		User reqUser=userService.findUserProfileByJwt(jwt);
-		List<ListModel> listModels= listService.findAllPrivateListByReqUser(reqUser);
+		//List<ListModel> listModels= listService.findAllPublicListByReqUser(reqUser);
+		List<ListModel> listModels = listService.findAllList(reqUser);
 		List<ListDto> listDtos=ListDtoMapper.toListDtos(listModels,reqUser);
 		return new ResponseEntity<>(listDtos, HttpStatus.ACCEPTED);
 	}
@@ -115,7 +107,6 @@ private UserRepository userRepository;
 			@RequestHeader("Authorization") String jwt) throws ListException, UserException {
 		
 		User user = userService.findUserProfileByJwt(jwt);
-		
 		listService.deleteListById(listId, user.getId());
 		
 		ApiResponse res = new ApiResponse();

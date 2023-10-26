@@ -26,7 +26,6 @@ public class ListModel {
 	private Long id;
 	
 	@ManyToOne(fetch=FetchType.LAZY)
-	//@ManyToMany(fetch=FetchType.LAZY)
 	@JoinColumn(name="user_id")
 	private User user;
 	
@@ -44,4 +43,5 @@ public class ListModel {
 	@JsonIgnore
 	@ManyToMany
 	private List<User> followings=new ArrayList<>();
+	
 }

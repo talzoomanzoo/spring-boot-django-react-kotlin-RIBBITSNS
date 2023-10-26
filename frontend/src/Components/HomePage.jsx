@@ -12,7 +12,7 @@ import RightPart from "./RightPart/RightPart";
 import Chatroom from "./Chat/Chat";
 
 const HomePage = () => {
-  const { list, twit, auth, theme } = useSelector((store) => store);
+  const { theme } = useSelector((store) => store);
   return (
     <Grid container className="px-5 lg:px-36 justify-between" xs={12}>
       <Grid item xs={0} lg={2.5} className="hidden lg:block  w-full relative">

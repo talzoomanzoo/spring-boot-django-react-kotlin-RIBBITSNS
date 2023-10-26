@@ -8,11 +8,8 @@ import com.zosh.model.ListModel;
 import com.zosh.model.User;
 
 public interface ListService {
-//	public List<ListModel> findAllList();
 	
-	public List<ListModel> findAllPublicListByReqUser(User user) throws ListException, UserException;
-	
-	public List<ListModel> findAllPrivateListByReqUser(User user) throws ListException, UserException;
+	public List<ListModel> findAllList(User user);
 	
 	public ListModel createList(ListModel req, User user) throws ListException, UserException;
 	
