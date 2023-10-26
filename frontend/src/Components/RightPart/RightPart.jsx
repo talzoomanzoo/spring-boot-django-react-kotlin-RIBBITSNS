@@ -47,7 +47,6 @@ const RightPart = () => {
   // }
   const [refreshTwits, setRefreshTwits] = useState(0);
 
-  console.log("auth.tweetSearchResult", auth.tweetSearchResult);
 
   const handleNavigateToTwit = (i) => {
     navigate(`/twit/${i.id}`);
@@ -105,13 +104,14 @@ const RightPart = () => {
                       navigateToProfile(item.id);
                     }
                   }}
-                  className="flex items-center hover:bg-slate-800 p-3 cursor-pointer"
+                  className={`flex items-center ${theme.currentTheme === "light" ? "hover:bg-[#008000]" : "hover:bg-[#dbd9d9]"}
+                  ${theme.currentTheme === "light" ? "text-black hover:text-white" : "text-white  hover:text-black"} p-3 cursor-pointer`}
                   key={item.id} // 각 항목에 고유한 키를 제공합니다.
                 >
                   <Avatar alt={item.fullName} src={item.image} />
-                  <div className="ml-2">
+                  <div className={`ml-2`}>
                     <p>{item.fullName}</p>
-                    <p className="text-sm text-gray-400">
+                    <p className={`text-sm`}>
                       @{item.fullName.split(" ").join("_").toLowerCase()}
                     </p>
                   </div>
@@ -128,13 +128,14 @@ const RightPart = () => {
                       // navigateToProfile(item.id);
                     }
                   }}
-                  className="flex items-center hover:bg-slate-800 p-3 cursor-pointer"
+                  className={`flex items-center ${theme.currentTheme === "light" ? "hover:bg-[#008000]" : "hover:bg-[#dbd9d9]"} 
+                  ${theme.currentTheme === "light" ? "text-black hover:text-white" : "text-white  hover:text-black"} p-3 cursor-pointer`}
                   key={item.id} // 각 항목에 고유한 키를 제공합니다.
                 >
                   <NotesIcon alt={item.fullName}/>
-                  <div className="ml-2">
+                  <div className={`ml-2 `}>
                     <p>{item.content}</p>
-                    <p className="text-sm text-gray-400">
+                    <p className={`text-sm`}>
                     @{item.user.fullName.split(" ").join("_").toLowerCase()}
                     </p>
                     </div>

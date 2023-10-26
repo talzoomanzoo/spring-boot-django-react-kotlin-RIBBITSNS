@@ -99,7 +99,7 @@ const TwitCard = ({ twit }) => {
   const handleCloseReplyModel = () => setOpenReplyModel(false);
 
   const handleOpenReplyModel = () => setOpenReplyModel(true);
-    
+
   //const handleNavigateToTwitDetial = () => navigate(`/twit/${twit.id}`);
 
   const handleNavigateToTwitDetial = () => {
@@ -110,7 +110,7 @@ const TwitCard = ({ twit }) => {
       setRefreshTwits((prev) => prev + 1);
     }
   };
-  
+
   const [refreshTwits, setRefreshTwits] = useState(0);
 
   // useEffect(()=>{
@@ -124,7 +124,7 @@ const TwitCard = ({ twit }) => {
       handleCloseDeleteMenu();
       //window.location.reload();
       //setRefreshTwits((prev) => prev + 1);
-      
+
       const currentId = window.location.pathname.replace(/^\/twit\//, "");
       if (location.pathname === `/twit/${currentId}`) {
         //window.location.reload();
@@ -156,17 +156,17 @@ const TwitCard = ({ twit }) => {
     return async (dispatch) => {
       console.log("twitContent", twit.content); // 넘어 온 것 확인
       console.log("tr", twit);
-      dispatch({type:UPDATE_TWEET_REQUEST});
+      dispatch({ type: UPDATE_TWEET_REQUEST });
       try {
-        const {data} = await api.post(`/api/twits/edit`, twit);
+        const { data } = await api.post(`/api/twits/edit`, twit);
         console.log("edited twit", data)
-        console.log("data.id: ",data.id);
-        console.log("data.id: ",data.content);
-  
+        console.log("data.id: ", data.id);
+        console.log("data.id: ", data.content);
+
         //const response = await ethicreveal(data.id,data.content);
-        dispatch({type:UPDATE_TWEET_SUCCESS,payload:data});
+        dispatch({ type: UPDATE_TWEET_SUCCESS, payload: data });
       } catch (error) {
-        dispatch({type:UPDATE_TWEET_FAILURE,payload:error.message});
+        dispatch({ type: UPDATE_TWEET_FAILURE, payload: error.message });
       }
     }
   }
@@ -208,22 +208,22 @@ const TwitCard = ({ twit }) => {
   };
 
 
-  const ethicreveal = async(twitid,twitcontent)=>{
+  const ethicreveal = async (twitid, twitcontent) => {
     try {
-      const response = await fetch("http://localhost:8080/api/ethic/reqsentence",{
-        method:'POST',
-        headers:{
+      const response = await fetch("http://localhost:8080/api/ethic/reqsentence", {
+        method: 'POST',
+        headers: {
           'Content-Type': 'application/json',
-          'Authorization':`Bearer ${jwtToken}`,
+          'Authorization': `Bearer ${jwtToken}`,
         },
         body: JSON.stringify({
           id: twitid,
           content: twitcontent,
         }),
       });
-      console.log("response: ",response);
-      console.log("jwt: ",jwtToken);
-      if(response.status===200){
+      console.log("response: ", response);
+      console.log("jwt: ", jwtToken);
+      if (response.status === 200) {
         const responseData = await response.json();
         setSentence(responseData.sentence);
         setRefreshTwits((prev) => prev + 1);
@@ -231,7 +231,7 @@ const TwitCard = ({ twit }) => {
     } catch (error) {
       console.error("Error fetching ethic data:", error);
     }
-  
+
   };
 
   const handleCancelClick = () => {
@@ -295,7 +295,7 @@ const TwitCard = ({ twit }) => {
 
   console.log("twitTest", twit);
   return (
-    
+
     <div className="">
       {isLoading && (
         <div>
@@ -303,7 +303,7 @@ const TwitCard = ({ twit }) => {
         </div>
       )}
       {auth.user?.id !== twit.user.id &&
-      // auth.user notnull 일때, auth.user.id 가 twit.user.id 와 일치하지 않고,
+        // auth.user notnull 일때, auth.user.id 가 twit.user.id 와 일치하지 않고,
         location.pathname === `/profile/${auth.user?.id}` && (
           // 현재 url의 pathname이 /profile/${auth.user?.id} 이면
           <div className="flex items-center font-semibold text-gray-700 py-2">
@@ -312,8 +312,8 @@ const TwitCard = ({ twit }) => {
           </div>
           // 해당 표시를 해라
         )}
-        
-      <div className="flex space-x-5 "> 
+
+      <div className="flex space-x-5 ">
         <Avatar
           onClick={() => navigate(`/profile/${twit.user.id}`)}
           alt="Avatar"
@@ -396,10 +396,10 @@ const TwitCard = ({ twit }) => {
             >
               {isEditing ? (
                 <div>
-                  <TextareaAutosize className={ `${theme.currentTheme === "light"
-                ? "bg-white"
-                : "bg-[#151515]"
-              }`}
+                  <TextareaAutosize className={`${theme.currentTheme === "light"
+                    ? "bg-white"
+                    : "bg-[#151515]"
+                    }`}
                     minRows={0}
                     maxRows={0}
                     value={editedContent}
@@ -441,11 +441,11 @@ const TwitCard = ({ twit }) => {
                   <p className="mb-2 p-0 ">
                     {isEditing ? editedContent : twit.content}
                   </p>
-                  
-                  {sentence &&(
+
+                  {sentence && (
                     <p>{sentence}</p>
                   )}
-                  
+
                   {twit.image && (
                     <img
                       className="w-[28rem] border border-gray-400 p-5 rounded-md"
@@ -522,9 +522,8 @@ const TwitCard = ({ twit }) => {
                     {/* twit 객체의 totalReplies 속성 값이 0보다 큰 경우에만 해당 값을 포함하는 <p> 태그로 래핑 시도*/}
                   </div>
                   <div
-                    className={`${
-                      isRetwit ? "text-pink-600" : "text-gray-600"
-                    } space-x-3 flex items-center`}
+                    className={`${isRetwit ? "text-pink-600" : "text-gray-600"
+                      } space-x-3 flex items-center`}
                   >
                     <RepeatIcon
                       className={` cursor-pointer`}
@@ -533,9 +532,8 @@ const TwitCard = ({ twit }) => {
                     {retwit > 0 && <p>{retwit}</p>}
                   </div>
                   <div
-                    className={`${
-                      isLiked ? "text-pink-600" : "text-gray-600"
-                    } space-x-3 flex items-center `}
+                    className={`${isLiked ? "text-pink-600" : "text-gray-600"
+                      } space-x-3 flex items-center `}
                   >
                     {isLiked ? (
                       <FavoriteIcon onClick={() => handleLikeTweet(-1)} />
@@ -553,7 +551,7 @@ const TwitCard = ({ twit }) => {
                   </div>
                 </>
               )}
-            </div> 
+            </div>
           </div>
         </div>
       </div>
@@ -563,7 +561,7 @@ const TwitCard = ({ twit }) => {
         open={openReplyModel}
         handleClose={handleCloseReplyModel}
       />
-      
+
       <section>
         <BackdropComponent open={uploadingImage} />
       </section>
