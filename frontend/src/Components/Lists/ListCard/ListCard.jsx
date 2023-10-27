@@ -1,61 +1,90 @@
-import ListIcon from '@mui/icons-material/List';
-import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import { useSelector } from 'react-redux/es/hooks/useSelector';
-import ListsModel2 from '../ListsModel2';
-import { memo } from "react";
-import { Button } from '@mui/material';
-import ListsDetail from '../ListsDetail';
+import ListIcon from "@mui/icons-material/List";
+import { Button } from "@mui/material";
+import { memo, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux/es/hooks/useSelector";
+import { useNavigate } from "react-router-dom";
+import { deleteList } from "../../../Store/List/Action";
+import ListsModel2 from "../ListsModel2";
 
 const ListCard = memo(({ list }) => {
-    const navigate = useNavigate();
-    const [openListsModel, setOpenListsModel] = useState();
-    const handleCloseListsModel = () => setOpenListsModel(false);
-    const handleOpenListsModel = () => setOpenListsModel(true);
+  const navigate = useNavigate();
+  const [openListsModel, setOpenListsModel] = useState();
+  const handleCloseListsModel = () => setOpenListsModel(false);
+  const handleOpenListsModel = () => setOpenListsModel(true);
+  const dispatch = useDispatch();
 
-    const handleNavigateToListsDetail = () => {
-          navigate(`/lists/${list.id}`);
-          //window.location.reload();
-      };
+  const handleNavigateToListsDetail = () => {
+    navigate(`/lists/${list.id}`);
+    //window.location.reload();
+  };
 
-    const { theme } = useSelector(store => store);
+  const { theme, auth } = useSelector((store) => store);
+  const showDeleteButton = list.user.id === auth.user.id;
 
-    return (
-        <div class="flex space-x-5">
-            <ListIcon
-                onClick={handleNavigateToListsDetail}
-                className="cursor-pointer"
-            />
-            <div class="w-full">
-                <div class="flex justify-between items-center">
-                    <div
-                        onClick={handleNavigateToListsDetail}
-                        className="flex cursor-pointer items-center space-x-2">
-                        <span class="text-xl">{list.listName}</span>
-                    </div>
-                </div>
-            </div>
+  const handleDelete = async () => {
+    try {
+      dispatch(deleteList(list.id));
+      //   handleClose();
+      window.location.reload();
+    } catch (error) {
+      console.error("리스트 삭제 중 오류 발생: ", error);
+    }
+  };
 
-            <section>
-                <ListsModel2
-                    list={list}
-                    open={openListsModel}
-                    handleClose={handleCloseListsModel}
-                />
-            </section>
-
-            <Button
-                onClick={handleOpenListsModel}
-                handleClose={handleCloseListsModel}
-                sx={{ borderRadius: "20px" }}
-                variant="outlined"
-                className="rounded-full"
-            >
-                수정
-            </Button>
-            
+  return (
+    <div class="flex space-x-5">
+      <ListIcon
+        onClick={handleNavigateToListsDetail}
+        className="cursor-pointer"
+      />
+      <div class="w-full">
+        <div class="flex justify-between items-center">
+          <div
+            onClick={handleNavigateToListsDetail}
+            className="flex cursor-pointer items-center space-x-2"
+          >
+            <span class="text-xl">{list.listName}</span>
+          </div>
         </div>
-    )
+      </div>
+      <section>
+        <ListsModel2
+          list={list}
+          open={openListsModel}
+          handleClose={handleCloseListsModel}
+        />
+      </section>
+      {showDeleteButton && (
+        <>
+          <section>
+            <Button
+              onClick={handleDelete}
+              //   handleClose={handleCloseListsModel}
+              sx={{ borderRadius: "20px" }}
+              variant="outlined"
+              className="rounded-full"
+            >
+              삭제
+            </Button>
+          </section>
+
+          <section>
+            <Button
+              onClick={handleOpenListsModel}
+              handleClose={handleCloseListsModel}
+              sx={{ borderRadius: "20px" }}
+              variant="outlined"
+              className="rounded-full"
+            >
+              수정
+            </Button>
+          </section>
+        </>
+      )}
+      ;
+    </div>
+  );
 });
 
 export default ListCard;
