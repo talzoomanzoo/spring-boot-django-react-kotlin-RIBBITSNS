@@ -1,9 +1,8 @@
 import ListIcon from '@mui/icons-material/List';
-import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { useSelector } from 'react-redux/es/hooks/useSelector';
+import { useNavigate } from 'react-router-dom';
 import ListsModel2 from '../ListsModel2';
-import { memo } from "react";
 
 const ListCard = memo(({ list }) => {
     const navigate = useNavigate();

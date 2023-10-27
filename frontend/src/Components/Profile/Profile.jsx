@@ -32,7 +32,7 @@ import ProfileModel from "./ProfileModel";
 const Profile = () => {
   const [address, setAddress] = useState("");
   const [tabValue, setTabValue] = useState("1");
-  const [isLocationFormOpen, setLocationFormOpen] = useState(false); // Step 1
+  const [isLocationFormOpen, setLocationFormOpen] = useState(false); 
   const { auth, twit, theme } = useSelector((store) => store);
   const [openProfileModel, setOpenProfileModel] = useState(false);
   const [openSnackBar, setOpenSnackBar] = useState(false);
@@ -44,7 +44,7 @@ const Profile = () => {
   const navigate = useNavigate();
 
   const handleToggleLocationForm = () => {
-    setLocationFormOpen((prev) => !prev); // Step 2: Toggle the form open/close
+    setLocationFormOpen((prev) => !prev); 
   };
 
   const handleBack = () => {

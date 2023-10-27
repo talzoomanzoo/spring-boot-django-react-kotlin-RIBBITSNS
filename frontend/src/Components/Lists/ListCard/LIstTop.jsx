@@ -1,8 +1,6 @@
 import { memo } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ListCard from "./ListCard";
-import { useEffect } from "react";
-import { getAllLists } from "../../../Store/List/Action";
 
 const ListTop = memo(({ list }) => {
     const { theme } = useSelector((store) => store);
