@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux/es/hooks/useSelector';
 import ListsModel2 from '../ListsModel2';
 import { memo } from "react";
+import { Button } from '@mui/material';
 
 const ListCard = memo(({ list }) => {
     const navigate = useNavigate();
@@ -37,6 +38,14 @@ const ListCard = memo(({ list }) => {
                     handleClose={handleCloseListsModel}
                 />
             </section>
+
+            <Button
+                sx={{ borderRadius: "20px" }}
+                variant="outlined"
+                className="rounded-full"
+            >
+                수정
+            </Button>
         </div>
     )
 });

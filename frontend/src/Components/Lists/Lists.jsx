@@ -4,10 +4,9 @@ import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import ListsModel from "./ListsModel";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ListBottom from "./ListCard/ListBottom";
-import ListTop from "./ListCard/LIstTop";
 import ListCard from "./ListCard/ListCard";
-import { getAllLists, getPrivateLists } from "../../Store/List/Action";
+import { getAllLists } from "../../Store/List/Action";
+import { Button } from "@mui/material";
 
 const Lists = () => {
     const dispatch = useDispatch();
@@ -30,8 +29,6 @@ const Lists = () => {
         <div id="lists" className="space-y-5">
             <section
                 className={`z-50 flex items-center sticky top-0 bg-opacity-95`}
-                // ${theme.currentTheme === "light" ? "bg-white" : "bg-[#0D0D0D]"
-                //     } 
             >
                 <div className="z-50 flex items-center sticky top-0 space-x-5">
                     <KeyboardBackspaceIcon
@@ -39,7 +36,6 @@ const Lists = () => {
                         onClick={handleBack}
                     />
                     <h1 className="py-5 text-xl font-bold opacity-90 ml-5">
-                        {/* ml-5: margin-left 3rem 크기 */}
                         리스트
                     </h1>
                 </div>
@@ -48,7 +44,6 @@ const Lists = () => {
                     onClick={handleOpenListsModel} //리스트 추가
                 >
                     <PlaylistAddIcon />
-                    <> 리스트 추가 </>
                 </div>
             </section>
 
@@ -80,6 +75,7 @@ const Lists = () => {
                             <ListCard
                                 style={{ marginTop: 10 }}
                                 list={item} />
+                            
                         ) : null
                     ))}
                 </section>
@@ -110,6 +106,13 @@ const Lists = () => {
                                 list={item} />
                         ) : null
                     ))}
+                    <Button
+                        sx={{ borderRadius: "20px" }}
+                        variant="outlined"
+                        className="rounded-full"
+                        >
+                        수정
+                    </Button>
                 </section>
                 
             </div>

@@ -28,10 +28,10 @@ import com.zosh.service.UserService;
 @RequestMapping("/api/ethic")
 public class EthicController {
 	
-//	@Autowired
+	@Autowired
 	private TwitService twitService;
 	
-//	@Autowired
+	@Autowired
 	private UserService userService;
 	
 	@PostMapping("/reqsentence")
