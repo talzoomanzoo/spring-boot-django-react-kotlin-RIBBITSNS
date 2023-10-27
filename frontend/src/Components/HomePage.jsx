@@ -10,6 +10,7 @@ import Navigation from "./Navigation/Navigation";
 import Profile from "./Profile/Profile";
 import RightPart from "./RightPart/RightPart";
 import Chatroom from "./Chat/Chat";
+import ListsDetail from "./Lists/ListsDetail";
 
 
 const HomePage = () => {
@@ -23,9 +24,8 @@ const HomePage = () => {
         item
         xs={12}
         lg={6}
-        className={`px-5 lg:px-9 border ${
-          theme.currentTheme === "dark" ? "border-gray-800" : ""
-        } `}
+        className={`px-5 lg:px-9 border ${theme.currentTheme === "dark" ? "border-gray-800" : ""
+          } `}
       >
         <Routes>
           <Route path="/" element={<HomeSection />}></Route>
@@ -34,6 +34,7 @@ const HomePage = () => {
           <Route path="/messages" element={<Chatroom />}></Route>
           <Route path="/lists" element={<Lists />}></Route>
           <Route path="/twit/:id" element={<TwitDetail />}></Route>
+            <Route path="/lists/:id" element={<ListsDetail />}></Route>
         </Routes>
       </Grid>
       <Grid item xs={0} lg={3} className="hidden lg:block ">

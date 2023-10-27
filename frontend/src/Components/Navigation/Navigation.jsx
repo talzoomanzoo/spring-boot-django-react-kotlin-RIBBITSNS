@@ -89,7 +89,7 @@ const Navigation = () => {
             size="large"
             onClick={()=>handleFollowTwit()}
           >
-            ribbit
+            Followed Ribbits
           </Button>
         </div>
       </div>

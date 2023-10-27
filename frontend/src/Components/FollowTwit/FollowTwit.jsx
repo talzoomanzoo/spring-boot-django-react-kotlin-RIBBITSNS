@@ -12,7 +12,7 @@ console.log("followTwittwit", twit);
 return (
     <div className="space-y-5">
         <section>
-        <h1 className="py-5 text-xl font-bold opacity-90">나의 리빗</h1>
+        <h1 className="py-5 text-xl font-bold opacity-90">팔로우 한 리빗</h1>
       </section>
       <section
         className={`${theme.currentTheme === "dark" ? "pt-14" : ""} space-y-5`}

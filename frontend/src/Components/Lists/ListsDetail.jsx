@@ -21,6 +21,7 @@ const ListsDetail = () => {
     // 뒤로가기, 앞으로가기는 navigate(1)
     useEffect(() => {
         dispatch(findTwitsByListId(param.id))
+        console.log("findTwitsByListId test success");
     }, [param.id])
 
     return (
