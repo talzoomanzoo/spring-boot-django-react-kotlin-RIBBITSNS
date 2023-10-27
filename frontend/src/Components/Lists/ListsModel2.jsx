@@ -62,6 +62,16 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
         onSubmit: handleSubmit,
     });
 
+    console.log("element list check", list);
+    console.log("auth.userSearchResult", auth.userSearchResult);
+
+    const itemsCheck = (item) => {
+        for (let i = 0; i < list.followings.length; i++) {
+            if (list.followings[i].id === item.id) {
+                return true;
+            }
+        }
+    }
     useEffect(() => {
 
         formik.setValues({
@@ -148,7 +158,6 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
     };
 
     const Element = memo(({ listVal }) => {
-        console.log("element list check", listVal);
         return (
             <div
                 className="overflow-y-scroll hideScrollbar border-gray-700 h-[20vh] w-full rounded-md">
@@ -181,8 +190,7 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
                                     <div className="ml-2">
                                         <p>{item.fullName}</p>
                                         <p className="text-sm text-gray-400">
-                                            @
-                                            {item.fullName.split(" ").join("_").toLowerCase()}
+                                            {item.email.split(" ").join("_").toLowerCase()}
                                         </p>
                                     </div>
                                 </div>
@@ -320,7 +328,7 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
                                                         </p>
                                                     </div>
                                                 </div>
-                                                {item.hasFollowedLists ?
+                                                {itemsCheck(item) ?
                                                     (
                                                         <RemoveIcon
                                                             id="remveIcon"
@@ -331,13 +339,14 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
                                                         </RemoveIcon>
                                                     )
                                                     : (
-                                                        <AddIcon
-                                                            //style={{ marginLeft: 0 }}
-                                                            className={`flex float-right absolute right-5 cursor-pointer`}
-                                                            //absolute right-0
-                                                            onClick={() => { handleAddUser(list.id, item.id, list) }}>
-                                                        </AddIcon>
+                                                <AddIcon
+                                                    //style={{ marginLeft: 0 }}
+                                                    className={`flex float-right absolute right-5 cursor-pointer`}
+                                                    //absolute right-0
+                                                    onClick={() => { handleAddUser(list.id, item.id, list) }}>
+                                                </AddIcon>
                                                     )}
+
                                             </div>
                                         ))}
                                     </div>

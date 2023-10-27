@@ -20,6 +20,9 @@ import {
     SET_PRIVATE_REQUEST,
     SET_PRIVATE_SUCCESS,
     SET_PRIVATE_FAILURE,
+    FIND_TWEET_BY_LIST_ID_REQUEST,
+    FIND_TWEET_BY_LIST_ID_SUCCESS,
+    FIND_TWEET_BY_LIST_ID_FAILURE,
 } from "./ActionType";
 
 const initialState = {
@@ -32,23 +35,24 @@ const initialState = {
 
 const listReducer = (state = initialState, action) => {
     switch (
-        action.type
+    action.type
     ) {
         case GET_LISTS_REQUEST:
         case LIST_CREATE_REQUEST:
         case SET_PRIVATE_REQUEST:
+        case FIND_TWEET_BY_LIST_ID_REQUEST:
         case UPDATE_LIST_REQUEST:
             return {
                 ...state,
-                loading:true,
-                error:null,
+                loading: true,
+                error: null,
             };
         case GET_USER_REQUEST:
         case ADD_USER_REQUEST:
             return {
                 ...state,
-                loading:true,
-                error:null
+                loading: true,
+                error: null
             };
         case LIST_DELETE_REQUEST:
         case GET_LISTS_FAILURE:
@@ -57,13 +61,21 @@ const listReducer = (state = initialState, action) => {
         case UPDATE_LIST_FAILURE:
             return {
                 ...state,
-                loading:false,
+                loading: false,
                 data: null,
                 error: action.error,
             };
         case GET_USER_FAILURE:
         case ADD_USER_FAILURE:
         case LIST_DELETE_FAILURE:
+        case FIND_TWEET_BY_LIST_ID_FAILURE:
+        case FIND_TWEET_BY_LIST_ID_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                twits: action.payload,
+                error: null,
+            }
         case LIST_DELETE_SUCCESS:
             const ListIdToDelete = action.payload;
             return {
@@ -83,7 +95,7 @@ const listReducer = (state = initialState, action) => {
         case GET_LISTS_SUCCESS:
             return {
                 ...state,
-                loading:false,
+                loading: false,
                 lists: action.payload,
                 error: null,
             };
@@ -99,14 +111,14 @@ const listReducer = (state = initialState, action) => {
                 ...state,
                 loading: false,
                 list: action.payload,
-                error:null,
+                error: null,
             };
         case GET_USER_SUCCESS:
             return {
                 ...state,
-                loading:false,
+                loading: false,
                 list: action.payload,
-                error:null,
+                error: null,
             }
         case SET_PRIVATE_SUCCESS:
             return {
