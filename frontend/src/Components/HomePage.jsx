@@ -9,7 +9,7 @@ import Lists from "./Lists/Lists";
 import Navigation from "./Navigation/Navigation";
 import Profile from "./Profile/Profile";
 import RightPart from "./RightPart/RightPart";
-import Chatroom from "./Chat/Chat";
+import Chatroom from "./Chat/ChatRoom";
 
 const HomePage = () => {
   const { theme } = useSelector((store) => store);
