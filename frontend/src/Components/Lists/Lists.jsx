@@ -1,31 +1,29 @@
-import { useSelector, useDispatch } from "react-redux";
-import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
-import ListsModel from "./ListsModel";
+import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import ListCard from "./ListCard/ListCard";
+import { useDispatch, useSelector } from "react-redux";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import { getAllLists } from "../../Store/List/Action";
-import { Button } from "@mui/material";
+import ListCard from "./ListCard/ListCard";
 import ListsDetail from "./ListsDetail";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+// import { Route, Routes } from "react-router-dom";
+import ListsModel from "./ListsModel";
 
 const Lists = () => {
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-    const { list } = useSelector(store => store);
-    const handleBack = () => {
-        navigate(-1);
-    };
-    const [openListsModel, setOpenListsModel] = useState();
-    const handleCloseListsModel = () => setOpenListsModel(false);
-    const handleOpenListsModel = () => setOpenListsModel(true);
-    console.log("list Lists check",
-        list);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { list } = useSelector((store) => store);
+  const handleBack = () => {
+    navigate(-1);
+  };
+  const [openListsModel, setOpenListsModel] = useState();
+  const handleCloseListsModel = () => setOpenListsModel(false);
+  const handleOpenListsModel = () => setOpenListsModel(true);
+  console.log("list Lists check", list);
 
-    useEffect(() => {
-        dispatch(getAllLists());
-    }, [list.list])
+  useEffect(() => {
+    dispatch(getAllLists());
+  }, [list.list]);
 
     return (
             <div id="lists" className="space-y-5">
