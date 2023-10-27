@@ -13,6 +13,7 @@ import com.hippoddung.ribbit.network.BASE_URL
 import com.hippoddung.ribbit.network.CLOUDINARY_URL
 import com.hippoddung.ribbit.network.RibbitApiService
 import com.hippoddung.ribbit.network.UploadCloudinaryApiService
+import com.hippoddung.ribbit.network.UserApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -85,6 +86,14 @@ class SingletonModule {
             .client(okHttpClient)
             .build()
             .create(RibbitApiService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideUserAPIService(okHttpClient: OkHttpClient, retrofit: Retrofit.Builder): UserApiService =
+        retrofit
+            .client(okHttpClient)
+            .build()
+            .create(UserApiService::class.java)
 
     @Singleton
     @Provides
