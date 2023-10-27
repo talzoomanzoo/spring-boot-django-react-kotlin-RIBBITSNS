@@ -18,6 +18,8 @@ public class ListDtoMapper {
 		listDto.setListName(listModel.getListName());
 		listDto.setFollowings(UserDtoMapper.toUserDtos(listModel.getFollowings()));
 		listDto.setPrivateMode(listModel.isPrivateMode());
+		listDto.setCreatedAt(listModel.getCreatedAt());
+		listDto.setUser(UserDtoMapper.toUserDto(listModel.getUser()));
 		System.out.println("UserDtoMapperTest + " + UserDtoMapper.toUserDtos(listModel.getFollowings()));
 		System.out.println("listDtoCheck + " + listDto.getFollowings());
 		return listDto;
@@ -35,6 +37,8 @@ public class ListDtoMapper {
 			listDto.setListName(listModel.getListName());
 			listDto.setFollowings(UserDtoMapper.toUserDtos(listModel.getFollowings()));
 			listDto.setPrivateMode(listModel.isPrivateMode());
+			listDto.setCreatedAt(listModel.getCreatedAt());
+			listDto.setUser(UserDtoMapper.toUserDto(listModel.getUser()));
 			listDtos.add(listDto);
 		}
 		
