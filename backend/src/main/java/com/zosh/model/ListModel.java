@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -23,24 +24,24 @@ public class ListModel {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="user_id")
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id")
 	private User user;
-	
-	@Column(nullable=false)
+
+	@Column(nullable = false)
 	private LocalDateTime createdAt;
-	
+
 	private String listName;
-	
+
 	private String description;
-	
+
 	private String backgroundImage;
-	
+
 	private boolean privateMode;
-	
+
 	@JsonIgnore
-	@ManyToMany
-	private List<User> followings=new ArrayList<>();
-	
+	@ManyToMany(cascade = CascadeType.DETACH)
+	private List<User> followings = new ArrayList<>();
+
 }
