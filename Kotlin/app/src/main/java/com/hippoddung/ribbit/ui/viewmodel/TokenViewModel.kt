@@ -23,11 +23,11 @@ class TokenViewModel @Inject constructor(
     private val tokenManager: TokenManager
 ): ViewModel() {
     var tokenUiState: TokenUiState by mutableStateOf(TokenUiState.Lack)
-    var token = MutableLiveData<String?>()
+    var token = MutableLiveData<String?>()  // LiveData 객체
 
     init{
         viewModelScope.launch(Dispatchers.IO){
-            tokenManager.getToken().collect{
+            tokenManager.getToken().collect{    // tokenManager.getToken()이 return하는 mapping된 flow를 잡아서 token.value에 넣어준다.
                 withContext(Dispatchers.Main){
                     token.value = it
                     Log.d("HippoLog, TokenViewModel", "${token.value}")
@@ -53,6 +53,7 @@ class TokenViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO){
             tokenManager.deleteToken()
             tokenUiState = TokenUiState.Lack
+            token.value = null
         }
     }
 }

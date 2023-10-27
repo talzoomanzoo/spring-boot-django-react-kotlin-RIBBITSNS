@@ -375,13 +375,13 @@ const Profile = () => {
           <CircularProgress color="inherit" />
         </Backdrop>
       </section>
-      <section>
+      {/* <section>
         <SnackbarComponent
           handleClose={handleCloseSnackBar}
           open={openSnackBar}
           message={"user updated successfully"}
         />
-      </section>
+      </section> */}
     </div>
   );
 };

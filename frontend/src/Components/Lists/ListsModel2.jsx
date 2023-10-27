@@ -19,10 +19,9 @@ import { useNavigate } from "react-router-dom";
 import { searchUser } from "../../Store/Auth/Action";
 import {
     addUserAction,
-    deleteList,
     getUserAction,
     setPrivate,
-    updateListModel,
+    updateListModel
 } from "../../Store/List/Action";
 import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
 import BackdropComponent from "../Backdrop/Backdrop";
@@ -68,13 +67,24 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
     onSubmit: handleSubmit,
   });
 
-  useEffect(() => {
-    formik.setValues({
-      id: list.id || "",
-      listName: list.listName || "",
-      description: list.description || "",
-      backgroundImage: list.backgroundImage || "",
-    });
+    console.log("element list check", list);
+    console.log("auth.userSearchResult", auth.userSearchResult);
+
+    const itemsCheck = (item) => {
+        for (let i = 0; i < list.followings.length; i++) {
+            if (list.followings[i].id === item.id) {
+                return true;
+            }
+        }
+    }
+    useEffect(() => {
+
+        formik.setValues({
+            id: list.id || "",
+            listName: list.listName || "",
+            description: list.description || "",
+            backgroundImage: list.backgroundImage || "",
+        });
 
     if (document.getElementById("element") != null) {
       const domNode = document.getElementById("element");
@@ -102,16 +112,6 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
   const navigateToProfile = (id) => {
     navigate(`/profile/${id}`);
     setSearch("");
-  };
-
-  const handleDelete = async () => {
-    try {
-      dispatch(deleteList(list.id));
-      handleClose();
-      window.location.reload();
-    } catch (error) {
-      console.error("리스트 삭제 중 오류 발생: ", error);
-    }
   };
 
   //element.render(<Element />);
@@ -149,53 +149,58 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
     dispatch(setPrivate(list.id));
   };
 
-  const Element = memo(({ listVal }) => {
-    console.log("element list check", listVal);
-    return (
-      <div className="overflow-y-scroll hideScrollbar border-gray-700 h-[20vh] w-full rounded-md">
-        <section className={`space-y-5`}>
-          <div
-            className="flex justify-between"
-            style={{ flexDirection: "column" }}
-          >
-            {listVal.followings?.map((item) => (
-              <div className="flex justify-between items-center">
-                <div
-                  style={{ paddingRight: 300 }}
-                  onClick={() => {
-                    if (Array.isArray(item)) {
-                      item.forEach((i) => navigateToProfile(i));
-                    } else {
-                      navigateToProfile(item.id);
-                    }
-                    handleFollowingsClick();
-                  }}
-                  className="flex items-center justify-between hover:bg-slate-800 p-3 cursor-pointer"
-                  key={item.id}
+    const Element = memo(({ listVal }) => {
+        return (
+            <div
+                className="overflow-y-scroll hideScrollbar border-gray-700 h-[20vh] w-full rounded-md">
+                <section
+                    className={`space-y-5`}
                 >
-                  <Avatar alt={item.fullName} src={item.image} />
-                  <div className="ml-2">
-                    <p>{item.fullName}</p>
-                    <p className="text-sm text-gray-400">
-                      @{item.fullName.split(" ").join("_").toLowerCase()}
-                    </p>
-                  </div>
-                </div>
-                <RemoveIcon
-                  style={{ marginLeft: 30 }}
-                  className="flex float-right hover:bg-slate-800 relative right-10 cursor-pointer"
-                  //absolute right-0
-                  onClick={() => {
-                    handleAddUser(list.id, item.id, list);
-                  }}
-                ></RemoveIcon>
-              </div>
-            ))}
-          </div>
-        </section>
-      </div>
-    );
-  });
+
+                    <div
+                        className="flex justify-between"
+                        style={{ flexDirection: "column" }}>
+
+                        {listVal.followings?.map((item) => (
+                            <div
+                                className="flex justify-between items-center"
+                            >
+                                <div
+                                    style={{ paddingRight: 300 }}
+                                    onClick={() => {
+                                        if (Array.isArray(item)) {
+                                            item.forEach((i) => navigateToProfile(i));
+                                        } else {
+                                            navigateToProfile(item.id);
+                                        }
+                                        handleFollowingsClick();
+                                    }}
+                                    className="flex items-center justify-between hover:bg-slate-800 p-3 cursor-pointer"
+                                    key={item.id}
+                                >
+                                    <Avatar alt={item.fullName} src={item.image} />
+                                    <div className="ml-2">
+                                        <p>{item.fullName}</p>
+                                        <p className="text-sm text-gray-400">
+                                            {item.email.split(" ").join("_").toLowerCase()}
+                                        </p>
+                                    </div>
+                                </div>
+                                <RemoveIcon
+                                    style={{ marginLeft: 30 }}
+                                    className="flex float-right hover:bg-slate-800 relative right-10 cursor-pointer"
+                                    //absolute right-0
+                                    onClick={() => { handleAddUser(list.id, item.id, list) }}>
+                                </RemoveIcon>
+                            </div>
+                        ))}
+
+                    </div>
+
+                </section>
+            </div>
+        );
+    });
 
   return (
     <div>
@@ -215,9 +220,6 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
                 <p>리스트 수정</p>
               </div>
               <div>
-                {showDeleteButton && (
-                  <Button onClick={handleDelete}> 삭제 </Button>
-                )}
                 {showDeleteButton && (
                 <Button type="submit">저장</Button>
                 )}
@@ -330,45 +332,40 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
                             }}
                             className={`py-3 flex float-left justify-content w-full
                                                     p-3 cursor-pointer`}
-                            key={item.id}
-                          >
-                            <Avatar alt={item.fullName} src={item.image} />
-                            <div className="ml-2">
-                              <p>{item.fullName}</p>
-                              <p className="text-sm">
-                                @
-                                {item.fullName
-                                  .split(" ")
-                                  .join("_")
-                                  .toLowerCase()}
-                              </p>
+                                                    key={item.id}
+                                                >
+                                                    <Avatar alt={item.fullName} src={item.image} />
+                                                    <div className="ml-2">
+                                                        <p>{item.fullName}</p>
+                                                        <p className="text-sm">
+                                                            @{item.fullName.split(" ").join("_").toLowerCase()}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                {itemsCheck(item) ?
+                                                    (
+                                                        <RemoveIcon
+                                                            id="remveIcon"
+                                                            //style={{ marginLeft: 0 }}
+                                                            className="flex float-right absolute right-5 cursor-pointer"
+                                                            //absolute right-0
+                                                            onClick={() => { handleAddUser(list.id, item.id, list) }}>
+                                                        </RemoveIcon>
+                                                    )
+                                                    : (
+                                                <AddIcon
+                                                    //style={{ marginLeft: 0 }}
+                                                    className={`flex float-right absolute right-5 cursor-pointer`}
+                                                    //absolute right-0
+                                                    onClick={() => { handleAddUser(list.id, item.id, list) }}>
+                                                </AddIcon>
+                                                    )}
+
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
-                          </div>
-                          {item.hasFollowedLists ? (
-                            <RemoveIcon
-                              id="remveIcon"
-                              //style={{ marginLeft: 0 }}
-                              className="flex float-right absolute right-5 cursor-pointer"
-                              //absolute right-0
-                              onClick={() => {
-                                handleAddUser(list.id, item.id, list);
-                              }}
-                            ></RemoveIcon>
-                          ) : (
-                            <AddIcon
-                              //style={{ marginLeft: 0 }}
-                              className={`flex float-right absolute right-5 cursor-pointer`}
-                              //absolute right-0
-                              onClick={() => {
-                                handleAddUser(list.id, item.id, list);
-                              }}
-                            ></AddIcon>
-                          )}
-                        </div>
-                      ))}
-                  </div>
-                )}
-              </div>
 
               {/* 여기 */}
               <div id="element">

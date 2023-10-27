@@ -26,6 +26,11 @@ interface RibbitApiService {
     suspend fun deletePost(
         @Path("twitId") postId : Int
     ): DeleteResponse
+
+    @GET("api/twits/{twitId}")
+    suspend fun getPostIdPosts(
+        @Path("twitId") postId : Int
+    ): RibbitPost
 }
 
 //    @GET("auth/refresh")

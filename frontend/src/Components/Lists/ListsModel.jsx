@@ -102,7 +102,7 @@ const ListsModel = ({ handleClose, open }) => {
                 <IconButton onClick={handleClose} aria-label="delete">
                   <CloseIcon />
                 </IconButton>
-                <p>리스트 수정</p>
+                <p>리스트 추가</p>
               </div>
               <Button type="submit">저장</Button>
             </div>

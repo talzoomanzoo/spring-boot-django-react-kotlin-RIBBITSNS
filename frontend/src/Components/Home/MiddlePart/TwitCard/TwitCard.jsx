@@ -79,7 +79,8 @@ const TwitCard = ({ twit }) => {
   const openDeleteMenu = Boolean(anchorEl);
   const [isLocationFormOpen, setLocationFormOpen] = useState(false);
   const [address, setAddress] = useState("");
-  
+  const [refreshTwits, setRefreshTwits] = useState(0);
+
   const handleMapLocation = (newAddress) => {
     setAddress(newAddress);
   };
@@ -111,32 +112,30 @@ const TwitCard = ({ twit }) => {
 
   //const handleNavigateToTwitDetial = () => navigate(`/twit/${twit.id}`);
 
+  // useEffect(() => {
+  //   dispatch(getAllTweets());
+  // }, [refreshTwits]);
+
+
   const handleNavigateToTwitDetial = () => {
     if (!isEditing) {
       navigate(`/twit/${twit.id}`);
       dispatch(viewPlus(twit.id));
       //window.location.reload();
-      setRefreshTwits((prev) => prev + 1);
     }
   };
-
-  const [refreshTwits, setRefreshTwits] = useState(0);
-
-  // useEffect(()=>{
-  //   dispatch(getAllTweets());
-  // },[refreshTwits])
 
   const handleDeleteTwit = async () => {
     try {
       dispatch(deleteTweet(twit.id));
       handleCloseDeleteMenu();
-      //window.location.reload();
+      window.location.reload();
       //setRefreshTwits((prev) => prev + 1);
 
       const currentId = window.location.pathname.replace(/^\/twit\//, "");
       if (location.pathname === `/twit/${currentId}`) {
-        //window.location.reload();
-        setRefreshTwits((prev) => prev + 1);
+        window.location.reload();
+        //setRefreshTwits((prev) => prev + 1);
       } else {
         navigate(".", { replace: true });
       }
@@ -262,6 +261,7 @@ const TwitCard = ({ twit }) => {
       content: "",
       image: "",
       video: "",
+      
     },
     validationSchema,
     onSubmit: handleSubmit,

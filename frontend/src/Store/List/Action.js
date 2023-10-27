@@ -1,26 +1,29 @@
 import { api } from "../../Config/apiConfig";
 import {
-  ADD_USER_FAILURE,
-  ADD_USER_REQUEST,
-  ADD_USER_SUCCESS,
-  GET_LISTS_FAILURE,
-  GET_LISTS_REQUEST,
-  GET_LISTS_SUCCESS,
-  GET_USER_FAILURE,
-  GET_USER_REQUEST,
-  GET_USER_SUCCESS,
-  LIST_CREATE_FAILURE,
-  LIST_CREATE_REQUEST,
-  LIST_CREATE_SUCCESS,
-  LIST_DELETE_FAILURE,
-  LIST_DELETE_REQUEST,
-  LIST_DELETE_SUCCESS,
-  SET_PRIVATE_FAILURE,
-  SET_PRIVATE_REQUEST,
-  SET_PRIVATE_SUCCESS,
-  UPDATE_LIST_FAILURE,
-  UPDATE_LIST_REQUEST,
-  UPDATE_LIST_SUCCESS,
+    ADD_USER_FAILURE,
+    ADD_USER_REQUEST,
+    ADD_USER_SUCCESS,
+    FIND_TWEET_BY_LIST_ID_FAILURE,
+    FIND_TWEET_BY_LIST_ID_REQUEST,
+    FIND_TWEET_BY_LIST_ID_SUCCESS,
+    GET_LISTS_FAILURE,
+    GET_LISTS_REQUEST,
+    GET_LISTS_SUCCESS,
+    GET_USER_FAILURE,
+    GET_USER_REQUEST,
+    GET_USER_SUCCESS,
+    LIST_CREATE_FAILURE,
+    LIST_CREATE_REQUEST,
+    LIST_CREATE_SUCCESS,
+    LIST_DELETE_FAILURE,
+    LIST_DELETE_REQUEST,
+    LIST_DELETE_SUCCESS,
+    SET_PRIVATE_FAILURE,
+    SET_PRIVATE_REQUEST,
+    SET_PRIVATE_SUCCESS,
+    UPDATE_LIST_FAILURE,
+    UPDATE_LIST_REQUEST,
+    UPDATE_LIST_SUCCESS,
 } from "./ActionType";
 
 export const deleteListRequest = () => ({
@@ -122,16 +125,30 @@ export const getUserAction = (listId) => async (dispatch) => {
   }
 };
 
-export const setPrivate = (listId) => async (dispatch) => {
-  dispatch({ type: SET_PRIVATE_REQUEST });
-  try {
-    const response = await api.post(`/api/lists/${listId}/setPrivate`);
-    const list = response.data;
-    dispatch({ type: SET_PRIVATE_SUCCESS, payload: list });
-  } catch (error) {
-    dispatch({ type: SET_PRIVATE_FAILURE, payload: error.message });
-  }
-};
+export const setPrivate= (listId) => async(dispatch) => {
+    dispatch({type: SET_PRIVATE_REQUEST})
+    try {
+        const response = await api.post(`/api/lists/${listId}/setPrivate`);
+        const list = response.data;
+        dispatch({type: SET_PRIVATE_SUCCESS, payload: list});
+    } catch (error) {
+        dispatch({type: SET_PRIVATE_FAILURE, payload: error.message});
+    }
+}
+
+export const findTwitsByListId = (listId) => {
+    return async (dispatch) => {
+      dispatch({type: FIND_TWEET_BY_LIST_ID_REQUEST})
+      try {
+        const response = await api.get(`/api/lists/${listId}`);
+        console.log("find tweets by listid", response.data);
+        dispatch({type: FIND_TWEET_BY_LIST_ID_SUCCESS, payload: response.data});
+      } catch (error) {
+        dispatch({type: FIND_TWEET_BY_LIST_ID_FAILURE, payload: error.message});
+      }
+    }
+  };
+
 
 export const getAllLists = () => {
   return async (dispatch) => {
