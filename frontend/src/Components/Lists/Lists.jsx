@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 import ListCard from "./ListCard/ListCard";
 import { getAllLists } from "../../Store/List/Action";
 import { Button } from "@mui/material";
+import ListsDetail from "./ListsDetail";
+import { Route, Routes } from "react-router-dom";
 
 const Lists = () => {
     const dispatch = useDispatch();
@@ -69,13 +71,13 @@ const Lists = () => {
                     }}
                 />
                 <section
-                    className={`space-y-5`}>
+                    className="space-y-5">
                     {list?.lists?.map((item) => (
                         !item.privateMode ? (
                             <ListCard
                                 style={{ marginTop: 10 }}
                                 list={item} />
-                            
+
                         ) : null
                     ))}
                 </section>
@@ -98,7 +100,7 @@ const Lists = () => {
                     }}
                 />
                 <section
-                    className={`space-y-5`}>
+                    className="space-y-5">
                     {list?.lists?.map((item) => (
                         item.privateMode ? (
                             <ListCard
@@ -106,14 +108,11 @@ const Lists = () => {
                                 list={item} />
                         ) : null
                     ))}
-                    <Button
-                        sx={{ borderRadius: "20px" }}
-                        variant="outlined"
-                        className="rounded-full"
-                        >
-                        수정
-                    </Button>
                 </section>
+
+                <Routes>
+                    <Route path="/lists/:id" element={<ListsDetail />}></Route>
+                </Routes>
                 
             </div>
         </div>

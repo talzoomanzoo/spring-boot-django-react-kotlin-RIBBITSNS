@@ -261,6 +261,7 @@ const TwitCard = ({ twit }) => {
       content: "",
       image: "",
       video: "",
+      
     },
     validationSchema,
     onSubmit: handleSubmit,

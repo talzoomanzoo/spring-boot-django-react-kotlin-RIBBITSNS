@@ -22,6 +22,9 @@ import {
     SET_PRIVATE_REQUEST,
     SET_PRIVATE_SUCCESS,
     SET_PRIVATE_FAILURE,
+    FIND_TWEET_BY_LIST_ID_REQUEST,
+    FIND_TWEET_BY_LIST_ID_SUCCESS,
+    FIND_TWEET_BY_LIST_ID_FAILURE,
 } from "./ActionType";
 
 export const deleteListRequest=() => ({
@@ -133,6 +136,19 @@ export const setPrivate= (listId) => async(dispatch) => {
         dispatch({type: SET_PRIVATE_FAILURE, payload: error.message});
     }
 }
+
+export const findTwitsByListId = (listId) => {
+    return async (dispatch) => {
+      dispatch({type: FIND_TWEET_BY_LIST_ID_REQUEST})
+      try {
+        const response = await api.get(`/api/lists/${listId}`);
+        console.log("find tweets by listid", response.data);
+        dispatch({type: FIND_TWEET_BY_LIST_ID_SUCCESS, payload: response.data});
+      } catch (error) {
+        dispatch({type: FIND_TWEET_BY_LIST_ID_FAILURE, payload: error.message});
+      }
+    }
+  };
 
 
 export const getAllLists = () => {

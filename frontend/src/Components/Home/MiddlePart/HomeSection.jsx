@@ -43,7 +43,6 @@ const HomeSection = () => {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
   const [selsectedVideo, setSelectedVideo] = useState("");
-  const [thumbnail, setThumbnail] = useState("");
   const [isLoading, setIsLoading] = useState(false); //로딩창 추가
   const [isLocationFormOpen, setLocationFormOpen] = useState(false);
   const dispatch = useDispatch();
@@ -55,10 +54,6 @@ const HomeSection = () => {
   const handleCloseEmoji = () => setOpenEmoji(false);
   const jwtToken = localStorage.getItem("jwt");
   const [address, setAddress] = useState("");
-
-  const handleMapLocation = (newAddress) => {
-    setAddress(newAddress);
-  };
 
   const handleToggleLocationForm = () => {
     setLocationFormOpen((prev) => !prev);
@@ -138,11 +133,13 @@ const HomeSection = () => {
       content: "",
       image: "",
       video: "",
+      location: "",
       // thumbnail: "",
     },
     validationSchema,
     onSubmit: handleSubmit,
   });
+
   const handleSelectImage = async (event) => {
     setUploadingImage(true);
     const imgUrl = await uploadToCloudinary(event.target.files[0], "image");
@@ -159,6 +156,12 @@ const HomeSection = () => {
     setUploadingImage(false);
   };
 
+  const handleMapLocation = async (newAddress) => {
+    setAddress(newAddress);
+    formik.setFieldValue("location", newAddress);
+    console.log("newAddress", newAddress);
+  };
+
   const handleEmojiClick = (value) => {
     const { emoji } = value;
     formik.setFieldValue("content", formik.values.content + emoji);
@@ -169,7 +172,7 @@ const HomeSection = () => {
       <section>
         <h1 className="py-5 text-xl font-bold opacity-90">홈</h1>
       </section>
-      <section className={`pb-10 `}>
+      <section className="pb-10">
         {/* ${theme.currentTheme==="dark"?" bg-[#151515] p-10 rounded-md mb-10":""} */}
         <div className="flex space-x-5 ">
           <Avatar alt="Avatar" src={auth.user?.image} />
@@ -263,19 +266,20 @@ const HomeSection = () => {
             </form>
           </div>
         </div>
+        <div style={{ marginTop: 20 }}>
+          {isLocationFormOpen && (
+            <Maplocation onLocationChange={handleMapLocation} />
+          )}
+          {isLoading && <div>Loading...</div>}
+          {twit.twits && twit.twits.length > 0 ?
+            (
+              twit.twits.map((item) => <TwitCard twit={item} key={item.id} />)
+            ) :
+            (
+              <div>게시된 리빗이 없습니다.</div>
+            )}
+        </div>
       </section>
-      {isLocationFormOpen && (
-        <Maplocation onLocationChange={handleMapLocation} />
-      )}
-      <section className={`space-y-5`}>
-        {isLoading && <div>Loading...</div>}
-        {twit.twits && twit.twits.length > 0 ? (
-          twit.twits.map((item) => <TwitCard twit={item} key={item.id} />)
-        ) : (
-          <div>게시된 리빗이 없습니다.</div>
-        )}
-      </section>
-
       <section>
         <BackdropComponent open={uploadingImage} />
       </section>

@@ -53,4 +53,4 @@ const TwitDetail = () => {
   )
 }
 
-export default TwitDetail
+export default TwitDetail;
