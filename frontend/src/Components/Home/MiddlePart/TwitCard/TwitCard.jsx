@@ -81,6 +81,7 @@ const TwitCard = ({ twit }) => {
   const openDeleteMenu = Boolean(anchorEl);
   const [isLocationFormOpen, setLocationFormOpen] = useState(false);
   const [address, setAddress] = useState("");
+  const [refreshTwits, setRefreshTwits] = useState(0);
 
   const handleMapLocation = (newAddress) => {
     setAddress(newAddress);
@@ -113,40 +114,36 @@ const TwitCard = ({ twit }) => {
 
   //const handleNavigateToTwitDetial = () => navigate(`/twit/${twit.id}`);
 
+  // useEffect(() => {
+  //   dispatch(getAllTweets());
+  // }, [refreshTwits]);
+
+
   const handleNavigateToTwitDetial = () => {
     if (!isEditing) {
       navigate(`/twit/${twit.id}`);
       dispatch(viewPlus(twit.id));
       //window.location.reload();
-      setRefreshTwits((prev) => prev + 1);
     }
   };
 
-  const [refreshTwits, setRefreshTwits] = useState(0);
-
-  // useEffect(()=>{
-  //   dispatch(getAllTweets());
-  // },[refreshTwits])
-
   const handleDeleteTwit = async () => {
-
     try {
       dispatch(deleteTweet(twit.id));
       handleCloseDeleteMenu();
-      //window.location.reload();
+      window.location.reload();
       //setRefreshTwits((prev) => prev + 1);
 
       const currentId = window.location.pathname.replace(/^\/twit\//, "");
       if (location.pathname === `/twit/${currentId}`) {
-        //window.location.reload();
-        setRefreshTwits((prev) => prev + 1);
+        window.location.reload();
+        //setRefreshTwits((prev) => prev + 1);
       } else {
         navigate(".", { replace: true });
       }
     } catch (error) {
       console.error("게시글 삭제 중 오류 발생:", error);
     }
-
   };
 
   const handleEditClick = () => {
@@ -218,20 +215,22 @@ const TwitCard = ({ twit }) => {
     }
   };
 
-
   const ethicreveal = async (twitid, twitcontent) => {
     try {
-      const response = await fetch("http://localhost:8080/api/ethic/reqsentence", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${jwtToken}`,
-        },
-        body: JSON.stringify({
-          id: twitid,
-          content: twitcontent,
-        }),
-      });
+      const response = await fetch(
+        "http://localhost:8080/api/ethic/reqsentence",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${jwtToken}`,
+          },
+          body: JSON.stringify({
+            id: twitid,
+            content: twitcontent,
+          }),
+        }
+      );
       console.log("response: ", response);
       console.log("jwt: ", jwtToken);
       if (response.status === 200) {
@@ -264,6 +263,7 @@ const TwitCard = ({ twit }) => {
       content: "",
       image: "",
       video: "",
+      
     },
     validationSchema,
     onSubmit: handleSubmit,
@@ -345,6 +345,12 @@ const TwitCard = ({ twit }) => {
                   </p>
                 )}
               </span>
+              {/* <span className="flex items-center text-gray-500">
+                <LocationOnIcon />
+                <p className="text-gray-500">
+                  {auth.findUser?.location || address}
+                </p>
+              </span> */}
               {twit.user.verified && (
                 <img
                   className="ml-2 w-5 h-5"
@@ -401,9 +407,11 @@ const TwitCard = ({ twit }) => {
             >
               {isEditing ? (
                 <div>
-                  <TextareaAutosize className={`${theme.currentTheme === "light"
-                    ? "bg-white"
-                    : "bg-[#151515]"
+                  <TextareaAutosize
+                    className={`${
+                      theme.currentTheme === "light"
+                        ? "bg-white"
+                        : "bg-[#151515]"
                     }`}
                     minRows={0}
                     maxRows={0}
@@ -447,9 +455,7 @@ const TwitCard = ({ twit }) => {
                     {isEditing ? editedContent : twit.content}
                   </p>
 
-                  {sentence && (
-                    <p>{sentence}</p>
-                  )}
+                  {sentence && <p>{sentence}</p>}
 
                   {twit.image && (
                     <img
@@ -537,8 +543,9 @@ const TwitCard = ({ twit }) => {
                     {/* twit 객체의 totalReplies 속성 값이 0보다 큰 경우에만 해당 값을 포함하는 <p> 태그로 래핑 시도*/}
                   </div>
                   <div
-                    className={`${isRetwit ? "text-pink-600" : "text-gray-600"
-                      } space-x-3 flex items-center`}
+                    className={`${
+                      isRetwit ? "text-pink-600" : "text-gray-600"
+                    } space-x-3 flex items-center`}
                   >
                     <RepeatIcon
                       className={` cursor-pointer`}
@@ -547,8 +554,9 @@ const TwitCard = ({ twit }) => {
                     {retwit > 0 && <p>{retwit}</p>}
                   </div>
                   <div
-                    className={`${isLiked ? "text-pink-600" : "text-gray-600"
-                      } space-x-3 flex items-center `}
+                    className={`${
+                      isLiked ? "text-pink-600" : "text-gray-600"
+                    } space-x-3 flex items-center `}
                   >
                     {isLiked ? (
                       <FavoriteIcon onClick={() => handleLikeTweet(-1)} />

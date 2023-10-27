@@ -112,7 +112,7 @@ const RightPart = () => {
                   <div className={`ml-2`}>
                     <p>{item.fullName}</p>
                     <p className={`text-sm`}>
-                      @{item.fullName.split(" ").join("_").toLowerCase()}
+                    {item.email.split(" ").join("_").toLowerCase()}
                     </p>
                   </div>
                 </div>

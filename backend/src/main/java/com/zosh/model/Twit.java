@@ -7,6 +7,7 @@ import java.util.List;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,7 +24,7 @@ public class Twit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; 
 
-    @ManyToOne//(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id") // 외래키를 매핑할 때 사용; name 속성에는 매핑할 외래키 이름 지정
     private User user;
 
@@ -37,7 +38,7 @@ public class Twit {
     @JoinColumn(name = "twit_id")
     private List<Twit> replyTwits = new ArrayList<>(); //여러개의 twit에 하나의 reply 리스트
 
-    @ManyToMany//(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL)
     private List<User> retwitUser = new ArrayList<>();
 
     @ManyToOne // 붙는 엔티티가 M, 상대가 1

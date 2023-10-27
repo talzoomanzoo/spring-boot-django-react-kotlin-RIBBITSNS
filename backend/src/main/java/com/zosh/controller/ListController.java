@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zosh.dto.ListDto;
+import com.zosh.dto.TwitDto;
 import com.zosh.dto.UserDto;
 import com.zosh.dto.mapper.ListDtoMapper;
 import com.zosh.dto.mapper.UserDtoMapper;
@@ -100,6 +101,14 @@ private UserRepository userRepository;
 		ListDto listDto=ListDtoMapper.toListDto(listModel, user);
 		System.out.println("listDto followers + " + listDto.getFollowings());
 		return new ResponseEntity<>(listDto, HttpStatus.OK);
+	}
+	
+	@GetMapping("/{listId}")
+	public void findTwitByListId (@PathVariable Long listId,
+			@RequestHeader("Authorization") String jwt) throws ListException, UserException {
+		User user= userService.findUserProfileByJwt(jwt);
+		ListModel listModel=listService.findById(listId);
+		System.out.println("-----------------------------");
 	}
 	
 	@DeleteMapping("/{listId}")
