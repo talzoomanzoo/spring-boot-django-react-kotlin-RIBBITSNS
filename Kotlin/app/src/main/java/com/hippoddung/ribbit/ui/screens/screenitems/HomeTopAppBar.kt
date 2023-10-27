@@ -1,4 +1,4 @@
-package com.hippoddung.ribbit.ui.screens.homescreen
+package com.hippoddung.ribbit.ui.screens.screenitems
 
 import android.util.Log
 import androidx.compose.foundation.layout.Box
@@ -43,7 +43,7 @@ fun HomeTopAppBar(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    Log.d("HippoLog, RibbitApp", "HippoTopAppBar")
+    Log.d("HippoLog, HomeTopAppBar", "HomeTopAppBar")
     Column {
         CenterAlignedTopAppBar(
             scrollBehavior = scrollBehavior,
@@ -55,6 +55,7 @@ fun HomeTopAppBar(
                     }) {
                         Text(
                             text = stringResource(R.string.app_name),
+                            color = Color(0xFF006400),
                             style = MaterialTheme.typography.headlineSmall,
                         )
                     }
@@ -75,7 +76,8 @@ fun MainDropDownMenu(navController: NavHostController) {
     OutlinedButton(
         onClick = { isDropDownMenuExpanded = true }
     ) {
-        Text(text = "Menu")
+        Text(text = "Menu",
+            color = Color(0xFF006400))
     }
 
     DropdownMenu(
@@ -93,10 +95,9 @@ fun MainDropDownMenu(navController: NavHostController) {
             text = {
                 Text(
                     text = "Home",
-                    color = Color.Blue,
-                    fontStyle = FontStyle.Italic,
+                    color = Color(0xFF006400),
                     fontSize = 14.sp,
-                    style = TextStyle(shadow = Shadow(Color.Black))
+                    style = MaterialTheme.typography.labelSmall
                 )
             }
         )
@@ -108,16 +109,9 @@ fun MainDropDownMenu(navController: NavHostController) {
             text = {
                 Text(
                     text = "Print Hello 5",
-                    color = Color.Blue,
-                    fontStyle = FontStyle.Italic,
+                    color = Color(0xFF006400),
                     fontSize = 14.sp,
-                    style = TextStyle(
-                        shadow = Shadow(
-                            color = Color.Black,
-                            offset = Offset(3f, 3f),
-                            blurRadius = 3f
-                        )
-                    )
+                    style = MaterialTheme.typography.labelSmall
                 )
             }
         )
@@ -131,7 +125,8 @@ fun ProfileDropDownMenu(navController: NavHostController) {
     OutlinedButton(
         onClick = { isDropDownMenuExpanded = true }
     ) {
-        Text(text = "Profile")
+        Text(text = "Profile",
+            color = Color(0xFF006400))
     }
 
     DropdownMenu(
@@ -149,10 +144,9 @@ fun ProfileDropDownMenu(navController: NavHostController) {
             text = {
                 Text(
                     text = "My Profile",
-                    color = Color.Blue,
-                    fontStyle = FontStyle.Italic,
+                    color = Color(0xFF006400),
                     fontSize = 14.sp,
-                    style = TextStyle(shadow = Shadow(Color.Black))
+                    style = MaterialTheme.typography.labelSmall
                 )
             }
         )
@@ -164,10 +158,9 @@ fun ProfileDropDownMenu(navController: NavHostController) {
             text = {
                 Text(
                     text = "Log out",
-                    color = Color.Blue,
-                    fontStyle = FontStyle.Italic,
+                    color = Color(0xFF006400),
                     fontSize = 14.sp,
-                    style = TextStyle(shadow = Shadow(Color.Black))
+                    style = MaterialTheme.typography.labelSmall
                 )
             }
         )

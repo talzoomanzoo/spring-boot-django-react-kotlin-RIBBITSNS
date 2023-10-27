@@ -14,46 +14,44 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-sealed interface TokenUiState {
-    data class Exist(private val token: String) : TokenUiState
-    object Lack : TokenUiState
-}
+//sealed interface TokenUiState {
+//    data class Exist(private val token: String) : TokenUiState
+//    object Loading : TokenUiState
+//    object Lack : TokenUiState
+//}
+
 @HiltViewModel
 class TokenViewModel @Inject constructor(
     private val tokenManager: TokenManager
-): ViewModel() {
-    var tokenUiState: TokenUiState by mutableStateOf(TokenUiState.Lack)
+) : ViewModel() {
+//    var tokenUiState: TokenUiState by mutableStateOf(TokenUiState.Lack) // token을 MainActivity의 Observer에서 관찰하기 때문에 state 업데이트를 MainActivity에 위임한다.
+    // token의 상태를 관찰하여 바로 사용하는 방향으로 전환
     var token = MutableLiveData<String?>()  // LiveData 객체
 
-    init{
-        viewModelScope.launch(Dispatchers.IO){
-            tokenManager.getToken().collect{    // tokenManager.getToken()이 return하는 mapping된 flow를 잡아서 token.value에 넣어준다.
-                withContext(Dispatchers.Main){
-                    token.value = it
-                    Log.d("HippoLog, TokenViewModel", "${token.value}")
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            tokenManager.getToken()
+                .collect {    // DataStore TokenManager.getToken()이 return하는 mapping된 flow를 잡는다.
+                    withContext(Dispatchers.Main) {
+                        token.value = it    // token Livedata 에 token값을 넣는다.
+                        Log.d("HippoLog, TokenViewModel", "init DataStore 에서 토큰 보냄 ${token.value}")
+                    }
                 }
-            }
-            tokenUiState = if(token.value != null) {
-                val token: String = token.value.toString()
-                TokenUiState.Exist(token)
-            }else{
-                TokenUiState.Lack
-            }
         }
     }
 
-    fun saveToken(token: String){
-        viewModelScope.launch(Dispatchers.IO){
-            Log.d("HippoLog, saveToken", token)
+    fun saveToken(token: String) {
+        viewModelScope.launch(Dispatchers.IO) {
             tokenManager.saveToken(token)
+            Log.d("HippoLog, TokenViewModel", "DataStore 토큰 저장")
         }
     }
 
-    fun deleteToken(){
-        viewModelScope.launch(Dispatchers.IO){
-            tokenManager.deleteToken()
-            tokenUiState = TokenUiState.Lack
-            token.value = null
+    suspend fun deleteToken() {
+        viewModelScope.launch(Dispatchers.IO) {
+            tokenManager.deleteToken()  // DataStore의 저장된 토큰을 삭제
+            token.postValue(null)   // token LiveData에 null값을 넣어준다.
+            Log.d("HippoLog, saveToken", "DataStore, LiveDate 토큰 삭제")
         }
     }
 }

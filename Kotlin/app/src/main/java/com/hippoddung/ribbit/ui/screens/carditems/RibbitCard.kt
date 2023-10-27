@@ -1,4 +1,4 @@
-package com.hippoddung.ribbit.ui.screens.homescreen
+package com.hippoddung.ribbit.ui.screens.carditems
 
 import android.annotation.SuppressLint
 import android.os.Build
@@ -25,7 +25,7 @@ import com.hippoddung.ribbit.ui.viewmodel.HomeViewModel
 fun RibbitCard(post: RibbitPost,
                homeViewModel: HomeViewModel,
                userId: Int,
-               navcontroller: NavHostController,
+               navController: NavHostController,
                modifier: Modifier = Modifier
 ) {
     Log.d("HippoLog, RibbitCard", "RibbitCard")
@@ -38,7 +38,7 @@ fun RibbitCard(post: RibbitPost,
             CardTopBar(post = post,
                 homeViewModel = homeViewModel,
                 userId = userId,
-                navController = navcontroller)
+                navController = navController)
             Text(
                 text = post.content,
                 fontSize = 14.sp,
@@ -55,7 +55,9 @@ fun RibbitCard(post: RibbitPost,
                 RibbitVideo(post.video, homeViewModel = homeViewModel)
             } else {
             }
-            CardBottomBar(post = post)
+            CardBottomBar(
+                post = post,
+                homeViewModel = homeViewModel)
         }
     }
 }

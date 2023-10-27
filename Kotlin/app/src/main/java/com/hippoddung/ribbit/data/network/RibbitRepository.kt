@@ -1,6 +1,7 @@
 package com.hippoddung.ribbit.data.network
 
 import com.hippoddung.ribbit.network.RibbitApiService
+import com.hippoddung.ribbit.network.bodys.requestbody.ReplyRequest
 import com.hippoddung.ribbit.network.bodys.requestbody.TwitCreateRequest
 import javax.inject.Inject
 
@@ -12,5 +13,9 @@ class RibbitRepository @Inject constructor(
         ribbitApiService.twitCreate(twitCreateRequest)
     }
     suspend fun deletePost(postId: Int) = ribbitApiService.deletePost(postId)
-    suspend fun getPostIdPosts(postId: Int) = ribbitApiService.getPostIdPosts(postId)
+    suspend fun getPostIdPost(postId: Int) = ribbitApiService.getPostIdPost(postId)
+
+    suspend fun reply(replyRequest: ReplyRequest) {
+        ribbitApiService.reply(replyRequest)
+    }
 }

@@ -33,10 +33,11 @@
 
     <!--    TwitCreate   -->
     <string name="twit_create">Twit Create</string>
-
-    <!--    TwitCreate   -->
     <string name="user_image">User Image</string>
     <string name="title_activity_fullscreen_web_view">FullscreenWebViewActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+
+    <!--    Reply   -->
+    <string name="reply">Reply</string>
 </resources>

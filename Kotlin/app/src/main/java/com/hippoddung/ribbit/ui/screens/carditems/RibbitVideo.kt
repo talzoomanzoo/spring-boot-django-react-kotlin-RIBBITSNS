@@ -1,4 +1,4 @@
-package com.hippoddung.ribbit.ui.screens.homescreen
+package com.hippoddung.ribbit.ui.screens.carditems
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
@@ -27,7 +27,6 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hippoddung.ribbit.R
-import com.hippoddung.ribbit.ui.screens.WebViewFullScreen
 import com.hippoddung.ribbit.ui.viewmodel.HomeViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

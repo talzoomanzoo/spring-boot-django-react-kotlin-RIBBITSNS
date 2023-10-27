@@ -1,6 +1,7 @@
 package com.hippoddung.ribbit.network
 
 import com.hippoddung.ribbit.network.bodys.RibbitPost
+import com.hippoddung.ribbit.network.bodys.requestbody.ReplyRequest
 import com.hippoddung.ribbit.network.bodys.requestbody.TwitCreateRequest
 import com.hippoddung.ribbit.network.bodys.responsebody.DeleteResponse
 import retrofit2.http.Body
@@ -28,8 +29,13 @@ interface RibbitApiService {
     ): DeleteResponse
 
     @GET("api/twits/{twitId}")
-    suspend fun getPostIdPosts(
+    suspend fun getPostIdPost(
         @Path("twitId") postId : Int
+    ): RibbitPost
+
+    @POST("api/twits/reply")
+    suspend fun reply(
+        @Body replyRequest: ReplyRequest
     ): RibbitPost
 }
 

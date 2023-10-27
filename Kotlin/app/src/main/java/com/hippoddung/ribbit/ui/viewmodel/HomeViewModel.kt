@@ -119,12 +119,12 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun getPostIdPosts(postId:Int) {
+    fun getPostIdPost(postId:Int) {
         viewModelScope.launch(Dispatchers.IO) {
             twitIdUiState = TwitIdUiState.Loading
             Log.d("HippoLog, HomeViewModel", "getTwitIdPosts, $homeUiState")
             twitIdUiState = try {
-                TwitIdUiState.Success(ribbitRepository.getPostIdPosts(postId))
+                TwitIdUiState.Success(ribbitRepository.getPostIdPost(postId))
             } catch (e: IOException) {
                 Log.d("HippoLog, HomeViewModel", "${e.stackTrace}, ${e.message}")
                 TwitIdUiState.Error(e.message.toString())

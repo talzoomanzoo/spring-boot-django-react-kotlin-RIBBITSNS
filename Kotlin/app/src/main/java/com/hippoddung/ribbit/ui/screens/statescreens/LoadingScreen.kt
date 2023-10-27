@@ -1,5 +1,6 @@
 package com.hippoddung.ribbit.ui.screens.statescreens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
@@ -11,6 +12,7 @@ import com.hippoddung.ribbit.R
 
 @Composable
 fun LoadingScreen(modifier: Modifier = Modifier) {
+    Log.d("HippoLog, LoadingScreen", "로딩스크린")
     Image(
         modifier = modifier.size(200.dp),
         painter = painterResource(R.drawable.loading_img),
