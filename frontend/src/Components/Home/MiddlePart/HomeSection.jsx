@@ -13,6 +13,7 @@ import { getAllTweets } from "../../../Store/Tweet/Action";
 import { uploadToCloudinary } from "../../../Utils/UploadToCloudinary";
 import BackdropComponent from "../../Backdrop/Backdrop";
 import TwitCard from "./TwitCard/TwitCard";
+import Loading from "../../Profile/Loading/Loading";
 // import ImageIcon from '@mui/icons-material/Image';
 import {
   TWEET_CREATE_FAILURE,
@@ -40,11 +41,12 @@ const createTweetFailure = (error) => ({
 });
 
 const HomeSection = () => {
+  const [ loading, setLoading ] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
   const [selsectedVideo, setSelectedVideo] = useState("");
   const [thumbnail, setThumbnail] = useState("");
-  const [isLoading, setIsLoading] = useState(false); //로딩창 추가
+  // const [isLoading, setIsLoading] = useState(false); //로딩창 추가
   const [isLocationFormOpen, setLocationFormOpen] = useState(false);
   const dispatch = useDispatch();
   const { twit, auth, theme } = useSelector((store) => store);
@@ -72,7 +74,7 @@ const HomeSection = () => {
 
   const HomeCreateTweet = (tweetData) => {
     return async (dispatch) => {
-      setIsLoading(true);
+      setLoading(true);
       dispatch(createTweetRequest());
       try {
         const { data } = await api.post(
@@ -89,7 +91,7 @@ const HomeSection = () => {
       } catch (error) {
         dispatch(createTweetFailure(error.message));
       } finally {
-        setIsLoading(false); // 로딩 완료
+        setLoading(false); // 로딩 완료
       }
     };
   };
@@ -125,7 +127,7 @@ const HomeSection = () => {
       console.log("jwt: ", jwtToken);
       if (response.status === 200) {
         console.log("ethicresponse: ", response);
-        setIsLoading(false);
+        setLoading(false);
         setRefreshTwits((prev) => prev + 1);
       }
     } catch (error) {
@@ -268,7 +270,7 @@ const HomeSection = () => {
         <Maplocation onLocationChange={handleMapLocation} />
       )}
       <section className={`space-y-5`}>
-        {isLoading && <div>Loading...</div>}
+      {loading ? <Loading/> : null}
         {twit.twits && twit.twits.length > 0 ? (
           twit.twits.map((item) => <TwitCard twit={item} key={item.id} />)
         ) : (

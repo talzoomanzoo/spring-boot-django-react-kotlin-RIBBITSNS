@@ -174,7 +174,7 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
                                         }
                                         handleFollowingsClick();
                                     }}
-                                    className="flex items-center justify-between hover:bg-slate-800 p-3 cursor-pointer"
+                                    className="flex items-center justify-between hover:bg-green-700 p-3 cursor-pointer"
                                     key={item.id}
                                 >
                                     <Avatar alt={item.fullName} src={item.image} />
@@ -188,7 +188,7 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
                                 </div>
                                 <RemoveIcon
                                     style={{ marginLeft: 30 }}
-                                    className="flex float-right hover:bg-slate-800 relative right-10 cursor-pointer"
+                                    className="flex float-right hover:bg-green-700 relative right-10 cursor-pointer"
                                     //absolute right-0
                                     onClick={() => { handleAddUser(list.id, item.id, list) }}>
                                 </RemoveIcon>
@@ -282,7 +282,7 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
                                     onChange={handleSearchUser}
                                     type="text"
                                     placeholder="사용자를 검색하여 추가하거나 삭제할 수 있습니다."
-                                    className={`py-3 rounded-full onutline-none text-gray-500 w-full pl-12 ${theme.currentTheme === "light" ? "bg-slate-300" : "bg-[#151515]"
+                                    className={`py-3 rounded-full onutline-none text-gray-500 w-full pl-12 ${theme.currentTheme === "light" ? "bg-stone-300" : "bg-[#151515]"
                                         }`}
                                 />
                                 <span className="absolute top-0 left-0 pl-3 pt-3">
