@@ -3,11 +3,9 @@ package com.zosh.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import com.zosh.model.ListModel;
-import com.zosh.model.User;
 
 public interface ListRepository extends JpaRepository<ListModel, Long>{
 //	@Query("SELECT l FROM ListModel l WHERE l.privateMode=false ORDER BY l.createdAt DESC")

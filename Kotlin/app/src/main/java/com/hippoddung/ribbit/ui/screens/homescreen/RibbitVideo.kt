@@ -28,6 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hippoddung.ribbit.R
 import com.hippoddung.ribbit.ui.screens.WebViewFullScreen
+import com.hippoddung.ribbit.ui.viewmodel.HomeViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.net.SocketTimeoutException
@@ -37,16 +38,16 @@ import java.util.concurrent.Future
 
 @SuppressLint("SetJavaScriptEnabled", "CoroutineCreationDuringComposition")
 @Composable
-fun RibbitVideo(videoUrl: String) {
+fun RibbitVideo(videoUrl: String, homeViewModel: HomeViewModel) {
     var isVideoPlayed by remember { mutableStateOf(false) }
     var videoThumbnail: Bitmap? by remember { mutableStateOf(null) }
     rememberCoroutineScope().launch(Dispatchers.IO) {
         try {
-            videoThumbnail = retrieveThumbnailFromVideo(videoUrl).get()
-        }catch (e: Exception){
-            Log.d("HippoLog, HomeScreen","Exception: ${e.message}")
-        }catch (e: SocketTimeoutException){
-            Log.d("HippoLog, HomeScreen","SocketTimeoutException: ${e.message}")
+            videoThumbnail = homeViewModel.retrieveThumbnailFromVideo(videoUrl).get()
+        } catch (e: SocketTimeoutException) {
+            Log.d("HippoLog, RibbitVideo", "Exception: ${e.message}")
+        } catch (e: Exception) {
+            Log.d("HippoLog, RibbitVideo", "SocketTimeoutException: ${e.message}")
         }
     }
 
@@ -96,30 +97,45 @@ fun RibbitVideo(videoUrl: String) {
     }
 }
 
+//suspend fun retrieveThumbnailFromVideo(videoUrl: String?): Bitmap? {
 fun retrieveThumbnailFromVideo(videoUrl: String?): Future<Bitmap> {
-    val executor = Executors.newFixedThreadPool(10)
+    val executor = Executors.newFixedThreadPool(2)
     val future: Future<Bitmap> = executor.submit(Callable<Bitmap> {
+        var retrievalCount = 0
+        val maxRetrievalCount = 2 // Adjust this value as needed
+        if (retrievalCount >= maxRetrievalCount) {
+            // You've reached the limit, so return null or handle it as needed
+            return@Callable null
+        }
         var bitmap: Bitmap? = null
         var mediaMetadataRetriever: MediaMetadataRetriever? = null
+        mediaMetadataRetriever = MediaMetadataRetriever()
+        if (Build.VERSION.SDK_INT >= 14) {
+            mediaMetadataRetriever.setDataSource(videoUrl, HashMap())
+        } else {
+            mediaMetadataRetriever.setDataSource(videoUrl)
+        }
         try {
             Log.d("HippoLog, HomeScreen, retrieve", "Thread - ${Thread.currentThread().name}")
-            mediaMetadataRetriever = MediaMetadataRetriever()
-            if (Build.VERSION.SDK_INT >= 14) {
-                mediaMetadataRetriever.setDataSource(videoUrl, HashMap())
-            } else {
-                mediaMetadataRetriever.setDataSource(videoUrl)
-            }
-            bitmap = mediaMetadataRetriever.getFrameAtTime(1000000)
+            bitmap = mediaMetadataRetriever.getFrameAtTime(100000)
+        } catch (e: java.net.SocketTimeoutException) {
+            Log.d(
+                "HippoLog, HomeScreen, retrieve, Exception",
+                "Exception in retrieveThumbnailFromVideo: ${e.message}"
+            )
         } catch (e: Exception) {
             e.printStackTrace()
-            Log.e(
+            Log.d(
                 "HippoLog, HomeScreen, retrieve, Exception",
                 "Exception in retrieveThumbnailFromVideo: ${e.message}"
             )
         } finally {
             mediaMetadataRetriever?.release()
         }
+        retrievalCount++
+//    return bitmap
         return@Callable bitmap
-    })
+    }
+    )
     return future
 }

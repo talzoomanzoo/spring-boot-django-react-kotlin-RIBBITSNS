@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.hippoddung.ribbit.data.local.AuthManager
 import com.hippoddung.ribbit.data.network.AuthRepository
 import com.hippoddung.ribbit.network.ApiResponse
+import com.hippoddung.ribbit.network.bodys.User
 import com.hippoddung.ribbit.network.bodys.requestbody.AuthRequest
 import com.hippoddung.ribbit.network.bodys.requestbody.SignUpRequest
 import com.hippoddung.ribbit.network.bodys.responsebody.AuthResponse
@@ -16,6 +17,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import retrofit2.HttpException
+import java.io.IOException
 import javax.inject.Inject
 
 
@@ -80,9 +83,9 @@ class AuthViewModel @Inject constructor(
 
     fun saveLoginInfo(email: String, pW: String){
         viewModelScope.launch(Dispatchers.IO){
-            Log.d("HippoLog, saveToken", email)
+            Log.d("HippoLog, saveLoginInfo", email)
             authManager.saveEmail(email)
-            Log.d("HippoLog, saveToken", pW)
+            Log.d("HippoLog, saveLoginInfo", pW)
             authManager.savePW(pW)
         }
     }

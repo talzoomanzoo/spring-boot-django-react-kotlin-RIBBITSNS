@@ -92,6 +92,7 @@ fun LoginScreen(
                         authRequest,
                         object : CoroutinesErrorHandler { override fun onError(message: String) { "Error! $message" } }
                     )
+                    authViewModel.saveLoginInfo(email = email, pW = pW)
                 },
                 modifier.padding(14.dp)
             ) {

@@ -1,12 +1,14 @@
 import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { updateUserProfile } from "../../Store/Auth/Action";
 import "./Map.css";
+import { Button } from "@mui/material";
 
 const Maplocation = (onLocationChange) => {
   const { kakao } = window;
   const [address, setAddress] = useState("");
+  const { theme } = useSelector(store => store);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [map, setMap] = useState(null);
   const [searchResults, setSearchResults] = useState([]);
@@ -85,14 +87,14 @@ const Maplocation = (onLocationChange) => {
       <div className="item" key={index}>
         <span className={"markerbg marker_" + (index + 1)}></span>
         <div className="info">
-          <h5>{places.place_name}</h5>
+          <h5 className={`text-black`}>{places.place_name}</h5>
           {places.road_address_name ? (
             <div>
-              <span>{places.road_address_name}</span>
+              <span className={`text-black`} >{places.road_address_name}</span>
               <span className="jibun gray">{places.address_name}</span>
             </div>
           ) : (
-            <span>{places.address_name}</span>
+            <span className={`text-black`} >{places.address_name}</span>
           )}
           <span className="tel">{places.phone}</span>
         </div>
@@ -146,7 +148,7 @@ const Maplocation = (onLocationChange) => {
         }
         infowindow = new kakao.maps.InfoWindow({
           content:
-            '<div style="padding:5px;font-size:12px;">' +
+            '<div style="padding:5px;font-size:12px;color:black;">' +
             result.place_name +
             "</div>",
           position: marker.getPosition(),
@@ -203,7 +205,7 @@ const Maplocation = (onLocationChange) => {
     kakao.maps.event.addListener(marker, "mouseover", function () {
       infowindow.close(); // 기존 infowindow를 닫음
       infowindow.setContent(
-        '<div style="padding:5px;font-size:12px;">' +
+        '<div style="padding:5px;font-size:12px;color:black;">' +
           place.place_name +
           "</div>"
       );
@@ -253,9 +255,9 @@ const Maplocation = (onLocationChange) => {
           <div className="mt-2 mb-2 space-y-3">
             <div className="flex items-center text-gray-500">
               <form onSubmit={formik.handleSubmit}>
-                <button onClick={toggleMap} className="save-location-button">
+                <Button type="submit" onClick={toggleMap} className="save-location-button">
                   저장
-                </button>
+                </Button>
               </form>
               <p className="text-gray-500 ml-3">{address}</p>
             </div>
@@ -288,7 +290,7 @@ const Maplocation = (onLocationChange) => {
                       id="keyword"
                       size="15"
                     />
-                    <button type="submit">검색하기</button>
+                    <Button type="submit">검색하기</Button>
                   </form>
                 </div>
               </div>
@@ -301,7 +303,7 @@ const Maplocation = (onLocationChange) => {
               </ul>
 
               <div id="pagination">
-                <ul className="page-numbers">
+                <ul className={`page-numbers text-black`}>
                   {pageNumbers.map((number) => (
                     <li key={number} onClick={() => handlePageClick(number)}>
                       {number}

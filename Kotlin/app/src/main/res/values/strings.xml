@@ -14,6 +14,7 @@
     <string name="loading_screen">LoadingScreen</string>
     <string name="error_screen">ErrorScreen</string>
     <string name="home_screen">HomeScreen</string>
+    <string name="twit_id_screen">TwitIdScreen</string>
     <string name="sign_up_screen">SingUpScreen</string>
     <string name="login_screen">LoginScreen</string>
     <string name="logout_screen">LogoutScreen</string>

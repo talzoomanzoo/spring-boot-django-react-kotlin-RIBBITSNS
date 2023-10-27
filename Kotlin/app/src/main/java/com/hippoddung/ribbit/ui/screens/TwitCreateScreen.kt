@@ -74,7 +74,6 @@ fun TwitCreateScreen(
         is TwitsCreateUiState.Success -> {
             Log.d("HippoLog, TwitCreateScreen", "Success")
             runBlocking {
-                launch {  homeViewModel.getRibbitPosts()}
                 launch { navController.navigate(RibbitScreen.HomeScreen.name) }
             }
             twitsCreateViewModel.twitsCreateUiState = TwitsCreateUiState.Ready

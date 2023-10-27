@@ -13,7 +13,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.network.bodys.RibbitPost
+import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
 import com.hippoddung.ribbit.ui.viewmodel.HomeViewModel
+import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -21,7 +23,10 @@ import java.util.concurrent.TimeUnit
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun CardTopBar(post: RibbitPost, homeViewModel: HomeViewModel, navController: NavHostController) {
+fun CardTopBar(post: RibbitPost,
+               homeViewModel: HomeViewModel,
+               userId: Int,
+               navController: NavHostController) {
     Row {
         Text(
             text = "No." + post.id.toString(),
@@ -49,7 +54,11 @@ fun CardTopBar(post: RibbitPost, homeViewModel: HomeViewModel, navController: Na
                 style = MaterialTheme.typography.headlineSmall
             )
         }
-        RibbitDropDownMenu(post = post, homeViewModel = homeViewModel, navController = navController)
+        RibbitDropDownMenu(
+            post = post,
+            homeViewModel = homeViewModel,
+            userId = userId,
+            navController = navController)
     }
 }
 
