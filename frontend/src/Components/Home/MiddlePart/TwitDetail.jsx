@@ -13,8 +13,6 @@ const TwitDetail = () => {
     const {twit,theme}=useSelector(store=>store);
     // useSelector로 twit과 theme이라는 모듈의 상태값을 가져오도록 한 후, twit과 theme의 상태를 변경해서 궁극적으로 스토어의 상태를 변경
     // twit: twitReducer, theme: themeReducer
-    console.log("detail", twit);
-    console.log("reply detail", twit.twit?.replyTwits.slice().reverse());
     const navigate=useNavigate();
 
     const handleBack = () => navigate(-1)
