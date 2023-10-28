@@ -6,8 +6,10 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -15,12 +17,15 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.hippoddung.ribbit.R
-import com.hippoddung.ribbit.ui.screens.homescreen.HomeScreen
+import com.hippoddung.ribbit.ui.screens.HomeScreen
 import com.hippoddung.ribbit.ui.screens.ProfileScreen
 import com.hippoddung.ribbit.ui.screens.TwitCreateScreen
 import com.hippoddung.ribbit.ui.screens.TwitIdScreen
@@ -67,6 +72,11 @@ fun RibbitApp(
         is AuthUiState.Logout -> {
             Log.d("HippoLog, RibbitApp", "Logout")
             AuthScreen(authViewModel)
+        }
+
+        is AuthUiState.LoginLoading ->{
+            Log.d("HippoLog, RibbitApp", "Loading")
+            AuthLoadingScreen()
         }
     }
 }
@@ -126,7 +136,7 @@ fun RibbitScreen(
         }
         composable(route = RibbitScreen.LogoutScreen.name) {
             Log.d("HippoLog, RibbitApp, RibbitScreen", "LogoutScreen")
-            LogoutScreen(authViewModel = authViewModel, tokenViewModel = tokenViewModel)
+            LogoutScreen(authViewModel = authViewModel, tokenViewModel = tokenViewModel, userViewModel = userViewModel)
         }
         composable(route = RibbitScreen.LoadingScreen.name) {
             Log.d("HippoLog, RibbitApp, RibbitScreen", "LoadingScreen")
@@ -170,4 +180,14 @@ fun AuthScreen(
             }
         }
     }
+}
+
+@Composable
+fun AuthLoadingScreen(modifier: Modifier = Modifier) {
+    Log.d("HippoLog, LoadingScreen", "로딩스크린")
+    Image(
+        modifier = modifier.size(200.dp),
+        painter = painterResource(R.drawable.loading_img),
+        contentDescription = stringResource(id = R.string.loading)
+    )
 }

@@ -1,4 +1,4 @@
-package com.hippoddung.ribbit.ui.screens
+package com.hippoddung.ribbit.ui.screens.carditems
 
 import android.annotation.SuppressLint
 import android.app.Activity

@@ -1,4 +1,4 @@
-package com.hippoddung.ribbit.ui.screens.homescreen
+package com.hippoddung.ribbit.ui.screens
 
 import android.annotation.SuppressLint
 import android.os.Build
@@ -26,12 +26,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.network.bodys.RibbitPost
 import com.hippoddung.ribbit.ui.RibbitScreen
+import com.hippoddung.ribbit.ui.screens.carditems.RibbitCard
+import com.hippoddung.ribbit.ui.screens.screenitems.HomeTopAppBar
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
 import com.hippoddung.ribbit.ui.viewmodel.HomeUiState
 import com.hippoddung.ribbit.ui.viewmodel.HomeViewModel
-import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
+import com.hippoddung.ribbit.ui.viewmodel.ReplyViewModel
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -151,7 +153,7 @@ fun PostsGridScreen(posts: List<RibbitPost>,
                 post = it,
                 homeViewModel = homeViewModel,
                 userId = userId,
-                navcontroller = navController,
+                navController = navController,
                 modifier = modifier.padding(8.dp)
             )
         }

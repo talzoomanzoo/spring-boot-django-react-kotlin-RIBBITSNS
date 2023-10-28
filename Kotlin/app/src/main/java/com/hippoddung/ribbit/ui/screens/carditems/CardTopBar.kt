@@ -1,4 +1,4 @@
-package com.hippoddung.ribbit.ui.screens.homescreen
+package com.hippoddung.ribbit.ui.screens.carditems
 
 import android.os.Build
 import android.util.Log
@@ -13,9 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.network.bodys.RibbitPost
-import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
 import com.hippoddung.ribbit.ui.viewmodel.HomeViewModel
-import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter

@@ -40,6 +40,7 @@ import { uploadToCloudinary } from "../../../../Utils/UploadToCloudinary";
 import BackdropComponent from "../../../Backdrop/Backdrop";
 import Maplocation from "../../../Profile/Maplocation";
 import ReplyModal from "./ReplyModal";
+import Loading from "../../../Profile/Loading/Loading";
 
 const validationSchema = Yup.object().shape({
   content: Yup.string().required("내용이 없습니다"),
@@ -48,7 +49,8 @@ const validationSchema = Yup.object().shape({
 const TwitCard = ({ twit }) => {
   const [selectedImage, setSelectedImage] = useState(twit.image);
   const [selectedVideo, setSelectedVideo] = useState(twit.video);
-  const [uploadingImage, setUploadingImage] = useState(false);
+  // const [uploadingImage, setUploadingImage] = useState(false);
+  const [ loading, setLoading ] = useState(false);
   const [openEmoji, setOpenEmoji] = useState(false);
   const handleOpenEmoji = () => setOpenEmoji(!openEmoji);
   const handleCloseEmoji = () => setOpenEmoji(false);
@@ -62,7 +64,7 @@ const TwitCard = ({ twit }) => {
   const [editedContent, setEditedContent] = useState(twit.content); // 편집된 내용을 관리하는 상태 변수
 
   const [sentence, setSentence] = useState(twit.sentence); //sentence는 윤리수치에 해당하는 문장이 담아진다.
-  const [isLoading, setIsLoading] = useState(false); //로딩창의 띄어짐의 유무를 판단한다. default는 true이다.
+//  const [isLoading, setIsLoading] = useState(false); //로딩창의 띄어짐의 유무를 판단한다. default는 true이다.
   const jwtToken = localStorage.getItem("jwt");
 
   const [isEdited, setIsEdited] = useState(twit.edited);
@@ -178,8 +180,8 @@ const TwitCard = ({ twit }) => {
   };
 
   const handleSaveClick = async () => {
+    setLoading(true);
     try {
-      setIsLoading(true);
       const currentTime = new Date();
       setEditedContent(editedContent);
       setSelectedImage(selectedImage);
@@ -206,7 +208,7 @@ const TwitCard = ({ twit }) => {
       console.log("edit test", twit);
       //window.location.reload();
       //setRefreshTwits((prev) => prev + 1);
-      setIsLoading(false);
+      setLoading(false);
       handleCloseEditClick();
     } catch (error) {
       //console.error("Error updating twit:", error);
@@ -275,21 +277,21 @@ const TwitCard = ({ twit }) => {
   };
 
   const handleSelectImage = async (event) => {
-    setUploadingImage(true);
+    setLoading(true);
     const imgUrl = await uploadToCloudinary(event.target.files[0], "image");
     //console.log("e.tar.val.I", event.target.value);
     formik.setFieldValue("image", imgUrl);
     setSelectedImage(imgUrl);
-    setUploadingImage(false);
+    setLoading(false);
   };
 
   const handleSelectVideo = async (event) => {
-    setUploadingImage(true);
+    setLoading(true);
     const videoUrl = await uploadToCloudinary(event.target.files[0], "video");
     //console.log("e.tar.val.V", event.target.value);
     formik.setFieldValue("video", videoUrl);
     setSelectedVideo(videoUrl);
-    setUploadingImage(false);
+    setLoading(false);
   };
 
   const currTimestamp = new Date().getTime();
@@ -304,7 +306,7 @@ const TwitCard = ({ twit }) => {
   console.log("twitTest", twit);
   return (
     <div className="">
-      {isLoading && <div>Loading...</div>}
+      {loading ? <Loading/> : null}
       {auth.user?.id !== twit.user.id &&
         // auth.user notnull 일때, auth.user.id 가 twit.user.id 와 일치하지 않고,
         location.pathname === `/profile/${auth.user?.id}` && (
@@ -424,7 +426,7 @@ const TwitCard = ({ twit }) => {
                     }}
                     style={{ width: "450px" }}
                   />
-                  {!uploadingImage && (
+                  {!loading && (
                     <div>
                       {selectedImage && ( // 편집 모드일 때 이미지가 선택된 경우에만 표시
                         <img
@@ -584,7 +586,7 @@ const TwitCard = ({ twit }) => {
       />
 
       <section>
-        <BackdropComponent open={uploadingImage} />
+        <BackdropComponent open={loading} />
       </section>
     </div>
   );

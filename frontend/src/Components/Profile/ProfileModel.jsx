@@ -15,6 +15,7 @@ import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
 import BackdropComponent from "../Backdrop/Backdrop";
 import "./ProfileModel.css";
 import axios from 'axios';
+import Loading from "./Loading/Loading";
 
 const style = {
   position: "absolute",
@@ -32,7 +33,8 @@ const style = {
 };
 
 const ProfileModel = ({ handleClose, open }) => {
-  const [uploading, setUploading] = useState(false);
+  // const [uploading,setUploading] = useState(false);
+  const [ loading, setLoading ] = useState(false);
   const dispatch = useDispatch();
   const { auth, theme } = useSelector(store => store);
 
@@ -69,7 +71,17 @@ const ProfileModel = ({ handleClose, open }) => {
       birthDate: auth.user.birthDate || "",
     });
 
-  }, [auth.user])
+  }, [auth.user]);
+
+  const handleOnClick = () => {
+    handleGenerateImage();
+  };
+
+  const handleOnKeyPress = e => {
+    if (e.key === 'Enter') {
+      handleOnClick();
+    }
+  }
 
   const [openInputAiKeyword, setOpenInputAiKeyword] = useState(false); // 모달 열기/닫기 상태
   const [keyword, setKeyword] = useState(""); // AI 키워드 입력 상태
@@ -88,7 +100,7 @@ const ProfileModel = ({ handleClose, open }) => {
   };
 
   const handleGenerateImage = async () => {
-
+    setLoading(true);
     try {
       const url = 'http://localhost:8080/sendprompt';
 
@@ -104,24 +116,25 @@ const ProfileModel = ({ handleClose, open }) => {
 
       setImage(generatedImage);
 
-
+      setLoading(false);
     } catch (error) {
       console.error('이미지 생성 요청 중 오류 발생:', error);
     }
   };
 
   const handleImageChange = async (event) => {
-    setUploading(true)
+    // setUploading(true)
+    setLoading(true);
     const { name } = event.target;
     const file = event.target.files[0];
     const url = await uploadToCloudinary(file, "image");
     formik.setFieldValue(name, url);
-    setUploading(false);
-
+    // setUploading(false);
+    setLoading(false);
   }
 
   const handleAIImageChange = async (event) => {//ai이미지를 cloudinary로 업로드하는 함수이다.
-    setUploading(true);
+    setLoading(true);
 
     const response = await fetch('http://localhost:8080/webptojpg', {
       method: 'POST',
@@ -135,7 +148,9 @@ const ProfileModel = ({ handleClose, open }) => {
     const file = new File([blob], 'output.jpg', { type: 'image/jpeg' });
     const url = await uploadToCloudinary(file, "image");
     formik.setFieldValue("image", url);
-    setUploading(false);
+    setLoading(false);
+    closeInputAiKeywordModal();
+
   };
 
   return (
@@ -288,7 +303,7 @@ const ProfileModel = ({ handleClose, open }) => {
                     />
                   </div>
                 </div>
-                <BackdropComponent open={uploading} />
+                <BackdropComponent open={loading} />
 
               </form>
             </Box>
@@ -303,6 +318,7 @@ const ProfileModel = ({ handleClose, open }) => {
             aria-describedby="image-source-modal-description"
           >
             <div className="image-source-modal">
+            {loading ? <Loading/> : null}
               <Box
                 sx={{
                   position: "absolute",
@@ -335,6 +351,7 @@ const ProfileModel = ({ handleClose, open }) => {
                     value={keyword}
                     onChange={handleKeywordChange}
                     placeholder="키워드 입력"
+                    onKeyUp={handleOnKeyPress}
                   />
                 </div>
                 {image && (
@@ -350,26 +367,39 @@ const ProfileModel = ({ handleClose, open }) => {
                         margin: '0 auto',
                       }}
                     />
-                    <a
-                      href={`http://localhost:8080/download`}
-                      download="generated_image.jpg"
-                    >이미지 저장</a>
-                    <button
+                    <Button
                       style={{
+                        textAlign: "right",
                         objectFit: 'cover',
                         display: 'block',
                         margin: '0 auto',
                       }}
-                      onClick={handleAIImageChange}>이미지 선택</button>
+                    >
+                    <a
+                      href={`http://localhost:8080/download`}
+                      download="generated_image.jpg"
+                    >이미지 저장</a>
+                    </Button>
+                    <Button
+                      style={{
+                        textAlign: "right",
+                        objectFit: 'cover',
+                        display: 'block',
+                        margin: '0 auto',
+                      }}
+                      onClick={handleAIImageChange}>이미지 선택</Button>
                   </div>
                 )}
-                <button
+                <Button
+                id="myBtn"
                   style={{
+                    // color: "#008000",
+                    textAlign: "center",
                     objectFit: 'cover',
                     display: 'block',
                     margin: '0 auto',
                   }}
-                  onClick={handleGenerateImage}>AI 프로필 생성</button>
+                  onClick={handleGenerateImage}>AI 프로필 생성</Button>
               </Box>
             </div>
           </Modal>
