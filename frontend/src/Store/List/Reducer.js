@@ -20,9 +20,6 @@ import {
     SET_PRIVATE_REQUEST,
     SET_PRIVATE_SUCCESS,
     SET_PRIVATE_FAILURE,
-    FIND_TWEET_BY_LIST_ID_REQUEST,
-    FIND_TWEET_BY_LIST_ID_SUCCESS,
-    FIND_TWEET_BY_LIST_ID_FAILURE,
 } from "./ActionType";
 
 const initialState = {
@@ -40,7 +37,6 @@ const listReducer = (state = initialState, action) => {
         case GET_LISTS_REQUEST:
         case LIST_CREATE_REQUEST:
         case SET_PRIVATE_REQUEST:
-        case FIND_TWEET_BY_LIST_ID_REQUEST:
         case UPDATE_LIST_REQUEST:
             return {
                 ...state,
@@ -68,14 +64,6 @@ const listReducer = (state = initialState, action) => {
         case GET_USER_FAILURE:
         case ADD_USER_FAILURE:
         case LIST_DELETE_FAILURE:
-        case FIND_TWEET_BY_LIST_ID_FAILURE:
-        case FIND_TWEET_BY_LIST_ID_SUCCESS:
-            return {
-                ...state,
-                loading: false,
-                twits: action.payload,
-                error: null,
-            }
         case LIST_DELETE_SUCCESS:
             const ListIdToDelete = action.payload;
             return {

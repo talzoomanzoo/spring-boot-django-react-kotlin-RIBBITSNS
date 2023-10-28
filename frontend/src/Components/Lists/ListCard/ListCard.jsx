@@ -82,7 +82,6 @@ const ListCard = memo(({ list }) => {
           </section>
         </>
       )}
-      ;
     </div>
   );
 });

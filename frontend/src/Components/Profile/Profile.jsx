@@ -154,7 +154,7 @@ const Profile = () => {
         <div className="flex justify-between items-start mt-5 h-[5rem]">
           <Avatar
             alt="Avatar"
-            src={auth.findUser?.image}
+            src={auth.findUser?.image?  auth.findUser.image : "https://cdn.pixabay.com/photo/2023/10/24/01/42/01-42-37-630_1280.png"}
             className="transform -translate-y-24"
             sx={{ width: "10rem", height: "10rem", border: "4px solid white" }}
           />

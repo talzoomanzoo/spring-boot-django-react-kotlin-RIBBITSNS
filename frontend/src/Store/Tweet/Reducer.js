@@ -2,6 +2,7 @@
 import {
   FIND_TWEET_BY_ID_REQUEST,
   FIND_TWEET_BY_ID_SUCCESS,
+  FIND_TWEET_BY_ID_FAILURE,
   GET_ALL_TWEETS_FAILURE,
   GET_ALL_TWEETS_REQUEST,
   GET_ALL_TWEETS_SUCCESS,
@@ -36,6 +37,9 @@ import {
   GET_USERS_REPLIES_REQUEST,
   GET_USERS_REPLIES_SUCCESS,
   GET_USERS_REPLIES_FAILURE,
+  FIND_TWEET_BY_LIST_ID_REQUEST,
+  FIND_TWEET_BY_LIST_ID_SUCCESS,
+  FIND_TWEET_BY_LIST_ID_FAILURE,
 } from "./ActionType";
 
 const initialState = {
@@ -56,6 +60,12 @@ const tweetReducer = (state = initialState, action) => {
     case VIEW_PLUS_REQUEST:
     case RETWEET_CREATE_REQUEST:
     case  FOLLOW_TWIT_REQUEST:
+    case FIND_TWEET_BY_LIST_ID_REQUEST:
+      return {
+        ...state,
+        loading: true,
+        error: null,
+      };
     case FIND_TWEET_BY_ID_REQUEST:
       return {
         ...state, // Spread Parameter: 배열이 개별 원소가 됨 (아래 이외 다른 데이터는 그대로 유지.)
@@ -80,6 +90,7 @@ const tweetReducer = (state = initialState, action) => {
     case TWEET_CREATE_FAILURE:
     case TWEET_DELETE_FAILURE:
     case GET_ALL_TWEETS_FAILURE:
+    case FIND_TWEET_BY_ID_FAILURE:
     case GET_USERS_TWEET_FAILURE:
     case GET_USERS_REPLIES_FAILURE:
     case USER_LIKE_TWEET_FAILURE:
@@ -155,6 +166,8 @@ const tweetReducer = (state = initialState, action) => {
         };
 
       case FIND_TWEET_BY_ID_SUCCESS:
+      case FIND_TWEET_BY_LIST_ID_SUCCESS:
+      case FIND_TWEET_BY_LIST_ID_FAILURE:
       case REPLY_TWEET_SUCCESS:
         return {...state,loading:false,twit:action.payload,error:null}
 

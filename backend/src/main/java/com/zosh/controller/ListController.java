@@ -103,14 +103,6 @@ private UserRepository userRepository;
 		return new ResponseEntity<>(listDto, HttpStatus.OK);
 	}
 	
-	@GetMapping("/{listId}")
-	public void findTwitByListId (@PathVariable Long listId,
-			@RequestHeader("Authorization") String jwt) throws ListException, UserException {
-		User user= userService.findUserProfileByJwt(jwt);
-		ListModel listModel=listService.findById(listId);
-		System.out.println("-----------------------------");
-	}
-	
 	@DeleteMapping("/{listId}")
 	public ResponseEntity<ApiResponse> deleteListById(@PathVariable Long listId,
 			@RequestHeader("Authorization") String jwt) throws ListException, UserException {

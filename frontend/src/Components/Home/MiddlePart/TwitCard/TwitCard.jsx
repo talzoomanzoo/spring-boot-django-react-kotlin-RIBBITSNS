@@ -320,7 +320,7 @@ const TwitCard = ({ twit }) => {
         <Avatar
           onClick={() => navigate(`/profile/${twit.user.id}`)}
           alt="Avatar"
-          src={twit.user.image}
+          src={twit.user.image? twit.user.image : "https://cdn.pixabay.com/photo/2023/10/24/01/42/01-42-37-630_1280.png"}
           className="cursor-pointer"
         />
         <div className="w-full">
