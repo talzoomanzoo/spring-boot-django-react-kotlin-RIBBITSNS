@@ -191,7 +191,7 @@ const Profile = () => {
               )}
             </div>
             <h1 className="text-gray-500">
-              @{auth.findUser?.fullName?.toLowerCase()}
+              {auth.findUser?.email?.toLowerCase()}
             </h1>
           </div>
           <div className="mt-2 space-y-3">

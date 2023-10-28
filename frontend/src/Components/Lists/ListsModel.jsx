@@ -69,16 +69,16 @@ const ListsModel = ({ handleClose, open }) => {
     setUploading(false);
   };
 
-  const navigateToProfile = (id) => {
-    navigate(`/profile/${id}`);
-    setSearch("");
-  };
+  // const navigateToProfile = (id) => {
+  //   navigate(`/profile/${id}`);
+  //   setSearch("");
+  // };
 
-  const handleAddUser = (listId, userId) => {
-    dispatch(addUserAction(listId, userId));
-    console.log("add user id", userId);
-    console.log("add list id", listId);
-  };
+  // const handleAddUser = (listId, userId) => {
+  //   dispatch(addUserAction(listId, userId));
+  //   console.log("add user id", userId);
+  //   console.log("add list id", listId);
+  // };
 
   const [isEnabled, setIsEnabled] = useState(false);
 

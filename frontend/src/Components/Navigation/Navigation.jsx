@@ -98,12 +98,12 @@ const Navigation = () => {
      <div className="flex items-center space-x-3">
         <Avatar
           alt="Remy Sharp"
-          src={auth.findUser?.image? auth.findUser.image : "https://cdn.pixabay.com/photo/2023/10/24/01/42/01-42-37-630_1280.png"}
+          src={auth.user?.image? auth.user.image : "https://cdn.pixabay.com/photo/2023/10/24/01/42/01-42-37-630_1280.png"}
         />
 
         <div>
           <p className="font-bold">{auth.user?.fullName}</p>
-          <p className="opacity-70">@{auth.user?.fullName.split(" ")[0]}</p>
+          <p className="opacity-70">{auth.user?.email.split(" ")[0]}</p>
         </div>
       </div>
       <Button

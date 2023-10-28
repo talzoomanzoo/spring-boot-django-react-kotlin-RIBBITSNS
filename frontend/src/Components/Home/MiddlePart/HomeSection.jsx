@@ -272,7 +272,7 @@ const HomeSection = () => {
           {isLocationFormOpen && (
             <Maplocation onLocationChange={handleMapLocation} />
           )}
-          {isLoading && <div>Loading...</div>}
+          {loading ? <Loading/> : null}
           {twit.twits && twit.twits.length > 0 ?
             (
               twit.twits.map((item) => <TwitCard twit={item} key={item.id} />)
@@ -281,17 +281,6 @@ const HomeSection = () => {
               <div>게시된 리빗이 없습니다.</div>
             )}
         </div>
-      </section>
-      {isLocationFormOpen && (
-        <Maplocation onLocationChange={handleMapLocation} />
-      )}
-      <section className={`space-y-5`}>
-      {loading ? <Loading/> : null}
-        {twit.twits && twit.twits.length > 0 ? (
-          twit.twits.map((item) => <TwitCard twit={item} key={item.id} />)
-        ) : (
-          <div>게시된 리빗이 없습니다.</div>
-        )}
       </section>
       <section>
         <BackdropComponent open={uploadingImage} />

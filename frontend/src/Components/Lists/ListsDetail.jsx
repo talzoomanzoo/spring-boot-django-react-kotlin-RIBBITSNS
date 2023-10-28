@@ -8,7 +8,6 @@ import { Divider } from "@mui/material";
 
 const ListsDetail = () => {
     const param = useParams();
-    // twit/83
     const dispatch = useDispatch();
     const { twit, theme } = useSelector(store => store);
     // useSelector로 twit과 theme이라는 모듈의 상태값을 가져오도록 한 후, twit과 theme의 상태를 변경해서 궁극적으로 스토어의 상태를 변경

@@ -139,7 +139,7 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
             {listVal.followings?.map((item) => (
               <div className="flex justify-between items-center" key={item.id}>
                 <div
-                  style={{ paddingRight: 300 }}
+                  style={{ paddingRight: 300, marginTop: 10,}}
                   onClick={() => {
                     if (Array.isArray(item)) {
                       item.forEach((i) => navigateToProfile(i));
@@ -148,7 +148,7 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
                     }
                     handleFollowingsClick();
                   }}
-                  className="flex items-center justify-between hover:bg-green-700 p-3 cursor-pointer"
+                  className="flex items-center absolute left-2 justify-between hover:bg-green-700 relative right-5 cursor-pointer"
                 >
                   <Avatar alt={item.fullName} src={item.image} />
                   <div className="ml-2">
@@ -161,14 +161,14 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
                 {itemsCheck(item) ? (
                   <RemoveIcon
                     style={{ marginLeft: 30 }}
-                    className="flex float-right hover:bg-green-700 relative right-10 cursor-pointer"
+                    className="flex hover:bg-green-700 relative right-5 cursor-pointer"
                     onClick={() => {
                       handleAddUser(list.id, item.id, list);
                     }}
                   ></RemoveIcon>
                 ) : (
                   <AddIcon
-                    className="flex float-right absolute right-5 cursor-pointer"
+                    className="flex hover:bg-green-700 relative right-5 cursor-pointer"
                     onClick={() => {
                       handleAddUser(list.id, item.id, list);
                     }}
@@ -350,13 +350,9 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
                   }}
                 />
                 <div className="flex items-center justify-between font-xl">
-                  {" "}
+
                   리스트 비공개 활성화
                   <Switch
-                    style={{
-                      marginTop: 10,
-                      marginRight: 20,
-                    }}
                     trackColor={{ false: "#767577", true: "#81b0ff" }}
                     thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
                     ios_backgroundColor="#3e3e3e"

@@ -124,7 +124,7 @@ public class TwitController {
 		return new ResponseEntity<>(twitDto,HttpStatus.ACCEPTED);
 	}
 	
-	@GetMapping("/{listId}")
+	@GetMapping("/{listId}/listTwit") // ambiguous handler
 	public void findTwitByListId (@PathVariable Long listId,
 			@RequestHeader("Authorization") String jwt) throws TwitException, ListException, UserException {
 		User user= userService.findUserProfileByJwt(jwt);
