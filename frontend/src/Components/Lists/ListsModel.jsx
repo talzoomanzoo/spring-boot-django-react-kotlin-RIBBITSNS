@@ -69,16 +69,16 @@ const ListsModel = ({ handleClose, open }) => {
     setUploading(false);
   };
 
-  const navigateToProfile = (id) => {
-    navigate(`/profile/${id}`);
-    setSearch("");
-  };
+  // const navigateToProfile = (id) => {
+  //   navigate(`/profile/${id}`);
+  //   setSearch("");
+  // };
 
-  const handleAddUser = (listId, userId) => {
-    dispatch(addUserAction(listId, userId));
-    console.log("add user id", userId);
-    console.log("add list id", listId);
-  };
+  // const handleAddUser = (listId, userId) => {
+  //   dispatch(addUserAction(listId, userId));
+  //   console.log("add user id", userId);
+  //   console.log("add list id", listId);
+  // };
 
   const [isEnabled, setIsEnabled] = useState(false);
 
@@ -87,25 +87,25 @@ const ListsModel = ({ handleClose, open }) => {
     //dispatch(setPrivate(list.id));
   };
 
-  return (
-    <div>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <form onSubmit={formik.handleSubmit}>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <IconButton onClick={handleClose} aria-label="delete">
-                  <CloseIcon />
-                </IconButton>
-                <p>리스트 추가</p>
-              </div>
-              <Button type="submit">저장</Button>
-            </div>
+    return (
+        <div>
+            <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>
+                    <form onSubmit={formik.handleSubmit}> 
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-3">
+                                <IconButton onClick={handleClose} aria-label="delete">
+                                    <CloseIcon />
+                                </IconButton>
+                                <p>리스트 추가</p>
+                            </div>
+                            <Button type="submit">저장</Button>
+                        </div>
 
             <div className="customeScrollbar overflow-y-scroll  overflow-x-hidden h-[80vh]">
               <div className="">

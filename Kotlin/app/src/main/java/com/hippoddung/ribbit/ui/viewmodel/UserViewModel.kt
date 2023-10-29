@@ -4,12 +4,14 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.hippoddung.ribbit.data.network.UserRepository
 import com.hippoddung.ribbit.network.bodys.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
@@ -17,6 +19,7 @@ import javax.inject.Inject
 sealed interface UserUiState {
     data class Exist(val user: User) : UserUiState
     object Lack : UserUiState
+    object Loading : UserUiState
     data class Error(val errorCode: String) : UserUiState
 }
 
@@ -27,29 +30,39 @@ class UserViewModel @Inject constructor(
     var userUiState: UserUiState by mutableStateOf(UserUiState.Lack)
         private set
 
+    var user = MutableLiveData<User?>()
+
     fun getUserProfile() {
         viewModelScope.launch(Dispatchers.IO) {
-            userUiState = UserUiState.Lack
+            userUiState = UserUiState.Loading
             Log.d("HippoLog, UserViewModel", "getUserProfile, $userUiState")
-            userUiState = try {
-                UserUiState.Exist(userRepository.getUserProfile())
+            try {
+                val responseUser = userRepository.getUserProfile()
+                userUiState = UserUiState.Exist(responseUser)
+                user.postValue(responseUser)    // user Livedata 에 user값을 넣는다.
+                Log.d("HippoLog, TokenViewModel", "init DataStore 에서 토큰 보냄 ${user.value}")
             } catch (e: IOException) {
                 Log.d("HippoLog, UserViewModel", "${e.stackTrace}, ${e.message}")
-                UserUiState.Error(e.message.toString())
+                userUiState = UserUiState.Error(e.message.toString())
 
             } catch (e: ExceptionInInitializerError) {
                 Log.d("HippoLog, UserViewModel", "${e.stackTrace}, ${e.message}")
-                UserUiState.Error(e.message.toString())
+                userUiState = UserUiState.Error(e.message.toString())
 
             } catch (e: HttpException) {
                 Log.d("HippoLog, UserViewModel", "${e.stackTrace}, ${e.code()}, $e")
                 if (e.code() == 500) {
-                    UserUiState.Error(e.code().toString())
+                    userUiState = UserUiState.Error(e.code().toString())
                 } else {
-                    UserUiState.Error(e.message.toString())
+                    userUiState = UserUiState.Error(e.message.toString())
                 }
             }
             Log.d("HippoLog, UserViewModel", "getUserProfile, $userUiState")
         }
+    }
+
+    fun resetUser(){
+        user.postValue(null)
+        Log.d("HippoLog, UserViewModel", "유저정보 리셋")
     }
 }

@@ -1,4 +1,4 @@
-package com.hippoddung.ribbit.ui.screens
+package com.hippoddung.ribbit.ui.screens.statescreens
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat
@@ -45,7 +45,7 @@ fun TwitCreateLoadingScreen(
         animationDuration: Int = 360
     ) {
 
-        val infiniteTransition = rememberInfiniteTransition()
+        val infiniteTransition = rememberInfiniteTransition(label = "InfiniteTransition")
 
         val rotateAnimation by infiniteTransition.animateFloat(
             initialValue = 0f,

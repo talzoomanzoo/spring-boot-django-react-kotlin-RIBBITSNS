@@ -7,7 +7,6 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
@@ -26,8 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.network.bodys.RibbitPost
 import com.hippoddung.ribbit.ui.RibbitScreen
-import com.hippoddung.ribbit.ui.screens.homescreen.HomeTopAppBar
-import com.hippoddung.ribbit.ui.screens.homescreen.RibbitCard
+import com.hippoddung.ribbit.ui.screens.carditems.RibbitCard
+import com.hippoddung.ribbit.ui.screens.screenitems.HomeTopAppBar
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
@@ -112,7 +111,7 @@ fun TwitIdSuccessScreen(
                         post = post,
                         homeViewModel = homeViewModel,
                         userId = userId,
-                        navcontroller = navController,
+                        navController = navController,
                         modifier = Modifier.padding(8.dp)
                             .wrapContentHeight()
                             .fillMaxWidth()
@@ -134,17 +133,4 @@ fun TwitIdSuccessScreen(
             }
         }
     }
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-@SuppressLint("UnrememberedMutableState", "RememberReturnType")
-@Composable
-fun PostsGridScreen(
-    post: RibbitPost,
-    homeViewModel: HomeViewModel,
-    userId: Int,
-    navController: NavHostController,
-    modifier: Modifier
-) {
-
 }
