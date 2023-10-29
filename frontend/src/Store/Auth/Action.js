@@ -166,10 +166,10 @@ export const findUserById = (userId) => async (dispatch) => {
 //사용자를 ID로 찾는 비동기 액션 생성자다. 사용자 등록 정보를 API로 전송하고, 
 //성공 또는 실패에 따라 각각 FIND_USER_BY_ID_SUCCESS 또는 FIND_USER_BY_ID_FAILURE 액션을 디스패치한다.
 
-/*export const searchUser = (query) => async (dispatch) => {
+export const searchUser = (query) => async (dispatch) => {
   dispatch({type:SEARCH_USER_REQUEST})
   try {
-    const response = await api.get(`/api/users/search?query=${query}`);
+    const response = await api.get(`/api/users/search1?query=${query}`);
     const users = response.data;
     console.log("search result -: ", users);
    
@@ -180,8 +180,6 @@ export const findUserById = (userId) => async (dispatch) => {
     );
   }
 };
-//사용자를 검색하는 비동기 액션 생성자다. 사용자 등록 정보를 API로 전송하고, 
-//성공 또는 실패에 따라 각각 SEARCH_USER_SUCCESS 또는 SEARCH_USER_FAILURE 액션을 디스패치한다. */
 
 export const searchAll = (query) => async (dispatch) => {
   dispatch({type:SEARCH_USER_REQUEST})

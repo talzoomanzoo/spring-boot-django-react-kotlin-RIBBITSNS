@@ -40,9 +40,9 @@ const Authentication = () => {
       {" "}
       <Grid className="overflow-y-hidden" container>
         <Grid className="hidden lg:block" item lg={7}>
-          <img
+          <img  
             className="w-full h-screen"
-            src="https://abs.twimg.com/sticky/illustrations/lohp_en_1302x955.png"
+            src="https://cdn.pixabay.com/photo/2018/04/14/05/26/green-3318343_1280.jpg"
             alt=""
           />
 
@@ -53,14 +53,20 @@ const Authentication = () => {
               aria-hidden="true"
               class="r-jwli3a r-4qtqp9 r-yyyyoo r-labphf r-1777fci r-dnmrzs r-494qqr r-bnwqim r-1plcrui r-lrvibr"
             >
-              <g>
-                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
-              </g>
+          
+
             </svg>
           </div>
 
-          {/* 
-        <img className=" w-[50rem] absolute -top-5" src="https://cdn.pixabay.com/photo/2021/03/02/12/04/twitter-6062249_640.png" alt="" /> */}
+          
+        <img className=" w-[50rem] absolute -top-5" 
+        style={{
+          height: "300px",
+          width: "300px",
+          marginTop: "300px",
+          marginLeft: "20%",
+        }}
+        src="https://cdn.pixabay.com/photo/2023/10/26/06/44/06-44-04-156_1280.png" alt="" />
         </Grid>
         <Grid className="px-10" item lg={5} xs={12}>
           <div className="py-10">
@@ -71,9 +77,16 @@ const Authentication = () => {
             />
           </div>
 
-          <h1 className="font-bold text-7xl">Happening now</h1>
+          <h1 className="font-bold text-7xl">RIBBIT<img src="https://cdn.pixabay.com/photo/2023/10/24/01/42/01-42-37-630_1280.png"
+          style={{
+            height: "80px",
+            width: "80px",
+            float: "right",
+            marginRight: "54%",
+          }}
+          /></h1>
 
-          <h1 className="font-bold text-3xl py-16">Join Twitter Today</h1>
+          <h1 className="font-bold text-3xl py-16">리빗 가입하기</h1>
 
           <div className="w-[60%]">
             <div className="w-full">
@@ -93,27 +106,27 @@ const Authentication = () => {
                   console.log("Login Failed");
                 }}
               />
-              <p className="py-5 text-center">OR</p>
+              <p className="py-5 text-center">또는</p>
               <Button
                 onClick={() => handleAuthModelOpen("/signup")}
                 sx={{
                   width: "100%",
                   borderRadius: "29px",
                   py: "7px",
-                  bgcolor: "#1d9bf0",
+                  bgcolor: "#008000",
                 }}
                 variant="contained"
                 size="large"
               >
-                Create Account
+                가입하기
               </Button>
               <p className="text-sm mt-2">
-                By signing up, you agree to the Terms of Service and Privacy
-                Policy, including Cookie Use.
+              가입하시면 서비스 약관 및 개인정보 보호정책에 동의하게 됩니다.
+              (쿠키 사용을 포함한 정책.)
               </p>
             </div>
             <div className="mt-10">
-              <h1 className="font-bold text-xl mb-5">Already Have Account?</h1>
+              <h1 className="font-bold text-xl mb-5">계정이 있으신가요?</h1>
               <Button
                 onClick={() => handleAuthModelOpen("/signin")}
                 sx={{
@@ -124,7 +137,7 @@ const Authentication = () => {
                 variant="outlined"
                 size="large"
               >
-                Signin
+                로그인
               </Button>
             </div>
           </div>

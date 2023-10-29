@@ -5,8 +5,9 @@ import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
 import { createTweetReply } from "../../../../Store/Tweet/Action";
 
+
 const validationSchema = Yup.object().shape({
-  content: Yup.string().required("Tweet text is required"),
+  content: Yup.string().required("내용이 없습니다"),
 });
 
 const style = {
@@ -27,6 +28,7 @@ const style = {
 const ReplyModal = ({ handleClose, twitData, open }) => {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
+  const [refreshTwits, setRefreshTwits] = useState(0);
   const dispatch = useDispatch();
 
   const { auth, theme } = useSelector((store) => store);
@@ -35,8 +37,9 @@ const ReplyModal = ({ handleClose, twitData, open }) => {
     console.log("val", values);
     dispatch(createTweetReply(values));
     actions.resetForm();
-    // setSelectedImage("");
+    //setSelectedImage("");
     window.location.reload();
+    //setRefreshTwits((prev) => prev + 1);
     handleClose()
   };
   console.log("twitData", twitData);
@@ -104,7 +107,7 @@ const ReplyModal = ({ handleClose, twitData, open }) => {
                     <input
                       type="text"
                       name="content"
-                      placeholder="What is happening?"
+                      placeholder="댓글은 여기에"
                       className={`border-none outline-none text-l bg-transparent `}
                       {...formik.getFieldProps("content")}
                     />
@@ -141,14 +144,14 @@ const ReplyModal = ({ handleClose, twitData, open }) => {
                       <Button
                         type="submit"
                         sx={{
-                          bgcolor: "#1d9bf0",
+                          bgcolor: "#42c924",
                           borderRadius: "20px",
                           paddingY: "8px",
                           paddingX: "20px",
-                          color: "white",
+                          color: "green",
                         }}
                       >
-                        Tweet
+                      RIBBIT
                       </Button>
                     </div>
                   </div>

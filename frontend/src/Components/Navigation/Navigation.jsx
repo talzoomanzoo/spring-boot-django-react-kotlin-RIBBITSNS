@@ -1,5 +1,5 @@
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { Avatar, Button, Menu, MenuItem,Modal } from "@mui/material";
+import { Avatar, Button, Menu, MenuItem, Modal } from "@mui/material";
 import React,{useState} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -31,13 +31,30 @@ const Navigation = () => {
   }
 
   const [openwithdrawl, setopenwithdrawl] = useState(false);
-  
   const handleopenwithdrawl = () => {
     setopenwithdrawl(true);
   };
-  
+
   const handleclosewithdrawl = () => {
     setopenwithdrawl(false);
+  };
+
+  const jwtToken = localStorage.getItem("jwt");
+  const accountwithdrawal = async()=>{
+    try {
+      const response = await fetch("http://localhost:8080/api/users/withdraw",{
+        method:'POST',
+        headers:{
+          'Authorization':`Bearer ${jwtToken}`,
+        },
+      });
+      if(response.status === 200){
+        localStorage.removeItem("jwt");
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error("Failed to delete:", error);
+    }
   };
 
   return (
@@ -46,13 +63,14 @@ const Navigation = () => {
         <div className="py-5">
           <img
             className="w-10"
-            src="https://cdn.pixabay.com/photo/2013/06/07/09/53/twitter-117595_1280.png"
+            src="https://cdn.pixabay.com/photo/2023/10/26/06/44/06-44-04-156_1280.png"
             alt=""
+            onClick={()=> navigate(`/`)}
           />
         </div>
         <div className="space-y-6">
           {navigationMenu.map((item) => (
-            <div onClick={()=> item.title==="Profile"?navigate(`/profile/${auth.user?.id}`): navigate(`${item.path}`)} className="cursor-pointer flex space-x-3 items-center">
+            <div onClick={()=> item.title==="프로필"?navigate(`/profile/${auth.user?.id}`): navigate(`${item.path}`)} className="cursor-pointer flex space-x-3 items-center">
               {item.icon}
               <p className="text-xl">{item.title}</p>
             </div>
@@ -65,13 +83,13 @@ const Navigation = () => {
               width: "100%",
               borderRadius: "29px",
               py: "15px",
-              bgcolor: "#1d9bf0",
+              bgcolor: "#42c924",
             }}
             variant="contained"
             size="large"
             onClick={()=>handleFollowTwit()}
           >
-            Tweet
+            ribbit
           </Button>
         </div>
       </div>
@@ -80,7 +98,7 @@ const Navigation = () => {
      <div className="flex items-center space-x-3">
         <Avatar
           alt="Remy Sharp"
-          src="https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_960_720.png"
+          src="https://cdn.pixabay.com/photo/2023/10/24/01/42/01-42-37-630_1280.png"
         />
 
         <div>
@@ -106,8 +124,8 @@ const Navigation = () => {
           'aria-labelledby': 'basic-button',
         }}
       >
-        <MenuItem onClick={handleLogout}>Logout</MenuItem>
-        <MenuItem onClick={handleopenwithdrawl}>Withdrawal</MenuItem>
+        <MenuItem onClick={handleLogout}>로그아웃</MenuItem>
+        <MenuItem onClick={handleopenwithdrawl}>회원탈퇴</MenuItem>
       </Menu>
     
      </div>
@@ -121,15 +139,14 @@ const Navigation = () => {
         }}
      >
         <div className="withdrawal-modal" style={{ background: "white", padding: "20px", borderRadius: "8px" }}>
-          <h1>
-            정말로 탈퇴하시겠습니까?
-          </h1>
-          만약 탈퇴를 원하신다면 아래쪽에 본인의 비밀번호를 입력해주세요.
-          <p><input type="text" placeholder='비밀번호'></input></p>
-          <Button >확인</Button>
+          <p id="description">
+            정말로 탈퇴하시겠습니까? 탈퇴하시는 순간 모든 게시물을 삭제 되어집니다.
+          </p>
+          <Button onClick={accountwithdrawal}>확인</Button>
           <Button onClick={handleclosewithdrawl}>취소</Button>
         </div>
      </Modal>
+     
     </div>
 
   );

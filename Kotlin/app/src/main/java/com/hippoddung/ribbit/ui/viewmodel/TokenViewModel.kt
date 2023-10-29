@@ -1,6 +1,9 @@
 package com.hippoddung.ribbit.ui.viewmodel
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,25 +14,30 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+sealed interface TokenUiState {
+    data class Exist(private val token: String) : TokenUiState
+    object Lack : TokenUiState
+}
 @HiltViewModel
 class TokenViewModel @Inject constructor(
     private val tokenManager: TokenManager
 ): ViewModel() {
-    var token = MutableLiveData<String?>()
+    var tokenUiState: TokenUiState by mutableStateOf(TokenUiState.Lack)
+    var token = MutableLiveData<String?>()  // LiveData 객체
 
     init{
         viewModelScope.launch(Dispatchers.IO){
-            tokenManager.getToken().collect{
+            tokenManager.getToken().collect{    // tokenManager.getToken()이 return하는 mapping된 flow를 잡아서 token.value에 넣어준다.
                 withContext(Dispatchers.Main){
                     token.value = it
                     Log.d("HippoLog, TokenViewModel", "${token.value}")
                 }
             }
-            try {
-                val token: String = token.value!!
-                saveToken(token)
-            }catch (e: Exception){
-                println(e)
+            tokenUiState = if(token.value != null) {
+                val token: String = token.value.toString()
+                TokenUiState.Exist(token)
+            }else{
+                TokenUiState.Lack
             }
         }
     }
@@ -44,6 +52,8 @@ class TokenViewModel @Inject constructor(
     fun deleteToken(){
         viewModelScope.launch(Dispatchers.IO){
             tokenManager.deleteToken()
+            tokenUiState = TokenUiState.Lack
+            token.value = null
         }
     }
 }

@@ -18,55 +18,53 @@ import {
 } from "@mui/material";
 import EmojiPicker from "emoji-picker-react";
 import { useFormik } from "formik";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
-import { css } from '@emotion/react';
+import { api } from "../../../../Config/apiConfig";
 import {
   createRetweet,
   createTweet,
   deleteTweet,
   getTime,
   likeTweet,
-  updateTweet,
   viewPlus,
 } from "../../../../Store/Tweet/Action";
-import { uploadToCloudinary } from "../../../../Utils/UploadToCloudinary";
-import BackdropComponent from "../../../Backdrop/Backdrop";
-import ReplyModal from "./ReplyModal";
-import { BounceLoader } from 'react-spinners';//npm install react-spinners --save 명령어로 설치진행
-import axios from 'axios';
-import { api } from "../../../../Config/apiConfig";
 import {
   UPDATE_TWEET_FAILURE,
   UPDATE_TWEET_REQUEST,
   UPDATE_TWEET_SUCCESS,
-
 } from "../../../../Store/Tweet/ActionType";
+import { uploadToCloudinary } from "../../../../Utils/UploadToCloudinary";
+import BackdropComponent from "../../../Backdrop/Backdrop";
+import Maplocation from "../../../Profile/Maplocation";
+import ReplyModal from "./ReplyModal";
+import Loading from "../../../Profile/Loading/Loading";
 
 const validationSchema = Yup.object().shape({
-  content: Yup.string().required("Tweet text is required"),
+  content: Yup.string().required("내용이 없습니다"),
 });
 
 const TwitCard = ({ twit }) => {
   const [selectedImage, setSelectedImage] = useState(twit.image);
   const [selectedVideo, setSelectedVideo] = useState(twit.video);
-  const [uploadingImage, setUploadingImage] = useState(false);
+  // const [uploadingImage, setUploadingImage] = useState(false);
+  const [ loading, setLoading ] = useState(false);
   const [openEmoji, setOpenEmoji] = useState(false);
   const handleOpenEmoji = () => setOpenEmoji(!openEmoji);
   const handleCloseEmoji = () => setOpenEmoji(false);
 
   const dispatch = useDispatch();
-  const { auth } = useSelector((store) => store);
+  const { theme, auth } = useSelector((store) => store);
   const [isLiked, setIsLiked] = useState(twit.liked);
   const [likes, setLikes] = useState(twit.totalLikes);
 
   const [isEditing, setIsEditing] = useState(false); // 편집 상태를 관리하는 상태 변수
   const [editedContent, setEditedContent] = useState(twit.content); // 편집된 내용을 관리하는 상태 변수
 
-  const [sentence, setSentence] = useState(twit.sentence);//sentence는 윤리수치에 해당하는 문장이 담아진다.
-  const [isLoading, setIsLoading] = useState(false);//로딩창의 띄어짐의 유무를 판단한다. default는 true이다.
+  const [sentence, setSentence] = useState(twit.sentence); //sentence는 윤리수치에 해당하는 문장이 담아진다.
+//  const [isLoading, setIsLoading] = useState(false); //로딩창의 띄어짐의 유무를 판단한다. default는 true이다.
   const jwtToken = localStorage.getItem("jwt");
 
   const [isEdited, setIsEdited] = useState(twit.edited);
@@ -81,6 +79,17 @@ const TwitCard = ({ twit }) => {
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const openDeleteMenu = Boolean(anchorEl);
+  const [isLocationFormOpen, setLocationFormOpen] = useState(false);
+  const [address, setAddress] = useState("");
+  const [refreshTwits, setRefreshTwits] = useState(0);
+
+  const handleMapLocation = (newAddress) => {
+    setAddress(newAddress);
+  };
+
+  const handleToggleLocationForm = () => {
+    setLocationFormOpen((prev) => !prev);
+  };
 
   const handleOpenDeleteMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -102,13 +111,19 @@ const TwitCard = ({ twit }) => {
   const handleCloseReplyModel = () => setOpenReplyModel(false);
 
   const handleOpenReplyModel = () => setOpenReplyModel(true);
+
   //const handleNavigateToTwitDetial = () => navigate(`/twit/${twit.id}`);
+
+  // useEffect(() => {
+  //   dispatch(getAllTweets());
+  // }, [refreshTwits]);
+
 
   const handleNavigateToTwitDetial = () => {
     if (!isEditing) {
       navigate(`/twit/${twit.id}`);
       dispatch(viewPlus(twit.id));
-      window.location.reload();
+      //window.location.reload();
     }
   };
 
@@ -117,10 +132,12 @@ const TwitCard = ({ twit }) => {
       dispatch(deleteTweet(twit.id));
       handleCloseDeleteMenu();
       window.location.reload();
-      
+      //setRefreshTwits((prev) => prev + 1);
+
       const currentId = window.location.pathname.replace(/^\/twit\//, "");
       if (location.pathname === `/twit/${currentId}`) {
         window.location.reload();
+        //setRefreshTwits((prev) => prev + 1);
       } else {
         navigate(".", { replace: true });
       }
@@ -147,24 +164,24 @@ const TwitCard = ({ twit }) => {
     return async (dispatch) => {
       console.log("twitContent", twit.content); // 넘어 온 것 확인
       console.log("tr", twit);
-      dispatch({type:UPDATE_TWEET_REQUEST});
+      dispatch({ type: UPDATE_TWEET_REQUEST });
       try {
-        const {data} = await api.post(`/api/twits/edit`, twit);
-        console.log("edited twit", data)
-        console.log("data.id: ",data.id);
-        console.log("data.id: ",data.content);
-  
+        const { data } = await api.post(`/api/twits/edit`, twit);
+        console.log("edited twit", data);
+        console.log("data.id: ", data.id);
+        console.log("data.id: ", data.content);
+
         //const response = await ethicreveal(data.id,data.content);
-        dispatch({type:UPDATE_TWEET_SUCCESS,payload:data});
+        dispatch({ type: UPDATE_TWEET_SUCCESS, payload: data });
       } catch (error) {
-        dispatch({type:UPDATE_TWEET_FAILURE,payload:error.message});
+        dispatch({ type: UPDATE_TWEET_FAILURE, payload: error.message });
       }
-    }
-  }
+    };
+  };
 
   const handleSaveClick = async () => {
+    setLoading(true);
     try {
-      setIsLoading(true);
       const currentTime = new Date();
       setEditedContent(editedContent);
       setSelectedImage(selectedImage);
@@ -190,36 +207,40 @@ const TwitCard = ({ twit }) => {
       setIsEditing(false);
       console.log("edit test", twit);
       //window.location.reload();
-      setIsLoading(false);
+      //setRefreshTwits((prev) => prev + 1);
+      setLoading(false);
       handleCloseEditClick();
     } catch (error) {
       //console.error("Error updating twit:", error);
     }
   };
 
-  const ethicreveal = async(twitid,twitcontent)=>{
+  const ethicreveal = async (twitid, twitcontent) => {
     try {
-      const response = await fetch("http://localhost:8080/api/ethic/reqsentence",{
-        method:'POST',
-        headers:{
-          'Content-Type': 'application/json',
-          'Authorization':`Bearer ${jwtToken}`,
-        },
-        body: JSON.stringify({
-          id: twitid,
-          content: twitcontent,
-        }),
-      });
-      console.log("response: ",response);
-      console.log("jwt: ",jwtToken);
-      if(response.status===200){
+      const response = await fetch(
+        "http://localhost:8080/api/ethic/reqsentence",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${jwtToken}`,
+          },
+          body: JSON.stringify({
+            id: twitid,
+            content: twitcontent,
+          }),
+        }
+      );
+      console.log("response: ", response);
+      console.log("jwt: ", jwtToken);
+      if (response.status === 200) {
         const responseData = await response.json();
         setSentence(responseData.sentence);
+        setRefreshTwits((prev) => prev + 1);
       }
     } catch (error) {
       console.error("Error fetching ethic data:", error);
     }
-  
   };
 
   const handleCancelClick = () => {
@@ -242,6 +263,7 @@ const TwitCard = ({ twit }) => {
       content: "",
       image: "",
       video: "",
+      
     },
     validationSchema,
     onSubmit: handleSubmit,
@@ -255,21 +277,21 @@ const TwitCard = ({ twit }) => {
   };
 
   const handleSelectImage = async (event) => {
-    setUploadingImage(true);
+    setLoading(true);
     const imgUrl = await uploadToCloudinary(event.target.files[0], "image");
     //console.log("e.tar.val.I", event.target.value);
     formik.setFieldValue("image", imgUrl);
     setSelectedImage(imgUrl);
-    setUploadingImage(false);
+    setLoading(false);
   };
 
   const handleSelectVideo = async (event) => {
-    setUploadingImage(true);
+    setLoading(true);
     const videoUrl = await uploadToCloudinary(event.target.files[0], "video");
     //console.log("e.tar.val.V", event.target.value);
     formik.setFieldValue("video", videoUrl);
     setSelectedVideo(videoUrl);
-    setUploadingImage(false);
+    setLoading(false);
   };
 
   const currTimestamp = new Date().getTime();
@@ -283,15 +305,10 @@ const TwitCard = ({ twit }) => {
 
   console.log("twitTest", twit);
   return (
-    
     <div className="">
-      {isLoading && (
-        <div>
-          Loading...
-        </div>
-      )}
+      {loading ? <Loading/> : null}
       {auth.user?.id !== twit.user.id &&
-      // auth.user notnull 일때, auth.user.id 가 twit.user.id 와 일치하지 않고,
+        // auth.user notnull 일때, auth.user.id 가 twit.user.id 와 일치하지 않고,
         location.pathname === `/profile/${auth.user?.id}` && (
           // 현재 url의 pathname이 /profile/${auth.user?.id} 이면
           <div className="flex items-center font-semibold text-gray-700 py-2">
@@ -300,8 +317,8 @@ const TwitCard = ({ twit }) => {
           </div>
           // 해당 표시를 해라
         )}
-        
-      <div className="flex space-x-5 "> 
+
+      <div className="flex space-x-5 ">
         <Avatar
           onClick={() => navigate(`/profile/${twit.user.id}`)}
           alt="Avatar"
@@ -328,10 +345,16 @@ const TwitCard = ({ twit }) => {
                   </p>
                 )}
               </span>
+              {/* <span className="flex items-center text-gray-500">
+                <LocationOnIcon />
+                <p className="text-gray-500">
+                  {auth.findUser?.location || address}
+                </p>
+              </span> */}
               {twit.user.verified && (
                 <img
                   className="ml-2 w-5 h-5"
-                  src="https://abs.twimg.com/responsive-web/client-web/verification-card-v2@3x.8ebee01a.png"
+                  src="https://cdn.pixabay.com/photo/2023/10/25/08/19/08-19-05-334_1280.png"
                   alt=""
                 />
               )}
@@ -357,19 +380,19 @@ const TwitCard = ({ twit }) => {
               >
                 {isEditing ? (
                   <div>
-                    <MenuItem onClick={handleSaveClick}>Save</MenuItem>
-                    <MenuItem onClick={handleCancelClick}>Cancel</MenuItem>
+                    <MenuItem onClick={handleSaveClick}>저장</MenuItem>
+                    <MenuItem onClick={handleCancelClick}>취소</MenuItem>
                   </div>
                 ) : (
                   <div>
                     {twit.user.id === auth.user.id && (
-                      <MenuItem onClick={handleDeleteTwit}>Delete</MenuItem>
+                      <MenuItem onClick={handleDeleteTwit}>삭제</MenuItem>
                     )}
                     {twit.user.id === auth.user.id && (
-                      <MenuItem onClick={handleEditClick}>Edit</MenuItem>
+                      <MenuItem onClick={handleEditClick}>수정</MenuItem>
                     )}
                     <MenuItem onClick={handleNavigateToTwitDetial}>
-                      Details
+                      자세히
                     </MenuItem>
                   </div>
                 )}
@@ -385,6 +408,11 @@ const TwitCard = ({ twit }) => {
               {isEditing ? (
                 <div>
                   <TextareaAutosize
+                    className={`${
+                      theme.currentTheme === "light"
+                        ? "bg-white"
+                        : "bg-[#151515]"
+                    }`}
                     minRows={0}
                     maxRows={0}
                     value={editedContent}
@@ -398,7 +426,7 @@ const TwitCard = ({ twit }) => {
                     }}
                     style={{ width: "450px" }}
                   />
-                  {!uploadingImage && (
+                  {!loading && (
                     <div>
                       {selectedImage && ( // 편집 모드일 때 이미지가 선택된 경우에만 표시
                         <img
@@ -412,6 +440,8 @@ const TwitCard = ({ twit }) => {
                           <video
                             className="max-h-[40rem] p-5"
                             controls
+                            // autoPlay
+                            // muted
                             src={selectedVideo}
                           />
                         </div>
@@ -424,11 +454,9 @@ const TwitCard = ({ twit }) => {
                   <p className="mb-2 p-0 ">
                     {isEditing ? editedContent : twit.content}
                   </p>
-                  
-                  {sentence &&(
-                    <p>{sentence}</p>
-                  )}
-                  
+
+                  {sentence && <p>{sentence}</p>}
+
                   {twit.image && (
                     <img
                       className="w-[28rem] border border-gray-400 p-5 rounded-md"
@@ -441,6 +469,8 @@ const TwitCard = ({ twit }) => {
                       <video
                         className="max-h-[40rem] p-5"
                         controls
+                        // autoPlay
+                        // muted
                         src={twit.video}
                       />
                     </div>
@@ -454,7 +484,7 @@ const TwitCard = ({ twit }) => {
                 {isEditing && (
                   <>
                     <label className="flex items-center space-x-2 rounded-md cursor-pointer">
-                      <ImageIcon className="text-[#1d9bf0]" />
+                      <ImageIcon className="text-[#42c924]" />
                       <input
                         type="file"
                         name="imageFile"
@@ -463,7 +493,7 @@ const TwitCard = ({ twit }) => {
                       />
                     </label>
                     <label className="flex items-center space-x-2 rounded-md cursor-pointer">
-                      <SlideshowIcon className="text-[#1d9bf0]" />
+                      <SlideshowIcon className="text-[#42c924]" />
                       <input
                         type="file"
                         name="videoFile"
@@ -471,11 +501,18 @@ const TwitCard = ({ twit }) => {
                         onChange={handleSelectVideo}
                       />
                     </label>
-                    <FmdGoodIcon className="text-[#1d9bf0]" />
+
+                    <label className="flex items-center space-x-2 rounded-md cursor-pointer">
+                      <FmdGoodIcon
+                        className="text-[#42c924]"
+                        onClick={handleToggleLocationForm}
+                      />
+                    </label>
+
                     <div className="relative">
                       <TagFacesIcon
                         onClick={handleOpenEmoji}
-                        className="text-[#1d9bf0] cursor-pointer"
+                        className="text-[#42c924] cursor-pointer"
                       />
                       {openEmoji && (
                         <div className="absolute top-10 z-50 ">
@@ -491,6 +528,9 @@ const TwitCard = ({ twit }) => {
                 )}
               </div>
             </div>
+            {isLocationFormOpen && (
+              <Maplocation onLocationChange={handleMapLocation} />
+            )}
             <div className="py-5 flex flex-wrap justify-between items-center">
               {!isEditing && (
                 <>
@@ -534,7 +574,7 @@ const TwitCard = ({ twit }) => {
                   </div>
                 </>
               )}
-            </div> 
+            </div>
           </div>
         </div>
       </div>
@@ -544,11 +584,10 @@ const TwitCard = ({ twit }) => {
         open={openReplyModel}
         handleClose={handleCloseReplyModel}
       />
-      
-      <section>
-        <BackdropComponent open={uploadingImage} />
-      </section>
 
+      <section>
+        <BackdropComponent open={loading} />
+      </section>
     </div>
   );
 };

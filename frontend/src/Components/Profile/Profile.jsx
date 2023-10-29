@@ -20,29 +20,37 @@ import { useNavigate, useParams } from "react-router-dom";
 import { FollowUserAction, findUserById } from "../../Store/Auth/Action";
 import {
   findTwitsByLikesContainUser,
-  getUsersTweets,
   getUsersReplies,
+  getUsersTweets,
   viewPlus,
 } from "../../Store/Tweet/Action";
 import TwitCard from "../Home/MiddlePart/TwitCard/TwitCard";
 import SnackbarComponent from "../Snackbar/SnackbarComponent";
+import Maplocation from "./Maplocation";
 import ProfileModel from "./ProfileModel";
 
 const Profile = () => {
-  const [tabValue, setTabValue] = React.useState("1");
+  const [address, setAddress] = useState("");
+  const [tabValue, setTabValue] = useState("1");
+  const [isLocationFormOpen, setLocationFormOpen] = useState(false); 
   const { auth, twit, theme } = useSelector((store) => store);
-  const [openProfileModel, setOpenProfileModel] = useState();
+  const [openProfileModel, setOpenProfileModel] = useState(false);
   const [openSnackBar, setOpenSnackBar] = useState(false);
   const [followersClicked, setFollowersClicked] = useState(false);
   const [followingsClicked, setFollowingsClicked] = useState(false);
   const followersListRef = useRef(null);
-
   const param = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const handleToggleLocationForm = () => {
+    setLocationFormOpen((prev) => !prev); 
+  };
+
   const handleBack = () => {
     navigate(-1);
   };
+
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
     if (newValue === "4") {
@@ -53,10 +61,9 @@ const Profile = () => {
       dispatch(getUsersReplies(param.id));
     }
   };
+
   useEffect(() => {
     dispatch(getUsersTweets(param.id));
-    //dispatch(getUsersReplies(param.id));
-    //dispatch(findTwitsByLikesContainUser(param.id));
   }, [param.id, twit.retwit]);
 
   useEffect(() => {
@@ -100,7 +107,7 @@ const Profile = () => {
         followersListRef &&
         followersListRef.current &&
         !followersListRef.current.contains(event.target) &&
-        !event.target.classList.contains("text-gray-500") // 예외를 추가하여 리스트 항목 클릭 시 숨기지 않음
+        !event.target.classList.contains("text-gray-500")
       ) {
         setFollowersClicked(false);
         setFollowingsClicked(false);
@@ -112,16 +119,17 @@ const Profile = () => {
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
-  }, []);
+  }, [auth.user]);
 
-  console.log("check twit.twits",twit.twits);
-  console.log("check twit only", twit);
+  const handleMapLocation = (newAddress) => {
+    setAddress(newAddress);
+  };
 
   return (
-    <React.Fragment>
+    <div>
       <section
         className={`z-50 flex items-center sticky top-0 ${
-          theme.currentTheme === "light" ? "bg-white" : "bg-[#0D0D0D]"
+          theme.currentTheme === "light" ? "light" : "dark"
         } bg-opacity-95`}
       >
         <KeyboardBackspaceIcon
@@ -137,18 +145,17 @@ const Profile = () => {
           className="w-[100%] h-[15rem] object-cover"
           src={
             auth.findUser?.backgroundImage ||
-            "https://cdn.pixabay.com/photo/2018/10/16/15/01/background-image-3751623_1280.jpg"
+            "https://png.pngtree.com/thumb_back/fw800/background/20230304/pngtree-green-base-vector-smooth-background-image_1770922.jpg"
           }
           alt=""
         />
       </section>
-
       <section className="pl-6">
-        <div className=" flex justify-between items-start mt-5 h-[5rem]">
+        <div className="flex justify-between items-start mt-5 h-[5rem]">
           <Avatar
             alt="Avatar"
             src={auth.findUser?.image}
-            className="transform -translate-y-24 "
+            className="transform -translate-y-24"
             sx={{ width: "10rem", height: "10rem", border: "4px solid white" }}
           />
           {auth.findUser?.req_user ? (
@@ -158,7 +165,7 @@ const Profile = () => {
               variant="outlined"
               className="rounded-full"
             >
-              Edit Profile
+              프로필 변경
             </Button>
           ) : (
             <Button
@@ -199,14 +206,18 @@ const Profile = () => {
                 </div>
               ) : null}
 
-              {auth.findUser?.location ? (
-                <div className="flex items-center text-gray-500">
-                  <>
-                    <LocationOnIcon />
-                    <p className="ml-2">{auth.findUser.location}</p>
-                  </>
-                </div>
-              ) : null}
+              <section>
+                <Button
+                  className="flex items-center text-gray-500"
+                  onClick={handleToggleLocationForm}
+                >
+                  <LocationOnIcon />
+                  <p className="text-gray-500">
+                    {auth.findUser?.location || address}
+                  </p>
+                </Button>
+              </section>
+
               {auth.findUser?.joinedAt ? (
                 <div className="flex items-center text-gray-500">
                   <>
@@ -224,21 +235,13 @@ const Profile = () => {
             </div>
             <div className="flex items-center space-x-5">
               <div className="flex items-center space-x-1 font-semibold">
-                <span
-                  onClick={handleFollowingsClick} // followers 텍스트 클릭 시 handleFollowersClick 함수 실행
-                  className="text-gray-500"
-                >
+                <span onClick={handleFollowingsClick} className="text-gray-500">
                   {auth.findUser?.followings?.length} followings
                 </span>
-
-                {followingsClicked && ( // followersClicked 상태에 따라 followers 리스트를 렌더링합니다.
+                {followingsClicked && (
                   <div
                     ref={followersListRef}
-                    className={` overflow-y-scroll hideScrollbar absolute z-50 bg-white border rounded-md p-3 w-30 ${
-                      theme.currentTheme === "light"
-                        ? "bg-white"
-                        : "bg-[#151515] border"
-                    }`}
+                    className={`overflow-y-scroll hideScrollbar absolute z-50 bg-white border rounded-md p-3 w-30`}
                   >
                     {auth.findUser?.followings &&
                       auth.findUser?.followings.map((item) => (
@@ -267,23 +270,14 @@ const Profile = () => {
                   </div>
                 )}
               </div>
-
               <div className="flex items-center space-x-1 font-semibold">
-                <span
-                  onClick={handleFollowersClick} // followers 텍스트 클릭 시 handleFollowersClick 함수 실행
-                  className="text-gray-500"
-                >
+                <span onClick={handleFollowersClick} className="text-gray-500">
                   {auth.findUser?.followers?.length} followers
                 </span>
-
-                {followersClicked && ( // followersClicked 상태에 따라 followers 리스트를 렌더링합니다.
+                {followersClicked && (
                   <div
                     ref={followersListRef}
-                    className={` overflow-y-scroll hideScrollbar absolute z-50 bg-white border rounded-md p-3 w-30 ${
-                      theme.currentTheme === "light"
-                        ? "bg-white"
-                        : "bg-[#151515] border"
-                    }`}
+                    className={`overflow-y-scroll hideScrollbar absolute z-50 bg-white border rounded-md p-3 w-30`}
                   >
                     {auth.findUser?.followers &&
                       auth.findUser?.followers.map((item) => (
@@ -296,7 +290,7 @@ const Profile = () => {
                             }
                             handleFollowersClick();
                           }}
-                          className="flex items-center hover:bg-slate-800 p-3 cursor-pointer"
+                          className="flex items-center hover-bg-slate-800 p-3 cursor-pointer"
                           key={item.id}
                         >
                           <Avatar alt={item.fullName} src={item.image} />
@@ -316,6 +310,9 @@ const Profile = () => {
           </div>
         </div>
       </section>
+      {isLocationFormOpen && (
+        <Maplocation onLocationChange={handleMapLocation} />
+      )}
       <section>
         <Box sx={{ width: "100%", typography: "body1", marginTop: "20px" }}>
           <TabContext value={tabValue}>
@@ -324,42 +321,38 @@ const Profile = () => {
                 onChange={handleTabChange}
                 aria-label="lab API tabs example"
               >
-                <Tab label="Tweets" value="1" />
-                <Tab label="Replies" value="2" />
-                <Tab label="Media" value="3" />
-                <Tab label="Likes" value="4" />
+                <Tab label="리빗" value="1" />
+                <Tab label="댓글" value="2" />
+                <Tab label="미디어" value="3" />
+                <Tab label="좋아요" value="4" />
               </TabList>
             </Box>
-
             <TabPanel value="1">
               {twit.twits?.map((item) => (
                 <div>
                   <TwitCard twit={item} />
-                  <Divider sx={{ margin: "2rem 0rem" }} />{" "}
+                  <Divider sx={{ margin: "2rem 0rem" }} />
                 </div>
               ))}
             </TabPanel>
-
             <TabPanel value="2">
               {twit.twits?.map((item) => (
                 <div>
                   <TwitCard twit={item} />
-                  <Divider sx={{ margin: "2rem 0rem" }} />{" "}
+                  <Divider sx={{ margin: "2rem 0rem" }} />
                 </div>
               ))}
             </TabPanel>
-
             <TabPanel value="3">
               {twit.twits
                 .filter((item) => item.image || item.video)
                 .map((item) => (
                   <div>
                     <TwitCard twit={item} />
-                    <Divider sx={{ margin: "2rem 0rem" }} />{" "}
+                    <Divider sx={{ margin: "2rem 0rem" }} />
                   </div>
                 ))}
             </TabPanel>
-
             <TabPanel value="4">
               {twit.likedTwits?.map((item) => (
                 <TwitCard twit={item} />
@@ -382,14 +375,14 @@ const Profile = () => {
           <CircularProgress color="inherit" />
         </Backdrop>
       </section>
-      <section>
+      {/* <section>
         <SnackbarComponent
           handleClose={handleCloseSnackBar}
           open={openSnackBar}
           message={"user updated successfully"}
         />
-      </section>
-    </React.Fragment>
+      </section> */}
+    </div>
   );
 };
 

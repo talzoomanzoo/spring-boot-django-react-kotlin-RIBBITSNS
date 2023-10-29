@@ -1,25 +1,39 @@
 package com.zosh.service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.zosh.config.JwtProvider;
+import com.zosh.exception.ListException;
 import com.zosh.exception.UserException;
+import com.zosh.model.ListModel;
+import com.zosh.model.Twit;
 import com.zosh.model.User;
+import com.zosh.repository.ListRepository;
+import com.zosh.repository.TwitRepository;
 import com.zosh.repository.UserRepository;
 
 @Service
 public class UserServiceImplementation implements UserService {
-	
-	private UserRepository userRepository;
-	private JwtProvider jwtProvider;
-	
+	private final UserRepository userRepository;
+	private final ListRepository listRepository;
+	private final TwitRepository twitRepository;
+	private final JwtProvider jwtProvider;
+
+	@Autowired
 	public UserServiceImplementation(
 			UserRepository userRepository,
+			ListRepository listRepository,
+			TwitRepository twitRepository,
 			JwtProvider jwtProvider) {
 		
 		this.userRepository=userRepository;
+		this.listRepository=listRepository;
+		this.twitRepository = twitRepository;
 		this.jwtProvider=jwtProvider;
 		
 	}
@@ -102,6 +116,67 @@ public class UserServiceImplementation implements UserService {
 	public List<User> searchUser(String query) {
 	
 		return userRepository.searchUser(query);
+	}
+
+	public ListModel findById(Long listId) throws ListException {
+		// TODO Auto-generated method stub
+		ListModel listModel = listRepository.findById(listId)
+				.orElseThrow(()-> new ListException("List Not Found with Id" + listId));
+		return listModel;
+	}
+	@Override
+	public User followList(Long userId, Long listId) throws UserException, ListException {
+		// TODO Auto-generated method stub
+		User user=findUserById(userId);
+		ListModel listModel=findById(listId);
+		if (user.getFollowedLists().contains(listModel) ) {
+			user.getFollowedLists().remove(listModel);
+		} else {
+			user.getFollowedLists().add(listModel);
+		}
+		userRepository.save(user);
+		return user;
+	}
+
+	@Override
+	public void deleteaccount(User user) throws UserException {
+		// TODO Auto-generated method stub
+		List<Twit> retwittedtwits = twitRepository.findByRetwitUser(user);
+		
+		for(Twit twit: retwittedtwits) {
+			twit.getRetwitUser().remove(user);
+			twitRepository.save(twit);
+		}
+		
+		//자신의 계정 삭제시 다른사람의 계정의 followers에 자신의 계정을 삭제
+		List<User> followers = userRepository.findByFollowers(user);
+		
+		for(User follower: followers) {
+			follower.getFollowers().remove(user);
+			userRepository.save(follower);
+		}
+		
+		//자신의 계정 삭제시 다른사람의 계정의 followings에 자신의 계정을 삭제
+		List<User> followings = userRepository.findByFollowings(user);
+		
+		for(User following: followings) {
+			following.getFollowings().remove(user);
+			userRepository.save(following);
+		}
+		
+		//자신의 계정 삭제시 Lists에서 자신의 followings 정보 삭제
+//		List<ListModel> listfollowings = listRepository.findByFollowings(user);
+//		System.out.println("listfollowings: "+listfollowings);
+//		System.out.println("listrepos: "+listRepository.findByFollowings(user));
+//		
+//		for(ListModel listModel : listfollowings) {
+//			System.out.println("Listmodel: "+listModel);
+//			listModel.getFollowings().remove(user);
+//			listRepository.save(listModel);
+//		}
+	
+		userRepository.delete(user);
+		
 	}
 
 }

@@ -5,6 +5,7 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -22,6 +23,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.OndemandVideo
+import androidx.compose.material.icons.filled.VideoLibrary
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -39,38 +41,53 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.R
 import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
+import com.hippoddung.ribbit.ui.viewmodel.HomeViewModel
 import com.hippoddung.ribbit.ui.viewmodel.TwitsCreateUiState
 import com.hippoddung.ribbit.ui.viewmodel.TwitsCreateViewModel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import java.io.File
 
 @Composable
 fun TwitCreateScreen(
+    twitsCreateViewModel: TwitsCreateViewModel,
+    homeViewModel: HomeViewModel,
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    val twitsCreateViewModel: TwitsCreateViewModel = hiltViewModel()
     when (twitsCreateViewModel.twitsCreateUiState) {
-        is TwitsCreateUiState.Ready -> InputTwitScreen(
-            navController = navController,
-            twitsCreateViewModel = twitsCreateViewModel,
-            modifier = modifier.fillMaxSize()
-        )
+        is TwitsCreateUiState.Ready -> {
+            Log.d("HippoLog, TwitCreateScreen", "Ready")
+            InputTwitScreen(
+                navController = navController,
+                twitsCreateViewModel = twitsCreateViewModel,
+                homeViewModel = homeViewModel,
+                modifier = modifier.fillMaxSize()
+            )
+        }
 
-        is TwitsCreateUiState.Success ->
-            navController.navigate(RibbitScreen.HomeScreen.name)
+        is TwitsCreateUiState.Success -> {
+            Log.d("HippoLog, TwitCreateScreen", "Success")
+            runBlocking {
+                launch { navController.navigate(RibbitScreen.HomeScreen.name) }
+            }
+            twitsCreateViewModel.twitsCreateUiState = TwitsCreateUiState.Ready
+        }
 
-        is TwitsCreateUiState.Loading -> LoadingScreen(
-            modifier = modifier.fillMaxSize()
-        )
+        is TwitsCreateUiState.Loading -> {
+            Log.d("HippoLog, TwitCreateScreen", "Loading")
+            LoadingScreen()
+        }
 
-        is TwitsCreateUiState.Error -> ErrorScreen(
-            modifier = modifier.fillMaxSize()
-        )
+        is TwitsCreateUiState.Error -> {
+            Log.d("HippoLog, TwitCreateScreen", "Error")
+            ErrorScreen(modifier = modifier.fillMaxSize())
+        }
     }
 }
 
@@ -78,15 +95,17 @@ fun TwitCreateScreen(
 fun InputTwitScreen(
     navController: NavHostController,
     twitsCreateViewModel: TwitsCreateViewModel,
+    homeViewModel: HomeViewModel,
     modifier: Modifier = Modifier
 ) {
-    var inputText by remember { mutableStateOf("") }
     val context = LocalContext.current
-
-
+    var inputText by remember { mutableStateOf("") }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     var videoUri by remember { mutableStateOf<Uri?>(null) }
     val bitmap = remember { mutableStateOf<Bitmap?>(null) }
+    var videoAbsolutePath by remember { mutableStateOf<String?>(null) }
+    var videoFile by remember { mutableStateOf<File?>(null) }
+
     val imageLauncher = rememberLauncherForActivityResult(
         contract =
         ActivityResultContracts.GetContent()
@@ -117,28 +136,42 @@ fun InputTwitScreen(
                 .fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(4.dp))
-        Box(modifier = Modifier.size(200.dp)) {
-            imageUri?.let {
-                if (Build.VERSION.SDK_INT < 28) {
-                    bitmap.value = MediaStore.Images
-                        .Media.getBitmap(context.contentResolver, it)
-                } else {
-                    val source = ImageDecoder
-                        .createSource(context.contentResolver, it)
-                    bitmap.value = ImageDecoder.decodeBitmap(source)
-                }
+        if (imageUri != null) {
+            Box(modifier = Modifier.size(200.dp)) {
+                imageUri?.let {
+                    if (Build.VERSION.SDK_INT < 28) {
+                        bitmap.value = MediaStore.Images
+                            .Media.getBitmap(context.contentResolver, it)
+                    } else {
+                        val source = ImageDecoder
+                            .createSource(context.contentResolver, it)
+                        bitmap.value = ImageDecoder.decodeBitmap(source)
+                    }
 
-                bitmap.value?.let { btm ->
-                    Image(
-                        bitmap = btm.asImageBitmap(),
-                        contentScale = ContentScale.Fit,
-                        contentDescription = null,
-                        modifier = Modifier.size(200.dp)
-                    )
+                    bitmap.value?.let { btm ->
+                        Image(
+                            bitmap = btm.asImageBitmap(),
+                            contentScale = ContentScale.Fit,
+                            contentDescription = null,
+                            modifier = Modifier.size(200.dp)
+                        )
+                    }
                 }
             }
-        }
-        Row() {
+        }else{}
+        if (videoUri != null) {
+            videoAbsolutePath = twitsCreateViewModel.getFilePathFromUri(context, videoUri!!)
+            videoFile = videoAbsolutePath?.let { File(it) }
+            Row {
+                Icon(
+                    imageVector = Icons.Default.VideoLibrary,
+                    contentDescription = "Video Uri",
+                    modifier = Modifier.padding(8.dp)
+                )
+                Text(videoFile!!.name, modifier = Modifier.padding(8.dp))
+            }
+        }else{}
+        Row {
             Button(
                 onClick = { imageLauncher.launch("image/*") },
                 Modifier.padding(14.dp)
@@ -152,7 +185,7 @@ fun InputTwitScreen(
                 Icon(Icons.Filled.OndemandVideo, "Pick Video button.")
             }
         }
-        Row() {
+        Row {
             Button(
                 onClick = { navController.navigate(RibbitScreen.HomeScreen.name) },
                 Modifier.padding(14.dp)
@@ -161,11 +194,9 @@ fun InputTwitScreen(
             }
             Button(
                 onClick = {
-                    val image = bitmap.value
                     twitsCreateViewModel.createTwit(
-                        context = context,
-                        image = image,
-                        videoUri = videoUri,
+                        image = bitmap.value,
+                        videoFile = videoFile,
                         inputText = inputText,
                     )
                 },
@@ -194,3 +225,4 @@ fun InputTextField(
         modifier = modifier,
     )
 }
+

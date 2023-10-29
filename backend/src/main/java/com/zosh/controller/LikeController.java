@@ -2,6 +2,7 @@ package com.zosh.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,9 +29,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/api")
 @Tag(name="Like-Unlike Twit")
 public class LikeController {
-	
+	@Autowired
 	private UserService userService;
+	@Autowired
 	private LikesService likeService;
+
 	
 	public LikeController(UserService userService,LikesService likeService) {
 		this.userService=userService;

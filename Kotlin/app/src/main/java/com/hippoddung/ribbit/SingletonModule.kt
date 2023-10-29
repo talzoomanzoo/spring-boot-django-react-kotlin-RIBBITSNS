@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import com.hippoddung.ribbit.data.local.AuthManager
 import com.hippoddung.ribbit.data.local.TokenManager
 import com.hippoddung.ribbit.network.AuthApiService
 import com.hippoddung.ribbit.network.AuthAuthenticator
@@ -12,6 +13,7 @@ import com.hippoddung.ribbit.network.BASE_URL
 import com.hippoddung.ribbit.network.CLOUDINARY_URL
 import com.hippoddung.ribbit.network.RibbitApiService
 import com.hippoddung.ribbit.network.UploadCloudinaryApiService
+import com.hippoddung.ribbit.network.UserApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,6 +34,10 @@ class SingletonModule {
     @Singleton
     @Provides
     fun provideTokenManager(@ApplicationContext context: Context): TokenManager = TokenManager(context)
+
+    @Singleton
+    @Provides
+    fun provideAuthManager(@ApplicationContext context: Context): AuthManager = AuthManager(context)
 
     @Singleton
     @Provides
@@ -80,6 +86,14 @@ class SingletonModule {
             .client(okHttpClient)
             .build()
             .create(RibbitApiService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideUserAPIService(okHttpClient: OkHttpClient, retrofit: Retrofit.Builder): UserApiService =
+        retrofit
+            .client(okHttpClient)
+            .build()
+            .create(UserApiService::class.java)
 
     @Singleton
     @Provides

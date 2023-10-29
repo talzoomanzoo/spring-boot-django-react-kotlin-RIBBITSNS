@@ -12,6 +12,8 @@ from io import BytesIO
 from django.http import HttpResponse, JsonResponse
 from PIL import Image
 from django.views.decorators.csrf import csrf_exempt
+import sys
+import urllib.request
 REST_API_KEY = '472d2c640e9e91717a08a4de64af8974'
 
 def t2i(prompt, negative_prompt):
@@ -34,15 +36,34 @@ def t2i(prompt, negative_prompt):
         # 오류 처리: 오류 메시지 출력
         return None
 
-image_url = None
+client_id = "2TW_ZaDKuPgyUdP484ax" # 개발자센터에서 발급받은 Client ID 값
+client_secret = "K1AtAfkobv" # 개발자센터에서 발급받은 Client Secret 값
+
+def translation(text):
+    encText = urllib.parse.quote(text)
+    data = "source=ko&target=en&text=" + encText
+    url = "https://openapi.naver.com/v1/papago/n2mt"
+    request = urllib.request.Request(url)
+    request.add_header("X-Naver-Client-Id",client_id)
+    request.add_header("X-Naver-Client-Secret",client_secret)
+    response = urllib.request.urlopen(request, data=data.encode("utf-8"))
+    rescode = response.getcode()
+    if(rescode==200):
+        response_body = response.read()
+        result=json.loads(response_body.decode('utf-8'))
+        translated = result['message']['result']['translatedText']
+        return translated
+    else:
+        print("Error Code:" + rescode)
 
 def making_image(request):
     response = None
     # 이미지 URL을 따로 저장할 변수 추가
     if request.method == "GET":
         prompt = request.GET.get("keyword")
+        translated_prompt = translation(prompt)
         negative_prompt = "sleeping cat, dog, human, ugly face, cropped"
-        response = t2i(prompt, negative_prompt)
+        response = t2i(translated_prompt, negative_prompt)
         
     return JsonResponse({'image_url':response})
 

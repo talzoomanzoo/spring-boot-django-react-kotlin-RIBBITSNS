@@ -10,11 +10,11 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -62,6 +62,8 @@ public class User {
     
     private boolean is_req_user=false;
     
+//    private boolean hasFollowedLists;
+    
     private LocalDateTime joinedAt; 
     
 //    @ManyToMany(mappedBy = "retwitUser",cascade = CascadeType.ALL)
@@ -79,12 +81,17 @@ public class User {
     private Varification verification;
     
     @JsonIgnore
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany//(cascade = CascadeType.ALL)
     private List<User> followers=new ArrayList<>();
     
     @JsonIgnore
     //@ManyToMany(mappedBy = "followers")
-    @ManyToMany(cascade = CascadeType.ALL) // followers와 followings 테이블 분리를 통해 null칸 폐기
+    //@ManyToMany(cascade = CascadeType.ALL) // followers와 followings 테이블 분리를 통해 null칸 폐기
+    @ManyToMany
     private List<User> followings=new ArrayList<>();
+    
+    @JsonIgnore
+    @ManyToMany
+    private List<ListModel> followedLists=new ArrayList<>();
     
 }

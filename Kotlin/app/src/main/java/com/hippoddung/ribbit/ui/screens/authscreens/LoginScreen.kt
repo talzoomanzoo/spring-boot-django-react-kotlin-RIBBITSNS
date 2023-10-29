@@ -31,7 +31,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.R
 import com.hippoddung.ribbit.network.bodys.requestbody.AuthRequest
@@ -42,7 +41,7 @@ import com.hippoddung.ribbit.ui.viewmodel.CoroutinesErrorHandler
 @Composable
 fun LoginScreen(
     navController: NavHostController,
-    authViewModel: AuthViewModel = hiltViewModel(),
+    authViewModel: AuthViewModel,
     modifier: Modifier = Modifier
 ) {
     var email by remember { mutableStateOf("") }
@@ -93,6 +92,7 @@ fun LoginScreen(
                         authRequest,
                         object : CoroutinesErrorHandler { override fun onError(message: String) { "Error! $message" } }
                     )
+                    authViewModel.saveLoginInfo(email = email, pW = pW)
                 },
                 modifier.padding(14.dp)
             ) {
