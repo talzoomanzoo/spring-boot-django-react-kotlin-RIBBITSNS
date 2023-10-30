@@ -17,12 +17,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.zosh.dto.TwitDto;
 import com.zosh.dto.mapper.TwitDtoMapper;
+import com.zosh.exception.ListException;
 import com.zosh.exception.TwitException;
 import com.zosh.exception.UserException;
+import com.zosh.model.ListModel;
 import com.zosh.model.Twit;
 import com.zosh.model.User;
 import com.zosh.request.TwitReplyRequest;
 import com.zosh.response.ApiResponse;
+import com.zosh.service.ListService;
 import com.zosh.service.TwitService;
 import com.zosh.service.UserService;
 
@@ -35,6 +38,7 @@ public class TwitController {
 	
 	private TwitService twitService;
 	private UserService userService;
+	private ListService listService;
 	
 	public TwitController(TwitService twitService,UserService userService) {
 		this.twitService=twitService;
@@ -93,17 +97,6 @@ public class TwitController {
 		return new ResponseEntity<>(twitDto,HttpStatus.OK);
 	}
 	
-	@GetMapping("/{twitId}")
-	public ResponseEntity<TwitDto> findTwitById( @PathVariable Long twitId, 
-			@RequestHeader("Authorization") String jwt) throws TwitException, UserException{
-		User user=userService.findUserProfileByJwt(jwt);
-		Twit twit=twitService.findById(twitId);
-		
-		TwitDto twitDto=TwitDtoMapper.toTwitDto(twit,user);
-		
-		return new ResponseEntity<>(twitDto,HttpStatus.ACCEPTED);
-	}
-	
 	@DeleteMapping("/{twitId}")
 	public ResponseEntity<ApiResponse> deleteTwitById( @PathVariable Long twitId,
 		@RequestHeader("Authorization") String jwt) throws UserException, TwitException{
@@ -118,6 +111,25 @@ public class TwitController {
 		
 		return new ResponseEntity<>(res,HttpStatus.OK);
 		
+	}
+	
+	@GetMapping("/{twitId}")
+	public ResponseEntity<TwitDto> findTwitById( @PathVariable Long twitId, 
+			@RequestHeader("Authorization") String jwt) throws TwitException, UserException{
+		User user=userService.findUserProfileByJwt(jwt);
+		Twit twit=twitService.findById(twitId);
+		
+		TwitDto twitDto=TwitDtoMapper.toTwitDto(twit,user);
+		
+		return new ResponseEntity<>(twitDto,HttpStatus.ACCEPTED);
+	}
+	
+	@GetMapping("/{listId}/listTwit") // ambiguous handler
+	public void findTwitByListId (@PathVariable Long listId,
+			@RequestHeader("Authorization") String jwt) throws TwitException, ListException, UserException {
+		User user= userService.findUserProfileByJwt(jwt);
+		ListModel listModel=listService.findById(listId);
+		System.out.println("-----------------------------");
 	}
 	
 	@GetMapping("/")
