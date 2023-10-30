@@ -101,7 +101,7 @@ fun RibbitScreen(
         modifier = Modifier
     ) {
         composable(route = RibbitScreen.HomeScreen.name) {
-            homeViewModel.getRibbitPosts() // recompositon시 계속 실행됨. 여기 함수를 두면 안 됨. (수정: 반복 recomposition을 해결하여 상관 없음.)
+//            homeViewModel.getRibbitPosts() // recompositon시 계속 실행됨. 여기 함수를 두면 안 됨. (수정: 반복 recomposition을 해결하여 상관 없음.) NavHostController 호출시 항상 실행되는 문제
             Log.d("HippoLog, RibbitApp, RibbitScreen", "HomeScreen")
             HomeScreen(
                 scrollBehavior = scrollBehavior,

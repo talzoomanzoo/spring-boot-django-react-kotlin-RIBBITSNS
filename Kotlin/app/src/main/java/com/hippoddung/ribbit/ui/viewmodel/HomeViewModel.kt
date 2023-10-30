@@ -41,11 +41,11 @@ sealed interface PostIdUiState {
     object Loading : PostIdUiState
 }
 
-sealed interface ReplyUiState {
-    object Ready : ReplyUiState
-    object Loading : ReplyUiState
-    object Success : ReplyUiState
-    object Error : ReplyUiState
+sealed interface PostReplyUiState {
+    object Ready : PostReplyUiState
+    object Loading : PostReplyUiState
+    object Success : PostReplyUiState
+    object Error : PostReplyUiState
 }
 
 sealed interface ReplyClickedUiState {
@@ -66,7 +66,8 @@ class HomeViewModel @Inject constructor(
     var deletePostUiState: DeletePostUiState by mutableStateOf(DeletePostUiState.Ready)
     var postIdUiState: PostIdUiState by mutableStateOf(PostIdUiState.Loading)
 
-    var replyUiState: ReplyUiState by mutableStateOf(ReplyUiState.Ready)
+    var replyPostIdUiState: Int? by mutableStateOf(null)
+    var postReplyUiState: PostReplyUiState by mutableStateOf(PostReplyUiState.Ready)
     var replyClickedUiState: ReplyClickedUiState by mutableStateOf(ReplyClickedUiState.NotClicked)
     var whereReplyClickedUiState: WhereReplyClickedUiState by mutableStateOf(
         WhereReplyClickedUiState.HomeScreen
@@ -169,58 +170,57 @@ class HomeViewModel @Inject constructor(
     //suspend fun retrieveThumbnailFromVideo(videoUrl: String?): Bitmap? {
     fun retrieveThumbnailFromVideo(videoUrl: String?): Future<Bitmap> {
         val executor = Executors.newFixedThreadPool(2)
-        val future: Future<Bitmap> = executor.submit(Callable<Bitmap> {
-            var retrievalCount = 0
-            val maxRetrievalCount = 2 // Adjust this value as needed
-            if (retrievalCount >= maxRetrievalCount) {
-                // You've reached the limit, so return null or handle it as needed
-                return@Callable null
-            }
-            var bitmap: Bitmap? = null
-            var mediaMetadataRetriever: MediaMetadataRetriever? = null
-            mediaMetadataRetriever = MediaMetadataRetriever()
-            if (Build.VERSION.SDK_INT >= 14) {
+        val future: Future<Bitmap> = executor.submit(
+            Callable<Bitmap> {
+                var bitmap: Bitmap? = null
+                var mediaMetadataRetriever: MediaMetadataRetriever? = null
+                mediaMetadataRetriever = MediaMetadataRetriever()
                 mediaMetadataRetriever.setDataSource(videoUrl, HashMap())
-            } else {
-                mediaMetadataRetriever.setDataSource(videoUrl)
+                var retrievalCount = 0
+                val maxRetrievalCount = 2 // Adjust this value as needed
+                if (retrievalCount >= maxRetrievalCount) {
+                    // You've reached the limit, so return null or handle it as needed
+                    return@Callable null
+                }
+                try {
+                    Log.d(
+                        "HippoLog, HomeScreen, retrieve",
+                        "Thread - ${Thread.currentThread().name}"
+                    )
+                    bitmap = mediaMetadataRetriever.getFrameAtTime(100000)
+                } catch (e: SocketTimeoutException) {
+                    Log.d(
+                        "HippoLog, HomeScreen, retrieve, Exception",
+                        "Exception in retrieveThumbnailFromVideo: ${e.message}"
+                    )
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Log.d(
+                        "HippoLog, HomeScreen, retrieve, Exception",
+                        "Exception in retrieveThumbnailFromVideo: ${e.message}"
+                    )
+                } finally {
+                    mediaMetadataRetriever.release()
+                }
+                retrievalCount++
+                return@Callable bitmap
             }
-            try {
-                Log.d("HippoLog, HomeScreen, retrieve", "Thread - ${Thread.currentThread().name}")
-                bitmap = mediaMetadataRetriever.getFrameAtTime(100000)
-            } catch (e: SocketTimeoutException) {
-                Log.d(
-                    "HippoLog, HomeScreen, retrieve, Exception",
-                    "Exception in retrieveThumbnailFromVideo: ${e.message}"
-                )
-            } catch (e: Exception) {
-                e.printStackTrace()
-                Log.d(
-                    "HippoLog, HomeScreen, retrieve, Exception",
-                    "Exception in retrieveThumbnailFromVideo: ${e.message}"
-                )
-            } finally {
-                mediaMetadataRetriever.release()
-            }
-            retrievalCount++
-//    return bitmap
-            return@Callable bitmap
-        }
         )
         return future
     }
 
     fun postReply(inputText: String, postId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            replyUiState = ReplyUiState.Loading
+            postReplyUiState = PostReplyUiState.Loading
             val replyRequest = ReplyRequest(content = inputText, twitId = postId)
             try {
                 ribbitRepository.postReply(replyRequest)
-                replyUiState = ReplyUiState.Success
+                postReplyUiState = PostReplyUiState.Success
             } catch (e: IOException) {
-                replyUiState = ReplyUiState.Error
+                postReplyUiState = PostReplyUiState.Error
                 println(e.stackTrace)
             } catch (e: ExceptionInInitializerError) {
-                replyUiState = ReplyUiState.Error
+                postReplyUiState = PostReplyUiState.Error
                 println(e.stackTrace)
             }
             when (whereReplyClickedUiState) {
@@ -230,8 +230,45 @@ class HomeViewModel @Inject constructor(
 
                 is WhereReplyClickedUiState.TwitIdScreen -> {
                     getPostIdPost((postIdUiState as PostIdUiState.Success).post.id)
+                    whereReplyClickedUiState = WhereReplyClickedUiState.HomeScreen  // 기본값으로 HomeScreen으로 한다.
                 }
             }
         }
     }
+
+    fun postPostIdLike(postId: Int){    // 이 통신으로 like, dislike를 다 함.
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                ribbitRepository.postPostIdLike(postId)
+            } catch (e: IOException) {
+                println(e.stackTrace)
+            } catch (e: ExceptionInInitializerError) {
+                println(e.stackTrace)
+            }
+        }
+    }
+
+    fun deletePostIdLike(postId: Int){  // 서버 컨트롤러에 있지만 쓰지 않음.
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                ribbitRepository.deletePostIdLike(postId)
+            } catch (e: IOException) {
+                println(e.stackTrace)
+            } catch (e: ExceptionInInitializerError) {
+                println(e.stackTrace)
+            }
+        }
+    }
+    fun putPostIdRepost(postId: Int){   // 얘도 이것만으로 repost와 cancel을 다 함.
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                ribbitRepository.putPostIdRepost(postId)
+            } catch (e: IOException) {
+                println(e.stackTrace)
+            } catch (e: ExceptionInInitializerError) {
+                println(e.stackTrace)
+            }
+        }
+    }
+
 }

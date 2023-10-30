@@ -157,7 +157,7 @@ fun PostsGridScreen(posts: List<RibbitPost>,
         posts.sortedWith(comparator)
     }   // LazyColumn items에 List를 바로 주는 것이 아니라 Comparator로 정렬하여 remember로 기억시켜서 recomposition을 방지하여 성능을 올린다.
     LazyColumn(modifier = modifier) {
-        items(items = sortedRibbitPost, key = { post -> post.id }) {
+        items(items = sortedRibbitPost, key = { post -> post.id }) {it ->
             RibbitCard(
                 post = it,
                 homeViewModel = homeViewModel,

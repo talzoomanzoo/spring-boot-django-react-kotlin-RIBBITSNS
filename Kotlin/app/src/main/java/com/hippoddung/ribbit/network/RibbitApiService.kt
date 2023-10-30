@@ -8,6 +8,7 @@ import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 const val BASE_URL =
@@ -36,6 +37,18 @@ interface RibbitApiService {
     suspend fun postReply(
         @Body replyRequest: ReplyRequest
     )
+    @POST("api/{postId}/like")
+    suspend fun postPostIdLike(
+        @Path("postId") postId : Int
+    ): RibbitPost
+    @DELETE("api/{postId}/unlike")
+    suspend fun deletePostIdLike(
+        @Path("postId") postId : Int
+    ): RibbitPost
+    @PUT("api/twits/{postId}/retwit")
+    suspend fun putPostIdRepost(
+        @Path("postId") postId : Int
+    ): RibbitPost
 }
 
 //    @GET("auth/refresh")

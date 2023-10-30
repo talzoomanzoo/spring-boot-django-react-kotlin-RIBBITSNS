@@ -18,4 +18,9 @@ class RibbitRepository @Inject constructor(
     suspend fun postReply(replyRequest: ReplyRequest) {
         ribbitApiService.postReply(replyRequest)
     }
+
+    suspend fun postPostIdLike(postId: Int) = ribbitApiService.postPostIdLike(postId)
+    suspend fun deletePostIdLike(postId: Int) = ribbitApiService.deletePostIdLike(postId)
+    suspend fun putPostIdRepost(postId: Int) = ribbitApiService.putPostIdRepost(postId)
+
 }

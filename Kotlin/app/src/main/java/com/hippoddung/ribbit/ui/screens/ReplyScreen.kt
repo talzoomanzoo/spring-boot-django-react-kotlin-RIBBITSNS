@@ -30,8 +30,8 @@ import com.hippoddung.ribbit.ui.screens.screenitems.InputTextField
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.HomeViewModel
+import com.hippoddung.ribbit.ui.viewmodel.PostReplyUiState
 import com.hippoddung.ribbit.ui.viewmodel.ReplyClickedUiState
-import com.hippoddung.ribbit.ui.viewmodel.ReplyUiState
 
 @Composable
 fun ReplyScreen(
@@ -39,8 +39,8 @@ fun ReplyScreen(
     homeViewModel: HomeViewModel,
     modifier: Modifier = Modifier.wrapContentSize()
 ) {
-    when (homeViewModel.replyUiState) {
-        is ReplyUiState.Ready -> {
+    when (homeViewModel.postReplyUiState) {
+        is PostReplyUiState.Ready -> {
             Log.d("HippoLog, ReplyScreen", "Ready")
             InputReplyScreen(
                 post = post,
@@ -49,17 +49,17 @@ fun ReplyScreen(
             )
         }
 
-        is ReplyUiState.Success -> {
+        is PostReplyUiState.Success -> {
             Log.d("HippoLog, ReplyScreen", "Success")
-            homeViewModel.replyUiState = ReplyUiState.Ready
+            homeViewModel.postReplyUiState = PostReplyUiState.Ready
         }
 
-        is ReplyUiState.Loading -> {
+        is PostReplyUiState.Loading -> {
             Log.d("HippoLog, ReplyScreen", "Loading")
             LoadingScreen()
         }
 
-        is ReplyUiState.Error -> {
+        is PostReplyUiState.Error -> {
             Log.d("HippoLog, ReplyScreen", "Error")
             ErrorScreen(modifier = modifier.fillMaxSize())
         }
@@ -75,7 +75,6 @@ fun InputReplyScreen(
     modifier: Modifier = Modifier
 ) {
     var inputText by remember { mutableStateOf("") }
-
     Column(
         modifier = modifier
             .background(color = MaterialTheme.colorScheme.background, shape = RoundedCornerShape(12.dp)),
@@ -83,7 +82,7 @@ fun InputReplyScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = (stringResource(R.string.reply) + " to ${post.user.email}"),
+            text = (stringResource(R.string.reply) + " to No.${homeViewModel.replyPostIdUiState}, ${post.user.email}"),
             fontSize = 16.sp,
             modifier = Modifier
                 .padding(start = 28.dp, top = 28.dp, end = 0.dp, bottom = 0.dp)
@@ -111,10 +110,12 @@ fun InputReplyScreen(
             }
             Button(
                 onClick = {
-                    homeViewModel.postReply(
-                        inputText = inputText,
-                        postId = post.id
-                    )
+                    homeViewModel.replyPostIdUiState?.let {
+                        homeViewModel.postReply(
+                            inputText = inputText,
+                            postId = it
+                        )
+                    }
                     homeViewModel.replyClickedUiState = ReplyClickedUiState.NotClicked
                 }
             ) {

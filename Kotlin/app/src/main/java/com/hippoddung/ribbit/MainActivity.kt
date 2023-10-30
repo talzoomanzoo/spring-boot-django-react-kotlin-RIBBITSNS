@@ -123,6 +123,7 @@ class MainActivity @Inject constructor() : ComponentActivity() {
                 }
                 else -> {
                     Log.d("HippoLog, MainActivity", "유저정보 있는 경우")
+                    homeViewModel.getRibbitPosts()
                     authViewModel.authUiState = AuthUiState.Login   // 유저정보가 있으면 최종로그인이 된 것으로 보고 AuthUiState를 로그인으로 바꿔준다.
                 }
             }
