@@ -282,16 +282,17 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
                     {auth.userSearchResult &&
                       auth.userSearchResult.map((item) => (
                         <div
-                          className={` flex float items-center ${
-                            theme.currentTheme === "light"
-                              ? "hover:bg-[#008000]"
-                              : "hover:bg-[#dbd9d9]"
-                          } 
-                            ${
-                              theme.currentTheme === "light"
-                                ? "text-black hover:text-white"
-                                : "text-white  hover:text-black"
-                            }`}
+                          className={` flex float items-center `}
+                          // ${
+                          //   theme.currentTheme === "light"
+                          //     ? "hover:bg-[#008000]"
+                          //     : "hover:bg-[#dbd9d9]"
+                          // } 
+                          //   ${
+                          //     theme.currentTheme === "light"
+                          //       ? "text-black hover:text-white"
+                          //       : "text-white  hover:text-black"
+                          //   }
                         >
                           <div
                             style={{ paddingRight: 300 }}
@@ -302,7 +303,7 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
                                 navigateToProfile(item.id);
                               }
                             }}
-                            className={`py-3 flex float-left justify-content w-full p-3 cursor-pointer`}
+                            className={`flex items-center left-3 justify-content hover:bg-green-700 relative right-5 cursor-pointer`}
                             key={item.id}
                           >
                             <Avatar alt={item.fullName} src={item.image} />
@@ -315,8 +316,8 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
                           </div>
                           {itemsCheck(item) ? (
                             <RemoveIcon
-                              style={{ marginLeft: 0 }}
-                              className="flex float-right absolute right-5 cursor-pointer"
+                              style={{ marginLeft: 30 }}
+                              className="flex hover:bg-green-700 float-right absolute right-5 cursor-pointer"
                               onClick={() => {
                                 handleAddUser(list.id, item.id, list);
                               }}
@@ -324,7 +325,7 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
                           ) : (
                             <AddIcon
                               style={{ marginLeft: 0 }}
-                              className={`flex float-right absolute right-5 cursor-pointer`}
+                              className={`flex hover:bg-green-700 float-right absolute right-5 cursor-pointer`}
                               onClick={() => {
                                 handleAddUser(list.id, item.id, list);
                               }}
