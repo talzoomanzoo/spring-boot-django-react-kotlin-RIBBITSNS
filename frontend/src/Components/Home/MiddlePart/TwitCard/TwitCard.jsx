@@ -50,7 +50,7 @@ const TwitCard = ({ twit }) => {
   const [selectedImage, setSelectedImage] = useState(twit.image);
   const [selectedVideo, setSelectedVideo] = useState(twit.video);
   // const [uploadingImage, setUploadingImage] = useState(false);
-  const [ loading, setLoading ] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [openEmoji, setOpenEmoji] = useState(false);
   const handleOpenEmoji = () => setOpenEmoji(!openEmoji);
   const handleCloseEmoji = () => setOpenEmoji(false);
@@ -64,7 +64,7 @@ const TwitCard = ({ twit }) => {
   const [editedContent, setEditedContent] = useState(twit.content); // 편집된 내용을 관리하는 상태 변수
 
   const [sentence, setSentence] = useState(twit.sentence); //sentence는 윤리수치에 해당하는 문장이 담아진다.
-//  const [isLoading, setIsLoading] = useState(false); //로딩창의 띄어짐의 유무를 판단한다. default는 true이다.
+  //  const [isLoading, setIsLoading] = useState(false); //로딩창의 띄어짐의 유무를 판단한다. default는 true이다.
   const jwtToken = localStorage.getItem("jwt");
 
   const [isEdited, setIsEdited] = useState(twit.edited);
@@ -263,7 +263,7 @@ const TwitCard = ({ twit }) => {
       content: "",
       image: "",
       video: "",
-      
+
     },
     validationSchema,
     onSubmit: handleSubmit,
@@ -306,7 +306,7 @@ const TwitCard = ({ twit }) => {
   console.log("twitTest", twit);
   return (
     <div className="">
-      {loading ? <Loading/> : null}
+      {loading ? <Loading /> : null}
       {auth.user?.id !== twit.user.id &&
         // auth.user notnull 일때, auth.user.id 가 twit.user.id 와 일치하지 않고,
         location.pathname === `/profile/${auth.user?.id}` && (
@@ -322,7 +322,7 @@ const TwitCard = ({ twit }) => {
         <Avatar
           onClick={() => navigate(`/profile/${twit.user.id}`)}
           alt="Avatar"
-          src={twit.user.image? twit.user.image : "https://cdn.pixabay.com/photo/2023/10/24/01/42/01-42-37-630_1280.png"}
+          src={twit.user.image ? twit.user.image : "https://cdn.pixabay.com/photo/2023/10/24/01/42/01-42-37-630_1280.png"}
           className="cursor-pointer"
         />
         <div className="w-full">
@@ -408,11 +408,10 @@ const TwitCard = ({ twit }) => {
               {isEditing ? (
                 <div>
                   <TextareaAutosize
-                    className={`${
-                      theme.currentTheme === "light"
+                    className={`${theme.currentTheme === "light"
                         ? "bg-white"
                         : "bg-[#151515]"
-                    }`}
+                      }`}
                     minRows={0}
                     maxRows={0}
                     value={editedContent}
@@ -543,9 +542,8 @@ const TwitCard = ({ twit }) => {
                     {/* twit 객체의 totalReplies 속성 값이 0보다 큰 경우에만 해당 값을 포함하는 <p> 태그로 래핑 시도*/}
                   </div>
                   <div
-                    className={`${
-                      isRetwit ? "text-pink-600" : "text-gray-600"
-                    } space-x-3 flex items-center`}
+                    className={`${isRetwit ? "text-pink-600" : "text-gray-600"
+                      } space-x-3 flex items-center`}
                   >
                     <RepeatIcon
                       className={` cursor-pointer`}
@@ -554,9 +552,8 @@ const TwitCard = ({ twit }) => {
                     {retwit > 0 && <p>{retwit}</p>}
                   </div>
                   <div
-                    className={`${
-                      isLiked ? "text-pink-600" : "text-gray-600"
-                    } space-x-3 flex items-center `}
+                    className={`${isLiked ? "text-pink-600" : "text-gray-600"
+                      } space-x-3 flex items-center `}
                   >
                     {isLiked ? (
                       <FavoriteIcon onClick={() => handleLikeTweet(-1)} />
