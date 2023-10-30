@@ -33,12 +33,18 @@ import com.hippoddung.ribbit.R
 import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
 import com.hippoddung.ribbit.ui.viewmodel.HomeViewModel
+import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
+import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeTopAppBar(
     homeViewModel: HomeViewModel,
     authViewModel: AuthViewModel,
+    tokenViewModel: TokenViewModel,
+    userViewModel: UserViewModel,
     scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
     modifier: Modifier = Modifier
@@ -62,7 +68,7 @@ fun HomeTopAppBar(
                 }
             },
             navigationIcon = { MainDropDownMenu(navController) },
-            actions = { ProfileDropDownMenu(navController) },
+            actions = { ProfileDropDownMenu(navController, tokenViewModel, authViewModel, userViewModel) },
             modifier = modifier
         )
 //        AdBanner() // 불러오는 중 TimeOut이 자주 발생
@@ -70,7 +76,9 @@ fun HomeTopAppBar(
 }
 
 @Composable
-fun MainDropDownMenu(navController: NavHostController) {
+fun MainDropDownMenu(
+    navController: NavHostController
+) {
     var isDropDownMenuExpanded by remember { mutableStateOf(false) }
 
     OutlinedButton(
@@ -119,7 +127,12 @@ fun MainDropDownMenu(navController: NavHostController) {
 }
 
 @Composable
-fun ProfileDropDownMenu(navController: NavHostController) {
+fun ProfileDropDownMenu(
+    navController: NavHostController,
+    tokenViewModel: TokenViewModel,
+    authViewModel: AuthViewModel,
+    userViewModel: UserViewModel
+) {
     var isDropDownMenuExpanded by remember { mutableStateOf(false) }
 
     OutlinedButton(
@@ -152,7 +165,14 @@ fun ProfileDropDownMenu(navController: NavHostController) {
         )
         DropdownMenuItem(
             onClick = {
-                navController.navigate(RibbitScreen.LogoutScreen.name)
+                runBlocking {
+                    Log.d("HippoLog, HomeTopAppBar", "LogOut")
+                    launch {
+                        userViewModel.resetUser()   // 유저 정보 리셋
+                        authViewModel.deleteLoginInfo() // 로그인 정보 삭제
+                        tokenViewModel.deleteToken()    // 토큰 정보 삭제. token을 먼저 지우면 다시 로그인 됨
+                    }
+                }
                 isDropDownMenuExpanded = false
             },
             text = {

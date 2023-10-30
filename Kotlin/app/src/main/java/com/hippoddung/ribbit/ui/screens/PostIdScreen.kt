@@ -5,10 +5,16 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,7 +37,9 @@ import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
 import com.hippoddung.ribbit.ui.viewmodel.HomeViewModel
-import com.hippoddung.ribbit.ui.viewmodel.TwitIdUiState
+import com.hippoddung.ribbit.ui.viewmodel.PostIdUiState
+import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
+import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,23 +48,27 @@ fun TwitIdScreen(
     scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
     homeViewModel: HomeViewModel,
+    tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
+    userViewModel: UserViewModel,
     userId: Int,
     modifier: Modifier = Modifier.fillMaxSize()
 ) {
-    when (homeViewModel.twitIdUiState) {
+    when (homeViewModel.postIdUiState) {
 
-        is TwitIdUiState.Loading -> {
+        is PostIdUiState.Loading -> {
             Log.d("HippoLog, TwitIdScreen", "Loading")
             LoadingScreen(modifier = modifier)
         }
 
-        is TwitIdUiState.Success -> {
+        is PostIdUiState.Success -> {
             Log.d("HippoLog, TwitIdScreen", "Success")
-            val post = (homeViewModel.twitIdUiState as TwitIdUiState.Success).post
+            val post = (homeViewModel.postIdUiState as PostIdUiState.Success).post
             TwitIdSuccessScreen(
                 homeViewModel = homeViewModel,
+                tokenViewModel = tokenViewModel,
                 authViewModel = authViewModel,
+                userViewModel = userViewModel,
                 scrollBehavior = scrollBehavior,
                 navController = navController,
                 post = post,
@@ -65,7 +77,7 @@ fun TwitIdScreen(
             )
         }
 
-        is TwitIdUiState.Error -> {
+        is PostIdUiState.Error -> {
             Log.d("HippoLog, TwitIdScreen", "Error")
             ErrorScreen(modifier = modifier)
         }
@@ -75,12 +87,14 @@ fun TwitIdScreen(
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "RememberReturnType")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TwitIdSuccessScreen(
     homeViewModel: HomeViewModel,
+    tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
+    userViewModel: UserViewModel,
     scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
     post: RibbitPost,
@@ -94,6 +108,8 @@ fun TwitIdSuccessScreen(
         topBar = {
             HomeTopAppBar(
                 homeViewModel = homeViewModel,
+                tokenViewModel = tokenViewModel,
+                userViewModel = userViewModel,
                 authViewModel = authViewModel,
                 scrollBehavior = scrollBehavior,
                 navController = navController
@@ -105,17 +121,33 @@ fun TwitIdSuccessScreen(
                 .fillMaxSize()
                 .padding(it)
         ) {
-            Box(modifier = modifier) {
-                Box(modifier = modifier) {
-                    RibbitCard(
-                        post = post,
-                        homeViewModel = homeViewModel,
-                        userId = userId,
-                        navController = navController,
-                        modifier = Modifier.padding(8.dp)
-                            .wrapContentHeight()
-                            .fillMaxWidth()
-                    )
+            Column(modifier = modifier) {
+                RibbitCard(
+                    post = post,
+                    homeViewModel = homeViewModel,
+                    userId = userId,
+                    navController = navController,
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .wrapContentHeight()
+                        .fillMaxWidth()
+                )
+                if (post.replyTwits?.isNotEmpty() == true) {
+                    Row() {
+                        Spacer(modifier = Modifier.width(28.dp))
+                        LazyColumn(modifier = modifier) {
+                            items(items = post.replyTwits, key = { post -> post!!.id }) {
+                                RibbitCard(
+                                    post = it!!,
+                                    homeViewModel = homeViewModel,
+                                    userId = userId,
+                                    navController = navController,
+                                    modifier = modifier.padding(8.dp)
+                                )
+
+                            }
+                        }
+                    }
                 }
             }
             Box(modifier = modifier) {

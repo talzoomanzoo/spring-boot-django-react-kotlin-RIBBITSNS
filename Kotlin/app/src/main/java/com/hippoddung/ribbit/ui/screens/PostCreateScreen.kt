@@ -44,8 +44,8 @@ import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.screens.screenitems.InputTextField
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
+import com.hippoddung.ribbit.ui.viewmodel.CreatingPostUiState
 import com.hippoddung.ribbit.ui.viewmodel.HomeViewModel
-import com.hippoddung.ribbit.ui.viewmodel.TwitsCreateUiState
 import com.hippoddung.ribbit.ui.viewmodel.TwitsCreateViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -58,8 +58,8 @@ fun TwitCreateScreen(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    when (twitsCreateViewModel.twitsCreateUiState) {
-        is TwitsCreateUiState.Ready -> {
+    when (twitsCreateViewModel.creatingPostUiState) {
+        is CreatingPostUiState.Ready -> {
             Log.d("HippoLog, TwitCreateScreen", "Ready")
             InputTwitScreen(
                 navController = navController,
@@ -69,20 +69,20 @@ fun TwitCreateScreen(
             )
         }
 
-        is TwitsCreateUiState.Success -> {
+        is CreatingPostUiState.Success -> {
             Log.d("HippoLog, TwitCreateScreen", "Success")
             runBlocking {
                 launch { navController.navigate(RibbitScreen.HomeScreen.name) }
             }
-            twitsCreateViewModel.twitsCreateUiState = TwitsCreateUiState.Ready
+            twitsCreateViewModel.creatingPostUiState = CreatingPostUiState.Ready
         }
 
-        is TwitsCreateUiState.Loading -> {
+        is CreatingPostUiState.Loading -> {
             Log.d("HippoLog, TwitCreateScreen", "Loading")
             LoadingScreen()
         }
 
-        is TwitsCreateUiState.Error -> {
+        is CreatingPostUiState.Error -> {
             Log.d("HippoLog, TwitCreateScreen", "Error")
             ErrorScreen(modifier = modifier.fillMaxSize())
         }

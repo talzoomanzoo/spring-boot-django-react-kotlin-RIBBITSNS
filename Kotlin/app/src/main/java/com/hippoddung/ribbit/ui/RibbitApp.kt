@@ -30,7 +30,6 @@ import com.hippoddung.ribbit.ui.screens.ProfileScreen
 import com.hippoddung.ribbit.ui.screens.TwitCreateScreen
 import com.hippoddung.ribbit.ui.screens.TwitIdScreen
 import com.hippoddung.ribbit.ui.screens.authscreens.LoginScreen
-import com.hippoddung.ribbit.ui.screens.authscreens.LogoutScreen
 import com.hippoddung.ribbit.ui.screens.authscreens.SignUpScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
@@ -108,7 +107,9 @@ fun RibbitScreen(
                 scrollBehavior = scrollBehavior,
                 navController = navController,
                 homeViewModel = homeViewModel,
+                tokenViewModel = tokenViewModel,
                 authViewModel = authViewModel,
+                userViewModel = userViewModel,
                 userId = ((userViewModel.userUiState as UserUiState.Exist).user.id)!!   // 유저 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 것으로 가정한다.
             )
         }
@@ -118,7 +119,9 @@ fun RibbitScreen(
                 scrollBehavior = scrollBehavior,
                 navController = navController,
                 homeViewModel = homeViewModel,
+                tokenViewModel = tokenViewModel,
                 authViewModel = authViewModel,
+                userViewModel = userViewModel,
                 userId = ((userViewModel.userUiState as UserUiState.Exist).user.id)!!   // 유저 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 것으로 가정한다.
             )
         }
@@ -134,10 +137,6 @@ fun RibbitScreen(
                 navController = navController
             )
         }
-        composable(route = RibbitScreen.LogoutScreen.name) {
-            Log.d("HippoLog, RibbitApp, RibbitScreen", "LogoutScreen")
-            LogoutScreen(authViewModel = authViewModel, tokenViewModel = tokenViewModel, userViewModel = userViewModel)
-        }
         composable(route = RibbitScreen.LoadingScreen.name) {
             Log.d("HippoLog, RibbitApp, RibbitScreen", "LoadingScreen")
             LoadingScreen()
@@ -149,6 +148,7 @@ fun RibbitScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AuthScreen(
     authViewModel: AuthViewModel

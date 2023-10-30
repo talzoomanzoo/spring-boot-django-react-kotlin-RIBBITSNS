@@ -10,6 +10,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.hippoddung.ribbit.data.network.RibbitRepository
 import com.hippoddung.ribbit.network.bodys.RibbitPost
+import com.hippoddung.ribbit.network.bodys.requestbody.ReplyRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -34,10 +35,27 @@ sealed interface HomeUiState {
     object Loading : HomeUiState
 }
 
-sealed interface TwitIdUiState {
-    data class Success(val post: RibbitPost) : TwitIdUiState
-    data class Error(val errorCode: String) : TwitIdUiState
-    object Loading : TwitIdUiState
+sealed interface PostIdUiState {
+    data class Success(val post: RibbitPost) : PostIdUiState
+    data class Error(val errorCode: String) : PostIdUiState
+    object Loading : PostIdUiState
+}
+
+sealed interface ReplyUiState {
+    object Ready : ReplyUiState
+    object Loading : ReplyUiState
+    object Success : ReplyUiState
+    object Error : ReplyUiState
+}
+
+sealed interface ReplyClickedUiState {
+    object Clicked : ReplyClickedUiState
+    object NotClicked : ReplyClickedUiState
+}
+
+sealed interface WhereReplyClickedUiState {
+    object HomeScreen : WhereReplyClickedUiState
+    object TwitIdScreen : WhereReplyClickedUiState
 }
 
 @HiltViewModel
@@ -46,7 +64,13 @@ class HomeViewModel @Inject constructor(
 ) : BaseViewModel() {
     var homeUiState: HomeUiState by mutableStateOf(HomeUiState.Loading)
     var deletePostUiState: DeletePostUiState by mutableStateOf(DeletePostUiState.Ready)
-    var twitIdUiState: TwitIdUiState by mutableStateOf(TwitIdUiState.Loading)
+    var postIdUiState: PostIdUiState by mutableStateOf(PostIdUiState.Loading)
+
+    var replyUiState: ReplyUiState by mutableStateOf(ReplyUiState.Ready)
+    var replyClickedUiState: ReplyClickedUiState by mutableStateOf(ReplyClickedUiState.NotClicked)
+    var whereReplyClickedUiState: WhereReplyClickedUiState by mutableStateOf(
+        WhereReplyClickedUiState.HomeScreen
+    )
 //    val homeResponse: MutableLiveData<ApiResponse<List<RibbitPost>>> by lazy {
 //        MutableLiveData<ApiResponse<List<RibbitPost>>>()
 //    }
@@ -80,7 +104,6 @@ class HomeViewModel @Inject constructor(
             } catch (e: ExceptionInInitializerError) {
                 Log.d("HippoLog, HomeViewModel", "${e.stackTrace}, ${e.message}")
                 HomeUiState.Error(e.message.toString())
-
             } catch (e: HttpException) {
                 Log.d("HippoLog, HomeViewModel", "${e.stackTrace}, ${e.code()}, $e")
                 if (e.code() == 500) {
@@ -93,55 +116,53 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun deleteRibbitPost(postId: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            Log.d("HippoLog, HomeViewModel", "deleteRibbitPost, $postId")
-            try {
-                deletePostUiState = DeletePostUiState.Loading
-                ribbitRepository.deletePost(postId)
-            } catch (e: IOException) {
-                Log.d("HippoLog, HomeViewModel", "${e.stackTrace}, ${e.message}")
-                DeletePostUiState.Error(e.message.toString())
+    suspend fun deleteRibbitPost(postId: Int) {
+        Log.d("HippoLog, HomeViewModel", "deleteRibbitPost, $postId")
+        try {
+            deletePostUiState = DeletePostUiState.Loading
+            ribbitRepository.deletePost(postId)
+        } catch (e: IOException) {
+            Log.d("HippoLog, HomeViewModel", "${e.stackTrace}, ${e.message}")
+            DeletePostUiState.Error(e.message.toString())
 
-            } catch (e: ExceptionInInitializerError) {
-                Log.d("HippoLog, HomeViewModel", "${e.stackTrace}, ${e.message}")
-                DeletePostUiState.Error(e.message.toString())
+        } catch (e: ExceptionInInitializerError) {
+            Log.d("HippoLog, HomeViewModel", "${e.stackTrace}, ${e.message}")
+            DeletePostUiState.Error(e.message.toString())
 
-            } catch (e: HttpException) {
-                Log.d("HippoLog, HomeViewModel", "${e.stackTrace}, ${e.code()}, $e")
-                if (e.code() == 500) {
-                    DeletePostUiState.Error(e.code().toString())
-                } else {
-                    DeletePostUiState.Error(e.message.toString())
-                }
+        } catch (e: HttpException) {
+            Log.d("HippoLog, HomeViewModel", "${e.stackTrace}, ${e.code()}, $e")
+            if (e.code() == 500) {
+                DeletePostUiState.Error(e.code().toString())
+            } else {
+                DeletePostUiState.Error(e.message.toString())
             }
-            Log.d("HippoLog, HomeViewModel", "deleteRibbitPost")
         }
+        Log.d("HippoLog, HomeViewModel", "deleteRibbitPost")
     }
 
-    fun getPostIdPost(postId:Int) {
+    fun getPostIdPost(postId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            twitIdUiState = TwitIdUiState.Loading
-            Log.d("HippoLog, HomeViewModel", "getTwitIdPosts, $homeUiState")
-            twitIdUiState = try {
-                TwitIdUiState.Success(ribbitRepository.getPostIdPost(postId))
+            postIdUiState = PostIdUiState.Loading
+            Log.d("HippoLog, HomeViewModel", "getTwitIdPosts, $postIdUiState")
+            postIdUiState = try {
+                PostIdUiState.Success(ribbitRepository.getPostIdPost(postId))
             } catch (e: IOException) {
                 Log.d("HippoLog, HomeViewModel", "${e.stackTrace}, ${e.message}")
-                TwitIdUiState.Error(e.message.toString())
+                PostIdUiState.Error(e.message.toString())
 
             } catch (e: ExceptionInInitializerError) {
                 Log.d("HippoLog, HomeViewModel", "${e.stackTrace}, ${e.message}")
-                TwitIdUiState.Error(e.message.toString())
+                PostIdUiState.Error(e.message.toString())
 
             } catch (e: HttpException) {
                 Log.d("HippoLog, HomeViewModel", "${e.stackTrace}, ${e.code()}, $e")
                 if (e.code() == 500) {
-                    TwitIdUiState.Error(e.code().toString())
+                    PostIdUiState.Error(e.code().toString())
                 } else {
-                    TwitIdUiState.Error(e.message.toString())
+                    PostIdUiState.Error(e.message.toString())
                 }
             }
-            Log.d("HippoLog, HomeViewModel", "getTwitIdPosts, $homeUiState")
+            Log.d("HippoLog, HomeViewModel", "getTwitIdPosts, $postIdUiState")
         }
     }
 
@@ -186,5 +207,31 @@ class HomeViewModel @Inject constructor(
         }
         )
         return future
+    }
+
+    fun postReply(inputText: String, postId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            replyUiState = ReplyUiState.Loading
+            val replyRequest = ReplyRequest(content = inputText, twitId = postId)
+            try {
+                ribbitRepository.postReply(replyRequest)
+                replyUiState = ReplyUiState.Success
+            } catch (e: IOException) {
+                replyUiState = ReplyUiState.Error
+                println(e.stackTrace)
+            } catch (e: ExceptionInInitializerError) {
+                replyUiState = ReplyUiState.Error
+                println(e.stackTrace)
+            }
+            when (whereReplyClickedUiState) {
+                is WhereReplyClickedUiState.HomeScreen -> {
+                    getRibbitPosts()
+                }
+
+                is WhereReplyClickedUiState.TwitIdScreen -> {
+                    getPostIdPost((postIdUiState as PostIdUiState.Success).post.id)
+                }
+            }
+        }
     }
 }

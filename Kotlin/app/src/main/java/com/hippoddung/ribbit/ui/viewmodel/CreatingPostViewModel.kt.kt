@@ -19,11 +19,11 @@ import java.io.File
 import java.io.IOException
 import javax.inject.Inject
 
-sealed interface TwitsCreateUiState {
-    object Ready : TwitsCreateUiState
-    object Loading : TwitsCreateUiState
-    object Success : TwitsCreateUiState
-    object Error : TwitsCreateUiState
+sealed interface CreatingPostUiState {
+    object Ready : CreatingPostUiState
+    object Loading : CreatingPostUiState
+    object Success : CreatingPostUiState
+    object Error : CreatingPostUiState
 }
 
 sealed interface UploadImageCloudinaryUiState {
@@ -45,7 +45,7 @@ class TwitsCreateViewModel @Inject constructor(
     private val ribbitRepository: RibbitRepository,
     private val uploadCloudinaryRepository: UploadCloudinaryRepository
 ) : BaseViewModel() {
-    var twitsCreateUiState: TwitsCreateUiState by mutableStateOf(TwitsCreateUiState.Ready)
+    var creatingPostUiState: CreatingPostUiState by mutableStateOf(CreatingPostUiState.Ready)
     var uploadImageCloudinaryUiState: UploadImageCloudinaryUiState by mutableStateOf(
         UploadImageCloudinaryUiState.None
     )
@@ -64,7 +64,7 @@ class TwitsCreateViewModel @Inject constructor(
         var videoUrl: String? = null
 
         viewModelScope.launch(Dispatchers.IO) {
-            twitsCreateUiState = TwitsCreateUiState.Loading
+            creatingPostUiState = CreatingPostUiState.Loading
             uploadImageCloudinaryUiState = UploadImageCloudinaryUiState.None
             uploadVideoCloudinaryUiState = UploadVideoCloudinaryUiState.None
             if (image != null) {
@@ -117,15 +117,15 @@ class TwitsCreateViewModel @Inject constructor(
 
     suspend fun twitCreate(twitCreateRequest: TwitCreateRequest) {
             try {
-                ribbitRepository.twitCreate(twitCreateRequest)
+                ribbitRepository.postCreatePost(twitCreateRequest)
             } catch (e: IOException) {
-                twitsCreateUiState = TwitsCreateUiState.Error
+                creatingPostUiState = CreatingPostUiState.Error
                 println(e.stackTrace)
             } catch (e: ExceptionInInitializerError) {
-                twitsCreateUiState = TwitsCreateUiState.Error
+                creatingPostUiState = CreatingPostUiState.Error
                 println(e.stackTrace)
             }
-        twitsCreateUiState = TwitsCreateUiState.Success
+        creatingPostUiState = CreatingPostUiState.Success
     }
 
     fun getFilePathFromUri(context: Context, uri: Uri): String? {

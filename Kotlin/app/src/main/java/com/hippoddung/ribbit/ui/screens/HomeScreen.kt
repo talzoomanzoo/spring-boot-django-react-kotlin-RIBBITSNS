@@ -33,7 +33,8 @@ import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
 import com.hippoddung.ribbit.ui.viewmodel.HomeUiState
 import com.hippoddung.ribbit.ui.viewmodel.HomeViewModel
-import com.hippoddung.ribbit.ui.viewmodel.ReplyViewModel
+import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
+import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -43,7 +44,9 @@ fun HomeScreen(
     scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
     homeViewModel: HomeViewModel,
+    tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
+    userViewModel: UserViewModel,
     userId: Int,
     modifier: Modifier = Modifier.fillMaxSize()
 ) {
@@ -60,6 +63,8 @@ fun HomeScreen(
             HomeSuccessScreen(
                 homeViewModel = homeViewModel,
                 authViewModel = authViewModel,
+                tokenViewModel =  tokenViewModel,
+                userViewModel = userViewModel,
                 scrollBehavior = scrollBehavior,
                 navController = navController,
                 ribbitPosts = ribbitPosts,
@@ -83,7 +88,9 @@ fun HomeScreen(
 @Composable
 fun HomeSuccessScreen(
     homeViewModel: HomeViewModel,
+    tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
+    userViewModel: UserViewModel,
     scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
     ribbitPosts: List<RibbitPost>,
@@ -97,7 +104,9 @@ fun HomeSuccessScreen(
         topBar = {
             HomeTopAppBar(
                 homeViewModel = homeViewModel,
+                tokenViewModel = tokenViewModel,
                 authViewModel = authViewModel,
+                userViewModel = userViewModel,
                 scrollBehavior = scrollBehavior,
                 navController = navController
             )
@@ -156,6 +165,7 @@ fun PostsGridScreen(posts: List<RibbitPost>,
                 navController = navController,
                 modifier = modifier.padding(8.dp)
             )
+
         }
     }
 }

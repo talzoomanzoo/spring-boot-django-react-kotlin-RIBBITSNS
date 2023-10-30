@@ -4,14 +4,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChatBubbleOutline
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material.icons.filled.Repeat
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,9 +23,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.hippoddung.ribbit.network.bodys.RibbitPost
 import com.hippoddung.ribbit.ui.screens.ReplyScreen
 import com.hippoddung.ribbit.ui.viewmodel.HomeViewModel
+import com.hippoddung.ribbit.ui.viewmodel.ReplyClickedUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,7 +36,6 @@ fun CardBottomBar(
     homeViewModel: HomeViewModel,
     modifier: Modifier = Modifier
 ) {
-    var isReplyClicked by remember { mutableStateOf(false) }
     var isRetwited by remember { mutableStateOf(false) }
     var isLiked by remember { mutableStateOf(false) }
 
@@ -46,20 +44,26 @@ fun CardBottomBar(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.fillMaxWidth()
     ) {
-        IconButton(
-            onClick = {
-                isReplyClicked = true
-            },
-            content = {
-                Icon(
-                    imageVector = Icons.Default.ChatBubbleOutline,
-                    contentDescription = "reply"
-                )
-            }
-        )
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(
+                onClick = {
+                    homeViewModel.replyClickedUiState = ReplyClickedUiState.Clicked
+                },
+                content = {
+                    Icon(
+                        imageVector = Icons.Default.ChatBubbleOutline,
+                        contentDescription = "reply"
+                    )
+                }
+            )
+            Text(text = "${post.totalReplies}")
+        }
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             IconToggleButton(
                 checked = isRetwited,
@@ -101,9 +105,9 @@ fun CardBottomBar(
             Text(text = "${post.viewCount}", modifier = Modifier.padding(4.dp))
         }
     }
-    if (isReplyClicked){
+    if (homeViewModel.replyClickedUiState is ReplyClickedUiState.Clicked){
         Dialog(
-            onDismissRequest = { isReplyClicked = false }
+            onDismissRequest = { homeViewModel.replyClickedUiState = ReplyClickedUiState.NotClicked }
         ) {
             ReplyScreen(post = post, homeViewModel = homeViewModel)
         }
