@@ -1,4 +1,4 @@
-package com.hippoddung.ribbit.ui.screens.homescreen
+package com.hippoddung.ribbit.ui.screens.carditems
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize

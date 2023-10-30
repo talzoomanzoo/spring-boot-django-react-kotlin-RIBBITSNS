@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.OndemandVideo
@@ -27,7 +26,6 @@ import androidx.compose.material.icons.filled.VideoLibrary
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,11 +37,11 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.R
 import com.hippoddung.ribbit.ui.RibbitScreen
+import com.hippoddung.ribbit.ui.screens.screenitems.InputTextField
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.HomeViewModel
@@ -88,6 +86,8 @@ fun TwitCreateScreen(
             Log.d("HippoLog, TwitCreateScreen", "Error")
             ErrorScreen(modifier = modifier.fillMaxSize())
         }
+
+        else -> {}
     }
 }
 
@@ -208,21 +208,3 @@ fun InputTwitScreen(
         Spacer(modifier = Modifier.height(150.dp))
     }
 }
-
-@Composable
-fun InputTextField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    TextField(
-        singleLine = false,
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii),
-        label = { Text(stringResource(R.string.twit_create)) },
-        value = value,
-        onValueChange = onValueChange,
-        minLines = 5,
-        modifier = modifier,
-    )
-}
-

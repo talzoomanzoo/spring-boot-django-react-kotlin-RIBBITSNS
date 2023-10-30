@@ -33,6 +33,9 @@ import {
   UPDATE_TWEET_FAILURE,
   UPDATE_TWEET_REQUEST,
   UPDATE_TWEET_SUCCESS,
+  FIND_TWEET_BY_LIST_ID_REQUEST,
+  FIND_TWEET_BY_LIST_ID_SUCCESS,
+  FIND_TWEET_BY_LIST_ID_FAILURE,
   USER_LIKE_TWEET_FAILURE,
   USER_LIKE_TWEET_REQUEST,
   USER_LIKE_TWEET_SUCCESS,
@@ -154,6 +157,19 @@ export const findTwitsById = (twitId) => {
       dispatch({type:FIND_TWEET_BY_ID_FAILURE,payload:error.message});
     }
   };
+};
+
+export const findTwitsByListId = (listId) => {
+  return async (dispatch) => {
+    dispatch({type: FIND_TWEET_BY_LIST_ID_REQUEST})
+    try {
+      const response = await api.get(`/api/twits/${listId}`);
+      console.log("find tweets by listid", response.data);
+      dispatch({type: FIND_TWEET_BY_LIST_ID_SUCCESS, payload: response.data});
+    } catch (error) {
+      dispatch({type: FIND_TWEET_BY_LIST_ID_FAILURE, payload: error.message});
+    }
+  }
 };
 
 export const createTweet = (tweetData) => {
