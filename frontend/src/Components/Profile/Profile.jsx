@@ -95,7 +95,7 @@ const Profile = () => {
 
   const handleOpenProfileModel = () => setOpenProfileModel(true);
 
-  // const handleCloseSnackBar = () => setOpenSnackBar(false);
+  const handleCloseSnackBar = () => setOpenSnackBar(false);
 
   const handleFollowUser = () => {
     dispatch(FollowUserAction(param.id));
@@ -110,13 +110,13 @@ const Profile = () => {
     navigate(`/profile/${id}`);
   };
 
-  // const handleFollowersClick = () => {
-  //   setFollowersClicked(!followersClicked);
-  // };
+  const handleFollowersClick = () => {
+    setFollowersClicked(!followersClicked);
+  };
 
-  // const handleFollowingsClick = () => {
-  //   setFollowingsClicked(!followingsClicked);
-  // };
+  const handleFollowingsClick = () => {
+    setFollowingsClicked(!followingsClicked);
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -151,7 +151,7 @@ const Profile = () => {
   const closeFollowingsModal = () => {
     setOpenFollowings(false);
   };
-
+  
   const openFollowersModal = () => {
     setOpenFollowers(true);
   };
@@ -240,16 +240,15 @@ const Profile = () => {
           </div>
           <div className="mt-2 space-y-3">
             {auth.findUser?.bio && <p>{auth.findUser?.bio}</p>}
-            <div style={{ flexDirection: 'column' }} className="py-1 flex">
+            <div style={{flexDirection: 'column'}}className="py-1 flex">
               {auth.findUser?.education ? (
                 <div className="flex text-gray-500">
                   <>
-                    <BusinessCenterSharp />
+                    <BusinessCenterSharp  />
                     <p className="ml-2">{auth.findUser.education}</p>
                   </>
                 </div>
               ) : null}
-
               {auth.findUser?.joinedAt ? (
                 <div className="flex text-gray-500">
                   <>
@@ -265,7 +264,7 @@ const Profile = () => {
 
               <section>
                 <button
-                  style={{ color: "#008000" }}
+                  style={{color: "#008000"}}
                   className="flex text-gray-500"
                   onClick={handleToggleLocationForm}
                 >
@@ -286,42 +285,42 @@ const Profile = () => {
                 <Modal
                   open={openFollowings}
                   onClose={closeFollowingsModal}
-                >
-                  <Box
-                    sx={style}
+                >                
+                <Box
+                  sx={style}
                   >
-                    <Button sx={{ marginRight: "20%", marginLeft: "15%", textDecoration: "underline" }}>followings</Button>
-                    <Button onClick={openFollowersCloseFollowings}>followers</Button>
-                    <div
-                      ref={followersListRef}
-                      className={`overflow-y-scroll hideScrollbar h-[40vh]`}>
-                      {auth.findUser?.followings &&
-                        auth.findUser?.followings.map((item) => (
-                          <div
-                            onClick={() => {
-                              if (Array.isArray(item)) {
-                                item.forEach((i) => handleNavigateToTwit(i));
-                              } else {
-                                navigateToProfile(item.id);
-                              }
-                              closeFollowingsModal();
-                            }}
-                            className="flex items-center hover:bg-green-700 p-3 cursor-pointer"
-                            key={item.id}
-                          >
-                            <Avatar alt={item.fullName} src={item.image} />
-                            <div className="ml-2">
-                              <p>{item.fullName}</p>
-                              <p className="text-sm text-gray-400">
-                                @
-                                {item.fullName.split(" ").join("_").toLowerCase()}
-                              </p>
-                            </div>
+                    <Button sx={{ fontSize: "105%", marginRight: "16%", marginLeft: "16%", textDecoration: "underline" }}>followings</Button>
+                    <Button sx={{ fontSize: "75%", color: "darkgray"}}onClick={openFollowersCloseFollowings}>followers</Button>
+                  <div 
+                  ref={followersListRef}
+                  className={`overflow-y-scroll hideScrollbar h-[40vh]`}>
+                    {auth.findUser?.followings &&
+                      auth.findUser?.followings.map((item) => (
+                        <div
+                          onClick={() => {
+                            if (Array.isArray(item)) {
+                              item.forEach((i) => handleNavigateToTwit(i));
+                            } else {
+                              navigateToProfile(item.id);
+                            }
+                            closeFollowingsModal();
+                          }}
+                          className="flex items-center hover:bg-green-700 p-3 cursor-pointer"
+                          key={item.id}
+                        >
+                          <Avatar alt={item.fullName} src={item.image} />
+                          <div className="ml-2">
+                            <p>{item.fullName}</p>
+                            <p className="text-sm text-gray-400">
+                              @
+                              {item.fullName.split(" ").join("_").toLowerCase()}
+                            </p>
                           </div>
-                        ))}
-                    </div>
+                        </div>
+                      ))}
+                  </div>
                   </Box>
-                </Modal>
+                  </Modal>
               </div>
               <div className="flex items-center space-x-1 font-semibold">
                 <span onClick={openFollowersModal} className="text-gray-500">
@@ -330,40 +329,40 @@ const Profile = () => {
                 <Modal
                   open={openFollowers}
                   onClose={closeFollowersModal}
-                >
-                  <Box sx={style}>
-                    <Button sx={{ marginRight: "20%", marginLeft: "15%" }} onClick={openFollowingsCloseFollowers}>followings</Button>
-                    <Button sx={{ textDecoration: "underline" }}>followers</Button>
-                    <div
-                      ref={followersListRef}
-                      className={`overflow-y-scroll hideScrollbar h-[40vh] `}>
-                      {auth.findUser?.followers &&
-                        auth.findUser?.followers.map((item) => (
-                          <div
-                            onClick={() => {
-                              if (Array.isArray(item)) {
-                                item.forEach((i) => handleNavigateToTwit(i));
-                              } else {
-                                navigateToProfile(item.id);
-                              }
-                              closeFollowersModal();
-                            }}
-                            className="flex items-center hover:bg-green-700 p-3 cursor-pointer"
-                            key={item.id}
-                          >
-                            <Avatar alt={item.fullName} src={item.image} />
-                            <div className="ml-2">
-                              <p>{item.fullName}</p>
-                              <p className="text-sm text-gray-400">
-                                @
-                                {item.fullName.split(" ").join("_").toLowerCase()}
-                              </p>
-                            </div>
+                >                
+                <Box sx={style}>
+                <Button sx={{ marginRight: "17%", marginLeft: "18%", fontSize: "75%", color: "darkgray" }} onClick={openFollowingsCloseFollowers}>followings</Button>
+                <Button sx={{ fontSize: "105%", textDecoration: "underline" }}>followers</Button>
+                  <div
+                ref={followersListRef}
+                className={`overflow-y-scroll hideScrollbar h-[40vh] `}>
+                   {auth.findUser?.followers &&
+                      auth.findUser?.followers.map((item) => (
+                        <div
+                          onClick={() => {
+                            if (Array.isArray(item)) {
+                              item.forEach((i) => handleNavigateToTwit(i));
+                            } else {
+                              navigateToProfile(item.id);
+                            }
+                            closeFollowersModal();
+                          }}
+                          className="flex items-center hover:bg-green-700 p-3 cursor-pointer"
+                          key={item.id}
+                        >
+                          <Avatar alt={item.fullName} src={item.image} />
+                          <div className="ml-2">
+                            <p>{item.fullName}</p>
+                            <p className="text-sm text-gray-400">
+                              @
+                              {item.fullName.split(" ").join("_").toLowerCase()}
+                            </p>
                           </div>
-                        ))}
-                    </div>
+                        </div>
+                      ))}
+                  </div>
                   </Box>
-                </Modal>
+                  </Modal>
               </div>
             </div>
           </div>

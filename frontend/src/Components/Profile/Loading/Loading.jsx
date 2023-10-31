@@ -1,6 +1,7 @@
 import React from 'react';
 import { PacmanLoader } from 'react-spinners';
 
+
 const Loading = () => {
   const loadingStyle = {
     position: 'fixed',  // 화면 고정
@@ -13,7 +14,7 @@ const Loading = () => {
 
   return (
     <div style={loadingStyle}>
-      <h3>잠시만 기다려주세요</h3>
+      <h3 className='text-green-700' >잠시만 기다려주세요</h3>
       <PacmanLoader color="hsla(113, 67%, 43%, 1)" />
     </div>
   );
