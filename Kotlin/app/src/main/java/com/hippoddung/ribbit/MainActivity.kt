@@ -21,14 +21,12 @@ import com.hippoddung.ribbit.ui.RibbitApp
 import com.hippoddung.ribbit.ui.theme.RibbitTheme
 import com.hippoddung.ribbit.ui.viewmodel.AuthUiState
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
-import com.hippoddung.ribbit.ui.viewmodel.CoroutinesErrorHandler
+import com.hippoddung.ribbit.ui.viewmodel.CardViewModel
+import com.hippoddung.ribbit.ui.viewmodel.CreatingPostUiState
+import com.hippoddung.ribbit.ui.viewmodel.CreatingPostViewModel
 import com.hippoddung.ribbit.ui.viewmodel.EmailUiState
-import com.hippoddung.ribbit.ui.viewmodel.HomeUiState
-import com.hippoddung.ribbit.ui.viewmodel.HomeViewModel
 import com.hippoddung.ribbit.ui.viewmodel.PWUiState
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
-import com.hippoddung.ribbit.ui.viewmodel.TwitsCreateViewModel
-import com.hippoddung.ribbit.ui.viewmodel.UserUiState
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -37,9 +35,9 @@ import javax.inject.Inject
 class MainActivity @Inject constructor() : ComponentActivity() {
     private val authViewModel: AuthViewModel by viewModels()
     private val tokenViewModel: TokenViewModel by viewModels()
-    private val twitsCreateViewModel: TwitsCreateViewModel by viewModels()
+    private val creatingPostViewModel: CreatingPostViewModel by viewModels()
     private val userViewModel: UserViewModel by viewModels()
-    private val homeViewModel: HomeViewModel by viewModels()
+    private val cardViewModel: CardViewModel by viewModels()
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,10 +51,10 @@ class MainActivity @Inject constructor() : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background    // 백그라운드 컬러가 아님, Theme에서 바꿔줘야 함.
                 ) {
                     RibbitApp(
-                        homeViewModel,
+                        cardViewModel,
                         authViewModel,
                         tokenViewModel,
-                        twitsCreateViewModel,
+                        creatingPostViewModel,
                         userViewModel
                     )
                 }
@@ -108,7 +106,6 @@ class MainActivity @Inject constructor() : ComponentActivity() {
                     Log.d("HippoLog, MainActivity", "ApiResponse 성공")
                     tokenViewModel.saveToken(response.data.jwt)
                 }
-                else -> {}  // else branch 가 필요없으나 컴파일러가 자꾸 에러표시를 띄워서 귀찮아서 그냥 넣어줌.
             }
         }
         authViewModel.authResponse.observe(this, authObserver)
@@ -123,7 +120,7 @@ class MainActivity @Inject constructor() : ComponentActivity() {
                 }
                 else -> {
                     Log.d("HippoLog, MainActivity", "유저정보 있는 경우")
-                    homeViewModel.getRibbitPosts()
+                    cardViewModel.getRibbitPosts()
                     authViewModel.authUiState = AuthUiState.Login   // 유저정보가 있으면 최종로그인이 된 것으로 보고 AuthUiState를 로그인으로 바꿔준다.
                 }
             }

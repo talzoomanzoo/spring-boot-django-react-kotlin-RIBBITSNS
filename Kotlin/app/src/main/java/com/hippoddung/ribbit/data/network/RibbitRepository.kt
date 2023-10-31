@@ -9,18 +9,13 @@ class RibbitRepository @Inject constructor(
     private val ribbitApiService: RibbitApiService
 ) {
     suspend fun getPosts() = ribbitApiService.getPosts()
-    suspend fun postCreatePost(twitCreateRequest: TwitCreateRequest) {
-        ribbitApiService.postCreatePost(twitCreateRequest)
-    }
+    suspend fun postCreatePost(twitCreateRequest: TwitCreateRequest) = ribbitApiService.postCreatePost(twitCreateRequest)
     suspend fun deletePost(postId: Int) = ribbitApiService.deletePost(postId)
     suspend fun getPostIdPost(postId: Int) = ribbitApiService.getPostIdPost(postId)
-
-    suspend fun postReply(replyRequest: ReplyRequest) {
-        ribbitApiService.postReply(replyRequest)
-    }
-
+    suspend fun postReply(replyRequest: ReplyRequest) = ribbitApiService.postReply(replyRequest)
     suspend fun postPostIdLike(postId: Int) = ribbitApiService.postPostIdLike(postId)
     suspend fun deletePostIdLike(postId: Int) = ribbitApiService.deletePostIdLike(postId)
     suspend fun putPostIdRepost(postId: Int) = ribbitApiService.putPostIdRepost(postId)
+    suspend fun postPostIdCount(postId: Int) = ribbitApiService.postPostIdCount(postId)
 
 }

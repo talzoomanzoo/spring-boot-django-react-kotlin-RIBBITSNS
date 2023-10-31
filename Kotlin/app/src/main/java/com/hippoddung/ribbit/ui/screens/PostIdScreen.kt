@@ -9,12 +9,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -22,21 +18,21 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.network.bodys.RibbitPost
 import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.screens.carditems.RibbitCard
 import com.hippoddung.ribbit.ui.screens.screenitems.HomeTopAppBar
+import com.hippoddung.ribbit.ui.screens.screenitems.PostsGrid
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
-import com.hippoddung.ribbit.ui.viewmodel.HomeViewModel
+import com.hippoddung.ribbit.ui.viewmodel.CardViewModel
+import com.hippoddung.ribbit.ui.viewmodel.CreatingPostViewModel
 import com.hippoddung.ribbit.ui.viewmodel.PostIdUiState
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
@@ -44,17 +40,18 @@ import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TwitIdScreen(
-    scrollBehavior: TopAppBarScrollBehavior,
+fun PostIdScreen(
+//    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
-    homeViewModel: HomeViewModel,
+    cardViewModel: CardViewModel,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
+    creatingPostViewModel: CreatingPostViewModel,
     userId: Int,
-    modifier: Modifier = Modifier.fillMaxSize()
+    modifier: Modifier = Modifier
 ) {
-    when (homeViewModel.postIdUiState) {
+    when (cardViewModel.postIdUiState) {
 
         is PostIdUiState.Loading -> {
             Log.d("HippoLog, TwitIdScreen", "Loading")
@@ -63,13 +60,14 @@ fun TwitIdScreen(
 
         is PostIdUiState.Success -> {
             Log.d("HippoLog, TwitIdScreen", "Success")
-            val post = (homeViewModel.postIdUiState as PostIdUiState.Success).post
-            TwitIdSuccessScreen(
-                homeViewModel = homeViewModel,
+            val post = (cardViewModel.postIdUiState as PostIdUiState.Success).post
+            PostIdSuccessScreen(
+                cardViewModel = cardViewModel,
                 tokenViewModel = tokenViewModel,
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
-                scrollBehavior = scrollBehavior,
+                creatingPostViewModel = creatingPostViewModel,
+//                scrollBehavior = scrollBehavior,
                 navController = navController,
                 post = post,
                 userId = userId,
@@ -81,8 +79,6 @@ fun TwitIdScreen(
             Log.d("HippoLog, TwitIdScreen", "Error")
             ErrorScreen(modifier = modifier)
         }
-
-        else -> {}
     }
 }
 
@@ -90,62 +86,59 @@ fun TwitIdScreen(
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "RememberReturnType")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TwitIdSuccessScreen(
-    homeViewModel: HomeViewModel,
+fun PostIdSuccessScreen(
+    cardViewModel: CardViewModel,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
-    scrollBehavior: TopAppBarScrollBehavior,
+    creatingPostViewModel: CreatingPostViewModel,
+//    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
     post: RibbitPost,
     userId: Int,
-    modifier: Modifier
+    modifier: Modifier = Modifier
 ) {
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = modifier,
+//        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         // scrollBehavior에 따라 리컴포지션이 트리거되는 것으로 추측, 해결할 방법을 찾아야 함.
         // navigation 위(RibbitApp)에 있던 scrollBehavior을 navigation 하위에 있는 HomeScreen으로 옮겨서 해결.
         topBar = {
             HomeTopAppBar(
-                homeViewModel = homeViewModel,
+                cardViewModel = cardViewModel,
                 tokenViewModel = tokenViewModel,
                 userViewModel = userViewModel,
                 authViewModel = authViewModel,
-                scrollBehavior = scrollBehavior,
-                navController = navController
+//                scrollBehavior = scrollBehavior,
+                navController = navController,
+                modifier = modifier
             )
         }
     ) {
         Surface(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .padding(it)
         ) {
             Column(modifier = modifier) {
                 RibbitCard(
                     post = post,
-                    homeViewModel = homeViewModel,
+                    cardViewModel = cardViewModel,
                     userId = userId,
                     navController = navController,
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .wrapContentHeight()
-                        .fillMaxWidth()
+                    modifier = modifier
                 )
-                if (post.replyTwits?.isNotEmpty() == true) {
-                    Row() {
-                        Spacer(modifier = Modifier.width(28.dp))
-                        LazyColumn(modifier = modifier) {
-                            items(items = post.replyTwits, key = { post -> post!!.id }) {
-                                RibbitCard(
-                                    post = it!!,
-                                    homeViewModel = homeViewModel,
-                                    userId = userId,
-                                    navController = navController,
-                                    modifier = modifier.padding(8.dp)
-                                )
-
-                            }
+                if (post.replyTwits != null){
+                    if(post.replyTwits.isNotEmpty()) {
+                        Row(modifier = modifier) {
+                            Spacer(modifier = modifier.width(28.dp))
+                            PostsGrid(
+                                posts = post.replyTwits as List<RibbitPost>,    // null, Empty check를 하였음에도 컴파일오류가 계속되어 강제 캐스팅함.
+                                cardViewModel = cardViewModel,
+                                userId = userId,
+                                navController = navController,
+                                modifier = modifier
+                            )
                         }
                     }
                 }
@@ -154,13 +147,17 @@ fun TwitIdSuccessScreen(
                 FloatingActionButton(
                     onClick = {
                         Log.d("HippoLog, HomeScreen", "onClick")
-                        navController.navigate(RibbitScreen.TwitCreateScreen.name)
+                        navController.navigate(RibbitScreen.CreatingPostScreen.name)
                     },
-                    modifier = Modifier
+                    modifier = modifier
                         .align(Alignment.BottomEnd)
                         .padding(14.dp)
                 ) {
-                    Icon(Icons.Filled.Edit, "Floating action button.")
+                    Icon(
+                        imageVector = Icons.Filled.Edit,
+                        contentDescription = "Floating action button.",
+                        modifier = modifier
+                    )
                 }
             }
         }

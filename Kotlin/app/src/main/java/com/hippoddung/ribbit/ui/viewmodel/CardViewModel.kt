@@ -2,7 +2,6 @@ package com.hippoddung.ribbit.ui.viewmodel
 
 import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
-import android.os.Build
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,17 +21,17 @@ import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import javax.inject.Inject
 
+sealed interface HomeUiState {
+    data class Success(val posts: List<RibbitPost>) : HomeUiState
+    data class Error(val errorCode: String) : HomeUiState
+    object Loading : HomeUiState
+}
+
 sealed interface DeletePostUiState {
     object Ready : DeletePostUiState
     object Success : DeletePostUiState
     data class Error(val errorCode: String) : DeletePostUiState
     object Loading : DeletePostUiState
-}
-
-sealed interface HomeUiState {
-    data class Success(val posts: List<RibbitPost>) : HomeUiState
-    data class Error(val errorCode: String) : HomeUiState
-    object Loading : HomeUiState
 }
 
 sealed interface PostIdUiState {
@@ -59,7 +58,7 @@ sealed interface WhereReplyClickedUiState {
 }
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
+class CardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으나 ViewModel의 기능을 적절히 설명하기 위해 이름을 변경
     private val ribbitRepository: RibbitRepository
 ) : BaseViewModel() {
     var homeUiState: HomeUiState by mutableStateOf(HomeUiState.Loading)
@@ -92,7 +91,7 @@ class HomeViewModel @Inject constructor(
 //        Log.d("HippoLog, HomeViewModel", "getRibbitPosts")
 //        ribbitRepository.getPosts()
 //    }
-    fun getRibbitPosts() {
+    fun getRibbitPosts() {  // 모든 Post를 불러오는 메소드
         viewModelScope.launch(Dispatchers.IO) {
             homeUiState = HomeUiState.Loading
             Log.d("HippoLog, HomeViewModel", "getRibbitPosts, $homeUiState")
@@ -117,7 +116,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    suspend fun deleteRibbitPost(postId: Int) {
+    suspend fun deleteRibbitPost(postId: Int) { // Post를 삭제하는 메소드, 정상적인 페이지 노출을 위해 동기함수로 구성
         Log.d("HippoLog, HomeViewModel", "deleteRibbitPost, $postId")
         try {
             deletePostUiState = DeletePostUiState.Loading
@@ -141,22 +140,23 @@ class HomeViewModel @Inject constructor(
         Log.d("HippoLog, HomeViewModel", "deleteRibbitPost")
     }
 
-    fun getPostIdPost(postId: Int) {
+    fun getPostIdPost(postId: Int) {    // PostDetail을 불러오는 함수
         viewModelScope.launch(Dispatchers.IO) {
             postIdUiState = PostIdUiState.Loading
             Log.d("HippoLog, HomeViewModel", "getTwitIdPosts, $postIdUiState")
+            postPostIdCount(postId)
             postIdUiState = try {
                 PostIdUiState.Success(ribbitRepository.getPostIdPost(postId))
             } catch (e: IOException) {
-                Log.d("HippoLog, HomeViewModel", "${e.stackTrace}, ${e.message}")
+                Log.d("HippoLog, HomeViewModel", "getPostIdPost: ${e.stackTrace}, ${e.message}")
                 PostIdUiState.Error(e.message.toString())
 
             } catch (e: ExceptionInInitializerError) {
-                Log.d("HippoLog, HomeViewModel", "${e.stackTrace}, ${e.message}")
+                Log.d("HippoLog, HomeViewModel", "getPostIdPost: ${e.stackTrace}, ${e.message}")
                 PostIdUiState.Error(e.message.toString())
 
             } catch (e: HttpException) {
-                Log.d("HippoLog, HomeViewModel", "${e.stackTrace}, ${e.code()}, $e")
+                Log.d("HippoLog, HomeViewModel", "getPostIdPost: ${e.stackTrace}, ${e.code()}, $e")
                 if (e.code() == 500) {
                     PostIdUiState.Error(e.code().toString())
                 } else {
@@ -167,13 +167,29 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    //suspend fun retrieveThumbnailFromVideo(videoUrl: String?): Bitmap? {
+    suspend fun postPostIdCount(postId: Int) {  // Detail을 불러올 때 Count가 정확하지 않은 문제를 해결하기 위해 동기작업으로 실행
+        try {
+            ribbitRepository.postPostIdCount(postId)
+        } catch (e: IOException) {
+            Log.d("HippoLog, HomeViewModel", "postPostIdCount: ${e.stackTrace}, ${e.message}")
+
+        } catch (e: ExceptionInInitializerError) {
+            Log.d("HippoLog, HomeViewModel", "postPostIdCount: ${e.stackTrace}, ${e.message}")
+
+        } catch (e: HttpException) {
+            Log.d("HippoLog, HomeViewModel", "postPostIdCount: ${e.stackTrace}, ${e.code()}, $e")
+            if (e.code() == 500) {
+            } else {
+            }
+        }
+    }
+
     fun retrieveThumbnailFromVideo(videoUrl: String?): Future<Bitmap> {
         val executor = Executors.newFixedThreadPool(2)
         val future: Future<Bitmap> = executor.submit(
             Callable<Bitmap> {
                 var bitmap: Bitmap? = null
-                var mediaMetadataRetriever: MediaMetadataRetriever? = null
+                var mediaMetadataRetriever: MediaMetadataRetriever?
                 mediaMetadataRetriever = MediaMetadataRetriever()
                 mediaMetadataRetriever.setDataSource(videoUrl, HashMap())
                 var retrievalCount = 0
@@ -230,13 +246,14 @@ class HomeViewModel @Inject constructor(
 
                 is WhereReplyClickedUiState.TwitIdScreen -> {
                     getPostIdPost((postIdUiState as PostIdUiState.Success).post.id)
-                    whereReplyClickedUiState = WhereReplyClickedUiState.HomeScreen  // 기본값으로 HomeScreen으로 한다.
+                    whereReplyClickedUiState =
+                        WhereReplyClickedUiState.HomeScreen  // 기본값으로 HomeScreen으로 한다.
                 }
             }
         }
     }
 
-    fun postPostIdLike(postId: Int){    // 이 통신으로 like, dislike를 다 함.
+    fun postPostIdLike(postId: Int) {    // 이 통신으로 like, dislike를 다 함.
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 ribbitRepository.postPostIdLike(postId)
@@ -248,7 +265,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun deletePostIdLike(postId: Int){  // 서버 컨트롤러에 있지만 쓰지 않음.
+    fun deletePostIdLike(postId: Int) {  // 서버 컨트롤러에 있지만 쓰지 않음.
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 ribbitRepository.deletePostIdLike(postId)
@@ -259,7 +276,8 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
-    fun putPostIdRepost(postId: Int){   // 얘도 이것만으로 repost와 cancel을 다 함.
+
+    fun putPostIdRepost(postId: Int) {   // 얘도 이것만으로 repost와 cancel을 다 함.
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 ribbitRepository.putPostIdRepost(postId)

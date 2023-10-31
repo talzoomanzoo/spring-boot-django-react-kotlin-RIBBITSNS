@@ -7,4 +7,5 @@ class UserRepository @Inject constructor(
     private val userApiService: UserApiService
 ) {
     suspend fun getUserProfile() = userApiService.getUserProfile()
+    suspend fun getProfile(userId: Int) = userApiService.getProfile(userId)
 }

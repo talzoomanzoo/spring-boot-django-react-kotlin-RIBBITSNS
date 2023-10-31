@@ -13,7 +13,7 @@ data class RibbitPost(
     val reply: Boolean = false,
     val replyTwits: List<RibbitPost?>?,   // listOf(): 비어있는 리스트를 리턴
     val retwit: Boolean = false,
-    val retwitUsersId: List<Int?>?,
+    val retwitUsersId: List<Int?> = listOf(),
     val sentence: String?,
     val totalLikes: Int = 0,
     val totalReplies: Int = 0,

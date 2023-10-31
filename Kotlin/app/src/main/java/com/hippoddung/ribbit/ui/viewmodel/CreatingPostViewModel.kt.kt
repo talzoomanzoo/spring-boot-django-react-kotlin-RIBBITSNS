@@ -8,13 +8,17 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.hippoddung.ribbit.data.network.RibbitRepository
 import com.hippoddung.ribbit.data.network.UploadCloudinaryRepository
+import com.hippoddung.ribbit.network.ApiResponse
 import com.hippoddung.ribbit.network.bodys.requestbody.TwitCreateRequest
+import com.hippoddung.ribbit.network.bodys.responsebody.AuthResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.io.IOException
 import javax.inject.Inject
@@ -41,21 +45,21 @@ sealed interface UploadVideoCloudinaryUiState {
 }
 
 @HiltViewModel
-class TwitsCreateViewModel @Inject constructor(
+class CreatingPostViewModel @Inject constructor(
     private val ribbitRepository: RibbitRepository,
     private val uploadCloudinaryRepository: UploadCloudinaryRepository
 ) : BaseViewModel() {
     var creatingPostUiState: CreatingPostUiState by mutableStateOf(CreatingPostUiState.Ready)
-    var uploadImageCloudinaryUiState: UploadImageCloudinaryUiState by mutableStateOf(
+    private var uploadImageCloudinaryUiState: UploadImageCloudinaryUiState by mutableStateOf(
         UploadImageCloudinaryUiState.None
     )
         private set
-    var uploadVideoCloudinaryUiState: UploadVideoCloudinaryUiState by mutableStateOf(
+    private var uploadVideoCloudinaryUiState: UploadVideoCloudinaryUiState by mutableStateOf(
         UploadVideoCloudinaryUiState.None
     )
         private set
 
-    fun createTwit(
+    fun creatingPost(
         image: Bitmap?,
         videoFile: File?,
         inputText: String
@@ -67,64 +71,64 @@ class TwitsCreateViewModel @Inject constructor(
             creatingPostUiState = CreatingPostUiState.Loading
             uploadImageCloudinaryUiState = UploadImageCloudinaryUiState.None
             uploadVideoCloudinaryUiState = UploadVideoCloudinaryUiState.None
-            if (image != null) {
-                uploadImageCloudinaryUiState = UploadImageCloudinaryUiState.Loading
-                uploadImageCloudinary(image = image)
-                // 성공하면 uploadImageCloudinary 함수에서 UploadImageCloudinaryUiState.Success 로 업데이트함
+            runBlocking {
+                launch(Dispatchers.IO) {
+                    if (image != null) {
+                        uploadImageCloudinaryUiState = UploadImageCloudinaryUiState.Loading
+                        uploadImageCloudinary(image = image)
+                        // 성공하면 uploadImageCloudinary 함수에서 UploadImageCloudinaryUiState.Success 로 업데이트함
+                        when (uploadImageCloudinaryUiState) {
+                            is UploadImageCloudinaryUiState.Success -> {
+                                imageUrl =
+                                    (uploadImageCloudinaryUiState as UploadImageCloudinaryUiState.Success).imageUrl
+                            }
 
-                when (uploadImageCloudinaryUiState) {
-                    is UploadImageCloudinaryUiState.Success -> {
-                        imageUrl =
-                            (uploadImageCloudinaryUiState as UploadImageCloudinaryUiState.Success).imageUrl
+                            else -> {}  // 다른 경우 처리를 위함, 아직 미구현
+                        }
                     }
-
-                    else -> {}
                 }
-            } else {
-            }
-            if (videoFile != null) {
-                uploadVideoCloudinaryUiState = UploadVideoCloudinaryUiState.Loading
+                launch(Dispatchers.IO) {
+                    if (videoFile != null) {
+                        uploadVideoCloudinaryUiState = UploadVideoCloudinaryUiState.Loading
+                        uploadVideoCloudinary(videoFile = videoFile)
+                        // 성공하면 uploadVideoCloudinary 함수에서 UploadVideoCloudinaryUiState.Success 로 업데이트함
+                        when (uploadVideoCloudinaryUiState) {
+                            is UploadVideoCloudinaryUiState.Success -> {
+                                videoUrl =
+                                    (uploadVideoCloudinaryUiState as UploadVideoCloudinaryUiState.Success).videoUrl
+                            }
 
-                uploadVideoCloudinary(videoFile = videoFile)
-                // 성공하면 uploadVideoCloudinary 함수에서 UploadVideoCloudinaryUiState.Success 로 업데이트함
-
-                when (uploadVideoCloudinaryUiState) {
-                    is UploadVideoCloudinaryUiState.Success -> {
-                        videoUrl =
-                            (uploadVideoCloudinaryUiState as UploadVideoCloudinaryUiState.Success).videoUrl
+                            else -> {}  // 다른 경우 처리를 위함, 아직 미구현
+                        }
                     }
-
-                    else -> {}
                 }
-            } else {
             }
-
 
             if (((uploadImageCloudinaryUiState is UploadImageCloudinaryUiState.Success) or (uploadImageCloudinaryUiState is (UploadImageCloudinaryUiState.None))
                         and (uploadVideoCloudinaryUiState is UploadVideoCloudinaryUiState.Success) or (uploadVideoCloudinaryUiState is UploadVideoCloudinaryUiState.None))
             ) {
-                twitCreate(
+                postCreatingPost(
                     TwitCreateRequest(
                         content = inputText,
                         image = imageUrl,
                         video = videoUrl
                     )
                 )
-            } else {
+            } else {    // uploadImageCloudinaryUiState와 uploadVideoCloudinaryUiState 가 다른 상태일 때 처리를 위함 미구현
             }
         }
     }
 
-    suspend fun twitCreate(twitCreateRequest: TwitCreateRequest) {
-            try {
-                ribbitRepository.postCreatePost(twitCreateRequest)
-            } catch (e: IOException) {
-                creatingPostUiState = CreatingPostUiState.Error
-                println(e.stackTrace)
-            } catch (e: ExceptionInInitializerError) {
-                creatingPostUiState = CreatingPostUiState.Error
-                println(e.stackTrace)
-            }
+    private suspend fun postCreatingPost(twitCreateRequest: TwitCreateRequest) {
+        try {
+            ribbitRepository.postCreatePost(twitCreateRequest)
+        } catch (e: IOException) {
+            creatingPostUiState = CreatingPostUiState.Error
+            println(e.stackTrace)
+        } catch (e: ExceptionInInitializerError) {
+            creatingPostUiState = CreatingPostUiState.Error
+            println(e.stackTrace)
+        }
         creatingPostUiState = CreatingPostUiState.Success
     }
 
@@ -142,44 +146,42 @@ class TwitsCreateViewModel @Inject constructor(
         return null
     }
 
-    suspend fun uploadImageCloudinary(image: Bitmap?) {
-        viewModelScope.launch(Dispatchers.IO) {
-            UploadImageCloudinaryUiState.None
-            if (image != null) {
-                UploadImageCloudinaryUiState.Loading
-                try {
-                    val result = uploadCloudinaryRepository.uploadImageCloudinary(image)
-                    Log.d("HippoLog, TwitCreateViewModel, result", "$result")
-                    uploadImageCloudinaryUiState = UploadImageCloudinaryUiState.Success(
-                        imageUrl = result.url
-                    )
-                } catch (e: Exception) {
-                    uploadImageCloudinaryUiState = UploadImageCloudinaryUiState.Error(e)
-                    Log.d("HippoLog, TwitCreateViewModel, Error", "${e.stackTrace}, ${e.message}")
-                }
-            } else {
+    private suspend fun uploadImageCloudinary(image: Bitmap?) {
+//        viewModelScope.launch(Dispatchers.IO) {   // 호출함수에서 coroutin으로 접근하기 때문에 여기서는 그냥 지연함수로 둠
+        UploadImageCloudinaryUiState.None
+        if (image != null) {
+            UploadImageCloudinaryUiState.Loading
+            try {
+                val result = uploadCloudinaryRepository.uploadImageCloudinary(image)
+                Log.d("HippoLog, TwitCreateViewModel, result", "$result")
+                uploadImageCloudinaryUiState = UploadImageCloudinaryUiState.Success(
+                    imageUrl = result.url
+                )
+            } catch (e: Exception) {
+                uploadImageCloudinaryUiState = UploadImageCloudinaryUiState.Error(e)
+                Log.d("HippoLog, TwitCreateViewModel, Error", "${e.stackTrace}, ${e.message}")
             }
         }
+//        }
     }
 
-    suspend fun uploadVideoCloudinary(videoFile: File?) {
-        viewModelScope.launch(Dispatchers.IO) {
-            UploadVideoCloudinaryUiState.None
-            if (videoFile != null) {
-                UploadVideoCloudinaryUiState.Loading
-                try {
-                    val result =
-                        uploadCloudinaryRepository.uploadVideoCloudinary(videoFile = videoFile)
-                    Log.d("HippoLog, TwitCreateViewModel, result", "$result")
-                    uploadVideoCloudinaryUiState = UploadVideoCloudinaryUiState.Success(
-                        videoUrl = result.url
-                    )
-                } catch (e: Exception) {
-                    uploadVideoCloudinaryUiState = UploadVideoCloudinaryUiState.Error(e)
-                    Log.d("HippoLog, TwitCreateViewModel, Error", "${e.stackTrace}, ${e.message}")
-                }
-            } else {
+    private suspend fun uploadVideoCloudinary(videoFile: File?) {
+//        viewModelScope.launch(Dispatchers.IO) {   // 호출함수에서 coroutin으로 접근하기 때문에 여기서는 그냥 지연함수로 둠
+        UploadVideoCloudinaryUiState.None
+        if (videoFile != null) {
+            UploadVideoCloudinaryUiState.Loading
+            try {
+                val result =
+                    uploadCloudinaryRepository.uploadVideoCloudinary(videoFile = videoFile)
+                Log.d("HippoLog, TwitCreateViewModel, result", "$result")
+                uploadVideoCloudinaryUiState = UploadVideoCloudinaryUiState.Success(
+                    videoUrl = result.url
+                )
+            } catch (e: Exception) {
+                uploadVideoCloudinaryUiState = UploadVideoCloudinaryUiState.Error(e)
+                Log.d("HippoLog, TwitCreateViewModel, Error", "${e.stackTrace}, ${e.message}")
             }
         }
+//        }
     }
 }

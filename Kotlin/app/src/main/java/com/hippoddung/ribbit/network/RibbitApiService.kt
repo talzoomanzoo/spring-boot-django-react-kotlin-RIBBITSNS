@@ -37,16 +37,24 @@ interface RibbitApiService {
     suspend fun postReply(
         @Body replyRequest: ReplyRequest
     )
+
     @POST("api/{postId}/like")
     suspend fun postPostIdLike(
         @Path("postId") postId : Int
     ): RibbitPost
+
     @DELETE("api/{postId}/unlike")
     suspend fun deletePostIdLike(
         @Path("postId") postId : Int
     ): RibbitPost
+
     @PUT("api/twits/{postId}/retwit")
     suspend fun putPostIdRepost(
+        @Path("postId") postId : Int
+    ): RibbitPost
+
+    @POST("api/twits/{postId}/count")
+    suspend fun postPostIdCount(
         @Path("postId") postId : Int
     ): RibbitPost
 }

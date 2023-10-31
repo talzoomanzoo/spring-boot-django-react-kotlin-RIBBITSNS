@@ -1,5 +1,6 @@
 package com.hippoddung.ribbit.ui.screens
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
@@ -30,9 +31,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -44,58 +47,57 @@ import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.screens.screenitems.InputTextField
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
+import com.hippoddung.ribbit.ui.viewmodel.CardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.CreatingPostUiState
-import com.hippoddung.ribbit.ui.viewmodel.HomeViewModel
-import com.hippoddung.ribbit.ui.viewmodel.TwitsCreateViewModel
+import com.hippoddung.ribbit.ui.viewmodel.CreatingPostViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.io.File
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun TwitCreateScreen(
-    twitsCreateViewModel: TwitsCreateViewModel,
-    homeViewModel: HomeViewModel,
+fun CreatingPostScreen(
+    creatingPostViewModel: CreatingPostViewModel,
+    cardViewModel: CardViewModel,
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    when (twitsCreateViewModel.creatingPostUiState) {
+    when (creatingPostViewModel.creatingPostUiState) {
         is CreatingPostUiState.Ready -> {
-            Log.d("HippoLog, TwitCreateScreen", "Ready")
+            Log.d("HippoLog, CreatingPostScreen", "Ready")
             InputTwitScreen(
                 navController = navController,
-                twitsCreateViewModel = twitsCreateViewModel,
-                homeViewModel = homeViewModel,
-                modifier = modifier.fillMaxSize()
+                creatingPostViewModel = creatingPostViewModel,
+//                cardViewModel = cardViewModel,
+                modifier = modifier
             )
         }
 
         is CreatingPostUiState.Success -> {
-            Log.d("HippoLog, TwitCreateScreen", "Success")
-            runBlocking {
-                launch { navController.navigate(RibbitScreen.HomeScreen.name) }
-            }
-            twitsCreateViewModel.creatingPostUiState = CreatingPostUiState.Ready
+            Log.d("HippoLog, CreatingPostScreen", "Success")
+            cardViewModel.getRibbitPosts()
+            navController.navigate(RibbitScreen.HomeScreen.name)
+            creatingPostViewModel.creatingPostUiState = CreatingPostUiState.Ready
         }
 
         is CreatingPostUiState.Loading -> {
-            Log.d("HippoLog, TwitCreateScreen", "Loading")
-            LoadingScreen()
+            Log.d("HippoLog, CreatingPostScreen", "Loading")
+            LoadingScreen(modifier = modifier)
         }
 
         is CreatingPostUiState.Error -> {
-            Log.d("HippoLog, TwitCreateScreen", "Error")
-            ErrorScreen(modifier = modifier.fillMaxSize())
+            Log.d("HippoLog, CreatingPostScreen", "Error")
+            ErrorScreen(modifier = modifier)
         }
-
-        else -> {}
     }
 }
 
 @Composable
 fun InputTwitScreen(
     navController: NavHostController,
-    twitsCreateViewModel: TwitsCreateViewModel,
-    homeViewModel: HomeViewModel,
+    creatingPostViewModel: CreatingPostViewModel,
+//    cardViewModel: CardViewModel,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -124,24 +126,25 @@ fun InputTwitScreen(
     ) {
         Text(
             text = stringResource(R.string.twit_create),
-            modifier = Modifier
+            color = Color.Black,
+            modifier = modifier
                 .padding(bottom = 16.dp)
                 .align(alignment = Alignment.Start)
         )
         InputTextField(
             value = inputText,
             onValueChange = { inputText = it },
-            modifier = Modifier
+            modifier = modifier
                 .padding(bottom = 32.dp)
                 .fillMaxWidth()
         )
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = modifier.height(4.dp))
         if (imageUri != null) {
-            Box(modifier = Modifier.size(200.dp)) {
+            Box(modifier = modifier.size(200.dp)) {
                 imageUri?.let {
                     if (Build.VERSION.SDK_INT < 28) {
                         bitmap.value = MediaStore.Images
-                            .Media.getBitmap(context.contentResolver, it)
+                            .Media.getBitmap(context.contentResolver, it)   // getBitmap: deprecated
                     } else {
                         val source = ImageDecoder
                             .createSource(context.contentResolver, it)
@@ -153,58 +156,75 @@ fun InputTwitScreen(
                             bitmap = btm.asImageBitmap(),
                             contentScale = ContentScale.Fit,
                             contentDescription = null,
-                            modifier = Modifier.size(200.dp)
+                            modifier = modifier.size(200.dp)
                         )
                     }
                 }
             }
-        }else{}
+        }
         if (videoUri != null) {
-            videoAbsolutePath = twitsCreateViewModel.getFilePathFromUri(context, videoUri!!)
+            videoAbsolutePath = creatingPostViewModel.getFilePathFromUri(context, videoUri!!)
             videoFile = videoAbsolutePath?.let { File(it) }
-            Row {
+            Row(modifier = modifier) {
                 Icon(
                     imageVector = Icons.Default.VideoLibrary,
                     contentDescription = "Video Uri",
-                    modifier = Modifier.padding(8.dp)
+                    modifier = modifier.padding(8.dp)
                 )
-                Text(videoFile!!.name, modifier = Modifier.padding(8.dp))
+                Text(
+                    text = videoFile!!.name,
+                    modifier = modifier.padding(8.dp)
+                )
             }
-        }else{}
-        Row {
+        }
+        Row(modifier = modifier) {
             Button(
                 onClick = { imageLauncher.launch("image/*") },
-                Modifier.padding(14.dp)
+                modifier.padding(14.dp)
             ) {
-                Icon(Icons.Filled.Image, "Pick Image button.")
+                Icon(
+                    imageVector = Icons.Filled.Image,
+                    contentDescription = "Pick Image button.",
+                    modifier = modifier
+                )
             }
             Button(
                 onClick = { videoLauncher.launch("video/*") },
-                Modifier.padding(14.dp)
+                modifier.padding(14.dp)
             ) {
-                Icon(Icons.Filled.OndemandVideo, "Pick Video button.")
+                Icon(
+                    imageVector = Icons.Filled.OndemandVideo,
+                    contentDescription = "Pick Video button.",
+                    modifier = modifier
+                )
             }
         }
-        Row {
+        Row(modifier = modifier) {
             Button(
                 onClick = { navController.navigate(RibbitScreen.HomeScreen.name) },
-                Modifier.padding(14.dp)
+                modifier.padding(14.dp)
             ) {
-                Text(text = stringResource(R.string.Cancel))
+                Text(
+                    text = stringResource(R.string.Cancel),
+                    modifier = modifier
+                )
             }
             Button(
                 onClick = {
-                    twitsCreateViewModel.createTwit(
+                    creatingPostViewModel.creatingPost(
                         image = bitmap.value,
                         videoFile = videoFile,
-                        inputText = inputText,
+                        inputText = inputText
                     )
                 },
-                Modifier.padding(14.dp)
+                modifier.padding(14.dp)
             ) {
-                Text(text = stringResource(R.string.twit_create))
+                Text(
+                    text = stringResource(R.string.twit_create),
+                    modifier = modifier
+                )
             }
         }
-        Spacer(modifier = Modifier.height(150.dp))
+        Spacer(modifier = modifier.height(150.dp))
     }
 }

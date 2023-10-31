@@ -19,11 +19,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.hippoddung.ribbit.ui.viewmodel.TwitsCreateViewModel
+import com.hippoddung.ribbit.ui.viewmodel.CreatingPostViewModel
 
 @Composable
-fun TwitCreateLoadingScreen(
-    twitsCreateViewModel: TwitsCreateViewModel,
+fun CreatingPostLoadingScreen(
+    creatingPostViewModel: CreatingPostViewModel,
     navController: NavHostController,
     modifier: Modifier
 ) {
