@@ -313,7 +313,7 @@ const TwitCard = ({ twit }) => {
           // 현재 url의 pathname이 /profile/${auth.user?.id} 이면
           <div className="flex items-center font-semibold text-gray-700 py-2">
             <RepeatIcon />
-            <p className="ml-3">You Retweet</p>
+            <p className="ml-3">You Reribbit</p>
           </div>
           // 해당 표시를 해라
         )}
