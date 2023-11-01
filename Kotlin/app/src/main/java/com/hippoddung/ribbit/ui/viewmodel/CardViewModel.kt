@@ -40,6 +40,24 @@ sealed interface PostIdUiState {
     object Loading : PostIdUiState
 }
 
+sealed interface GetUserIdPostsUiState {
+    data class Success(val posts: List<RibbitPost>) : GetUserIdPostsUiState
+    data class Error(val errorCode: String) : GetUserIdPostsUiState
+    object Loading : GetUserIdPostsUiState
+}
+
+sealed interface GetUserIdRepliesUiState {
+    data class Success(val posts: List<RibbitPost>) : GetUserIdRepliesUiState
+    data class Error(val errorCode: String) : GetUserIdRepliesUiState
+    object Loading : GetUserIdRepliesUiState
+}
+
+sealed interface GetUserIdLikesUiState {
+    data class Success(val posts: List<RibbitPost>) : GetUserIdLikesUiState
+    data class Error(val errorCode: String) : GetUserIdLikesUiState
+    object Loading : GetUserIdLikesUiState
+}
+
 sealed interface PostReplyUiState {
     object Ready : PostReplyUiState
     object Loading : PostReplyUiState
@@ -64,6 +82,9 @@ class CardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으나
     var homeUiState: HomeUiState by mutableStateOf(HomeUiState.Loading)
     var deletePostUiState: DeletePostUiState by mutableStateOf(DeletePostUiState.Ready)
     var postIdUiState: PostIdUiState by mutableStateOf(PostIdUiState.Loading)
+    var getUserIdPostsUiState: GetUserIdPostsUiState by mutableStateOf(GetUserIdPostsUiState.Loading)
+    var getUserIdRepliesUiState: GetUserIdRepliesUiState by mutableStateOf(GetUserIdRepliesUiState.Loading)
+    var getUserIdLikesUiState: GetUserIdLikesUiState by mutableStateOf(GetUserIdLikesUiState.Loading)
 
     var replyPostIdUiState: Int? by mutableStateOf(null)
     var postReplyUiState: PostReplyUiState by mutableStateOf(PostReplyUiState.Ready)
@@ -94,90 +115,168 @@ class CardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으나
     fun getRibbitPosts() {  // 모든 Post를 불러오는 메소드
         viewModelScope.launch(Dispatchers.IO) {
             homeUiState = HomeUiState.Loading
-            Log.d("HippoLog, HomeViewModel", "getRibbitPosts, $homeUiState")
+            Log.d("HippoLog, CardViewModel", "getRibbitPosts, $homeUiState")
             homeUiState = try {
                 HomeUiState.Success(ribbitRepository.getPosts())
             } catch (e: IOException) {
-                Log.d("HippoLog, HomeViewModel", "${e.stackTrace}, ${e.message}")
+                Log.d("HippoLog, CardViewModel", "${e.stackTrace}, ${e.message}")
                 HomeUiState.Error(e.message.toString())
 
             } catch (e: ExceptionInInitializerError) {
-                Log.d("HippoLog, HomeViewModel", "${e.stackTrace}, ${e.message}")
+                Log.d("HippoLog, CardViewModel", "${e.stackTrace}, ${e.message}")
                 HomeUiState.Error(e.message.toString())
             } catch (e: HttpException) {
-                Log.d("HippoLog, HomeViewModel", "${e.stackTrace}, ${e.code()}, $e")
+                Log.d("HippoLog, CardViewModel", "${e.stackTrace}, ${e.code()}, $e")
                 if (e.code() == 500) {
                     HomeUiState.Error(e.code().toString())
                 } else {
                     HomeUiState.Error(e.message.toString())
                 }
             }
-            Log.d("HippoLog, HomeViewModel", "getRibbitPosts, $homeUiState")
+            Log.d("HippoLog, CardViewModel", "getRibbitPosts, $homeUiState")
         }
     }
 
     suspend fun deleteRibbitPost(postId: Int) { // Post를 삭제하는 메소드, 정상적인 페이지 노출을 위해 동기함수로 구성
-        Log.d("HippoLog, HomeViewModel", "deleteRibbitPost, $postId")
+        Log.d("HippoLog, CardViewModel", "deleteRibbitPost, $postId")
         try {
             deletePostUiState = DeletePostUiState.Loading
             ribbitRepository.deletePost(postId)
         } catch (e: IOException) {
-            Log.d("HippoLog, HomeViewModel", "${e.stackTrace}, ${e.message}")
+            Log.d("HippoLog, CardViewModel", "${e.stackTrace}, ${e.message}")
             DeletePostUiState.Error(e.message.toString())
 
         } catch (e: ExceptionInInitializerError) {
-            Log.d("HippoLog, HomeViewModel", "${e.stackTrace}, ${e.message}")
+            Log.d("HippoLog, CardViewModel", "${e.stackTrace}, ${e.message}")
             DeletePostUiState.Error(e.message.toString())
 
         } catch (e: HttpException) {
-            Log.d("HippoLog, HomeViewModel", "${e.stackTrace}, ${e.code()}, $e")
+            Log.d("HippoLog, CardViewModel", "${e.stackTrace}, ${e.code()}, $e")
             if (e.code() == 500) {
                 DeletePostUiState.Error(e.code().toString())
             } else {
                 DeletePostUiState.Error(e.message.toString())
             }
         }
-        Log.d("HippoLog, HomeViewModel", "deleteRibbitPost")
+        Log.d("HippoLog, CardViewModel", "deleteRibbitPost")
     }
 
     fun getPostIdPost(postId: Int) {    // PostDetail을 불러오는 함수
+        postIdUiState = PostIdUiState.Loading
         viewModelScope.launch(Dispatchers.IO) {
-            postIdUiState = PostIdUiState.Loading
-            Log.d("HippoLog, HomeViewModel", "getTwitIdPosts, $postIdUiState")
+            Log.d("HippoLog, CardViewModel", "getTwitIdPosts, $postIdUiState")
             postPostIdCount(postId)
             postIdUiState = try {
                 PostIdUiState.Success(ribbitRepository.getPostIdPost(postId))
             } catch (e: IOException) {
-                Log.d("HippoLog, HomeViewModel", "getPostIdPost: ${e.stackTrace}, ${e.message}")
+                Log.d("HippoLog, CardViewModel", "getPostIdPost: ${e.stackTrace}, ${e.message}")
                 PostIdUiState.Error(e.message.toString())
 
             } catch (e: ExceptionInInitializerError) {
-                Log.d("HippoLog, HomeViewModel", "getPostIdPost: ${e.stackTrace}, ${e.message}")
+                Log.d("HippoLog, CardViewModel", "getPostIdPost: ${e.stackTrace}, ${e.message}")
                 PostIdUiState.Error(e.message.toString())
 
             } catch (e: HttpException) {
-                Log.d("HippoLog, HomeViewModel", "getPostIdPost: ${e.stackTrace}, ${e.code()}, $e")
+                Log.d("HippoLog, CardViewModel", "getPostIdPost: ${e.stackTrace}, ${e.code()}, $e")
                 if (e.code() == 500) {
                     PostIdUiState.Error(e.code().toString())
                 } else {
                     PostIdUiState.Error(e.message.toString())
                 }
             }
-            Log.d("HippoLog, HomeViewModel", "getTwitIdPosts, $postIdUiState")
+            Log.d("HippoLog, CardViewModel", "getTwitIdPosts, $postIdUiState")
         }
     }
 
-    suspend fun postPostIdCount(postId: Int) {  // Detail을 불러올 때 Count가 정확하지 않은 문제를 해결하기 위해 동기작업으로 실행
+    fun getUserIdPosts(userId: Int) {    // PostDetail을 불러오는 함수
+        getUserIdPostsUiState = GetUserIdPostsUiState.Loading
+        viewModelScope.launch(Dispatchers.IO) {
+            Log.d("HippoLog, CardViewModel", "getUserIdPost, $getUserIdPostsUiState")
+            getUserIdPostsUiState = try {
+                GetUserIdPostsUiState.Success(ribbitRepository.getUserIdPosts(userId))
+            } catch (e: IOException) {
+                Log.d("HippoLog, CardViewModel", "getUserIdPost: ${e.stackTrace}, ${e.message}")
+                GetUserIdPostsUiState.Error(e.message.toString())
+
+            } catch (e: ExceptionInInitializerError) {
+                Log.d("HippoLog, CardViewModel", "getUserIdPost: ${e.stackTrace}, ${e.message}")
+                GetUserIdPostsUiState.Error(e.message.toString())
+
+            } catch (e: HttpException) {
+                Log.d("HippoLog, CardViewModel", "getUserIdPost: ${e.stackTrace}, ${e.code()}, $e")
+                if (e.code() == 500) {
+                    GetUserIdPostsUiState.Error(e.code().toString())
+                } else {
+                    GetUserIdPostsUiState.Error(e.message.toString())
+                }
+            }
+            Log.d("HippoLog, CardViewModel", "getUserIdPosts, $getUserIdPostsUiState")
+        }
+    }
+
+    fun getUserIdReplies(userId: Int) {    // PostDetail을 불러오는 함수
+        viewModelScope.launch(Dispatchers.IO) {
+            getUserIdRepliesUiState = GetUserIdRepliesUiState.Loading
+            Log.d("HippoLog, CardViewModel", "getUserIdReplies, $getUserIdRepliesUiState")
+            getUserIdRepliesUiState = try {
+                GetUserIdRepliesUiState.Success(ribbitRepository.getUserIdReplies(userId))
+            } catch (e: IOException) {
+                Log.d("HippoLog, CardViewModel", "getUserIdReplies: ${e.stackTrace}, ${e.message}")
+                GetUserIdRepliesUiState.Error(e.message.toString())
+
+            } catch (e: ExceptionInInitializerError) {
+                Log.d("HippoLog, CardViewModel", "getUserIdReplies: ${e.stackTrace}, ${e.message}")
+                GetUserIdRepliesUiState.Error(e.message.toString())
+
+            } catch (e: HttpException) {
+                Log.d("HippoLog, CardViewModel", "getUserIdReplies: ${e.stackTrace}, ${e.code()}, $e")
+                if (e.code() == 500) {
+                    GetUserIdRepliesUiState.Error(e.code().toString())
+                } else {
+                    GetUserIdRepliesUiState.Error(e.message.toString())
+                }
+            }
+            Log.d("HippoLog, CardViewModel", "getUserIdReplies, $getUserIdRepliesUiState")
+        }
+    }
+
+    fun getUserIdLikes(userId: Int) {    // PostDetail을 불러오는 함수
+        viewModelScope.launch(Dispatchers.IO) {
+            getUserIdLikesUiState = GetUserIdLikesUiState.Loading
+            Log.d("HippoLog, CardViewModel", "getUserIdLikes, $getUserIdLikesUiState")
+            getUserIdLikesUiState = try {
+                GetUserIdLikesUiState.Success(ribbitRepository.getUserIdLikes(userId))
+            } catch (e: IOException) {
+                Log.d("HippoLog, CardViewModel", "getUserIdLikes: ${e.stackTrace}, ${e.message}")
+                GetUserIdLikesUiState.Error(e.message.toString())
+
+            } catch (e: ExceptionInInitializerError) {
+                Log.d("HippoLog, CardViewModel", "getUserIdLikes: ${e.stackTrace}, ${e.message}")
+                GetUserIdLikesUiState.Error(e.message.toString())
+
+            } catch (e: HttpException) {
+                Log.d("HippoLog, CardViewModel", "getUserIdLikes: ${e.stackTrace}, ${e.code()}, $e")
+                if (e.code() == 500) {
+                    GetUserIdLikesUiState.Error(e.code().toString())
+                } else {
+                    GetUserIdLikesUiState.Error(e.message.toString())
+                }
+            }
+            Log.d("HippoLog, CardViewModel", "getUserIdLikes, $getUserIdLikesUiState")
+        }
+    }
+
+    suspend fun postPostIdCount(postId: Int) {  // Detail을 불러올 때 ViewCount가 정확하지 않은 문제를 해결하기 위해 동기작업으로 실행
         try {
             ribbitRepository.postPostIdCount(postId)
         } catch (e: IOException) {
-            Log.d("HippoLog, HomeViewModel", "postPostIdCount: ${e.stackTrace}, ${e.message}")
+            Log.d("HippoLog, CardViewModel", "postPostIdCount: ${e.stackTrace}, ${e.message}")
 
         } catch (e: ExceptionInInitializerError) {
-            Log.d("HippoLog, HomeViewModel", "postPostIdCount: ${e.stackTrace}, ${e.message}")
+            Log.d("HippoLog, CardViewModel", "postPostIdCount: ${e.stackTrace}, ${e.message}")
 
         } catch (e: HttpException) {
-            Log.d("HippoLog, HomeViewModel", "postPostIdCount: ${e.stackTrace}, ${e.code()}, $e")
+            Log.d("HippoLog, CardViewModel", "postPostIdCount: ${e.stackTrace}, ${e.code()}, $e")
             if (e.code() == 500) {
             } else {
             }
