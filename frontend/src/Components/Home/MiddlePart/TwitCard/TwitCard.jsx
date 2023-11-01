@@ -102,6 +102,7 @@ const TwitCard = ({ twit }) => {
     dispatch(likeTweet(twit.id));
     setIsLiked(!isLiked);
     setLikes(likes + num);
+    window.location.reload();
   };
   const handleCreateRetweet = () => {
     dispatch(createRetweet(twit.id));
@@ -123,7 +124,7 @@ const TwitCard = ({ twit }) => {
     if (!isEditing) {
       navigate(`/twit/${twit.id}`);
       dispatch(viewPlus(twit.id));
-      //window.location.reload();
+      window.location.reload();
     }
   };
 

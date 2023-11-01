@@ -21,6 +21,7 @@ const TwitDetail = () => {
         dispatch(findTwitsById(param.id))
     },[param.id])
 
+    console.log("twitdetail twit check", twit);
   return (
     <div>
         <section

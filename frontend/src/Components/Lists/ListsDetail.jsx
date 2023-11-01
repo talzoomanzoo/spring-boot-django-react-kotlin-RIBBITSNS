@@ -9,10 +9,9 @@ import { Divider } from "@mui/material";
 const ListsDetail = () => {
     const param = useParams();
     const dispatch = useDispatch();
-    const { twit, theme } = useSelector(store => store);
+    const { list, twit, theme } = useSelector(store => store);
     // useSelector로 twit과 theme이라는 모듈의 상태값을 가져오도록 한 후, twit과 theme의 상태를 변경해서 궁극적으로 스토어의 상태를 변경
     // twit: twitReducer, theme: themeReducer
-    console.log("detail", twit);
     // console.log("reply detail", twit.twit?.replyTwits.slice().reverse());
     const navigate = useNavigate();
 
@@ -22,13 +21,12 @@ const ListsDetail = () => {
         dispatch(findTwitsByListId(param.id))
     }, [param.id])
 
+    console.log("findTwitsByListId", twit);
+
     return (
         <div>
             <section
-                className={`z-50 flex items-center sticky top-0 
-        ${theme.currentTheme === "light" ? "bg-white" : "bg-[#0D0D0D]"
-                    // theme, 즉 themeReducer의 initialState 속성의 currentTheme 변경
-                    // 속성이 light이면,전자 아니면 후자
+                className={`z-50 flex items-center sticky top-0 ${theme.currentTheme === "light" ? "light" : "dark"
                     } bg-opacity-95`}
             >
                 <KeyboardBackspaceIcon
@@ -36,16 +34,27 @@ const ListsDetail = () => {
                     onClick={handleBack}
                 />
                 <h1 className="py-5 text-xl font-bold opacity-90 ml-5 ${}">
-                    {"의 리빗"}
+                    {"~~~~~~ 리스트의 리빗"}
                 </h1>
             </section>
-            {twit?.twit && <TwitCard twit={twit?.twit} />}
-            {/* twit.twit가 참이라면 TwitCard 렌더링 됨 */}
-            <Divider sx={{ margin: "2rem 0rem" }} />
-
-            <div>
-                {/* {twit?.twit?.replyTwits?.slice().reverse().map((item) => <TwitCard twit={item} />)} */}
-                {/* twit.twit notnull 일때 replyTwits 역순 배열 */}
+            <section>
+                <img
+                    className="w-[100%] h-[15rem] object-cover"
+                    src={
+                        list.findUser?.backgroundImage ||
+                        "https://png.pngtree.com/thumb_back/fw800/background/20230304/pngtree-green-base-vector-smooth-background-image_1770922.jpg"
+                    }
+                    alt=""
+                />
+            </section>
+            <div style={{ marginTop: 20 }}>
+                {twit.twits && twit.twits.length > 0 ?
+                    (
+                        twit.twits.map((item) => <TwitCard twit={item} key={item.id} />)
+                    ) :
+                    (
+                        <div>게시된 리빗이 없습니다.</div>
+                    )}
             </div>
         </div>
     )

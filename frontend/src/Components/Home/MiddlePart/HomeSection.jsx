@@ -67,6 +67,8 @@ const HomeSection = () => {
     dispatch(getAllTweets());
   }, [refreshTwits]);
 
+  console.log("tweetData: ", twit);
+
   const HomeCreateTweet = (tweetData) => {
     return async (dispatch) => {
       setLoading(true);
@@ -76,11 +78,8 @@ const HomeSection = () => {
           "http://localhost:8080/api/twits/create",
           tweetData
         );
-        console.log("tweetData: ", tweetData);
-        console.log("created twit ", data);
+        
         dispatch(createTweetSuccess(data));
-        console.log("data.id: ", data.id);
-        console.log("data.id: ", data.content);
 
         const response = await ethicreveal(data.id, data.content);
       } catch (error) {

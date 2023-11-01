@@ -45,6 +45,12 @@ import {
   GET_USERS_REPLIES_REQUEST,
   GET_USERS_REPLIES_SUCCESS,
   GET_USERS_REPLIES_FAILURE,
+  FIND_BY_TOP_LIKES_REQUEST,
+  FIND_BY_TOP_LIKES_SUCCESS,
+  FIND_BY_TOP_LIKES_FAILURE,
+  FIND_BY_TOP_VIEWS_REQUEST,
+  FIND_BY_TOP_VIEWS_SUCCESS,
+  FIND_BY_TOP_VIEWS_FAILURE,
 } from "./ActionType";
 
 export const createTweetRequest = () => ({
@@ -91,6 +97,34 @@ export const getAllTweetsFailure = (error) => ({
   payload: error,
 });
 
+export const findTopLikesRequest = () => ({
+  type: FIND_BY_TOP_LIKES_REQUEST,
+});
+
+export const findTopLikesSuccess = (tweets) => ({
+  type: FIND_BY_TOP_LIKES_SUCCESS,
+  payload: tweets,
+});
+
+export const findTopLikesFailure = (error) => ({
+  type: FIND_BY_TOP_LIKES_FAILURE,
+  payload: error,
+});
+
+export const findTopViewsRequest = () => ({
+  type: FIND_BY_TOP_VIEWS_REQUEST,
+});
+
+export const findTopViewsSuccess = (tweets) => ({
+  type: FIND_BY_TOP_VIEWS_SUCCESS,
+  payload: tweets,
+});
+
+export const findTopViewsFailure = (error) => ({
+  type: FIND_BY_TOP_VIEWS_FAILURE,
+  payload: error,
+});
+
 export const getAllTweets = () => {
 
   return async (dispatch) => {
@@ -103,6 +137,30 @@ export const getAllTweets = () => {
       dispatch(getAllTweetsSuccess(response.data));
     } catch (error) {
       dispatch(getAllTweetsFailure(error.message));
+    }
+  };
+};
+
+export const findByTopLikes = () => {
+  return async (dispatch) => {
+    dispatch({type:FIND_BY_TOP_LIKES_REQUEST});
+    try{
+      const response = await api.get("/api/twits/toplikes");
+      dispatch({type:FIND_BY_TOP_LIKES_SUCCESS,payload:response.data});
+    } catch (error) {
+      dispatch({type:FIND_BY_TOP_LIKES_SUCCESS,payload:error.message});
+    }
+  }
+}
+
+export const findByTopViews = () => {
+  return async (dispatch) => {
+    dispatch(findTopViewsRequest());
+    try{
+      const response = await api.get("/api/twits/topviews");
+      dispatch(findTopViewsSuccess(response.data));
+    } catch (error) {
+      dispatch(findTopViewsFailure(error.message));
     }
   };
 };
@@ -163,11 +221,10 @@ export const findTwitsByListId = (listId) => {
   return async (dispatch) => {
     dispatch({type: FIND_TWEET_BY_LIST_ID_REQUEST})
     try {
-      const response = await api.get(`/api/twits/${listId}`);
-      console.log("find tweets by listid", response.data);
-      dispatch({type: FIND_TWEET_BY_LIST_ID_SUCCESS, payload: response.data});
+      const response = await api.get(`/api/twits/${listId}/listTwit`);
+      dispatch({type:FIND_TWEET_BY_LIST_ID_SUCCESS,payload:response.data});
     } catch (error) {
-      dispatch({type: FIND_TWEET_BY_LIST_ID_FAILURE, payload: error.message});
+      dispatch({type:FIND_TWEET_BY_LIST_ID_FAILURE,payload:error.message});
     }
   }
 };
