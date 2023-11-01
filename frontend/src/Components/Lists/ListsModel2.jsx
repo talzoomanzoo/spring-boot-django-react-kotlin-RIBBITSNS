@@ -9,7 +9,6 @@ import {
   IconButton,
   Modal,
   TextField,
-  Switch,
 } from "@mui/material";
 import { useFormik } from "formik";
 import React, { memo, useEffect, useState } from "react";
@@ -19,12 +18,12 @@ import { useNavigate } from "react-router-dom";
 import { searchUser } from "../../Store/Auth/Action";
 import {
   addUserAction,
-  getUserAction,
   setPrivate,
   updateListModel,
 } from "../../Store/List/Action";
 import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
 import BackdropComponent from "../Backdrop/Backdrop";
+import { Switch } from 'react-native'; // 여기서만 import 할것, switch 건들 ㄴㄴ
 
 const style = {
   position: "absolute",
@@ -40,14 +39,13 @@ const style = {
   overflow: "scroll-y",
 };
 
-const ListsModel2 = memo(({ list, handleClose, open }) => {
+const ListsModel2 = ({ list, handleClose, open }) => {
   const [uploading, setUploading] = useState(false);
   const [search, setSearch] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { theme, auth } = useSelector((store) => store);
   const [followingsClicked, setFollowingsClicked] = useState(false);
-  const showDeleteButton = list.user.id === auth.user.id;
 
   const handleSubmit = (values) => {
     dispatch(updateListModel(values));
@@ -66,8 +64,12 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
   });
 
   const itemsCheck = (item) => {
-    return list.followings.some((following) => following.id === item.id);
-  };
+    for (let i = 0; i < list.followings.length; i++) {
+      if (list.followings[i].id === item.id) {
+        return true;
+      }
+    }
+  }
 
   useEffect(() => {
     formik.setValues({
@@ -84,7 +86,10 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
     } else {
       console.log("not exists");
     }
-  }, [list.followings, list.hasFollowedLists]);
+//list.followings, list.hasFollowedLists
+  }, []);
+
+  console.log("들어오는 리스트", list);
 
   const handleImageChange = async (event) => {
     setUploading(true);
@@ -106,17 +111,8 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
   };
 
   const handleAddUser = (listId, userId) => {
+
     dispatch(addUserAction(listId, userId));
-    dispatch(getUserAction(listId));
-
-    if (document.getElementById("element") !== null) {
-      const domNode = document.getElementById("element");
-      const element1 = createRoot(domNode);
-      element1.render(<Element listVal={list} />);
-    } else {
-      console.log("not exists");
-    }
-
     setSearch("");
   };
 
@@ -127,7 +123,7 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
   const [isEnabled, setIsEnabled] = useState(list.privateMode);
 
   const toggleSwitch = () => {
-    setIsEnabled((previousState) => !previousState);
+    setIsEnabled(previousState => !previousState);
     dispatch(setPrivate(list.id));
   };
 
@@ -139,7 +135,7 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
             {listVal.followings?.map((item) => (
               <div className="flex justify-between items-center" key={item.id}>
                 <div
-                  style={{ paddingRight: 300, marginTop: 10,}}
+                  style={{ paddingRight: 300, marginTop: 10, }}
                   onClick={() => {
                     if (Array.isArray(item)) {
                       item.forEach((i) => navigateToProfile(i));
@@ -150,7 +146,7 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
                   }}
                   className="flex items-center absolute left-2 justify-between hover:bg-green-700 relative right-5 cursor-pointer"
                 >
-                  <Avatar alt={item.fullName} src={item.image} />
+                  <Avatar alt={item.fullName} src={item.image} loading="lazy" />
                   <div className="ml-2">
                     <p>{item.fullName}</p>
                     <p className="text-sm text-gray-400">
@@ -200,7 +196,8 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
                 <p>리스트 수정</p>
               </div>
               <div>
-                {showDeleteButton && <Button type="submit">저장</Button>}
+                {/* {showDeleteButton && <Button type="submit">저장</Button>} */}
+                <Button type="submit">저장</Button>
               </div>
             </div>
 
@@ -210,11 +207,12 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
                   <div className="relative">
                     <img
                       src={
-                        formik.values.backgroundImage ||
-                        "https://i.stack.imgur.com/H0xdb.png"
+                        formik.values?.backgroundImage ||
+                        "https://png.pngtree.com/thumb_back/fw800/background/20230304/pngtree-green-base-vector-smooth-background-image_1770922.jpg"
                       }
                       alt="Img"
                       className="w-full h-[12rem] object-cover object-center"
+                      loading="lazy"
                     />
                     <input
                       type="file"
@@ -266,18 +264,16 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
                   onChange={handleSearchUser}
                   type="text"
                   placeholder="사용자를 검색하여 추가하거나 삭제할 수 있습니다."
-                  className={`py-3 rounded-full onutline-none text-gray-500 w-full pl-12 ${
-                    theme.currentTheme === "light" ? "bg-stone-300" : "bg-[#151515]"
-                  }`}
+                  className={`py-3 rounded-full onutline-none text-gray-500 w-full pl-12 ${theme.currentTheme === "light" ? "bg-stone-300" : "bg-[#151515]"
+                    }`}
                 />
                 <span className="absolute top-0 left-0 pl-3 pt-3">
                   <SearchIcon className="text-gray-500" />
                 </span>
                 {search && (
                   <div
-                    className={`overflow-y-scroll hideScrollbar absolute z-50 top-14  border-gray-700 h-[40vh] w-full rounded-md ${
-                      theme.currentTheme === "light" ? "bg-white" : "bg-[#151515] border"
-                    }`}
+                    className={`overflow-y-scroll hideScrollbar absolute z-50 top-14  border-gray-700 h-[40vh] w-full rounded-md ${theme.currentTheme === "light" ? "bg-white" : "bg-[#151515] border"
+                      }`}
                   >
                     {auth.userSearchResult &&
                       auth.userSearchResult.map((item) => (
@@ -306,7 +302,7 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
                             className={`flex items-center left-3 justify-content hover:bg-green-700 relative right-5 cursor-pointer`}
                             key={item.id}
                           >
-                            <Avatar alt={item.fullName} src={item.image} />
+                            <Avatar alt={item.fullName} src={item.image} loading="lazy" />
                             <div className="ml-2">
                               <p>{item.fullName}</p>
                               <p className="text-sm">
@@ -336,12 +332,17 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
                   </div>
                 )}
               </div>
+
               <div id="element">
                 <div>
                   <Element listVal={list} />
                 </div>
               </div>
-              <div className="space-y-3" style={{ marginTop: 10 }}>
+
+              <div
+                className="space-y-3"
+                style={{ marginTop: 10 }}>
+
                 <hr
                   style={{
                     background: "grey",
@@ -350,10 +351,15 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
                     height: "1px",
                   }}
                 />
-                <div className="flex items-center justify-between font-xl">
 
-                  리스트 비공개 활성화
+                <div className="flex items-center justify-between font-xl">
+                  비공개 활성화
                   <Switch
+                    style={{
+                      marginTop: 10,
+                      marginRight: 20,
+                    }}
+
                     trackColor={{ false: "#767577", true: "#81b0ff" }}
                     thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
                     ios_backgroundColor="#3e3e3e"
@@ -361,6 +367,7 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
                     value={isEnabled}
                   />
                 </div>
+
                 <hr
                   style={{
                     marginTop: 20,
@@ -370,7 +377,9 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
                     height: "1px",
                   }}
                 />
+
               </div>
+
             </div>
             <BackdropComponent open={uploading} />
           </form>
@@ -378,6 +387,6 @@ const ListsModel2 = memo(({ list, handleClose, open }) => {
       </Modal>
     </div>
   );
-});
+};
 
 export default ListsModel2;

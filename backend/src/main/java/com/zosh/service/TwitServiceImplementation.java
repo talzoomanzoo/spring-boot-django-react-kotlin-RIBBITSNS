@@ -220,4 +220,16 @@ public class TwitServiceImplementation implements TwitService {
 		System.out.println(user.getId());
 		return twitRepository.searchFollowedTwit(user.getId());
 	}
+
+	@Override
+	public List<Twit> findTwitsByTopLike() throws UserException, TwitException {
+		// TODO Auto-generated method stub
+		return twitRepository.findTwitsByTopLike();
+	}
+
+	@Override
+	public List<Twit> findTwitsByTopView() throws UserException, TwitException {
+		// TODO Auto-generated method stub
+		return twitRepository.findTwitsByTopView();
+	}
 }

@@ -43,4 +43,9 @@ public interface TwitService {
 	public Twit updateView(Twit twit) throws TwitException;
 	
 	public List<Twit> searchTwit(String query);
+
+		
+	public List<Twit> findTwitsByTopLike() throws UserException, TwitException;
+
+	public List<Twit> findTwitsByTopView() throws UserException, TwitException;
 }

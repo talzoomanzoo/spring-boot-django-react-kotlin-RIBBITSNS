@@ -109,18 +109,18 @@ export const addUserAction = (listId, userId) => async (dispatch) => {
   }
 };
 
-export const getUserAction = (listId) => async (dispatch) => {
-  dispatch({ type: GET_USER_REQUEST });
-  try {
-    console.log("listId get", listId);
-    const response = await api.get(`/api/lists/${listId}/get`);
-    const list = response.data;
-    console.log("getUserAction list data", list);
-    dispatch({ type: GET_USER_SUCCESS, payload: list });
-  } catch (error) {
-    dispatch({ type: GET_USER_FAILURE, payload: error.message });
-  }
-};
+// export const getUserAction = (listId) => async (dispatch) => {
+//   dispatch({ type: GET_USER_REQUEST });
+//   try {
+//     console.log("listId get", listId);
+//     const response = await api.get(`/api/lists/${listId}/get`);
+//     const list = response.data;
+//     console.log("getUserAction list data", list);
+//     dispatch({ type: GET_USER_SUCCESS, payload: list });
+//   } catch (error) {
+//     dispatch({ type: GET_USER_FAILURE, payload: error.message });
+//   }
+// };
 
 export const setPrivate= (listId) => async(dispatch) => {
     dispatch({type: SET_PRIVATE_REQUEST})
@@ -131,7 +131,7 @@ export const setPrivate= (listId) => async(dispatch) => {
     } catch (error) {
         dispatch({type: SET_PRIVATE_FAILURE, payload: error.message});
     }
-}
+};
 
 export const getAllLists = () => {
   return async (dispatch) => {

@@ -75,11 +75,9 @@ const Lists = () => {
                                 <ListCard
                                     style={{ marginTop: 10 }}
                                     list={item} />
-
                             ) : null
                         ))}
                     </section>
-
                 </div>
 
                 {/* ListBottom */}

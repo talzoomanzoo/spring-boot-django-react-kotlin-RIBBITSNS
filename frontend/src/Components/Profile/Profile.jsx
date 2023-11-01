@@ -192,6 +192,7 @@ const Profile = () => {
             "https://png.pngtree.com/thumb_back/fw800/background/20230304/pngtree-green-base-vector-smooth-background-image_1770922.jpg"
           }
           alt=""
+          loading="lazy"
         />
       </section>
       <section className="pl-6">
@@ -201,6 +202,7 @@ const Profile = () => {
             src={auth.findUser?.image ? auth.findUser.image : "https://cdn.pixabay.com/photo/2023/10/24/01/42/01-42-37-630_1280.png"}
             className="transform -translate-y-24"
             sx={{ width: "10rem", height: "10rem", border: "4px solid white" }}
+            loading="lazy"
           />
           {auth.findUser?.req_user ? (
             <Button
@@ -231,6 +233,7 @@ const Profile = () => {
                   className="ml-2 w-5 h-5"
                   src="https://abs.twimg.com/responsive-web/client-web/verification-card-v2@3x.8ebee01a.png"
                   alt=""
+                  loading="lazy"
                 />
               )}
             </div>
@@ -308,7 +311,7 @@ const Profile = () => {
                           className="flex items-center hover:bg-green-700 p-3 cursor-pointer"
                           key={item.id}
                         >
-                          <Avatar alt={item.fullName} src={item.image} />
+                          <Avatar alt={item.fullName} src={item.image} loading="lazy" />
                           <div className="ml-2">
                             <p>{item.fullName}</p>
                             <p className="text-sm text-gray-400">
@@ -350,7 +353,7 @@ const Profile = () => {
                           className="flex items-center hover:bg-green-700 p-3 cursor-pointer"
                           key={item.id}
                         >
-                          <Avatar alt={item.fullName} src={item.image} />
+                          <Avatar alt={item.fullName} src={item.image} loading="lazy" />
                           <div className="ml-2">
                             <p>{item.fullName}</p>
                             <p className="text-sm text-gray-400">

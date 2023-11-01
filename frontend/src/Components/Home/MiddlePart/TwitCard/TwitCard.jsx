@@ -102,6 +102,7 @@ const TwitCard = ({ twit }) => {
     dispatch(likeTweet(twit.id));
     setIsLiked(!isLiked);
     setLikes(likes + num);
+    window.location.reload();
   };
   const handleCreateRetweet = () => {
     dispatch(createRetweet(twit.id));
@@ -123,7 +124,7 @@ const TwitCard = ({ twit }) => {
     if (!isEditing) {
       navigate(`/twit/${twit.id}`);
       dispatch(viewPlus(twit.id));
-      //window.location.reload();
+      window.location.reload();
     }
   };
 
@@ -324,6 +325,7 @@ const TwitCard = ({ twit }) => {
           alt="Avatar"
           src={twit.user.image ? twit.user.image : "https://cdn.pixabay.com/photo/2023/10/24/01/42/01-42-37-630_1280.png"}
           className="cursor-pointer"
+          loading="lazy"
         />
         <div className="w-full">
           <div className="flex justify-between items-center ">
@@ -356,6 +358,7 @@ const TwitCard = ({ twit }) => {
                   className="ml-2 w-5 h-5"
                   src="https://cdn.pixabay.com/photo/2023/10/25/08/19/08-19-05-334_1280.png"
                   alt=""
+                  loading="lazy"
                 />
               )}
             </div>
@@ -432,6 +435,7 @@ const TwitCard = ({ twit }) => {
                           className="w-[28rem] border border-gray-400 p-5 rounded-md"
                           src={selectedImage}
                           alt=""
+                          loading="lazy"
                         />
                       )}
                       {selectedVideo && (
@@ -442,6 +446,7 @@ const TwitCard = ({ twit }) => {
                             // autoPlay
                             // muted
                             src={selectedVideo}
+                            loading="lazy"
                           />
                         </div>
                       )}
@@ -461,6 +466,7 @@ const TwitCard = ({ twit }) => {
                       className="w-[28rem] border border-gray-400 p-5 rounded-md"
                       src={twit.image}
                       alt=""
+                      loading="lazy"
                     />
                   )}
                   {twit.video && (
@@ -471,6 +477,7 @@ const TwitCard = ({ twit }) => {
                         // autoPlay
                         // muted
                         src={twit.video}
+                        loading="lazy"
                       />
                     </div>
                   )}

@@ -44,6 +44,7 @@ const Authentication = () => {
             className="w-full h-screen"
             src="https://cdn.pixabay.com/photo/2018/04/14/05/26/green-3318343_1280.jpg"
             alt=""
+            loading="lazy"
           />
 
           <div className="absolute top-[26%] left-[19%]">
@@ -66,7 +67,7 @@ const Authentication = () => {
           marginTop: "300px",
           marginLeft: "20%",
         }}
-        src="https://cdn.pixabay.com/photo/2023/10/26/06/44/06-44-04-156_1280.png" alt="" />
+        src="https://cdn.pixabay.com/photo/2023/10/26/06/44/06-44-04-156_1280.png" alt="" loading="lazy"/>
         </Grid>
         <Grid className="px-10" item lg={5} xs={12}>
           <div className="py-10">
@@ -74,10 +75,11 @@ const Authentication = () => {
               className="w-16"
               src="https://pbs.twimg.com/media/F1iAD_iaYAAu7I3?format=jpg&name=small"
               alt=""
+              loading="lazy"
             />
           </div>
 
-          <h1 className="font-bold text-7xl">RIBBIT<img src="https://cdn.pixabay.com/photo/2023/10/24/01/42/01-42-37-630_1280.png"
+          <h1 className="font-bold text-7xl">RIBBIT<img src="https://cdn.pixabay.com/photo/2023/10/24/01/42/01-42-37-630_1280.png" loading="lazy"
           style={{
             height: "80px",
             width: "80px",
