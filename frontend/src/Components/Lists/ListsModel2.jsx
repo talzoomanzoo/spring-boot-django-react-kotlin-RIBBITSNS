@@ -18,7 +18,6 @@ import { useNavigate } from "react-router-dom";
 import { searchUser } from "../../Store/Auth/Action";
 import {
   addUserAction,
-  getUserAction,
   setPrivate,
   updateListModel,
 } from "../../Store/List/Action";
@@ -87,8 +86,8 @@ const ListsModel2 = ({ list, handleClose, open }) => {
     } else {
       console.log("not exists");
     }
-
-  }, [list.followings, list.hasFollowedLists]);
+//list.followings, list.hasFollowedLists
+  }, []);
 
   console.log("들어오는 리스트", list);
 
@@ -114,17 +113,6 @@ const ListsModel2 = ({ list, handleClose, open }) => {
   const handleAddUser = (listId, userId) => {
 
     dispatch(addUserAction(listId, userId));
-
-    dispatch(getUserAction(listId));
-
-    if (document.getElementById("element") !== null) {
-      const domNode = document.getElementById("element");
-      const element1 = createRoot(domNode);
-      element1.render(<Element listVal={list} />);
-    } else {
-      console.log("not exists");
-    }
-
     setSearch("");
   };
 
@@ -364,7 +352,7 @@ const ListsModel2 = ({ list, handleClose, open }) => {
                 />
 
                 <div className="flex items-center justify-between font-xl">
-                  리스트 비공개 활성화
+                  비공개 활성화
                   <Switch
                     style={{
                       marginTop: 10,
