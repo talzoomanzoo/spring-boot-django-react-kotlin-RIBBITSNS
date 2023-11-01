@@ -6,7 +6,6 @@ import { Switch } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
-  addUserAction,
   createListModel,
 } from "../../Store/List/Action";
 import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
@@ -126,7 +125,7 @@ const ListsModel = ({ handleClose, open }) => {
                 <TextField
                   fullWidth
                   id="listName"
-                  label="List Name"
+                  label="리스트 이름"
                   value={formik.values.listName}
                   onChange={formik.handleChange}
                   error={
@@ -140,7 +139,7 @@ const ListsModel = ({ handleClose, open }) => {
                   rows={4}
                   id="description"
                   name="description"
-                  label="Description"
+                  label="리스트 정보"
                   value={formik.values.description}
                   onChange={formik.handleChange}
                   error={
@@ -165,7 +164,7 @@ const ListsModel = ({ handleClose, open }) => {
 
                 <div className="flex items-center justify-between font-xl">
                   {" "}
-                  비공개 리스트 활성화
+                  비공개 활성화
                   <Switch
                     name="privateMode"
                     style={{
