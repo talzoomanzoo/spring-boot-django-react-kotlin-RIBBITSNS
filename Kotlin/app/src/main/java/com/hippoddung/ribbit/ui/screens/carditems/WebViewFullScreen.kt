@@ -14,8 +14,10 @@ import android.widget.FrameLayout
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,16 +29,20 @@ import androidx.compose.ui.viewinterop.AndroidView
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
-fun WebViewFullScreen(videoUrl: String) {
+fun WebViewFullScreen(
+    videoUrl: String,
+    modifier: Modifier
+) {
     val activity = LocalView.current.context as Activity
     val isFullScreen = remember { mutableStateOf(false) }
 
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         AndroidView(
-            modifier = Modifier.size(300.dp)
+            modifier = modifier.width(400.dp)
+                .height(250.dp)
                 .padding(8.dp),
             factory = {
                 WebView(it).apply {

@@ -57,34 +57,38 @@ fun LoginScreen(
     ) {
         Text(
             text = stringResource(R.string.login),
-            style = MaterialTheme.typography.displaySmall
+            style = MaterialTheme.typography.displaySmall,
+            modifier = modifier
         )
         Text(
             text = stringResource(R.string.login),
-            modifier = Modifier
+            modifier = modifier
                 .padding(bottom = 16.dp)
                 .align(alignment = Alignment.Start)
         )
         InputEmailField(
             value = email,
             onValueChange = { email = it },
-            modifier = Modifier
+            modifier = modifier
                 .padding(bottom = 32.dp)
                 .fillMaxWidth()
         )
         InputPWField(
             value = pW,
             onValueChange = { pW = it },
-            modifier = Modifier
+            modifier = modifier
                 .padding(bottom = 32.dp)
                 .fillMaxWidth()
         )
-        Row(modifier) {
+        Row(modifier = modifier) {
             Button(
                 onClick = { /*TODO*/ },
                 modifier.padding(14.dp)
             ) {
-                Text(text = stringResource(R.string.Cancel))
+                Text(
+                    text = stringResource(R.string.Cancel),
+                    modifier = modifier
+                    )
             }
             Button(
                 onClick = {
@@ -93,20 +97,25 @@ fun LoginScreen(
                 },
                 modifier.padding(14.dp)
             ) {
-                Text(text = stringResource(R.string.login))
+                Text(
+                    text = stringResource(R.string.login),
+                    modifier = modifier
+                )
             }
         }
-        Row(modifier) {
+        Row(modifier = modifier) {
             Button(
                 onClick = {
                     navController.navigate(RibbitScreen.SignUpScreen.name)
                 },
                 modifier.padding(14.dp)
             ) {
-                Text(text = stringResource(R.string.sign_up))
+                Text(
+                    text = stringResource(R.string.sign_up),
+                    modifier = modifier)
             }
         }
-        Spacer(modifier = Modifier.height(150.dp))
+        Spacer(modifier = modifier.height(150.dp))
     }
 }
 

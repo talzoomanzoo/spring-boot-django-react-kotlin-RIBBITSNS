@@ -6,9 +6,11 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -16,12 +18,9 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.network.bodys.RibbitPost
@@ -33,17 +32,15 @@ import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
 import com.hippoddung.ribbit.ui.viewmodel.CardViewModel
-import com.hippoddung.ribbit.ui.viewmodel.CreatingPostUiState
 import com.hippoddung.ribbit.ui.viewmodel.CreatingPostViewModel
-import com.hippoddung.ribbit.ui.viewmodel.HomeUiState
+import com.hippoddung.ribbit.ui.viewmodel.PostIdUiState
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
-
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(
+fun PostIdScreen(
 //    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
     cardViewModel: CardViewModel,
@@ -54,42 +51,42 @@ fun HomeScreen(
     userId: Int,
     modifier: Modifier = Modifier
 ) {
-    when (cardViewModel.homeUiState) {
+    when (cardViewModel.postIdUiState) {
 
-        is HomeUiState.Loading -> {
-            Log.d("HippoLog, HomeScreen", "Loading")
+        is PostIdUiState.Loading -> {
+            Log.d("HippoLog, TwitIdScreen", "Loading")
             LoadingScreen(modifier = modifier)
         }
 
-        is HomeUiState.Success -> {
-            Log.d("HippoLog, HomeScreen", "Success")
-            val ribbitPosts = (cardViewModel.homeUiState as HomeUiState.Success).posts
-            HomeSuccessScreen(
+        is PostIdUiState.Success -> {
+            Log.d("HippoLog, TwitIdScreen", "Success")
+            val post = (cardViewModel.postIdUiState as PostIdUiState.Success).post
+            PostIdSuccessScreen(
                 cardViewModel = cardViewModel,
-                authViewModel = authViewModel,
                 tokenViewModel = tokenViewModel,
+                authViewModel = authViewModel,
                 userViewModel = userViewModel,
                 creatingPostViewModel = creatingPostViewModel,
 //                scrollBehavior = scrollBehavior,
                 navController = navController,
-                ribbitPosts = ribbitPosts,
+                post = post,
                 userId = userId,
                 modifier = modifier
             )
         }
 
-        is HomeUiState.Error -> {
-            Log.d("HippoLog, HomeScreen", "Error")
+        is PostIdUiState.Error -> {
+            Log.d("HippoLog, TwitIdScreen", "Error")
             ErrorScreen(modifier = modifier)
         }
     }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "RememberReturnType")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeSuccessScreen(
+fun PostIdSuccessScreen(
     cardViewModel: CardViewModel,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
@@ -97,9 +94,9 @@ fun HomeSuccessScreen(
     creatingPostViewModel: CreatingPostViewModel,
 //    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
-    ribbitPosts: List<RibbitPost>,
+    post: RibbitPost,
     userId: Int,
-    modifier: Modifier
+    modifier: Modifier = Modifier
 ) {
     Scaffold(
         modifier = modifier,
@@ -110,8 +107,8 @@ fun HomeSuccessScreen(
             HomeTopAppBar(
                 cardViewModel = cardViewModel,
                 tokenViewModel = tokenViewModel,
-                authViewModel = authViewModel,
                 userViewModel = userViewModel,
+                authViewModel = authViewModel,
 //                scrollBehavior = scrollBehavior,
                 navController = navController,
                 modifier = modifier
@@ -123,18 +120,33 @@ fun HomeSuccessScreen(
                 .fillMaxSize()
                 .padding(it)
         ) {
-            Box(modifier = modifier) {
-                PostsGrid(
-                    posts = ribbitPosts,
+            Column(modifier = modifier) {
+                RibbitCard(
+                    post = post,
                     cardViewModel = cardViewModel,
                     userId = userId,
                     navController = navController,
                     modifier = modifier
                 )
+                if (post.replyTwits != null){
+                    if(post.replyTwits.isNotEmpty()) {
+                        Row(modifier = modifier) {
+                            Spacer(modifier = modifier.width(28.dp))
+                            PostsGrid(
+                                posts = post.replyTwits as List<RibbitPost>,    // null, Empty check를 하였음에도 컴파일오류가 계속되어 강제 캐스팅함.
+                                cardViewModel = cardViewModel,
+                                userId = userId,
+                                navController = navController,
+                                modifier = modifier
+                            )
+                        }
+                    }
+                }
+            }
+            Box(modifier = modifier) {
                 FloatingActionButton(
                     onClick = {
                         Log.d("HippoLog, HomeScreen", "onClick")
-                        creatingPostViewModel.creatingPostUiState = CreatingPostUiState.Ready
                         navController.navigate(RibbitScreen.CreatingPostScreen.name)
                     },
                     modifier = modifier
@@ -148,10 +160,6 @@ fun HomeSuccessScreen(
                     )
                 }
             }
-//            Box(modifier = modifier) {
-//
-//            }
         }
     }
 }
-

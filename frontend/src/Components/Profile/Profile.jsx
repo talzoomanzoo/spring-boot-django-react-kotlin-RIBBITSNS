@@ -12,6 +12,7 @@ import {
   Button,
   CircularProgress,
   Divider,
+  Modal,
 } from "@mui/material";
 import Tab from "@mui/material/Tab";
 import React, { useEffect, useRef, useState } from "react";
@@ -30,9 +31,25 @@ import Maplocation from "./Maplocation";
 import ProfileModel from "./ProfileModel";
 
 const Profile = () => {
+
+  const style = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 500,
+    maxHeight: 500,
+    bgcolor: "background.paper",
+    boxShadow: 24,
+    p: 2,
+    borderRadius: 3,
+    outline: "none",
+    overflow: "scroll-y",
+  }
+
   const [address, setAddress] = useState("");
   const [tabValue, setTabValue] = useState("1");
-  const [isLocationFormOpen, setLocationFormOpen] = useState(false); 
+  const [isLocationFormOpen, setLocationFormOpen] = useState(false);
   const { auth, twit, theme } = useSelector((store) => store);
   const [openProfileModel, setOpenProfileModel] = useState(false);
   const [openSnackBar, setOpenSnackBar] = useState(false);
@@ -44,7 +61,7 @@ const Profile = () => {
   const navigate = useNavigate();
 
   const handleToggleLocationForm = () => {
-    setLocationFormOpen((prev) => !prev); 
+    setLocationFormOpen((prev) => !prev);
   };
 
   const handleBack = () => {
@@ -124,13 +141,40 @@ const Profile = () => {
   const handleMapLocation = (newAddress) => {
     setAddress(newAddress);
   };
+  const [openFollowings, setOpenFollowings] = useState(false);
+  const [openFollowers, setOpenFollowers] = useState(false);
+
+  const openFollowingsModal = () => {
+    setOpenFollowings(true);
+  };
+
+  const closeFollowingsModal = () => {
+    setOpenFollowings(false);
+  };
+  
+  const openFollowersModal = () => {
+    setOpenFollowers(true);
+  };
+
+  const closeFollowersModal = () => {
+    setOpenFollowers(false);
+  }
+
+  const openFollowingsCloseFollowers = () => {
+    openFollowingsModal();
+    closeFollowersModal();
+  }
+
+  const openFollowersCloseFollowings = () => {
+    openFollowersModal();
+    closeFollowingsModal();
+  }
 
   return (
     <div>
       <section
-        className={`z-50 flex items-center sticky top-0 ${
-          theme.currentTheme === "light" ? "light" : "dark"
-        } bg-opacity-95`}
+        className={`z-50 flex items-center sticky top-0 ${theme.currentTheme === "light" ? "light" : "dark"
+          } bg-opacity-95`}
       >
         <KeyboardBackspaceIcon
           className="cursor-pointer"
@@ -154,7 +198,7 @@ const Profile = () => {
         <div className="flex justify-between items-start mt-5 h-[5rem]">
           <Avatar
             alt="Avatar"
-            src={auth.findUser?.image?  auth.findUser.image : "https://cdn.pixabay.com/photo/2023/10/24/01/42/01-42-37-630_1280.png"}
+            src={auth.findUser?.image ? auth.findUser.image : "https://cdn.pixabay.com/photo/2023/10/24/01/42/01-42-37-630_1280.png"}
             className="transform -translate-y-24"
             sx={{ width: "10rem", height: "10rem", border: "4px solid white" }}
           />
@@ -196,53 +240,60 @@ const Profile = () => {
           </div>
           <div className="mt-2 space-y-3">
             {auth.findUser?.bio && <p>{auth.findUser?.bio}</p>}
-            <div className="py-1 flex space-x-5">
+            <div style={{flexDirection: 'column'}}className="py-1 flex">
               {auth.findUser?.education ? (
-                <div className="flex items-center text-gray-500">
+                <div className="flex text-gray-500">
                   <>
-                    <BusinessCenterSharp />
+                    <BusinessCenterSharp  />
                     <p className="ml-2">{auth.findUser.education}</p>
+                  </>
+                </div>
+              ) : null}
+              {auth.findUser?.joinedAt ? (
+                <div className="flex text-gray-500">
+                  <>
+                    <CalendarMonthIcon />
+                    <p className="ml-2">
+                      {`${auth.findUser.joinedAt?.substr(0, 4) || ""}년 ${auth.findUser.joinedAt?.substring(5, 7) || ""
+                        }월 ${auth.findUser.joinedAt?.substring(8, 10) || ""
+                        }일에 가입함`}
+                    </p>
                   </>
                 </div>
               ) : null}
 
               <section>
-                <Button
-                  className="flex items-center text-gray-500"
+                <button
+                  style={{color: "#008000"}}
+                  className="flex text-gray-500"
                   onClick={handleToggleLocationForm}
                 >
                   <LocationOnIcon />
                   <p className="text-gray-500">
                     {auth.findUser?.location || address}
                   </p>
-                </Button>
+                </button>
               </section>
 
-              {auth.findUser?.joinedAt ? (
-                <div className="flex items-center text-gray-500">
-                  <>
-                    <CalendarMonthIcon />
-                    <p className="ml-2">
-                      {`${auth.findUser.joinedAt?.substr(0, 4) || ""}년 ${
-                        auth.findUser.joinedAt?.substring(5, 7) || ""
-                      }월 ${
-                        auth.findUser.joinedAt?.substring(8, 10) || ""
-                      }일에 가입함`}
-                    </p>
-                  </>
-                </div>
-              ) : null}
+
             </div>
             <div className="flex items-center space-x-5">
               <div className="flex items-center space-x-1 font-semibold">
-                <span onClick={handleFollowingsClick} className="text-gray-500">
+                <span onClick={openFollowingsModal} className="text-gray-500">
                   {auth.findUser?.followings?.length} followings
                 </span>
-                {followingsClicked && (
-                  <div
-                    ref={followersListRef}
-                    className={`overflow-y-scroll hideScrollbar absolute z-50 bg-white border rounded-md p-3 w-30`}
+                <Modal
+                  open={openFollowings}
+                  onClose={closeFollowingsModal}
+                >                
+                <Box
+                  sx={style}
                   >
+                    <Button sx={{ fontSize: "105%", marginRight: "16%", marginLeft: "16%", textDecoration: "underline" }}>followings</Button>
+                    <Button sx={{ fontSize: "75%", color: "darkgray"}}onClick={openFollowersCloseFollowings}>followers</Button>
+                  <div 
+                  ref={followersListRef}
+                  className={`overflow-y-scroll hideScrollbar h-[40vh]`}>
                     {auth.findUser?.followings &&
                       auth.findUser?.followings.map((item) => (
                         <div
@@ -252,9 +303,9 @@ const Profile = () => {
                             } else {
                               navigateToProfile(item.id);
                             }
-                            handleFollowingsClick();
+                            closeFollowingsModal();
                           }}
-                          className="flex items-center hover:bg-slate-800 p-3 cursor-pointer"
+                          className="flex items-center hover:bg-green-700 p-3 cursor-pointer"
                           key={item.id}
                         >
                           <Avatar alt={item.fullName} src={item.image} />
@@ -268,18 +319,24 @@ const Profile = () => {
                         </div>
                       ))}
                   </div>
-                )}
+                  </Box>
+                  </Modal>
               </div>
               <div className="flex items-center space-x-1 font-semibold">
-                <span onClick={handleFollowersClick} className="text-gray-500">
+                <span onClick={openFollowersModal} className="text-gray-500">
                   {auth.findUser?.followers?.length} followers
                 </span>
-                {followersClicked && (
+                <Modal
+                  open={openFollowers}
+                  onClose={closeFollowersModal}
+                >                
+                <Box sx={style}>
+                <Button sx={{ marginRight: "17%", marginLeft: "18%", fontSize: "75%", color: "darkgray" }} onClick={openFollowingsCloseFollowers}>followings</Button>
+                <Button sx={{ fontSize: "105%", textDecoration: "underline" }}>followers</Button>
                   <div
-                    ref={followersListRef}
-                    className={`overflow-y-scroll hideScrollbar absolute z-50 bg-white border rounded-md p-3 w-30`}
-                  >
-                    {auth.findUser?.followers &&
+                ref={followersListRef}
+                className={`overflow-y-scroll hideScrollbar h-[40vh] `}>
+                   {auth.findUser?.followers &&
                       auth.findUser?.followers.map((item) => (
                         <div
                           onClick={() => {
@@ -288,9 +345,9 @@ const Profile = () => {
                             } else {
                               navigateToProfile(item.id);
                             }
-                            handleFollowersClick();
+                            closeFollowersModal();
                           }}
-                          className="flex items-center hover-bg-slate-800 p-3 cursor-pointer"
+                          className="flex items-center hover:bg-green-700 p-3 cursor-pointer"
                           key={item.id}
                         >
                           <Avatar alt={item.fullName} src={item.image} />
@@ -304,7 +361,8 @@ const Profile = () => {
                         </div>
                       ))}
                   </div>
-                )}
+                  </Box>
+                  </Modal>
               </div>
             </div>
           </div>

@@ -28,7 +28,7 @@ fun ErrorScreen(modifier: Modifier = Modifier) {
         )
         Text(
             text = stringResource(id = R.string.loading_failed),
-            modifier = Modifier.padding(16.dp)
+            modifier = modifier.padding(16.dp)
         )
     }
 }

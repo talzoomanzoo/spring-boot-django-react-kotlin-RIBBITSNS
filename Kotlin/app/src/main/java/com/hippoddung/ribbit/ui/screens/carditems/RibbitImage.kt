@@ -17,10 +17,13 @@ import coil.request.ImageRequest
 import com.hippoddung.ribbit.R
 
 @Composable
-fun RibbitImage(image: String) {
+fun RibbitImage(
+    image: String,
+    modifier: Modifier
+) {
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize()
     ) {
         AsyncImage(
             model = ImageRequest.Builder(context = LocalContext.current).data(image)
@@ -29,7 +32,7 @@ fun RibbitImage(image: String) {
             placeholder = painterResource(R.drawable.loading_img),
             contentDescription = stringResource(R.string.user_image),
             contentScale = ContentScale.Inside,
-            modifier = Modifier
+            modifier = modifier
                 .size(300.dp)
                 .padding(8.dp)
         )
