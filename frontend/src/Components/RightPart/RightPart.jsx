@@ -110,7 +110,7 @@ const RightPart = () => {
                   ${theme.currentTheme === "light" ? "text-black hover:text-white" : "text-white  hover:text-black"} p-3 cursor-pointer`}
                   key={item.id} // 각 항목에 고유한 키를 제공합니다.
                 >
-                  <Avatar alt={item.fullName} src={item.image} />
+                  <Avatar alt={item.fullName} src={item.image} loading="lazy" />
                   <div className={`ml-2`}>
                     <p>{item.fullName}</p>
                     <p className={`text-sm`}>

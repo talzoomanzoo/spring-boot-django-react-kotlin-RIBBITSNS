@@ -40,6 +40,7 @@ dispatch(verifiedAccountAction(urlParams.get("razorpay_payment_link_id")))
                   className="w-16 h-16  "
                   src="https://cdn.pixabay.com/photo/2016/01/20/18/59/confirmation-1152155_1280.png"
                   alt=""
+                  loading="lazy"
                 />
                 <Alert  className='my-5 font-bold text-3xl' severity="success">축하드립니다 인증이 되었습니다!</Alert>
               </div>

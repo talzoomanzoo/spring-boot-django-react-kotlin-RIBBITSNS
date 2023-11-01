@@ -190,6 +190,7 @@ const ProfileModel = ({ handleClose, open }) => {
                           }
                           alt="Img"
                           className="w-full h-[12rem] object-cover object-center"
+                          loading="lazy"
                         />
                         {/* Hidden file input */}
                         <input
@@ -213,6 +214,7 @@ const ProfileModel = ({ handleClose, open }) => {
                             height: "10rem",
                             border: "4px solid white",
                           }}
+                          loading="lazy"
                         />
                         {/* Hidden file input */}
                         <input
@@ -366,6 +368,7 @@ const ProfileModel = ({ handleClose, open }) => {
                         display: 'block',
                         margin: '0 auto',
                       }}
+                      loading="lazy"
                     />
                     <Button
                       style={{
