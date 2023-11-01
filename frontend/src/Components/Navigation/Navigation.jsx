@@ -99,7 +99,7 @@ const Navigation = () => {
      <div className="flex items-center space-x-3">
         <Avatar
           alt="Remy Sharp"
-          data-src={auth.user?.image? auth.user.image : "https://cdn.pixabay.com/photo/2023/10/24/01/42/01-42-37-630_1280.png"}
+          src={auth.user?.image? auth.user.image : "https://cdn.pixabay.com/photo/2023/10/24/01/42/01-42-37-630_1280.png"}
           loading="lazy"
         />
 
