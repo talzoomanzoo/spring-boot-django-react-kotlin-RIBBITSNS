@@ -131,7 +131,7 @@ export const setPrivate= (listId) => async(dispatch) => {
     } catch (error) {
         dispatch({type: SET_PRIVATE_FAILURE, payload: error.message});
     }
-}
+};
 
 export const getAllLists = () => {
   return async (dispatch) => {

@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { deleteList } from "../../../Store/List/Action";
 import ListsModel2 from "../ListsModel2";
 
-const ListCard = memo(({ list }) => {
+const ListCard = ({ list }) => {
   const navigate = useNavigate();
   const [openListsModel, setOpenListsModel] = useState();
   const handleCloseListsModel = () => setOpenListsModel(false);
@@ -16,10 +16,11 @@ const ListCard = memo(({ list }) => {
 
   const handleNavigateToListsDetail = () => {
     navigate(`/lists/${list.id}`);
-    //window.location.reload();
   };
 
-  const { theme, auth } = useSelector((store) => store);
+  console.log("list log", list);
+
+  const { auth } = useSelector((store) => store);
   const showDeleteButton = list.user.id === auth.user.id;
 
   const handleDelete = async () => {
@@ -48,19 +49,11 @@ const ListCard = memo(({ list }) => {
           </div>
         </div>
       </div>
-      <section>
-        <ListsModel2
-          list={list}
-          open={openListsModel}
-          handleClose={handleCloseListsModel}
-        />
-      </section>
       {showDeleteButton && (
         <>
           <section>
             <Button
               onClick={handleDelete}
-              //   handleClose={handleCloseListsModel}
               sx={{ borderRadius: "20px" }}
               variant="outlined"
               className="rounded-full"
@@ -72,7 +65,7 @@ const ListCard = memo(({ list }) => {
           <section>
             <Button
               onClick={handleOpenListsModel}
-              handleClose={handleCloseListsModel}
+             //handleClose={handleCloseListsModel}
               sx={{ borderRadius: "20px" }}
               variant="outlined"
               className="rounded-full"
@@ -80,10 +73,18 @@ const ListCard = memo(({ list }) => {
               수정
             </Button>
           </section>
+
+          <section>
+            <ListsModel2
+              list={list}
+              open={openListsModel}
+              handleClose={handleCloseListsModel}
+            />
+          </section>
         </>
       )}
     </div>
   );
-});
+};
 
 export default ListCard;

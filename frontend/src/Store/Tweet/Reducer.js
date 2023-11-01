@@ -1,4 +1,3 @@
-// reducer.js
 import {
   FIND_TWEET_BY_ID_REQUEST,
   FIND_TWEET_BY_ID_SUCCESS,
@@ -40,6 +39,12 @@ import {
   FIND_TWEET_BY_LIST_ID_REQUEST,
   FIND_TWEET_BY_LIST_ID_SUCCESS,
   FIND_TWEET_BY_LIST_ID_FAILURE,
+  FIND_BY_TOP_LIKES_REQUEST,
+  FIND_BY_TOP_LIKES_SUCCESS,
+  FIND_BY_TOP_LIKES_FAILURE,
+  FIND_BY_TOP_VIEWS_REQUEST,
+  FIND_BY_TOP_VIEWS_SUCCESS,
+  FIND_BY_TOP_VIEWS_FAILURE,
 } from "./ActionType";
 
 const initialState = {
@@ -47,7 +52,10 @@ const initialState = {
   data: null,
   error: null,
   twits: [],
-  twit: null
+  twit: null,
+  topLikesTwits: [],
+  topViewsTwits: [],
+  listTwits: [],
   // usersTwit
 };
 
@@ -73,6 +81,8 @@ const tweetReducer = (state = initialState, action) => {
         error: null,
       };
     case GET_ALL_TWEETS_REQUEST:
+    case FIND_BY_TOP_LIKES_REQUEST:
+    case FIND_BY_TOP_VIEWS_REQUEST:
     case GET_USERS_TWEET_REQUEST:
           return {
             ...state,
@@ -90,6 +100,8 @@ const tweetReducer = (state = initialState, action) => {
     case TWEET_CREATE_FAILURE:
     case TWEET_DELETE_FAILURE:
     case GET_ALL_TWEETS_FAILURE:
+    case FIND_BY_TOP_LIKES_FAILURE:
+    case FIND_BY_TOP_VIEWS_FAILURE:
     case FIND_TWEET_BY_ID_FAILURE:
     case GET_USERS_TWEET_FAILURE:
     case GET_USERS_REPLIES_FAILURE:
@@ -111,9 +123,28 @@ const tweetReducer = (state = initialState, action) => {
         error: null,
       };
     case GET_ALL_TWEETS_SUCCESS:
+      return {
+        ...state,
+        loading: true,
+        error: null,
+        twits: action.payload,
+      };
+    case FIND_BY_TOP_LIKES_SUCCESS:
+      return {
+        ...state,
+        loading: true,
+        error: null,
+        topLikesTwits: action.payload,
+      };
+    case FIND_BY_TOP_VIEWS_SUCCESS:
+      return {
+        ...state,
+        loading: true,
+        error: null,
+        topViewsTwits: action.payload,
+      };
     case GET_USERS_TWEET_SUCCESS:
     case GET_USERS_REPLIES_SUCCESS:
-    // case USER_LIKE_TWEET_SUCCESS:
       return {
         ...state,
         loading: false,
@@ -166,7 +197,19 @@ const tweetReducer = (state = initialState, action) => {
         };
 
       case FIND_TWEET_BY_ID_SUCCESS:
+        return {
+          ...state,
+          loading:false,
+          twit:action.payload,
+          error:null,
+        }
       case FIND_TWEET_BY_LIST_ID_SUCCESS:
+        return {
+          ...state,
+          loading:false,
+          twits:action.payload,
+          error:null,
+        }
       case FIND_TWEET_BY_LIST_ID_FAILURE:
       case REPLY_TWEET_SUCCESS:
         return {...state,loading:false,twit:action.payload,error:null}
