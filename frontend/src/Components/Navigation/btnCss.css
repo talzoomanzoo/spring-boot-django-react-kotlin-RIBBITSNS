@@ -1,0 +1,64 @@
+.space-x-4{
+    /* list-style-type: none; */
+    /* margin: 0;
+    padding: 0; */
+}
+
+.space-x-4{
+    --c: goldenrod;
+    color: var(--c);
+    font-size: 10px;
+    /* border: 0.1em solid var(--c);
+    border-radius: 0.5em; */
+    text-transform: uppercase;
+    font-weight: bold;
+    font-family: sans-serif;
+    letter-spacing: 0.1em;
+    text-align: center;
+    line-height: 3em;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    transition: 0.5s;
+    margin: 1em;
+}
+
+.space-x-4 span {
+    position: absolute;
+    width: 30%;
+    height: 100%;
+    background-color: var(--c);
+    transform: translateY(150%);
+    border-radius: 50%;
+    left: calc((var(--n) - 1) * 25%);
+    transition: 0.5s;
+    transition-delay: calc((var(--n) - 1) * 0.1s);
+    z-index: -1;
+}
+
+.space-x-4:hover {
+    color: black;
+}
+
+.space-x-4:hover span {
+    transform: translateY(0) scale(2);
+}
+
+.space-x-4 span:nth-child(1) {
+    --n: 1;
+}
+
+.space-x-4 span:nth-child(2) {
+    --n: 2;
+}
+
+.space-x-4 span:nth-child(3) {
+    --n: 3;
+}
+
+.space-x-4 span:nth-child(4) {
+    --n: 4;
+}
+.space-x-4 span:nth-child(5) {
+    --n: 5;
+}

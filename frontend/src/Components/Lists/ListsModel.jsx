@@ -6,8 +6,7 @@ import { Switch } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
-    addUserAction,
-    createListModel,
+  createListModel,
 } from "../../Store/List/Action";
 import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
 import BackdropComponent from "../Backdrop/Backdrop";
@@ -20,7 +19,7 @@ const style = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: 600,
-  //   height: "90vh",
+  height: 600,
   bgcolor: "background.paper",
   boxShadow: 24,
   p: 2,
@@ -35,9 +34,10 @@ const ListsModel = ({ handleClose, open }) => {
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
   const { list, theme, auth } = useSelector((store) => store);
-  const [backgroundImage, setBackgroundImage] = useState(list.backgroundImage);
-  const [listName, setListName] = useState(list.listName);
-  const [description, setDescription] = useState(list.description);
+  const [backgroundImage, setBackgroundImage] = useState("");
+  const [listName, setListName] = useState("");
+  const [description, setDescription] = useState("");
+  const [isEnabled, setIsEnabled] = useState(false);
 
   const handleSubmit = (values, actions) => {
     dispatch(createListModel(values));
@@ -50,6 +50,7 @@ const ListsModel = ({ handleClose, open }) => {
     window.location.reload();
   };
 
+
   const formik = useFormik({
     initialValues: {
       listName: "",
@@ -59,6 +60,7 @@ const ListsModel = ({ handleClose, open }) => {
     },
     onSubmit: handleSubmit,
   });
+  
 
   const handleImageChange = async (event) => {
     setUploading(true);
@@ -69,43 +71,32 @@ const ListsModel = ({ handleClose, open }) => {
     setUploading(false);
   };
 
-  // const navigateToProfile = (id) => {
-  //   navigate(`/profile/${id}`);
-  //   setSearch("");
+  // const toggleSwitch = async () => {
+  //   setIsEnabled((previousState) => !previousState);
+  //   formik.setFieldValue("privateMode", isEnabled); //여기부터 고치기
+  //   console.log("isEnabled", { isEnabled });
+  //   //dispatch(setPrivate(list.id));
   // };
 
-  // const handleAddUser = (listId, userId) => {
-  //   dispatch(addUserAction(listId, userId));
-  //   console.log("add user id", userId);
-  //   console.log("add list id", listId);
-  // };
-
-  const [isEnabled, setIsEnabled] = useState(false);
-
-  const toggleSwitch = () => {
-    setIsEnabled((previousState) => !previousState);
-    //dispatch(setPrivate(list.id));
-  };
-
-    return (
-        <div>
-            <Modal
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-            >
-                <Box sx={style}>
-                    <form onSubmit={formik.handleSubmit}> 
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-3">
-                                <IconButton onClick={handleClose} aria-label="delete">
-                                    <CloseIcon />
-                                </IconButton>
-                                <p>리스트 추가</p>
-                            </div>
-                            <Button type="submit">저장</Button>
-                        </div>
+  return (
+    <div>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <form onSubmit={formik.handleSubmit}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <IconButton onClick={handleClose} aria-label="delete">
+                  <CloseIcon />
+                </IconButton>
+                <p>리스트 추가</p>
+              </div>
+              <Button type="submit">저장</Button>
+            </div>
 
             <div className="customeScrollbar overflow-y-scroll  overflow-x-hidden h-[80vh]">
               <div className="">
@@ -113,12 +104,12 @@ const ListsModel = ({ handleClose, open }) => {
                   <div className="relative">
                     <img
                       src={
-                        formik.values.backgroundImage ||
-                        "https://i.stack.imgur.com/H0xdb.png"
-                        // "https://cdn.pixabay.com/photo/2018/10/16/15/01/background-image-3751623_1280.jpg"
+                        formik.values?.backgroundImage ||
+                        "https://png.pngtree.com/thumb_back/fw800/background/20230304/pngtree-green-base-vector-smooth-background-image_1770922.jpg"
                       }
                       alt="Img"
                       className="w-full h-[12rem] object-cover object-center"
+                      loading="lazy"
                     />
                     <input
                       type="file"
@@ -135,7 +126,7 @@ const ListsModel = ({ handleClose, open }) => {
                 <TextField
                   fullWidth
                   id="listName"
-                  label="List Name"
+                  label="리스트 이름"
                   value={formik.values.listName}
                   onChange={formik.handleChange}
                   error={
@@ -149,7 +140,7 @@ const ListsModel = ({ handleClose, open }) => {
                   rows={4}
                   id="description"
                   name="description"
-                  label="Description"
+                  label="리스트 정보"
                   value={formik.values.description}
                   onChange={formik.handleChange}
                   error={
@@ -174,8 +165,9 @@ const ListsModel = ({ handleClose, open }) => {
 
                 <div className="flex items-center justify-between font-xl">
                   {" "}
-                  비공개 리스트 활성화
+                  비공개 활성화
                   <Switch
+                    name="privateMode"
                     style={{
                       marginTop: 10,
                       marginRight: 20,
@@ -183,8 +175,17 @@ const ListsModel = ({ handleClose, open }) => {
                     trackColor={{ false: "#767577", true: "#81b0ff" }}
                     thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
                     ios_backgroundColor="#3e3e3e"
-                    onValueChange={toggleSwitch}
-                    value={isEnabled}
+                    //onValueChange={toggleSwitch}
+                    //value={isEnabled}
+                    value={formik.values.privateMode}
+                    onValueChange={value => formik.setFieldValue('privateMode', value)}
+                    error={
+                      formik.touched.description &&
+                      Boolean(formik.errors.description)
+                    }
+                    helperText={
+                      formik.touched.description && formik.errors.description
+                    }
                   />
                 </div>
 

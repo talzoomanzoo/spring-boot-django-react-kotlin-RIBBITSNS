@@ -43,7 +43,7 @@ class AuthViewModel @Inject constructor(
     private val authManager: AuthManager,
     private val authRepository: AuthRepository
 ) : BaseViewModel() {
-    var authUiState: AuthUiState by mutableStateOf(AuthUiState.LoginLoading)  // authUiState의 경우 <ApiResponse<AuthResponse>>를 관찰하는 observer에게 관리를 위임한다.
+    var authUiState: AuthUiState by mutableStateOf(AuthUiState.Logout)  // authUiState의 경우 <ApiResponse<AuthResponse>>를 관찰하는 observer에게 관리를 위임한다.
     // 현재 TokenUiState가 AthUiState와 동일하게 기능하기 때문에 AthUiState 를 사용하는 것을 중지하고 tokenUiState 를 사용하기로 한다.
     // LoginLoading(JWT를 받아오는 것에 시간이 걸림.)을 위해 다시 사용하기로 함.
     val authResponse: MutableLiveData<ApiResponse<AuthResponse>> by lazy {
@@ -113,7 +113,7 @@ class AuthViewModel @Inject constructor(
     fun login(authRequest: AuthRequest) {
         Log.d("HippoLog, AuthViewModel", "로그인 시도")
         authUiState = AuthUiState.LoginLoading
-        loginRequest(authRequest)   // authResponse를 관찰하는 observer에서 authUiState를 업데이트하도록 함.
+        loginRequest(authRequest)   // loginRequest를 보내고 응답이 오면 authResponse를 관찰하는 observer에서 authUiState를 업데이트하도록 함.
     }
 
     private fun loginRequest(

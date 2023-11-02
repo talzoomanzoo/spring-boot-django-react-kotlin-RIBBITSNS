@@ -17,15 +17,38 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    primary = Green80,
+    primaryContainer = Water40,
+    secondary = GreenGrey80,
+    secondaryContainer = Water40,
+    tertiary = Water80,
+    tertiaryContainer = Water40,
+    surface = Water40,
+    onSurface = Water40,
+    background = Water40,
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+    primary = Green40,
+    secondary = GreenGrey40,
+    tertiary = Water40,
+//    onPrimary = Water80,
+    primaryContainer = Green80, // FloatingActionButton 배경
+//    onPrimaryContainer = Water80,
+//    inversePrimary = Water80,
+//    onSecondary = Water80,
+//    secondaryContainer = Water80,
+//    onSecondaryContainer = Water80,
+    onTertiary = Water80,
+    tertiaryContainer = Water80,
+    onTertiaryContainer = Water80,
+    background = Color.White,
+    onBackground = Green40,   // Card 내 글자
+    surface = Color.White,    // 앱 배경
+    onSurface = Green80,    // CardBottomBar ToggleIcons 변경 색상, InputTextField 글자 색
+    surfaceVariant = Color.White,   // Card, TextField 배경
+    inverseSurface = Water80,
+    scrim = Water80,
 )
 
 @Composable

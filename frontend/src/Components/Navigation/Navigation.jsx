@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { logout } from "../../Store/Auth/Action";
 import { followTwit } from '../../Store/Tweet/Action';
 import { navigationMenu } from "../../Utils/NavigationMenu";
-
+import "./btnCss.css";
 const Navigation = () => {
   const {auth}=useSelector(store=>store);
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -63,16 +63,18 @@ const Navigation = () => {
         <div className="cursor-pointer py-5">
           <img
             className="w-10"
-            src="https://cdn.pixabay.com/photo/2023/10/26/06/44/06-44-04-156_1280.png"
+            src="https://cdn.pixabay.com/photo/2023/10/26/06/44/frog-8341850_1280.png"
             alt=""
             onClick={()=> navigate(`/`)}
+            loading="lazy"
           />
         </div>
         <div className="space-y-6">
           {navigationMenu.map((item) => (
-            <div onClick={()=> item.title==="프로필"?navigate(`/profile/${auth.user?.id}`): navigate(`${item.path}`)} className="cursor-pointer flex space-x-3 items-center">
+            <div onClick={()=> item.title==="프로필"?navigate(`/profile/${auth.user?.id}`): navigate(`${item.path}`)} className="cursor-pointer flex space-x-4 items-center">
               {item.icon}
               <p className="text-xl">{item.title}</p>
+              <span></span><span></span><span></span><span></span><span></span>
             </div>
           ))}
         </div>
@@ -98,7 +100,8 @@ const Navigation = () => {
      <div className="flex items-center space-x-3">
         <Avatar
           alt="Remy Sharp"
-          src={auth.user?.image? auth.user.image : "https://cdn.pixabay.com/photo/2023/10/24/01/42/01-42-37-630_1280.png"}
+          src={auth.user?.image? auth.user.image : "https://cdn.pixabay.com/photo/2023/10/24/01/42/art-8337199_1280.png"}
+          loading="lazy"
         />
 
         <div>
@@ -140,7 +143,7 @@ const Navigation = () => {
      >
         <div className="withdrawal-modal" style={{ background: "white", padding: "20px", borderRadius: "8px" }}>
           <p id="description">
-            정말로 탈퇴하시겠습니까? 탈퇴하시는 순간 모든 게시물을 삭제 되어집니다.
+            정말로 탈퇴하시겠습니까? 탈퇴하는 순간 모든 게시물을 삭제 되어집니다.
           </p>
           <Button onClick={accountwithdrawal}>확인</Button>
           <Button onClick={handleclosewithdrawl}>취소</Button>

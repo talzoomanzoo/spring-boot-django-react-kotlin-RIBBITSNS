@@ -73,11 +73,8 @@ const HomeSection = () => {
           "http://localhost:8080/api/twits/create",
           tweetData
         );
-        console.log("tweetData: ", tweetData);
-        console.log("created twit ", data);
+        
         dispatch(createTweetSuccess(data));
-        console.log("data.id: ", data.id);
-        console.log("data.id: ", data.content);
 
         const response = await ethicreveal(data.id, data.content);
         handleSendPushNotification();
@@ -183,15 +180,9 @@ const HomeSection = () => {
         <h1 className="py-5 text-xl font-bold opacity-90">홈</h1>
       </section>
       <section className="pb-10">
-        <div className="flex space-x-5">
-          <Avatar
-            alt="Avatar"
-            src={
-              auth.user?.image
-                ? auth.user.image
-                : "URL_TO_DEFAULT_AVATAR"
-            }
-          />
+        {/* ${theme.currentTheme==="dark"?" bg-[#151515] p-10 rounded-md mb-10":""} */}
+        <div className="flex space-x-5 ">
+          <Avatar alt="Avatar" src={auth.user?.image? auth.user.image : "https://cdn.pixabay.com/photo/2023/10/24/01/42/art-8337199_1280.png"} loading="lazy" />
           <div className="w-full">
             <form onSubmit={formik.handleSubmit}>
               <div>
@@ -210,7 +201,7 @@ const HomeSection = () => {
               {!uploadingImage && (
                 <div>
                   {selectedImage && (
-                    <img className="w-[28rem]" src={selectedImage} alt="" />
+                    <img className="w-[28rem]" src={selectedImage} alt="" loading="lazy" />
                   )}
 
                   {selectedVideo && <video controls src={selectedVideo} />}

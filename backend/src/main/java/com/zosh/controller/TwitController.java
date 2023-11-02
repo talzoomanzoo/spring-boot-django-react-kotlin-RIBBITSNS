@@ -40,9 +40,10 @@ public class TwitController {
 	private UserService userService;
 	private ListService listService;
 	
-	public TwitController(TwitService twitService,UserService userService) {
+	public TwitController(TwitService twitService,UserService userService, ListService listService) {
 		this.twitService=twitService;
 		this.userService=userService;
+		this.listService=listService;
 	}
 	
 	@PostMapping("/create")
@@ -210,4 +211,19 @@ public class TwitController {
 	}
 	
 
+	@GetMapping("/toplikes")
+	public ResponseEntity<List<TwitDto>> findTwitsByTopLikes(@RequestHeader("Authorization") String jwt) throws UserException, TwitException{
+		User user=userService.findUserProfileByJwt(jwt);
+		List<Twit> twits=twitService.findTwitsByTopLike();
+		List<TwitDto> twitDtos=TwitDtoMapper.toTwitDtos(twits,user);
+		return new ResponseEntity<List<TwitDto>>(twitDtos,HttpStatus.OK);
+	}
+	
+	@GetMapping("/topviews")
+	public ResponseEntity<List<TwitDto>> findTwitsByTopViews(@RequestHeader("Authorization") String jwt) throws UserException, TwitException{
+		User user=userService.findUserProfileByJwt(jwt);
+		List<Twit> twits=twitService.findTwitsByTopView();
+		List<TwitDto> twitDtos=TwitDtoMapper.toTwitDtos(twits,user);
+		return new ResponseEntity<List<TwitDto>>(twitDtos,HttpStatus.OK);
+	}
 }

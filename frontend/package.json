@@ -27,6 +27,7 @@
     "emoji-picker-react": "^4.4.10",
     "expo-video-thumbnails": "^7.6.0",
     "formik": "^2.4.5",
+    "framer-motion": "^10.16.4",
     "http": "^0.0.1-security",
     "http-proxy-middleware": "^2.0.6",
     "net": "^1.0.2",

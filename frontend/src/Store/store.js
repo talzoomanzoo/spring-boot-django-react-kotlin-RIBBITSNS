@@ -1,6 +1,7 @@
 import { applyMiddleware, combineReducers, legacy_createStore } from "redux";
 import thunk from "redux-thunk";
 import authReducer from "./Auth/Reducer";
+import comReducer from "./Community/Reducer";
 import listReducer from "./List/Reducer";
 import notificationReducer from "./Notification/Reducer";
 import { themeReducer } from "./Theme/Reducer";
@@ -11,6 +12,7 @@ auth:authReducer,
 twit:tweetReducer,
 theme:themeReducer,
 list:listReducer,
+com: comReducer,
 notification: notificationReducer,
 })
 export const store=legacy_createStore(rootReducers,applyMiddleware(thunk))

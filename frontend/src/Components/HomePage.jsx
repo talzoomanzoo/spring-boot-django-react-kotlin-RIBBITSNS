@@ -3,6 +3,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { Route, Routes } from "react-router-dom";
 import Chatroom from "./Chat/Chat";
+import Communities from "./Communities/Communities";
 import FollowTwit from "./FollowTwit/FollowTwit";
 import HomeSection from "./Home/MiddlePart/HomeSection";
 import TwitDetail from "./Home/MiddlePart/TwitDetail";
@@ -12,6 +13,7 @@ import Navigation from "./Navigation/Navigation";
 import Notifications from "./Notifications/Notifications";
 import Profile from "./Profile/Profile";
 import RightPart from "./RightPart/RightPart";
+
 
 const HomePage = () => {
   const { theme } = useSelector((store) => store);
@@ -35,11 +37,12 @@ const HomePage = () => {
           <Route path="/notifications" element={<Notifications />}></Route>
           <Route path="/messages" element={<Chatroom />}></Route>
           <Route path="/lists" element={<Lists />}></Route>
+          <Route path="/communities" element={<Communities />}></Route>
           <Route path="/twit/:id" element={<TwitDetail />}></Route>
           <Route path="/lists/:id" element={<ListsDetail />}></Route>
         </Routes>
       </Grid>
-      <Grid item xs={0} lg={3} className="hidden lg:block ">
+      <Grid item xs={0} lg={3} className="hidden lg:block overflow-y-scroll hideScrollbar h-[110vh]">
         <RightPart />
       </Grid>
     </Grid>
