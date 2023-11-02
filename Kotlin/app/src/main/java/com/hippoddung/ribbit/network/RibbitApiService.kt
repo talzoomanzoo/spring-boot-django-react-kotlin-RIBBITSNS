@@ -27,11 +27,23 @@ interface RibbitApiService {
     suspend fun deletePost(
         @Path("twitId") postId : Int
     ): DeleteResponse
-
     @GET("api/twits/{twitId}")
     suspend fun getPostIdPost(
         @Path("twitId") postId : Int
     ): RibbitPost
+
+    @GET("api/twits/user/{userId}")
+    suspend fun getUserIdPosts(
+        @Path("userId") userId : Int
+    ): List<RibbitPost>
+    @GET("api/twits/user/{userId}/replies")
+    suspend fun getUserIdReplies(
+        @Path("userId") userId : Int
+    ): List<RibbitPost>
+    @GET("api/twits/user/{userId}/likes")
+    suspend fun getUserIdLikes(
+        @Path("userId") userId : Int
+    ): List<RibbitPost>
 
     @POST("api/twits/reply")
     suspend fun postReply(

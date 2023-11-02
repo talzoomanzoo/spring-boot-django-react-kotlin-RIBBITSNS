@@ -148,7 +148,7 @@ const ListsModel2 = ({ list, handleClose, open }) => {
                   }}
                   className="flex items-center absolute left-2 justify-between hover:bg-green-700 relative right-5 cursor-pointer"
                 >
-                  <Avatar alt={item.fullName} src={item.image} />
+                  <Avatar alt={item.fullName} src={item.image} loading="lazy" />
                   <div className="ml-2">
                     <p>{item.fullName}</p>
                     <p className="text-sm text-gray-400">
@@ -214,6 +214,7 @@ const ListsModel2 = ({ list, handleClose, open }) => {
                       }
                       alt="Img"
                       className="w-full h-[12rem] object-cover object-center"
+                      loading="lazy"
                     />
                     <input
                       type="file"
@@ -303,7 +304,7 @@ const ListsModel2 = ({ list, handleClose, open }) => {
                             className={`flex items-center left-3 justify-content hover:bg-green-700 relative right-5 cursor-pointer`}
                             key={item.id}
                           >
-                            <Avatar alt={item.fullName} src={item.image} />
+                            <Avatar alt={item.fullName} src={item.image} loading="lazy" />
                             <div className="ml-2">
                               <p>{item.fullName}</p>
                               <p className="text-sm">

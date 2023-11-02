@@ -1,88 +1,65 @@
-package com.hippoddung.ribbit.ui.screens
+package com.hippoddung.ribbit.ui.screens.profilescreens
 
 import android.annotation.SuppressLint
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.hippoddung.ribbit.network.bodys.RibbitPost
-import com.hippoddung.ribbit.ui.RibbitScreen
-import com.hippoddung.ribbit.ui.screens.carditems.RibbitCard
 import com.hippoddung.ribbit.ui.screens.screenitems.HomeTopAppBar
-import com.hippoddung.ribbit.ui.screens.screenitems.PostsGrid
+import com.hippoddung.ribbit.ui.screens.screenitems.ProfilePostsGrid
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
 import com.hippoddung.ribbit.ui.viewmodel.CardViewModel
-import com.hippoddung.ribbit.ui.viewmodel.CreatingPostUiState
-import com.hippoddung.ribbit.ui.viewmodel.CreatingPostViewModel
-import com.hippoddung.ribbit.ui.viewmodel.HomeUiState
+import com.hippoddung.ribbit.ui.viewmodel.GetUserIdPostsUiState
+import com.hippoddung.ribbit.ui.viewmodel.GetUserIdRepliesUiState
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
-
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(
+fun ProfileRepliesScreen(
 //    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
     cardViewModel: CardViewModel,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
-    creatingPostViewModel: CreatingPostViewModel,
     userId: Int,
-    onNavigateToCreatingPostScreen: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier
 ) {
-    when (cardViewModel.homeUiState) {
+    when (cardViewModel.getUserIdRepliesUiState) {
 
-        is HomeUiState.Loading -> {
-            Log.d("HippoLog, HomeScreen", "Loading")
+        is GetUserIdRepliesUiState.Loading -> {
+            Log.d("HippoLog, ProfileRepliesScreen", "Loading")
             LoadingScreen(modifier = modifier)
         }
 
-        is HomeUiState.Success -> {
-            Log.d("HippoLog, HomeScreen", "Success")
-            val ribbitPosts = (cardViewModel.homeUiState as HomeUiState.Success).posts
-            HomeSuccessScreen(
+        is GetUserIdRepliesUiState.Error -> {
+            Log.d("HippoLog, ProfileRepliesScreen", "Error")
+            ErrorScreen(modifier = modifier)
+        }
+
+        is GetUserIdRepliesUiState.Success -> {
+            Log.d("HippoLog, ProfileRepliesScreen", "Success")
+            ProfileRepliesSuccessScreen(
                 cardViewModel = cardViewModel,
                 authViewModel = authViewModel,
                 tokenViewModel = tokenViewModel,
                 userViewModel = userViewModel,
-                creatingPostViewModel = creatingPostViewModel,
 //                scrollBehavior = scrollBehavior,
                 navController = navController,
-                ribbitPosts = ribbitPosts,
                 userId = userId,
-                onNavigateToCreatingPostScreen = onNavigateToCreatingPostScreen,
                 modifier = modifier
             )
-        }
-
-        is HomeUiState.Error -> {
-            Log.d("HippoLog, HomeScreen", "Error")
-            ErrorScreen(modifier = modifier)
         }
     }
 }
@@ -91,19 +68,17 @@ fun HomeScreen(
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeSuccessScreen(
+fun ProfileRepliesSuccessScreen(
     cardViewModel: CardViewModel,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
-    creatingPostViewModel: CreatingPostViewModel,
 //    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
-    ribbitPosts: List<RibbitPost>,
     userId: Int,
-    onNavigateToCreatingPostScreen: () -> Unit,
     modifier: Modifier
 ) {
+    Log.d("HippoLog, ProfileRepliesScreen", "ProfileRepliesSuccessScreen")
     Scaffold(
         modifier = modifier,
 //        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -126,31 +101,15 @@ fun HomeSuccessScreen(
                 .fillMaxSize()
                 .padding(it)
         ) {
-            Box(modifier = modifier) {
-                PostsGrid(
-                    posts = ribbitPosts,
-                    cardViewModel = cardViewModel,
-                    userId = userId,
-                    navController = navController,
-                    modifier = modifier
-                )
-                FloatingActionButton(
-                    onClick = onNavigateToCreatingPostScreen,
-                    modifier = modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(14.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Edit,
-                        contentDescription = "Floating action button.",
-                        modifier = modifier
-                    )
-                }
-            }
-//            Box(modifier = modifier) {
-//
-//            }
+            Log.d("HippoLog, ProfileRepliesScreen", "posts: ${(cardViewModel.getUserIdRepliesUiState as GetUserIdRepliesUiState.Success).posts}")
+            ProfilePostsGrid(
+                posts = (cardViewModel.getUserIdRepliesUiState as GetUserIdRepliesUiState.Success).posts,
+                cardViewModel = cardViewModel,
+                userViewModel = userViewModel,
+                userId = userId,
+                navController = navController,
+                modifier = modifier
+            )
         }
     }
 }
-

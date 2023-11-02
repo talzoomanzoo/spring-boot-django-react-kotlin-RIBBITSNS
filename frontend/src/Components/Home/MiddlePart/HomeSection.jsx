@@ -174,7 +174,7 @@ const HomeSection = () => {
       <section className="pb-10">
         {/* ${theme.currentTheme==="dark"?" bg-[#151515] p-10 rounded-md mb-10":""} */}
         <div className="flex space-x-5 ">
-          <Avatar alt="Avatar" src={auth.user?.image? auth.user.image : "https://cdn.pixabay.com/photo/2023/10/24/01/42/01-42-37-630_1280.png"} />
+          <Avatar alt="Avatar" src={auth.user?.image? auth.user.image : "https://cdn.pixabay.com/photo/2023/10/24/01/42/01-42-37-630_1280.png"} loading="lazy" />
           <div className="w-full">
             <form onSubmit={formik.handleSubmit}>
               <div>
@@ -193,7 +193,7 @@ const HomeSection = () => {
               {!uploadingImage && (
                 <div>
                   {selectedImage && (
-                    <img className="w-[28rem]" src={selectedImage} alt="" />
+                    <img className="w-[28rem]" src={selectedImage} alt="" loading="lazy" />
                   )}
 
                   {selsectedVideo && <video controls src={twit.video} />}

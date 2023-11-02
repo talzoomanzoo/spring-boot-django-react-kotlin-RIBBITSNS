@@ -47,6 +47,7 @@ const ListsDetail = () => {
                         "https://png.pngtree.com/thumb_back/fw800/background/20230304/pngtree-green-base-vector-smooth-background-image_1770922.jpg"
                     }
                     alt=""
+                    loading="lazy"
                 />
             </section>
             <div style={{ marginTop: 20 }}>
