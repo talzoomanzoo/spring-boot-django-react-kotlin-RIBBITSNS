@@ -3,7 +3,7 @@
     list-style-type: none;
 }
 
-li {
+.list-css {
     font-size: 19px;
     width: 7em;
     height: 2em;
@@ -15,8 +15,8 @@ li {
     transition: 0.5s;
 }
 
-li::before,
-li::after {
+.list-css::before,
+.list-css::after {
     content: '';
     position: absolute;
     width: 0.6em;
@@ -27,26 +27,26 @@ li::after {
     top: calc(50% - 0.3em / 2);
 }
 
-li::before {left: 0; z-index: -1;}
-li::after {right: 0; z-index: -2;}
+.list-css::before {left: 0; z-index: -1;}
+.list-css::after {right: 0; z-index: -2;}
 
-li:hover {
+.list-css:hover {
     color: white;
 }
 
-li:hover::before,
-li:hover::after {
+.list-css:hover::before,
+.list-css:hover::after {
     width: 100%;
     height: 90%;
     border-radius: 0;
     background-color: #42C924;
 }
 
-li:hover::before {
+.list-css:hover::before {
     top: 0;
 }
 
-li:hover::after {
+.list-css:hover::after {
     right: -0.4em;
     filter: brightness(0.8);
 }

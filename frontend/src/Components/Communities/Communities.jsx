@@ -49,7 +49,7 @@ const Communities = () => {
                 </div>
             </section>
 
-            <div className="overflow-x-scroll hideScrollbar border-gray-700 h-[20vh] w-full rounded-md">
+            <div>
                 <div
                     className="space-y-3"
                     style={{ marginTop: 10 }}>
@@ -64,7 +64,7 @@ const Communities = () => {
                         }}
                     />
                 </div>
-                <div className= "flex inline-block justify-content">
+                <div className= "flex inline-block justify-content overflow-x-scroll hideScrollbar border-gray-700 h-[20vh] w-full rounded-md">
                     {com.coms.map((item) => (<ComCard style={{ marginTop: 10 }} com={item} />))}
                 </div>
             </div>

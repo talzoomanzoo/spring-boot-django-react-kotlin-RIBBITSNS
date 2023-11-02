@@ -199,7 +199,7 @@ const Profile = () => {
         <div className="flex justify-between items-start mt-5 h-[5rem]">
           <Avatar
             alt="Avatar"
-            src={auth.findUser?.image ? auth.findUser.image : "https://cdn.pixabay.com/photo/2023/10/24/01/42/01-42-37-630_1280.png"}
+            src={auth.findUser?.image ? auth.findUser.image : "https://cdn.pixabay.com/photo/2023/10/24/01/42/art-8337199_1280.png"}
             className="transform -translate-y-24"
             sx={{ width: "10rem", height: "10rem", border: "4px solid white" }}
             loading="lazy"
@@ -228,14 +228,14 @@ const Profile = () => {
           <div>
             <div className="flex items-center">
               <h1 className="font-bold text-lg">{auth.findUser?.fullName}</h1>
-              {auth.findUser?.verified && (
+              {/* {auth.findUser?.verified && (
                 <img
                   className="ml-2 w-5 h-5"
                   src="https://abs.twimg.com/responsive-web/client-web/verification-card-v2@3x.8ebee01a.png"
                   alt=""
                   loading="lazy"
                 />
-              )}
+              )} */}
             </div>
             <h1 className="text-gray-500">
               {auth.findUser?.email?.toLowerCase()}
