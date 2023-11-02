@@ -307,7 +307,7 @@ const TwitCard = ({ twit }) => {
         (
           <div className="flex items-center font-semibold text-pink-700 py-2">
             <RepeatIcon />
-            <p className="ml-3">You Reribbit</p>
+            <p className="ml-3">Reribbit</p>
           </div>
         ) :
         null
