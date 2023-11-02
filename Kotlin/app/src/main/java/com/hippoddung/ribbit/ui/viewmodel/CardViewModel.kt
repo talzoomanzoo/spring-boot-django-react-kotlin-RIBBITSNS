@@ -3,13 +3,16 @@ package com.hippoddung.ribbit.ui.viewmodel
 import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
 import android.util.Log
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.hippoddung.ribbit.data.network.RibbitRepository
 import com.hippoddung.ribbit.network.bodys.RibbitPost
+import com.hippoddung.ribbit.network.bodys.User
 import com.hippoddung.ribbit.network.bodys.requestbody.ReplyRequest
+import com.hippoddung.ribbit.ui.RibbitScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -41,7 +44,7 @@ sealed interface PostIdUiState {
 }
 
 sealed interface GetUserIdPostsUiState {
-    data class Success(val posts: List<RibbitPost>) : GetUserIdPostsUiState
+    data class Success( val posts: List<RibbitPost> ) : GetUserIdPostsUiState
     data class Error(val errorCode: String) : GetUserIdPostsUiState
     object Loading : GetUserIdPostsUiState
 }
@@ -72,7 +75,7 @@ sealed interface ReplyClickedUiState {
 
 sealed interface WhereReplyClickedUiState {
     object HomeScreen : WhereReplyClickedUiState
-    object TwitIdScreen : WhereReplyClickedUiState
+    object PostIdScreen : WhereReplyClickedUiState
 }
 
 @HiltViewModel
@@ -92,6 +95,15 @@ class CardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으나
     var whereReplyClickedUiState: WhereReplyClickedUiState by mutableStateOf(
         WhereReplyClickedUiState.HomeScreen
     )
+
+    private val currentScreenState = mutableStateOf(RibbitScreen.HomeScreen)    // 현재 viewModel에 접근하는 스크린의 정보를 가져온다.
+    fun getCurrentScreen(): State<RibbitScreen> {
+        return currentScreenState
+    }
+    fun setCurrentScreen(screen: RibbitScreen) {
+        currentScreenState.value = screen
+    }
+
 //    val homeResponse: MutableLiveData<ApiResponse<List<RibbitPost>>> by lazy {
 //        MutableLiveData<ApiResponse<List<RibbitPost>>>()
 //    }
@@ -162,9 +174,9 @@ class CardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으나
     }
 
     fun getPostIdPost(postId: Int) {    // PostDetail을 불러오는 함수
-        postIdUiState = PostIdUiState.Loading
         viewModelScope.launch(Dispatchers.IO) {
-            Log.d("HippoLog, CardViewModel", "getTwitIdPosts, $postIdUiState")
+            postIdUiState = PostIdUiState.Loading
+            Log.d("HippoLog, CardViewModel", "getPostIdPost, $postIdUiState")
             postPostIdCount(postId)
             postIdUiState = try {
                 PostIdUiState.Success(ribbitRepository.getPostIdPost(postId))
@@ -184,7 +196,7 @@ class CardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으나
                     PostIdUiState.Error(e.message.toString())
                 }
             }
-            Log.d("HippoLog, CardViewModel", "getTwitIdPosts, $postIdUiState")
+            Log.d("HippoLog, CardViewModel", "getPostIdPost, $postIdUiState")
         }
     }
 
@@ -193,7 +205,7 @@ class CardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으나
         viewModelScope.launch(Dispatchers.IO) {
             Log.d("HippoLog, CardViewModel", "getUserIdPost, $getUserIdPostsUiState")
             getUserIdPostsUiState = try {
-                GetUserIdPostsUiState.Success(ribbitRepository.getUserIdPosts(userId))
+                GetUserIdPostsUiState.Success( posts = ribbitRepository.getUserIdPosts(userId) )
             } catch (e: IOException) {
                 Log.d("HippoLog, CardViewModel", "getUserIdPost: ${e.stackTrace}, ${e.message}")
                 GetUserIdPostsUiState.Error(e.message.toString())
@@ -338,16 +350,16 @@ class CardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으나
                 postReplyUiState = PostReplyUiState.Error
                 println(e.stackTrace)
             }
-            when (whereReplyClickedUiState) {
-                is WhereReplyClickedUiState.HomeScreen -> {
-                    getRibbitPosts()
+            when (currentScreenState.value) {
+                RibbitScreen.HomeScreen -> {
+                    getRibbitPosts()    // 댓글수 정보를 정확하게 표시하기 위해 다시 로딩
                 }
-
-                is WhereReplyClickedUiState.TwitIdScreen -> {
-                    getPostIdPost((postIdUiState as PostIdUiState.Success).post.id)
+                RibbitScreen.PostIdScreen -> {
+                    getPostIdPost((postIdUiState as PostIdUiState.Success).post.id) //
                     whereReplyClickedUiState =
                         WhereReplyClickedUiState.HomeScreen  // 기본값으로 HomeScreen으로 한다.
                 }
+                else -> {}
             }
         }
     }

@@ -51,7 +51,7 @@ fun HomeScreen(
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
     creatingPostViewModel: CreatingPostViewModel,
-    userId: Int,
+    myId: Int,
     onNavigateToCreatingPostScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -74,7 +74,7 @@ fun HomeScreen(
 //                scrollBehavior = scrollBehavior,
                 navController = navController,
                 ribbitPosts = ribbitPosts,
-                userId = userId,
+                myId = myId,
                 onNavigateToCreatingPostScreen = onNavigateToCreatingPostScreen,
                 modifier = modifier
             )
@@ -100,7 +100,7 @@ fun HomeSuccessScreen(
 //    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
     ribbitPosts: List<RibbitPost>,
-    userId: Int,
+    myId: Int,
     onNavigateToCreatingPostScreen: () -> Unit,
     modifier: Modifier
 ) {
@@ -130,7 +130,8 @@ fun HomeSuccessScreen(
                 PostsGrid(
                     posts = ribbitPosts,
                     cardViewModel = cardViewModel,
-                    userId = userId,
+                    userViewModel = userViewModel,
+                    myId = myId,
                     navController = navController,
                     modifier = modifier
                 )

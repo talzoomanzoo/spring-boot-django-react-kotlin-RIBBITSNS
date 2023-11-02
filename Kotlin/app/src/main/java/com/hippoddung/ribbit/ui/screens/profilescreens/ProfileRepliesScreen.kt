@@ -13,12 +13,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.ui.screens.screenitems.HomeTopAppBar
-import com.hippoddung.ribbit.ui.screens.screenitems.ProfilePostsGrid
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
 import com.hippoddung.ribbit.ui.viewmodel.CardViewModel
-import com.hippoddung.ribbit.ui.viewmodel.GetUserIdPostsUiState
 import com.hippoddung.ribbit.ui.viewmodel.GetUserIdRepliesUiState
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
@@ -33,7 +31,7 @@ fun ProfileRepliesScreen(
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
-    userId: Int,
+    myId: Int,
     modifier: Modifier
 ) {
     when (cardViewModel.getUserIdRepliesUiState) {
@@ -57,7 +55,7 @@ fun ProfileRepliesScreen(
                 userViewModel = userViewModel,
 //                scrollBehavior = scrollBehavior,
                 navController = navController,
-                userId = userId,
+                myId = myId,
                 modifier = modifier
             )
         }
@@ -75,7 +73,7 @@ fun ProfileRepliesSuccessScreen(
     userViewModel: UserViewModel,
 //    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
-    userId: Int,
+    myId: Int,
     modifier: Modifier
 ) {
     Log.d("HippoLog, ProfileRepliesScreen", "ProfileRepliesSuccessScreen")
@@ -106,7 +104,7 @@ fun ProfileRepliesSuccessScreen(
                 posts = (cardViewModel.getUserIdRepliesUiState as GetUserIdRepliesUiState.Success).posts,
                 cardViewModel = cardViewModel,
                 userViewModel = userViewModel,
-                userId = userId,
+                myId = myId,
                 navController = navController,
                 modifier = modifier
             )

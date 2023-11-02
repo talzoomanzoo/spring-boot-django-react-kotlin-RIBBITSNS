@@ -29,6 +29,7 @@ import com.hippoddung.ribbit.R
 import com.hippoddung.ribbit.network.bodys.RibbitPost
 import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.viewmodel.CardViewModel
+import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -39,7 +40,8 @@ import java.util.concurrent.TimeUnit
 fun CardTopBar(
     post: RibbitPost,
     cardViewModel: CardViewModel,
-    userId: Int,
+    userViewModel: UserViewModel,
+    myId: Int,
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
@@ -66,7 +68,11 @@ fun CardTopBar(
                     .fillMaxSize()
                     .clip(CircleShape)
                     .clickable {    // 해당 Composable function 을 click 하여 "() -> unit" 을 받을 수 있는 형태로 만들어 줌.
-                        Log.d("HippoLog, HomeScreen", "onClick")
+                        Log.d("HippoLog, CardTopBar", "profileImageClick")
+                        post.user.id?.let {
+                            cardViewModel.getUserIdPosts(userId = it)
+                            userViewModel.getProfile(userId = it)
+                        }
                         navController.navigate(RibbitScreen.ProfileScreen.name)
                     }
             )
@@ -104,7 +110,7 @@ fun CardTopBar(
         RibbitDropDownMenu(
             post = post,
             cardViewModel = cardViewModel,
-            userId = userId,
+            myId = myId,
             navController = navController,
             modifier = modifier
         )

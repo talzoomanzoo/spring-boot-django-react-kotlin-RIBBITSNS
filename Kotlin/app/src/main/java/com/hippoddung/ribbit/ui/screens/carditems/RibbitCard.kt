@@ -23,6 +23,7 @@ import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.network.bodys.RibbitPost
 import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.viewmodel.CardViewModel
+import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
@@ -31,7 +32,8 @@ import com.hippoddung.ribbit.ui.viewmodel.CardViewModel
 fun RibbitCard(
     post: RibbitPost,
     cardViewModel: CardViewModel,
-    userId: Int,
+    userViewModel: UserViewModel,
+    myId: Int,
     navController: NavHostController,
     modifier: Modifier
 ) {
@@ -54,7 +56,8 @@ fun RibbitCard(
             CardTopBar(
                 post = post,
                 cardViewModel = cardViewModel,
-                userId = userId,
+                userViewModel = userViewModel,
+                myId = myId,
                 navController = navController,
                 modifier = modifier
             )
@@ -69,7 +72,6 @@ fun RibbitCard(
                     image = post.image,
                     modifier = modifier
                     )
-            } else {
             }
 
             if (post.video != null) {
@@ -79,10 +81,9 @@ fun RibbitCard(
                     cardViewModel = cardViewModel,
                     modifier = modifier
                 )
-            } else {
             }
             CardBottomBar(
-                userId = userId,
+                myId = myId,
                 post = post,
                 cardViewModel = cardViewModel
             )

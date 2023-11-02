@@ -33,7 +33,7 @@ import com.hippoddung.ribbit.ui.viewmodel.ReplyClickedUiState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CardBottomBar(
-    userId: Int,
+    myId: Int,
     post: RibbitPost,
     cardViewModel: CardViewModel,
     modifier: Modifier = Modifier
@@ -73,7 +73,7 @@ fun CardBottomBar(
             verticalAlignment = Alignment.CenterVertically,
             modifier = modifier
         ) {
-            var isRetwited by remember { mutableStateOf(post.retwitUsersId.contains(userId)) }
+            var isRetwited by remember { mutableStateOf(post.retwitUsersId.contains(myId)) }
             var retwited by remember { mutableStateOf(isRetwited) }
             if (!retwited) {
                 IconButton(

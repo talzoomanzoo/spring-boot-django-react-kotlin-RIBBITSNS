@@ -6,7 +6,7 @@ import retrofit2.http.Path
 
 interface UserApiService {
     @GET("api/users/profile")
-    suspend fun getUserProfile(): User
+    suspend fun getMyProfile(): User
 
     @GET("api/users/{userId}")
     suspend fun getProfile(

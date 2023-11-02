@@ -35,7 +35,7 @@ import kotlinx.coroutines.runBlocking
 fun RibbitDropDownMenu(
     post: RibbitPost,
     cardViewModel: CardViewModel,
-    userId: Int,
+    myId: Int,
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
@@ -64,7 +64,7 @@ fun RibbitDropDownMenu(
                     .wrapContentSize()
                     .padding(start = 4.dp, end = 4.dp),
             ) {
-                if (post.user.id == userId) {
+                if (post.user.id == myId) {
                     DropdownMenuItem(
                         onClick = {
                             // 본인 계정이 아닌 경우 서버에서 삭제를 거부함. UI단계에서 타 계정의 접근을 막아야 함.

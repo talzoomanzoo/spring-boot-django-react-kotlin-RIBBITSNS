@@ -8,8 +8,10 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayCircleOutline
 import androidx.compose.material3.Icon
@@ -54,10 +56,12 @@ fun RibbitVideo(
         }
     }
 
-    if (isVideoPlayed) {
+    if (isVideoPlayed) {    // video가 플레이된 경우
         Box(
             contentAlignment = Alignment.Center,
-            modifier = modifier.fillMaxSize()
+            modifier = modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
         ) {
             WebViewFullScreen(
                 videoUrl = videoUrl,
@@ -69,7 +73,7 @@ fun RibbitVideo(
             contentAlignment = Alignment.Center,
             modifier = modifier.fillMaxSize()
         ) {
-            if (videoThumbnail == null) {
+            if (videoThumbnail == null) {   // thumbnail을 불러오지 못한 경우
                 Image(
                     painter = painterResource(R.drawable.loading_img),
                     contentDescription = "Loading",
@@ -79,7 +83,7 @@ fun RibbitVideo(
                 )
             } else {
                 Image(
-                    bitmap = videoThumbnail!!.asImageBitmap(),
+                    bitmap = videoThumbnail!!.asImageBitmap(),  // thumbnail을 불러온 경우
                     contentDescription = "Success",
                     modifier = modifier
                         .size(300.dp)

@@ -10,8 +10,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import com.hippoddung.ribbit.network.bodys.RibbitPost
 import com.hippoddung.ribbit.ui.screens.screenitems.HomeTopAppBar
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
@@ -24,7 +29,7 @@ import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(
+fun ProfileMediasScreen(
 //    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
     cardViewModel: CardViewModel,
@@ -48,7 +53,7 @@ fun ProfileScreen(
 
         is GetUserIdPostsUiState.Success -> {
             Log.d("HippoLog, ProfileScreen", "Success")
-            ProfileSuccessScreen(
+            ProfileMediasSuccessScreen(
                 cardViewModel = cardViewModel,
                 authViewModel = authViewModel,
                 tokenViewModel = tokenViewModel,
@@ -66,7 +71,7 @@ fun ProfileScreen(
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileSuccessScreen(
+fun ProfileMediasSuccessScreen(
     cardViewModel: CardViewModel,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
@@ -76,7 +81,7 @@ fun ProfileSuccessScreen(
     myId: Int,
     modifier: Modifier
 ) {
-    Log.d("HippoLog, ProfileScreen", "ProfileSuccessScreen")
+    Log.d("HippoLog, ProfileLikesScreen", "ProfileLikesSuccessScreen")
     Scaffold(
         modifier = modifier,
 //        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -99,16 +104,25 @@ fun ProfileSuccessScreen(
                 .fillMaxSize()
                 .padding(it)
         ) {
-            if(cardViewModel.getUserIdPostsUiState is GetUserIdPostsUiState.Success) {  // 원래 state에 따라 넘어오기 때문에 확인할 필요가 없으나 state에 무관하게 내려오는 문제가 있어 여기서 재확인
-                ProfilePostsGrid(
-                    posts = (cardViewModel.getUserIdPostsUiState as GetUserIdPostsUiState.Success).posts,
-                    cardViewModel = cardViewModel,
-                    userViewModel = userViewModel,
-                    myId = myId,
-                    navController = navController,
-                    modifier = modifier
+            var posts by remember { mutableStateOf(listOf<RibbitPost>()) }
+            if (cardViewModel.getUserIdPostsUiState is GetUserIdPostsUiState.Success) {
+                posts = (cardViewModel.getUserIdPostsUiState as GetUserIdPostsUiState.Success).posts
+                // navigation으로 ProfileScreen main으로 이동시 getUserIdPostsUiState 를 공유하는 현재 페이지를 백스택으로 넣으면서 문제가 발생.
+                // state check 를 추가.
+            }
+            val userIdMedias by remember {
+                mutableStateOf(
+                    posts.filter { (it.image != null) or (it.video != null) }   // image나 video가 null이 아닌 경우만 뽑아서 리스트로 만든다.
                 )
             }
+            ProfilePostsGrid(
+                posts = userIdMedias,
+                cardViewModel = cardViewModel,
+                userViewModel = userViewModel,
+                myId = myId,
+                navController = navController,
+                modifier = modifier
+            )
         }
     }
 }

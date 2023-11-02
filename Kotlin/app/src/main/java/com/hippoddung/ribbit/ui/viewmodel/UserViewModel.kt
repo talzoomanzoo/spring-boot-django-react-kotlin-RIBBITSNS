@@ -16,11 +16,11 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-sealed interface UserUiState {
-    data class Exist(val user: User) : UserUiState
-    object Lack : UserUiState
-    object Loading : UserUiState
-    data class Error(val errorCode: String) : UserUiState
+sealed interface MyProfileUiState {
+    data class Exist(val myProfile: User) : MyProfileUiState
+    object Lack : MyProfileUiState
+    object Loading : MyProfileUiState
+    data class Error(val errorCode: String) : MyProfileUiState
 }
 
 sealed interface ProfileUiState {
@@ -33,45 +33,43 @@ sealed interface ProfileUiState {
 class UserViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : BaseViewModel() {
-    var userUiState: UserUiState by mutableStateOf(UserUiState.Lack)
+    var myProfileUiState: MyProfileUiState by mutableStateOf(MyProfileUiState.Lack)
         private set
-
-    var user = MutableLiveData<User?>()
+    var myProfile = MutableLiveData<User?>()
 
     var profileUiState: ProfileUiState by mutableStateOf(ProfileUiState.Loading)
         private set
 
-    fun getUserProfile() {
+    fun getMyProfile() {
         viewModelScope.launch(Dispatchers.IO) {
-            userUiState = UserUiState.Loading
-            Log.d("HippoLog, UserViewModel", "getUserProfile, $userUiState")
+            myProfileUiState = MyProfileUiState.Loading
+            Log.d("HippoLog, UserViewModel", "getMyProfile, $myProfileUiState")
             try {
-                val responseUser = userRepository.getUserProfile()
-                userUiState = UserUiState.Exist(responseUser)
-                user.postValue(responseUser)    // user Livedata 에 user값을 넣는다.
-                Log.d("HippoLog, TokenViewModel", "init DataStore 에서 토큰 보냄 ${user.value}")
+                val responseUser = userRepository.getMyProfile()
+                myProfileUiState = MyProfileUiState.Exist(responseUser)
+                myProfile.postValue(responseUser)    // user Livedata 에 user값을 넣는다.
             } catch (e: IOException) {
                 Log.d("HippoLog, UserViewModel", "${e.stackTrace}, ${e.message}")
-                userUiState = UserUiState.Error(e.message.toString())
+                myProfileUiState = MyProfileUiState.Error(e.message.toString())
 
             } catch (e: ExceptionInInitializerError) {
                 Log.d("HippoLog, UserViewModel", "${e.stackTrace}, ${e.message}")
-                userUiState = UserUiState.Error(e.message.toString())
+                myProfileUiState = MyProfileUiState.Error(e.message.toString())
 
             } catch (e: HttpException) {
                 Log.d("HippoLog, UserViewModel", "${e.stackTrace}, ${e.code()}, $e")
-                if (e.code() == 500) {
-                    userUiState = UserUiState.Error(e.code().toString())
+                myProfileUiState = if (e.code() == 500) {
+                    MyProfileUiState.Error(e.code().toString())
                 } else {
-                    userUiState = UserUiState.Error(e.message.toString())
+                    MyProfileUiState.Error(e.message.toString())
                 }
             }
-            Log.d("HippoLog, UserViewModel", "getUserProfile, $userUiState")
+            Log.d("HippoLog, UserViewModel", "getMyProfile, $myProfileUiState")
         }
     }
 
-    fun resetUser(){
-        user.postValue(null)
+    fun resetMyProfile() {
+        myProfile.postValue(null)
         Log.d("HippoLog, UserViewModel", "유저정보 리셋")
     }
 
@@ -82,8 +80,6 @@ class UserViewModel @Inject constructor(
             try {
                 val responseProfile = userRepository.getProfile(userId)
                 profileUiState = ProfileUiState.Exist(responseProfile)
-                user.postValue(responseProfile)    // user Livedata 에 user값을 넣는다.
-                Log.d("HippoLog, TokenViewModel", "init DataStore 에서 토큰 보냄 ${user.value}")
             } catch (e: IOException) {
                 Log.d("HippoLog, UserViewModel", "${e.stackTrace}, ${e.message}")
                 profileUiState = ProfileUiState.Error(e.message.toString())
@@ -100,7 +96,7 @@ class UserViewModel @Inject constructor(
                     profileUiState = ProfileUiState.Error(e.message.toString())
                 }
             }
-            Log.d("HippoLog, UserViewModel", "getUserProfile, $profileUiState")
+            Log.d("HippoLog, UserViewModel", "getProfile, $profileUiState")
         }
     }
 }

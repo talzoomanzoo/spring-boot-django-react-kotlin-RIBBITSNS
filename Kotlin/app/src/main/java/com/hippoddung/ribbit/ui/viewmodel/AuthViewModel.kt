@@ -44,6 +44,7 @@ class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : BaseViewModel() {
     var authUiState: AuthUiState by mutableStateOf(AuthUiState.Logout)  // authUiState의 경우 <ApiResponse<AuthResponse>>를 관찰하는 observer에게 관리를 위임한다.
+
     // 현재 TokenUiState가 AthUiState와 동일하게 기능하기 때문에 AthUiState 를 사용하는 것을 중지하고 tokenUiState 를 사용하기로 한다.
     // LoginLoading(JWT를 받아오는 것에 시간이 걸림.)을 위해 다시 사용하기로 함.
     val authResponse: MutableLiveData<ApiResponse<AuthResponse>> by lazy {
@@ -60,7 +61,10 @@ class AuthViewModel @Inject constructor(
                 withContext(Dispatchers.Main) {
                     if (it != null) {    // email 정보가 있는 경우
                         emailUiState = EmailUiState.Exist(it)   // emailUiState를 업데이트한다.
-                        Log.d("HippoLog, AuthViewModel", "init DataStore 에서 emailUiState 업데이트 $emailUiState")
+                        Log.d(
+                            "HippoLog, AuthViewModel",
+                            "init DataStore 에서 emailUiState 업데이트 $emailUiState"
+                        )
                     } else {
                         emailUiState = EmailUiState.Lack
                     }
@@ -75,7 +79,10 @@ class AuthViewModel @Inject constructor(
                 withContext(Dispatchers.Main) {
                     if (it != null) {    // pW 정보가 있는 경우
                         pWUiState = PWUiState.Exist(it) // pWUiState를 업데이트한다.
-                        Log.d("HippoLog, AuthViewModel", "init DataStore 에서 pWUiState 업데이트 $pWUiState")
+                        Log.d(
+                            "HippoLog, AuthViewModel",
+                            "init DataStore 에서 pWUiState 업데이트 $pWUiState"
+                        )
                     } else {
                         pWUiState = PWUiState.Lack
                     }
@@ -92,15 +99,13 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    suspend fun deleteLoginInfo() {  // Logout 시 DataStore 에 저장된 email 과 pW를 삭제.
-        viewModelScope.launch(Dispatchers.IO) {
-            authUiState = AuthUiState.Logout
-            authManager.deleteEmail()
-            authManager.deletePW()
-            emailUiState = EmailUiState.Lack
-            pWUiState = PWUiState.Lack
-            Log.d("HippoLog, AuthViewModel", "DataStore, state 로그인정보 삭제")
-        }
+    suspend fun deleteLoginInfo() {  // Logout 시 DataStore 에 저장된 email 과 pW를 삭제. 자동로그인으로 인해 자동로그아웃이 제대로 되지 않는 문제 해결을 위해 동기식으로 변경
+        authUiState = AuthUiState.Logout
+        authManager.deleteEmail()
+        authManager.deletePW()
+        emailUiState = EmailUiState.Lack
+        pWUiState = PWUiState.Lack
+        Log.d("HippoLog, AuthViewModel", "DataStore, state 로그인정보 삭제")
     }
 
     fun signUp(auth: SignUpRequest, coroutinesErrorHandler: CoroutinesErrorHandler) =
