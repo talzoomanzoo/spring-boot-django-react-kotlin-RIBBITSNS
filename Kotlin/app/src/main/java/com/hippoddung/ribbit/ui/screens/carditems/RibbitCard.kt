@@ -95,7 +95,7 @@ fun RibbitCard(
                         start = Offset(0.dp.toPx(), 0.dp.toPx()),
                         end = Offset(400.dp.toPx(), 0.dp.toPx()),
                         strokeWidth = 1.dp.toPx(),
-                        cap = StrokeCap.Round
+//                        cap = StrokeCap.Round
                     )
                 }
             )

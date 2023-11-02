@@ -190,7 +190,10 @@ fun ProfileDropDownMenu(
     ) {
         DropdownMenuItem(
             onClick = {
-                userViewModel.myProfile.value?.id?.let { cardViewModel.getUserIdPosts(userId = it) }   // userViewModel의 user가 없는 경우 접근 자체가 불가능
+                userViewModel.myProfile.value?.id?.let {
+                    cardViewModel.getUserIdPosts(userId = it)
+                    userViewModel.getProfile(userId = it)
+                }   // userViewModel의 user가 없는 경우 접근 자체가 불가능
                 navController.navigate(RibbitScreen.ProfileScreen.name)
                 isDropDownMenuExpanded = false
             },
