@@ -141,7 +141,6 @@ fun RibbitScreen(
                 tokenViewModel = tokenViewModel,
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
-                creatingPostViewModel = creatingPostViewModel,
                 myId = myProfile,   // 유저 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 것으로 가정한다.
                 modifier = modifier
             )

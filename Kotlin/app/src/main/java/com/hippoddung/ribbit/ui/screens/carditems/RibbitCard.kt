@@ -6,13 +6,20 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -20,9 +27,11 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.hippoddung.ribbit.network.bodys.RibbitPost
 import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.viewmodel.CardViewModel
+import com.hippoddung.ribbit.ui.viewmodel.ProfileUiState
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,6 +46,9 @@ fun RibbitCard(
     navController: NavHostController,
     modifier: Modifier
 ) {
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentScreen =
+        RibbitScreen.valueOf(backStackEntry?.destination?.route ?: RibbitScreen.HomeScreen.name)
     Log.d("HippoLog, RibbitCard", "RibbitCard")
     Card(
         onClick = {
@@ -49,10 +61,34 @@ fun RibbitCard(
 //            containerColor = MaterialTheme.colorScheme.background
 //        ),
 //        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
             .padding(start = 16.dp, top = 16.dp, end = 16.dp)
     ) {
         Column(modifier = modifier) {
+            if (currentScreen == RibbitScreen.ProfileScreen) {
+                if (userViewModel.profileUiState is ProfileUiState.Exist) {
+                    if ((userViewModel.profileUiState as ProfileUiState.Exist).user.id != post.user.id) {
+                        Row(
+                            modifier = modifier,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Repeat,
+                                contentDescription = "Rebbit 표시",
+                                modifier = modifier.size(12.dp),
+                                tint = Color.Red
+                            )
+                            Text(
+                                text = "Rebbit from ${(userViewModel.profileUiState as ProfileUiState.Exist).user.email}",
+                                modifier = modifier,
+                                color = Color.Red,
+                                fontSize = 12.sp
+                            )
+                        }
+                    }
+                }
+            }
             CardTopBar(
                 post = post,
                 cardViewModel = cardViewModel,
@@ -71,7 +107,7 @@ fun RibbitCard(
                 RibbitImage(
                     image = post.image,
                     modifier = modifier
-                    )
+                )
             }
 
             if (post.video != null) {

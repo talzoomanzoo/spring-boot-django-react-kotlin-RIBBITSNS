@@ -50,7 +50,6 @@ fun PostIdScreen(
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
-    creatingPostViewModel: CreatingPostViewModel,
     myId: Int,
     modifier: Modifier = Modifier
 ) {
@@ -69,7 +68,6 @@ fun PostIdScreen(
                 tokenViewModel = tokenViewModel,
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
-                creatingPostViewModel = creatingPostViewModel,
 //                scrollBehavior = scrollBehavior,
                 navController = navController,
                 post = post,
@@ -94,7 +92,6 @@ fun PostIdSuccessScreen(
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
-    creatingPostViewModel: CreatingPostViewModel,
 //    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
     post: RibbitPost,
