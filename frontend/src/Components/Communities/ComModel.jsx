@@ -109,6 +109,7 @@ const ComModel = ({ handleClose, open }) => {
                                             }
                                             alt="Img"
                                             className="w-full h-[12rem] object-cover object-center"
+                                            loading="lazy"
                                         />
                                         <input
                                             type="file"

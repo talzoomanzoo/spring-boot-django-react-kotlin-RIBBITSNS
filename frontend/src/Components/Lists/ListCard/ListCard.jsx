@@ -35,7 +35,7 @@ const ListCard = ({ list }) => {
 
   return (
     <div class="flex space-x-5">
-      <ListIcon
+      <div
         onClick={handleNavigateToListsDetail}
         className="cursor-pointer"
       />
@@ -45,7 +45,7 @@ const ListCard = ({ list }) => {
             onClick={handleNavigateToListsDetail}
             className="flex cursor-pointer items-center space-x-1"
           >
-            <li><span>{list.listName}</span></li>
+            <li className="list-css"><span>{list.listName}</span></li>
           </div>
         </div>
       </div>

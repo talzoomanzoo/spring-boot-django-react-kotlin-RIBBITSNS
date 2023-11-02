@@ -63,7 +63,7 @@ const Navigation = () => {
         <div className="cursor-pointer py-5">
           <img
             className="w-10"
-            src="https://cdn.pixabay.com/photo/2023/10/26/06/44/06-44-04-156_1280.png"
+            src="https://cdn.pixabay.com/photo/2023/10/26/06/44/frog-8341850_1280.png"
             alt=""
             onClick={()=> navigate(`/`)}
             loading="lazy"
@@ -100,7 +100,7 @@ const Navigation = () => {
      <div className="flex items-center space-x-3">
         <Avatar
           alt="Remy Sharp"
-          src={auth.user?.image? auth.user.image : "https://cdn.pixabay.com/photo/2023/10/24/01/42/01-42-37-630_1280.png"}
+          src={auth.user?.image? auth.user.image : "https://cdn.pixabay.com/photo/2023/10/24/01/42/art-8337199_1280.png"}
           loading="lazy"
         />
 
