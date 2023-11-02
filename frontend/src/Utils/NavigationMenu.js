@@ -1,15 +1,12 @@
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ExploreIcon from '@mui/icons-material/Explore';
-import GroupIcon from '@mui/icons-material/Group';
+import ForumIcon from '@mui/icons-material/Forum';
+import GroupsIcon from '@mui/icons-material/Groups';
 import HouseIcon from '@mui/icons-material/House';
 import ListIcon from '@mui/icons-material/List';
-import ChatIcon from '@mui/icons-material/Chat';
-import ForumIcon from '@mui/icons-material/Forum';
-import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import VerifiedIcon from '@mui/icons-material/Verified';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import GroupsIcon from '@mui/icons-material/Groups';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 
 export const navigationMenu=[
     {

@@ -21,8 +21,10 @@ import { useFormik } from "formik";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
+// import { io } from "socket.io-client";
 import * as Yup from "yup";
 import { api } from "../../../../Config/apiConfig";
+import { incrementNotificationCount } from "../../../../Store/Notification/Action";
 import {
   createRetweet,
   createTweet,
@@ -38,9 +40,10 @@ import {
 } from "../../../../Store/Tweet/ActionType";
 import { uploadToCloudinary } from "../../../../Utils/UploadToCloudinary";
 import BackdropComponent from "../../../Backdrop/Backdrop";
+import Loading from "../../../Profile/Loading/Loading";
 import Maplocation from "../../../Profile/Maplocation";
 import ReplyModal from "./ReplyModal";
-import Loading from "../../../Profile/Loading/Loading";
+
 
 const validationSchema = Yup.object().shape({
   content: Yup.string().required("내용이 없습니다"),
@@ -83,6 +86,15 @@ const TwitCard = ({ twit }) => {
   const [address, setAddress] = useState("");
   const [refreshTwits, setRefreshTwits] = useState(0);
 
+  // useEffect(()=>{
+  //   const socket = io("https://localhost:5000")
+  //   console.log(socket)
+  // },[])
+
+  // const handleNotification =() => {
+  //   setLikes(true);
+  // }
+
   const handleMapLocation = (newAddress) => {
     setAddress(newAddress);
   };
@@ -99,10 +111,17 @@ const TwitCard = ({ twit }) => {
   };
 
   const handleLikeTweet = (num) => {
-    dispatch(likeTweet(twit.id));
-    setIsLiked(!isLiked);
-    setLikes(likes + num);
-  };
+  // if (!isLiked) { // FavoriteIcon이 눌리지 않은 상태일 때만 카운트를 증가시킴
+  //   dispatch(incrementNotificationCount());
+  // }
+  const TuserId = twit.user.id;
+  console.log("asdf", TuserId);
+  dispatch(incrementNotificationCount(TuserId));
+  dispatch(likeTweet(twit.id));
+  setIsLiked(!isLiked);
+  setLikes(likes + num);
+};
+  
   const handleCreateRetweet = () => {
     dispatch(createRetweet(twit.id));
     setRetwit(isRetwit ? retwit - 1 : retwit + 1);

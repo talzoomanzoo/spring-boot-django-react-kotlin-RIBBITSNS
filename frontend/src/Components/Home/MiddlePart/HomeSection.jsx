@@ -12,15 +12,15 @@ import { api } from "../../../Config/apiConfig";
 import { getAllTweets } from "../../../Store/Tweet/Action";
 import { uploadToCloudinary } from "../../../Utils/UploadToCloudinary";
 import BackdropComponent from "../../Backdrop/Backdrop";
-import TwitCard from "./TwitCard/TwitCard";
 import Loading from "../../Profile/Loading/Loading";
-// import ImageIcon from '@mui/icons-material/Image';
+import Maplocation from "../../Profile/Maplocation";
+import TwitCard from "./TwitCard/TwitCard";
+
 import {
   TWEET_CREATE_FAILURE,
   TWEET_CREATE_REQUEST,
   TWEET_CREATE_SUCCESS,
 } from "../../../Store/Tweet/ActionType";
-import Maplocation from "../../Profile/Maplocation";
 
 const validationSchema = Yup.object().shape({
   content: Yup.string().required("내용이 없습니다"),
@@ -41,31 +41,28 @@ const createTweetFailure = (error) => ({
 });
 
 const HomeSection = () => {
-  const [ loading, setLoading ] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
-  const [selsectedVideo, setSelectedVideo] = useState("");
-  const [isLoading, setIsLoading] = useState(false); //로딩창 추가
+  const [selectedVideo, setSelectedVideo] = useState("");
   const [isLocationFormOpen, setLocationFormOpen] = useState(false);
+  const [openEmoji, setOpenEmoji] = useState(false);
+  const [refreshTwits, setRefreshTwits] = useState(0); // Define setRefreshTwits
   const dispatch = useDispatch();
   const { twit, auth, theme } = useSelector((store) => store);
-  const jwt = localStorage.getItem("jwt");
-
-  const [openEmoji, setOpenEmoji] = useState(false);
-  const handleOpenEmoji = () => setOpenEmoji(!openEmoji);
-  const handleCloseEmoji = () => setOpenEmoji(false);
+  const [notificationSent, setNotificationSent] = useState(false); // 푸시 알림을 이미 보냈는지 확인하는 상태 추가
   const jwtToken = localStorage.getItem("jwt");
   const [address, setAddress] = useState("");
+  const handleOpenEmoji = () => setOpenEmoji(true);
+  const handleCloseEmoji = () => setOpenEmoji(false);
+
+  useEffect(() => {
+    dispatch(getAllTweets());
+  }, [dispatch]);
 
   const handleToggleLocationForm = () => {
     setLocationFormOpen((prev) => !prev);
   };
-
-  const [refreshTwits, setRefreshTwits] = useState(0);
-
-  useEffect(() => {
-    dispatch(getAllTweets());
-  }, [refreshTwits]);
 
   const HomeCreateTweet = (tweetData) => {
     return async (dispatch) => {
@@ -83,6 +80,7 @@ const HomeSection = () => {
         console.log("data.id: ", data.content);
 
         const response = await ethicreveal(data.id, data.content);
+        handleSendPushNotification();
       } catch (error) {
         dispatch(createTweetFailure(error.message));
       } finally {
@@ -93,13 +91,10 @@ const HomeSection = () => {
 
   const handleSubmit = (values, actions) => {
     dispatch(HomeCreateTweet(values));
-    console.log("values: ", values);
     actions.resetForm();
     setSelectedImage("");
     setSelectedVideo("");
     handleCloseEmoji();
-
-    // window.location.reload();
   };
 
   const ethicreveal = async (twitid, twitcontent) => {
@@ -118,10 +113,7 @@ const HomeSection = () => {
           }),
         }
       );
-      console.log("response: ", response);
-      console.log("jwt: ", jwtToken);
       if (response.status === 200) {
-        console.log("ethicresponse: ", response);
         setLoading(false);
         setRefreshTwits((prev) => prev + 1);
       }
@@ -136,7 +128,6 @@ const HomeSection = () => {
       image: "",
       video: "",
       location: "",
-      // thumbnail: "",
     },
     validationSchema,
     onSubmit: handleSubmit,
@@ -161,12 +152,29 @@ const HomeSection = () => {
   const handleMapLocation = async (newAddress) => {
     setAddress(newAddress);
     formik.setFieldValue("location", newAddress);
-    console.log("newAddress", newAddress);
   };
 
   const handleEmojiClick = (value) => {
     const { emoji } = value;
     formik.setFieldValue("content", formik.values.content + emoji);
+  };
+
+  const handleSendPushNotification = () => {
+    if (!notificationSent && Notification.permission === "granted") {
+      const options = {
+        body: "리빗이 성공적으로 게시되었습니다.",
+        icon: "URL_TO_ICON",
+        badge: "URL_TO_BADGE",
+      };
+      new Notification("게시 완료", options);
+      setNotificationSent(true); // 알림을 보냈음을 표시
+    } else if (Notification.permission !== "denied") {
+      Notification.requestPermission().then((permission) => {
+        if (permission === "granted") {
+          handleSendPushNotification();
+        }
+      });
+    }
   };
 
   return (
@@ -175,9 +183,15 @@ const HomeSection = () => {
         <h1 className="py-5 text-xl font-bold opacity-90">홈</h1>
       </section>
       <section className="pb-10">
-        {/* ${theme.currentTheme==="dark"?" bg-[#151515] p-10 rounded-md mb-10":""} */}
-        <div className="flex space-x-5 ">
-          <Avatar alt="Avatar" src={auth.user?.image? auth.user.image : "https://cdn.pixabay.com/photo/2023/10/24/01/42/01-42-37-630_1280.png"} />
+        <div className="flex space-x-5">
+          <Avatar
+            alt="Avatar"
+            src={
+              auth.user?.image
+                ? auth.user.image
+                : "URL_TO_DEFAULT_AVATAR"
+            }
+          />
           <div className="w-full">
             <form onSubmit={formik.handleSubmit}>
               <div>
@@ -185,7 +199,7 @@ const HomeSection = () => {
                   type="text"
                   name="content"
                   placeholder="뭔 일 있음?"
-                  className={`border-none outline-none text-xl bg-transparent `}
+                  className={`border-none outline-none text-xl bg-transparent`}
                   {...formik.getFieldProps("content")}
                 />
                 {formik.errors.content && formik.touched.content && (
@@ -199,7 +213,7 @@ const HomeSection = () => {
                     <img className="w-[28rem]" src={selectedImage} alt="" />
                   )}
 
-                  {selsectedVideo && <video controls src={twit.video} />}
+                  {selectedVideo && <video controls src={selectedVideo} />}
                 </div>
               )}
 
@@ -238,7 +252,7 @@ const HomeSection = () => {
                       className="text-[#42c924] cursor-pointer"
                     />
                     {openEmoji && (
-                      <div className="absolute top-10 z-50 ">
+                      <div className="absolute top-10 z-50">
                         <EmojiPicker
                           theme={theme.currentTheme}
                           onEmojiClick={handleEmojiClick}
@@ -272,14 +286,12 @@ const HomeSection = () => {
           {isLocationFormOpen && (
             <Maplocation onLocationChange={handleMapLocation} />
           )}
-          {loading ? <Loading/> : null}
-          {twit.twits && twit.twits.length > 0 ?
-            (
-              twit.twits.map((item) => <TwitCard twit={item} key={item.id} />)
-            ) :
-            (
-              <div>게시된 리빗이 없습니다.</div>
-            )}
+          {loading ? <Loading /> : null}
+          {twit.twits && twit.twits.length > 0 ? (
+            twit.twits.map((item) => <TwitCard twit={item} key={item.id} />)
+          ) : (
+            <div>게시된 리빗이 없습니다.</div>
+          )}
         </div>
       </section>
       <section>
