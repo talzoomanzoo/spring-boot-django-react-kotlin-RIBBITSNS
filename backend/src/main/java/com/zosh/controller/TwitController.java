@@ -40,9 +40,10 @@ public class TwitController {
 	private UserService userService;
 	private ListService listService;
 	
-	public TwitController(TwitService twitService,UserService userService) {
+	public TwitController(TwitService twitService,UserService userService, ListService listService) {
 		this.twitService=twitService;
 		this.userService=userService;
+		this.listService=listService;
 	}
 	
 	@PostMapping("/create")

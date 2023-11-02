@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zosh.dto.ListDto;
-import com.zosh.dto.TwitDto;
 import com.zosh.dto.UserDto;
 import com.zosh.dto.mapper.ListDtoMapper;
 import com.zosh.dto.mapper.UserDtoMapper;
@@ -117,15 +116,21 @@ private UserRepository userRepository;
 		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
 	
+	@GetMapping("/{listId}")
+	public ResponseEntity<ListDto> findListById(@PathVariable Long listId,
+			@RequestHeader("Authorization") String jwt) throws ListException, UserException {
+		User user = userService.findUserProfileByJwt(jwt);
+		ListModel listModel = listService.findById(listId);
+		ListDto listDto = ListDtoMapper.toListDto(listModel, user);
+		return new ResponseEntity<>(listDto, HttpStatus.ACCEPTED);
+	}
+	
 	@PostMapping("/{listId}/setPrivate")
 	public ResponseEntity<ListDto> setPrivate(@PathVariable Long listId, 
 			@RequestHeader("Authorization") String jwt) throws ListException, UserException {
-		
-		
 		User user = userService.findUserProfileByJwt(jwt);
 		ListModel listModel=listService.setPrivateById(listId, user.getId());
 		ListDto listDto=ListDtoMapper.toListDto(listModel, user);
-		
 		return new ResponseEntity<>(listDto, HttpStatus.CREATED);
 	}
 }

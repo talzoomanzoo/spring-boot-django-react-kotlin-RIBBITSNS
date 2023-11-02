@@ -14,11 +14,10 @@ const ListCard = ({ list }) => {
   const handleOpenListsModel = () => setOpenListsModel(true);
   const dispatch = useDispatch();
 
-  const handleNavigateToListsDetail = () => {
+  const handleNavigateToListsDetail = async() => {
     navigate(`/lists/${list.id}`);
   };
 
-  console.log("list log", list);
 
   const { auth } = useSelector((store) => store);
   const showDeleteButton = list.user.id === auth.user.id;

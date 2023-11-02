@@ -65,6 +65,7 @@ const TwitCard = ({ twit }) => {
 
   const [sentence, setSentence] = useState(twit.sentence); //sentence는 윤리수치에 해당하는 문장이 담아진다.
   //  const [isLoading, setIsLoading] = useState(false); //로딩창의 띄어짐의 유무를 판단한다. default는 true이다.
+
   const jwtToken = localStorage.getItem("jwt");
 
   const [isEdited, setIsEdited] = useState(twit.edited);
@@ -104,21 +105,24 @@ const TwitCard = ({ twit }) => {
     setLikes(likes + num);
     window.location.reload();
   };
+
   const handleCreateRetweet = () => {
-    dispatch(createRetweet(twit.id));
-    setRetwit(isRetwit ? retwit - 1 : retwit + 1);
-    setIsRetwit(!retwit);
+    if (auth.user.id !== twit.user.id) {
+      dispatch(createRetweet(twit.id));
+      setRetwit(isRetwit ? retwit - 1 : retwit + 1);
+      setIsRetwit(!retwit);
+    } else {
+      console.log("unable to create reribbit")
+    }
   };
+
   const handleCloseReplyModel = () => setOpenReplyModel(false);
-
   const handleOpenReplyModel = () => setOpenReplyModel(true);
-
   //const handleNavigateToTwitDetial = () => navigate(`/twit/${twit.id}`);
 
   // useEffect(() => {
   //   dispatch(getAllTweets());
   // }, [refreshTwits]);
-
 
   const handleNavigateToTwitDetial = () => {
     if (!isEditing) {
@@ -163,14 +167,9 @@ const TwitCard = ({ twit }) => {
 
   const updateTweet = (twit) => {
     return async (dispatch) => {
-      console.log("twitContent", twit.content); // 넘어 온 것 확인
-      console.log("tr", twit);
       dispatch({ type: UPDATE_TWEET_REQUEST });
       try {
         const { data } = await api.post(`/api/twits/edit`, twit);
-        console.log("edited twit", data);
-        console.log("data.id: ", data.id);
-        console.log("data.id: ", data.content);
 
         //const response = await ethicreveal(data.id,data.content);
         dispatch({ type: UPDATE_TWEET_SUCCESS, payload: data });
@@ -206,7 +205,6 @@ const TwitCard = ({ twit }) => {
       //setSelectedImage("");
       //setSelectedVideo("");
       setIsEditing(false);
-      console.log("edit test", twit);
       //window.location.reload();
       //setRefreshTwits((prev) => prev + 1);
       setLoading(false);
@@ -232,8 +230,6 @@ const TwitCard = ({ twit }) => {
           }),
         }
       );
-      console.log("response: ", response);
-      console.log("jwt: ", jwtToken);
       if (response.status === 200) {
         const responseData = await response.json();
         setSentence(responseData.sentence);
@@ -300,25 +296,22 @@ const TwitCard = ({ twit }) => {
   const timeAgo = getTime(datefinal, currTimestamp);
 
   const dateedit = new Date(edittime).getTime();
-  //console.log("dateedit", dateedit);
   const timeEdit = getTime(dateedit, currTimestamp);
-  //console.log("timeedit", timeEdit);
 
-  console.log("twitTest", twit);
   return (
     <div className="">
       {loading ? <Loading /> : null}
-      {auth.user?.id !== twit.user.id &&
-        // auth.user notnull 일때, auth.user.id 가 twit.user.id 와 일치하지 않고,
-        location.pathname === `/profile/${auth.user?.id}` && (
-          // 현재 url의 pathname이 /profile/${auth.user?.id} 이면
-          <div className="flex items-center font-semibold text-gray-700 py-2">
+      {auth.findUser?.id !== twit.user.id &&
+        location.pathname === `/profile/${auth.findUser?.id}` &&
+        twit.retwitUsersId.length > 0 ?
+        (
+          <div className="flex items-center font-semibold text-pink-700 py-2">
             <RepeatIcon />
             <p className="ml-3">You Reribbit</p>
           </div>
-          // 해당 표시를 해라
-        )}
-
+        ) :
+        null
+      }
       <div className="flex space-x-5 ">
         <Avatar
           onClick={() => navigate(`/profile/${twit.user.id}`)}
@@ -412,8 +405,8 @@ const TwitCard = ({ twit }) => {
                 <div>
                   <TextareaAutosize
                     className={`${theme.currentTheme === "light"
-                        ? "bg-white"
-                        : "bg-[#151515]"
+                      ? "bg-white"
+                      : "bg-[#151515]"
                       }`}
                     minRows={0}
                     maxRows={0}

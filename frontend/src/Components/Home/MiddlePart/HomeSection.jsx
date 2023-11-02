@@ -67,8 +67,6 @@ const HomeSection = () => {
     dispatch(getAllTweets());
   }, [refreshTwits]);
 
-  console.log("tweetData: ", twit);
-
   const HomeCreateTweet = (tweetData) => {
     return async (dispatch) => {
       setLoading(true);

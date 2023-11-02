@@ -9,8 +9,6 @@ const ViewTop = () => {
     const { twit } = useSelector(store => store);
     const [refreshTwits, setRefreshTwits] = useState(0);
 
-    console.log("viewTop check", twit);
-
     useEffect(() => {
         dispatch(findByTopViews());
     }, [refreshTwits])

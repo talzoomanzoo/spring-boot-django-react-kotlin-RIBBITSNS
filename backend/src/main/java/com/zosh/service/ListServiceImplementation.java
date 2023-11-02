@@ -36,6 +36,7 @@ public class ListServiceImplementation implements ListService {
 	public ListModel createList(ListModel req, User user) throws ListException, UserException {
 		// TODO Auto-generated method stub
 		ListModel listModel = new ListModel();
+		listModel.setPrivateMode(req.isPrivateMode());
 		listModel.setBackgroundImage(req.getBackgroundImage());
 		listModel.setCreatedAt(LocalDateTime.now());
 		listModel.setDescription(req.getDescription());
