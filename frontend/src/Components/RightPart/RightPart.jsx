@@ -87,7 +87,7 @@ const RightPart = () => {
             onChange={handleSearchAll}
             // onChange={handleSearchUser}
             type="text"
-            placeholder="사용자 검색"
+            placeholder="사용자 및 글 검색"
             className={`py-3 rounded-full outline-none text-gray- w-full pl-12 ${theme.currentTheme === "light" ? "bg-stone-300" : "bg-[#151515]"}`}
           />
           <span className="absolute top-0 left-0 pl-3 pt-3">
@@ -110,7 +110,7 @@ const RightPart = () => {
                   ${theme.currentTheme === "light" ? "text-black hover:text-white" : "text-white  hover:text-black"} p-3 cursor-pointer`}
                   key={item.id} // 각 항목에 고유한 키를 제공합니다.
                 >
-                  <Avatar alt={item.fullName} src={item.image ? item.image : "https://cdn.pixabay.com/photo/2023/10/24/01/42/01-42-37-630_1280.png"} loading="lazy" />
+                  <Avatar alt={item.fullName} src={item.image ? item.image : "https://cdn.pixabay.com/photo/2023/10/24/01/42/art-8337199_1280.png"} loading="lazy" />
                   <div className={`ml-2`}>
                     <p>{item.fullName}</p>
                     <p className={`text-sm`}>
