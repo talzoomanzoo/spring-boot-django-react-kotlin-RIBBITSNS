@@ -12,14 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zosh.dto.ComDto;
-import com.zosh.dto.ListDto;
 import com.zosh.dto.mapper.ComDtoMapper1;
-import com.zosh.dto.mapper.ListDtoMapper;
 import com.zosh.exception.ComException;
-import com.zosh.exception.ListException;
 import com.zosh.exception.UserException;
 import com.zosh.model.Community;
-import com.zosh.model.ListModel;
 import com.zosh.model.User;
 import com.zosh.service.ComService;
 import com.zosh.service.UserService;
@@ -52,7 +48,6 @@ private UserService userService;
 		User reqUser=userService.findUserProfileByJwt(jwt);
 		List<Community> communities = comService.findAllCom(reqUser);
 		List<ComDto> comDtos=ComDtoMapper1.toComDtos(communities,reqUser);
-		System.out.println("===");
 		return new ResponseEntity<>(comDtos, HttpStatus.ACCEPTED);
 	}
 	
