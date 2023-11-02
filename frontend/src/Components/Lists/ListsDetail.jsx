@@ -1,6 +1,7 @@
 import { memo, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import TwitCard from "../Home/MiddlePart/TwitCard/TwitCard";
+import { findListById } from "../../Store/List/Action";
 import { findTwitsByListId } from "../../Store/Tweet/Action";
 import { useParams, useNavigate } from "react-router";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
@@ -14,14 +15,15 @@ const ListsDetail = () => {
     // twit: twitReducer, theme: themeReducer
     // console.log("reply detail", twit.twit?.replyTwits.slice().reverse());
     const navigate = useNavigate();
-
     const handleBack = () => navigate(-1)
     // 뒤로가기, 앞으로가기는 navigate(1)
     useEffect(() => {
+        dispatch(findListById(param.id))
         dispatch(findTwitsByListId(param.id))
     }, [param.id])
 
-    console.log("findTwitsByListId", twit);
+    console.log("listname check", list);
+
 
     return (
         <div>
@@ -34,7 +36,7 @@ const ListsDetail = () => {
                     onClick={handleBack}
                 />
                 <h1 className="py-5 text-xl font-bold opacity-90 ml-5 ${}">
-                    {"~~~~~~ 리스트의 리빗"}
+                    {`${list.list?.listName} 리스트의 리빗`}
                 </h1>
             </section>
             <section>

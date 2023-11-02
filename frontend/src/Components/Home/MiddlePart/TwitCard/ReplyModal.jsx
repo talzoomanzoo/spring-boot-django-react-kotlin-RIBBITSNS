@@ -42,7 +42,6 @@ const ReplyModal = ({ handleClose, twitData, open }) => {
     //setRefreshTwits((prev) => prev + 1);
     handleClose()
   };
-  console.log("twitData", twitData);
 
   const formik = useFormik({
     initialValues: {

@@ -24,6 +24,7 @@ import {
 import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
 import BackdropComponent from "../Backdrop/Backdrop";
 import { Switch } from 'react-native'; // 여기서만 import 할것, switch 건들 ㄴㄴ
+import { getUserAction } from "../../Store/List/Action";
 
 const style = {
   position: "absolute",
@@ -114,6 +115,7 @@ const ListsModel2 = ({ list, handleClose, open }) => {
 
     dispatch(addUserAction(listId, userId));
     setSearch("");
+    dispatch(getUserAction(listId));
   };
 
   const handleFollowingsClick = () => {

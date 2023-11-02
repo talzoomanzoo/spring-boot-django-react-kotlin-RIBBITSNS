@@ -21,6 +21,9 @@ import {
     UPDATE_LIST_FAILURE,
     UPDATE_LIST_REQUEST,
     UPDATE_LIST_SUCCESS,
+    FIND_LIST_BY_ID_REQUEST,
+    FIND_LIST_BY_ID_SUCCESS,
+    FIND_LIST_BY_ID_FAILURE,
 } from "./ActionType";
 
 export const deleteListRequest = () => ({
@@ -109,18 +112,18 @@ export const addUserAction = (listId, userId) => async (dispatch) => {
   }
 };
 
-// export const getUserAction = (listId) => async (dispatch) => {
-//   dispatch({ type: GET_USER_REQUEST });
-//   try {
-//     console.log("listId get", listId);
-//     const response = await api.get(`/api/lists/${listId}/get`);
-//     const list = response.data;
-//     console.log("getUserAction list data", list);
-//     dispatch({ type: GET_USER_SUCCESS, payload: list });
-//   } catch (error) {
-//     dispatch({ type: GET_USER_FAILURE, payload: error.message });
-//   }
-// };
+export const getUserAction = (listId) => async (dispatch) => {
+  dispatch({ type: GET_USER_REQUEST });
+  try {
+    console.log("listId get", listId);
+    const response = await api.get(`/api/lists/${listId}/get`);
+    const list = response.data;
+    console.log("getUserAction list data", list);
+    dispatch({ type: GET_USER_SUCCESS, payload: list });
+  } catch (error) {
+    dispatch({ type: GET_USER_FAILURE, payload: error.message });
+  }
+};
 
 export const setPrivate= (listId) => async(dispatch) => {
     dispatch({type: SET_PRIVATE_REQUEST})
@@ -144,6 +147,18 @@ export const getAllLists = () => {
       dispatch(getAllListsFailure(error.message));
     }
   };
+};
+
+export const findListById = (listId) => {
+  return async(dispatch) => {
+    dispatch({type: FIND_LIST_BY_ID_REQUEST});
+    try {
+      const response = await api.get(`/api/lists/${listId}`);
+      dispatch({type: FIND_LIST_BY_ID_SUCCESS, payload: response.data});
+    } catch (error) {
+      dispatch({type: FIND_LIST_BY_ID_FAILURE, payload: error.message});
+    }
+  }
 };
 
 export const deleteList = (listId) => {

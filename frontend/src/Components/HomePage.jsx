@@ -11,6 +11,7 @@ import Profile from "./Profile/Profile";
 import RightPart from "./RightPart/RightPart";
 import Chatroom from "./Chat/Chat";
 import ListsDetail from "./Lists/ListsDetail";
+import Communities from "./Communities/Communities";
 
 
 const HomePage = () => {
@@ -33,6 +34,7 @@ const HomePage = () => {
           <Route path="/followTwit" element={<FollowTwit />}></Route>
           <Route path="/messages" element={<Chatroom />}></Route>
           <Route path="/lists" element={<Lists />}></Route>
+          <Route path="/communities" element={<Communities />}></Route>
           <Route path="/twit/:id" element={<TwitDetail />}></Route>
             <Route path="/lists/:id" element={<ListsDetail />}></Route>
         </Routes>
