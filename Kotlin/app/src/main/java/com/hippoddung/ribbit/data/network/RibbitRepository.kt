@@ -12,10 +12,12 @@ class RibbitRepository @Inject constructor(
     suspend fun postCreatePost(twitCreateRequest: TwitCreateRequest) = ribbitApiService.postCreatePost(twitCreateRequest)
     suspend fun deletePost(postId: Int) = ribbitApiService.deletePost(postId)
     suspend fun getPostIdPost(postId: Int) = ribbitApiService.getPostIdPost(postId)
+    suspend fun getUserIdPosts(userId: Int) = ribbitApiService.getUserIdPosts(userId)
+    suspend fun getUserIdReplies(userId: Int) = ribbitApiService.getUserIdReplies(userId)
+    suspend fun getUserIdLikes(userId: Int) = ribbitApiService.getUserIdLikes(userId)
     suspend fun postReply(replyRequest: ReplyRequest) = ribbitApiService.postReply(replyRequest)
     suspend fun postPostIdLike(postId: Int) = ribbitApiService.postPostIdLike(postId)
     suspend fun deletePostIdLike(postId: Int) = ribbitApiService.deletePostIdLike(postId)
     suspend fun putPostIdRepost(postId: Int) = ribbitApiService.putPostIdRepost(postId)
     suspend fun postPostIdCount(postId: Int) = ribbitApiService.postPostIdCount(postId)
-
 }

@@ -190,7 +190,7 @@ fun InputTwitScreen(
             }
             Button(
                 onClick = { videoLauncher.launch("video/*") },
-                modifier.padding(14.dp)
+                modifier = modifier.padding(14.dp)
             ) {
                 Icon(
                     imageVector = Icons.Filled.OndemandVideo,
@@ -202,7 +202,7 @@ fun InputTwitScreen(
         Row(modifier = modifier) {
             Button(
                 onClick = { navController.navigate(RibbitScreen.HomeScreen.name) },
-                modifier.padding(14.dp)
+                modifier = modifier.padding(14.dp)
             ) {
                 Text(
                     text = stringResource(R.string.Cancel),
@@ -217,7 +217,7 @@ fun InputTwitScreen(
                         inputText = inputText
                     )
                 },
-                modifier.padding(14.dp)
+                modifier = modifier.padding(14.dp)
             ) {
                 Text(
                     text = stringResource(R.string.twit_create),

@@ -76,6 +76,7 @@ fun HomeTopAppBar(
                     navController,
                     tokenViewModel,
                     authViewModel,
+                    cardViewModel,
                     userViewModel,
                     modifier = modifier
                 )
@@ -163,6 +164,7 @@ fun ProfileDropDownMenu(
     navController: NavHostController,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
+    cardViewModel: CardViewModel,
     userViewModel: UserViewModel,
     modifier: Modifier
 ) {
@@ -188,6 +190,7 @@ fun ProfileDropDownMenu(
     ) {
         DropdownMenuItem(
             onClick = {
+                userViewModel.user.value?.id?.let { cardViewModel.getUserIdPosts(userId = it) }   // userViewModel의 user가 없는 경우 접근 자체가 불가능
                 navController.navigate(RibbitScreen.ProfileScreen.name)
                 isDropDownMenuExpanded = false
             },

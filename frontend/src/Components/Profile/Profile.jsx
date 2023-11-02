@@ -26,7 +26,6 @@ import {
   viewPlus,
 } from "../../Store/Tweet/Action";
 import TwitCard from "../Home/MiddlePart/TwitCard/TwitCard";
-import SnackbarComponent from "../Snackbar/SnackbarComponent";
 import Maplocation from "./Maplocation";
 import ProfileModel from "./ProfileModel";
 
@@ -81,6 +80,7 @@ const Profile = () => {
 
   useEffect(() => {
     dispatch(getUsersTweets(param.id));
+    console.log("check1");
   }, [param.id, twit.retwit]);
 
   useEffect(() => {

@@ -25,7 +25,6 @@ sealed interface UserUiState {
 
 sealed interface ProfileUiState {
     data class Exist(val user: User) : ProfileUiState
-    object Lack : ProfileUiState
     object Loading : ProfileUiState
     data class Error(val errorCode: String) : ProfileUiState
 }
@@ -39,7 +38,7 @@ class UserViewModel @Inject constructor(
 
     var user = MutableLiveData<User?>()
 
-    var profileUiState: ProfileUiState by mutableStateOf(ProfileUiState.Lack)
+    var profileUiState: ProfileUiState by mutableStateOf(ProfileUiState.Loading)
         private set
 
     fun getUserProfile() {
