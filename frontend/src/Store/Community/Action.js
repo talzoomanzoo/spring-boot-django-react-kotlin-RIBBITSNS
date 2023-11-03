@@ -6,6 +6,12 @@ import {
     GET_COMS_REQUEST,
     GET_COMS_SUCCESS,
     GET_COMS_FAILURE,
+    UPDATE_COM_REQUEST,
+    UPDATE_COM_SUCCESS,
+    UPDATE_COM_FAILURE,
+    ADD_USER_REQUEST,
+    ADD_USER_SUCCESS,
+    ADD_USER_FAILURE,
 } from "./ActionType";
 
 export const createComRequest = () => ({
@@ -61,4 +67,27 @@ export const getAllComs = () => {
             dispatch(getAllComsFailure(error.message));
         }
     };
+};
+
+export const updateCom = (reqData) => async (dispatch) => {
+    dispatch({ type: UPDATE_COM_REQUEST });
+    try {
+        const response = await api.post(`/api/communities/update`, reqData);
+        const com = response.data;
+        dispatch({ type: UPDATE_COM_SUCCESS, payload: com });
+    } catch (error) {
+        dispatch({ type: UPDATE_COM_FAILURE, payload: error.message });
+    }
+};
+
+export const addUserAction = (comId, userId) => async (dispatch) => {
+    dispatch({ type: ADD_USER_REQUEST });
+    //dispatch({type: ADD_USER_USERDTO_REQUEST})
+    try {
+        const response = await api.post(`/api/communities/${comId}/add/${userId}`);
+        const com = response.data;
+        dispatch({ type: ADD_USER_SUCCESS, payload: com });
+    } catch (error) {
+        dispatch({ type: ADD_USER_FAILURE, payload: error.message });
+    }
 };

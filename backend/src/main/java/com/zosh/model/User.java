@@ -93,4 +93,8 @@ public class User {
     @ManyToMany(cascade = CascadeType.DETACH)
     private List<ListModel> followedLists=new ArrayList<>();
     
+    @JsonIgnore
+    @ManyToMany(cascade = CascadeType.DETACH)
+    private List<Community> followedComs=new ArrayList<>();
+    
 }

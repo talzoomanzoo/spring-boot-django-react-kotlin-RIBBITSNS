@@ -41,5 +41,48 @@ public class ComServiceImplementation implements ComService{
 		// TODO Auto-generated method stub
 		return comRepository.findAllOrderByCreatedAtDesc();
 	}
+	
+	public User findUserById(Long userId) throws UserException {
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new UserException("user not found with id " + userId));
+		return user;
+	}
+	
+	@Override
+	public Community findById(Long comId) throws ComException {
+		// TODO Auto-generated method stub
+		Community community = comRepository.findById(comId)
+				.orElseThrow(() -> new ComException("Com Not Found with Id" + comId));
+		return community;
+	}
+
+
+	@Override
+	public Community addUser(Long userId, Long comId) throws ComException, UserException {
+		// TODO Auto-generated method stub
+		Community community = findById(comId);
+		User followToUser = findUserById(userId);
+		if (community.getFollowingsc().contains(followToUser)) {
+			community.getFollowingsc().remove(followToUser);
+		} else {
+			community.getFollowingsc().add(followToUser);
+		}
+		comRepository.save(community);
+		return community;
+	}
+
+	@Override
+	public Community editCom(Community req, User user) throws ComException, UserException {
+		// TODO Auto-generated method stub
+		Community community = findById(req.getId());
+		
+		community.setBackgroundImage(req.getBackgroundImage());
+		community.setDescription(req.getDescription());
+		community.setComName(req.getComName());
+		community.setPrivateMode(req.isPrivateMode());
+		comRepository.save(community);
+		
+		return community;
+	}
 
 }

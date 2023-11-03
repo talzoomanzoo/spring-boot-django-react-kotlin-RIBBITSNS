@@ -56,7 +56,9 @@ const Lists = () => {
             {/* ListTop */}
             <div
                 className="space-y-3"
-                style={{ marginTop: 10 }}>
+                style={{ marginTop: 10,
+                         fontSize: "larger",
+                }}>
                 공개 리스트
                 <hr
                     style={{
@@ -68,7 +70,7 @@ const Lists = () => {
                     }}
                 />
                 <section
-                    className="space-y-5 overflow-y-scroll hideScrollbar border-gray-700 h-[20vh] w-full rounded-md">
+                    className="space-y-5 overflow-y-scroll hideScrollbar border-gray-700 h-[40vh] w-full rounded-md">
                     {list.lists.map((item) => ( !item.privateMode ? (<ListCard style={{ marginTop: 10 }} list={item} />) : null)) }
                 </section>
             </div>
@@ -76,7 +78,9 @@ const Lists = () => {
             {/* ListBottom */}
             <div
                 className="space-y-3"
-                style={{ marginTop: 50 }}>
+                style={{ marginTop: 60,
+                         fontSize: "larger",
+                }}>
                 비공개 리스트
                 <hr
                     style={{
@@ -88,7 +92,7 @@ const Lists = () => {
                     }}
                 />
                 <section
-                    className="space-y-5 overflow-y-scroll hideScrollbar border-gray-700 h-[20vh] w-full rounded-md">
+                    className="space-y-5 overflow-y-scroll hideScrollbar border-gray-700 h-[40vh] w-full rounded-md">
                     {/* {list.lists && list.lists.length > 0 ?
                         ( */}
                         {list.lists.map((item) => ( item.privateMode ? (<ListCard style={{ marginTop: 10 }} list={item} />) : null)) }

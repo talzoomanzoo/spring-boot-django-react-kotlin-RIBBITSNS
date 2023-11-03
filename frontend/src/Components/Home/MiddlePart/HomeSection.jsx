@@ -168,8 +168,8 @@ const HomeSection = () => {
 
   return (
     <div className="space-y-5">
-      <section>
-        <h1 className="py-5 text-xl font-bold opacity-90">홈</h1>
+      <section className="sticky top-0">
+        <h1 className="py-5 text-xl font-bold opacity-90 ml-5">홈</h1>
       </section>
       <section className="pb-10">
         {/* ${theme.currentTheme==="dark"?" bg-[#151515] p-10 rounded-md mb-10":""} */}
@@ -280,7 +280,7 @@ const HomeSection = () => {
         </div>
       </section>
       <section>
-        <BackdropComponent open={uploadingImage} />
+        {uploadingImage ? <Loading/> : null}
       </section>
     </div>
   );

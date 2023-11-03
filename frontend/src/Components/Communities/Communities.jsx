@@ -64,24 +64,17 @@ const Communities = () => {
                         }}
                     />
                 </div>
-                <div className= "flex inline-block justify-content overflow-x-scroll hideScrollbar border-gray-700 h-[20vh] w-full rounded-md">
-                    {com.coms.map((item) => (<ComCard style={{ marginTop: 10 }} com={item} />))}
+                <div className= "flex inline-block justify-content overflow-x-scroll hideScrollbar border-gray-700 h-[35vh] w-full rounded-md">
+                    {com.coms.map((item) => (<ComCard style={{ marginTop: 10 }} com={item} />))} 
+                    {/* com.privateMode? && auth.user.id == */}
                 </div>
             </div>
-            <hr
-                style={{
-                    marginTop: 10,
-                    background: 'grey',
-                    color: 'grey',
-                    borderColor: 'grey',
-                    height: '1px',
-                }}
-            />
+            
             <section className="space-y-5" style={{ marginTop: 50 }}>
                 <div
                     className="space-y-3"
                     style={{ marginTop: 10 }}>
-                    리빗 모아보기
+                    내 커뮤니티 리빗 모아보기
                     <hr
                         style={{
                             marginTop: 10,

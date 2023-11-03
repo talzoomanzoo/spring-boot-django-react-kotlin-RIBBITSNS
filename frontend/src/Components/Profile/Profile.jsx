@@ -15,7 +15,7 @@ import {
   Modal,
 } from "@mui/material";
 import Tab from "@mui/material/Tab";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, Suspense } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { FollowUserAction, findUserById } from "../../Store/Auth/Action";
@@ -26,8 +26,13 @@ import {
   viewPlus,
 } from "../../Store/Tweet/Action";
 import TwitCard from "../Home/MiddlePart/TwitCard/TwitCard";
-import Maplocation from "./Maplocation";
-import ProfileModel from "./ProfileModel";
+//import Maplocation from "./Maplocation";
+//import ProfileModel from "./ProfileModel";
+import "./Profile.css";
+import Loading from "./Loading/Loading";
+
+const Maplocation = React.lazy(() => import("./Maplocation"));
+const ProfileModel = React.lazy(() => import("./ProfileModel"));
 
 const Profile = () => {
 
@@ -54,6 +59,7 @@ const Profile = () => {
   const [openSnackBar, setOpenSnackBar] = useState(false);
   const [followersClicked, setFollowersClicked] = useState(false);
   const [followingsClicked, setFollowingsClicked] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const followersListRef = useRef(null);
   const param = useParams();
   const dispatch = useDispatch();
@@ -80,7 +86,6 @@ const Profile = () => {
 
   useEffect(() => {
     dispatch(getUsersTweets(param.id));
-    console.log("check1");
   }, [param.id, twit.retwit]);
 
   useEffect(() => {
@@ -205,14 +210,14 @@ const Profile = () => {
             loading="lazy"
           />
           {auth.findUser?.req_user ? (
-            <Button
+            <button
               onClick={handleOpenProfileModel}
               sx={{ borderRadius: "20px" }}
               variant="outlined"
-              className="rounded-full"
+              className="rounded-full profile--chage--btn"
             >
-              프로필 변경
-            </Button>
+              <a></a>
+            </button>
           ) : (
             <Button
               onClick={handleFollowUser}
@@ -239,6 +244,9 @@ const Profile = () => {
             </div>
             <h1 className="text-gray-500">
               {auth.findUser?.email?.toLowerCase()}
+            </h1>
+            <h1 className="text-gray-500">
+                {auth.findUser?.website?.toLowerCase()}
             </h1>
           </div>
           <div className="mt-2 space-y-3">
@@ -372,7 +380,9 @@ const Profile = () => {
         </div>
       </section>
       {isLocationFormOpen && (
+        <Suspense fallback = {<div> {uploading ? <Loading/> : null} </div>}>
         <Maplocation onLocationChange={handleMapLocation} />
+        </Suspense>
       )}
       <section>
         <Box sx={{ width: "100%", typography: "body1", marginTop: "20px" }}>
@@ -383,7 +393,7 @@ const Profile = () => {
                 aria-label="lab API tabs example"
               >
                 <Tab label="리빗" value="1" />
-                <Tab label="댓글" value="2" />
+                <Tab label="댓글 단 리빗" value="2" />
                 <Tab label="미디어" value="3" />
                 <Tab label="좋아요" value="4" />
               </TabList>
@@ -423,18 +433,20 @@ const Profile = () => {
         </Box>
       </section>
       <section>
+      <Suspense fallback = {<div> Loading... </div>}>
         <ProfileModel
           open={openProfileModel}
           handleClose={handleCloseProfileModel}
         />
+      </Suspense>
       </section>
       <section>
-        <Backdrop
+        {/* <Backdrop
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
           open={twit.loading}
         >
           <CircularProgress color="inherit" />
-        </Backdrop>
+        </Backdrop> */}
       </section>
       {/* <section>
         <SnackbarComponent

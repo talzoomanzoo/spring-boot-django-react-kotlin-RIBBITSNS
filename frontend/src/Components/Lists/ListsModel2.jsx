@@ -25,6 +25,7 @@ import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
 import BackdropComponent from "../Backdrop/Backdrop";
 import { Switch } from 'react-native'; // 여기서만 import 할것, switch 건들 ㄴㄴ
 import { getUserAction } from "../../Store/List/Action";
+import Loading from "../Profile/Loading/Loading";
 
 const style = {
   position: "absolute",
@@ -46,7 +47,7 @@ const ListsModel2 = ({ list, handleClose, open }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { theme, auth } = useSelector((store) => store);
-  const [followingsClicked, setFollowingsClicked] = useState(false);
+  const [followings1Clicked, setFollowings1Clicked] = useState(false);
 
   const handleSubmit = (values) => {
     dispatch(updateListModel(values));
@@ -60,13 +61,14 @@ const ListsModel2 = ({ list, handleClose, open }) => {
       listName: "",
       description: "",
       backgroundImage: "",
+      // privateMode: false,
     },
     onSubmit: handleSubmit,
   });
 
   const itemsCheck = (item) => {
-    for (let i = 0; i < list.followings.length; i++) {
-      if (list.followings[i].id === item.id) {
+    for (let i = 0; i < list.followingsl.length; i++) {
+      if (list.followingsl[i].id === item.id) {
         return true;
       }
     }
@@ -78,6 +80,7 @@ const ListsModel2 = ({ list, handleClose, open }) => {
       listName: list.listName || "",
       description: list.description || "",
       backgroundImage: list.backgroundImage || "",
+      //privateMode: list.privateMode || "",
     });
 
     if (document.getElementById("element") !== null) {
@@ -118,8 +121,8 @@ const ListsModel2 = ({ list, handleClose, open }) => {
     dispatch(getUserAction(listId));
   };
 
-  const handleFollowingsClick = () => {
-    setFollowingsClicked(!followingsClicked);
+  const handleFollowingslClick = () => {
+    setFollowings1Clicked(!followings1Clicked);
   };
 
   const [isEnabled, setIsEnabled] = useState(list.privateMode);
@@ -134,7 +137,7 @@ const ListsModel2 = ({ list, handleClose, open }) => {
       <div className="overflow-y-scroll hideScrollbar border-gray-700 h-[20vh] w-full rounded-md">
         <section className="space-y-5">
           <div className="flex justify-between" style={{ flexDirection: "column" }}>
-            {listVal.followings?.map((item) => (
+            {listVal.followingsl?.map((item) => (
               <div className="flex justify-between items-center" key={item.id}>
                 <div
                   style={{ paddingRight: 300, marginTop: 10, }}
@@ -144,7 +147,7 @@ const ListsModel2 = ({ list, handleClose, open }) => {
                     } else {
                       navigateToProfile(item.id);
                     }
-                    handleFollowingsClick();
+                    handleFollowingslClick();
                   }}
                   className="flex items-center absolute left-2 justify-between hover:bg-green-700 relative right-5 cursor-pointer"
                 >
@@ -266,7 +269,7 @@ const ListsModel2 = ({ list, handleClose, open }) => {
                   onChange={handleSearchUser}
                   type="text"
                   placeholder="사용자를 검색하여 추가하거나 삭제할 수 있습니다."
-                  className={`py-3 rounded-full onutline-none text-gray-500 w-full pl-12 ${theme.currentTheme === "light" ? "bg-stone-300" : "bg-[#151515]"
+                  className={`py-3 rounded-full outline-none text-gray-500 w-full pl-12 ${theme.currentTheme === "light" ? "bg-stone-300" : "bg-[#151515]"
                     }`}
                 />
                 <span className="absolute top-0 left-0 pl-3 pt-3">
@@ -383,7 +386,7 @@ const ListsModel2 = ({ list, handleClose, open }) => {
               </div>
 
             </div>
-            <BackdropComponent open={uploading} />
+            {uploading ? <Loading/> : null} 
           </form>
         </Box>
       </Modal>

@@ -54,7 +54,7 @@ public class ListServiceImplementation implements ListService {
 		listModel.setBackgroundImage(req.getBackgroundImage());
 		listModel.setDescription(req.getDescription());
 		listModel.setListName(req.getListName());
-		listModel.setUser(user);
+		listModel.setPrivateMode(req.isPrivateMode());
 		listRepository.save(listModel);
 
 		return listModel;
@@ -72,10 +72,10 @@ public class ListServiceImplementation implements ListService {
 		// TODO Auto-generated method stub
 		ListModel listModel = findById(listId);
 		User followToUser = findUserById(userId);
-		if (listModel.getFollowings().contains(followToUser)) {
-			listModel.getFollowings().remove(followToUser);
+		if (listModel.getFollowingsl().contains(followToUser)) {
+			listModel.getFollowingsl().remove(followToUser);
 		} else {
-			listModel.getFollowings().add(followToUser);
+			listModel.getFollowingsl().add(followToUser);
 		}
 		listRepository.save(listModel);
 		return listModel;
@@ -85,7 +85,7 @@ public class ListServiceImplementation implements ListService {
 	public void deleteListById(Long listId, Long userId) throws ListException, UserException {
 		// TODO Auto-generated method stub
 		ListModel listModel = findById(listId);
-		listModel.getFollowings().forEach(user -> user.getFollowedLists().remove(listModel));
+		listModel.getFollowingsl().forEach(user -> user.getFollowedLists().remove(listModel));
 		listRepository.deleteById(listModel.getId());
 	}
 

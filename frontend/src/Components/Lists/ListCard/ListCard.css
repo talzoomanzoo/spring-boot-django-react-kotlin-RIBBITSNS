@@ -10,7 +10,7 @@
     text-align: center;
     line-height: 2em;
     font-family: sans-serif;
-    text-transform: capitalize;
+    /* text-transform: capitalize; */
     position: relative;
     transition: 0.5s;
 }
