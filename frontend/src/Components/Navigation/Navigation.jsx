@@ -8,11 +8,12 @@ import { followTwit } from '../../Store/Tweet/Action';
 import { navigationMenu } from "../../Utils/NavigationMenu";
 import "./btnCss.css";
 const Navigation = () => {
-  const {auth}=useSelector(store=>store);
+  const {auth, theme }=useSelector(store=>store);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const openLogoutMenu = Boolean(anchorEl);
   const dispatch=useDispatch();
   const navigate=useNavigate();
+
 
   const handleOpenLogoutMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -71,7 +72,7 @@ const Navigation = () => {
         </div>
         <div className="space-y-6">
           {navigationMenu.map((item) => (
-            <div onClick={()=> item.title==="프로필"?navigate(`/profile/${auth.user?.id}`): navigate(`${item.path}`)} className="cursor-pointer flex space-x-4 items-center">
+            <div onClick={()=> item.title==="프로필"?navigate(`/profile/${auth.user?.id}`): navigate(`${item.path}`)} className={`cursor-pointer flex space-x-4 ${theme.currentTheme === "dark" ? "" : "text-yellow-700"} items-center`}>
               {item.icon}
               <p className="text-xl">{item.title}</p>
               <span></span><span></span><span></span><span></span><span></span>

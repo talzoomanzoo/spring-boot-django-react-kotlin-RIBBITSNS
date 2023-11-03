@@ -80,7 +80,7 @@ const RightPart = () => {
 
   return (
     <div className="sticky top-0">
-      <div className="py-5 overflow-y-scroll hideScrollbar h-[110vh]">
+      <div className="py-5 overflow-y-scroll hideScrollbar h-[120vh]">
         <div className="relative flex items-center">
           <input
             value={search}

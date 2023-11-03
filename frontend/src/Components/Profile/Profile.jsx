@@ -28,6 +28,8 @@ import {
 import TwitCard from "../Home/MiddlePart/TwitCard/TwitCard";
 //import Maplocation from "./Maplocation";
 //import ProfileModel from "./ProfileModel";
+import "./Profile.css";
+import Loading from "./Loading/Loading";
 
 const Maplocation = React.lazy(() => import("./Maplocation"));
 const ProfileModel = React.lazy(() => import("./ProfileModel"));
@@ -57,6 +59,7 @@ const Profile = () => {
   const [openSnackBar, setOpenSnackBar] = useState(false);
   const [followersClicked, setFollowersClicked] = useState(false);
   const [followingsClicked, setFollowingsClicked] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const followersListRef = useRef(null);
   const param = useParams();
   const dispatch = useDispatch();
@@ -207,14 +210,14 @@ const Profile = () => {
             loading="lazy"
           />
           {auth.findUser?.req_user ? (
-            <Button
+            <button
               onClick={handleOpenProfileModel}
               sx={{ borderRadius: "20px" }}
               variant="outlined"
-              className="rounded-full"
+              className="rounded-full profile--chage--btn"
             >
-              프로필 변경
-            </Button>
+              <a></a>
+            </button>
           ) : (
             <Button
               onClick={handleFollowUser}
@@ -241,6 +244,9 @@ const Profile = () => {
             </div>
             <h1 className="text-gray-500">
               {auth.findUser?.email?.toLowerCase()}
+            </h1>
+            <h1 className="text-gray-500">
+                {auth.findUser?.website?.toLowerCase()}
             </h1>
           </div>
           <div className="mt-2 space-y-3">
@@ -374,7 +380,7 @@ const Profile = () => {
         </div>
       </section>
       {isLocationFormOpen && (
-        <Suspense fallback = {<div> Loading... </div>}>
+        <Suspense fallback = {<div> {uploading ? <Loading/> : null} </div>}>
         <Maplocation onLocationChange={handleMapLocation} />
         </Suspense>
       )}

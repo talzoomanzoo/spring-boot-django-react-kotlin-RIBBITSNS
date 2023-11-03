@@ -26,19 +26,6 @@ export const navigationMenu = [
         },
     },
     {
-        id: 2,
-        title: "탐색",
-        icon: <ExploreIcon />,
-        path: "/explore",
-        pattern: {
-            y: 16,
-            squares: [
-                [0, 1],
-                [1, 3],
-            ],
-        },
-    },
-    {
         id: 3,
         title: "알림",
         icon: <NotificationsIcon />,
