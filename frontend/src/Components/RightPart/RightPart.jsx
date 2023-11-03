@@ -12,6 +12,8 @@ import SubscriptionModel from "./SubscriptionModel";
 import { useNavigate } from "react-router-dom";
 import { searchAll } from "../../Store/Auth/Action";
 import { viewPlus } from "../../Store/Tweet/Action";
+import LikeTop from "./LikeTop";
+import ViewTop from "./ViewTop";
 
 const RightPart = () => {
   const { theme, auth } = useSelector((store) => store);
@@ -21,6 +23,7 @@ const RightPart = () => {
   const [openSubscriptionModal, setOpenSubscriptionModal] = useState(false);
   const handleCloseSubscriptionMadal = () => setOpenSubscriptionModal(false);
   const handleOpenSubscriptionModal = () => setOpenSubscriptionModal(true);
+
 
   // const Payment = () => {
   //   useEffect(() => {
@@ -40,7 +43,7 @@ const RightPart = () => {
   // const requestPay = () => {
   //   const { IMP } = window;
   //   IMP.init('imp40731612')
-    
+
   //   IMP.request_pay({
   //     pg: 
   //   })
@@ -76,24 +79,23 @@ const RightPart = () => {
   };
 
   return (
-    <div className="py-5 sticky top-0 overflow-y-hidden">
-      <div className="hideScrollbar overflow-y-scroll">
+    <div className="sticky top-0">
+      <div className="py-5 overflow-y-scroll hideScrollbar h-[120vh]">
         <div className="relative flex items-center">
-            <input
-              value={search}
-              onChange={handleSearchAll}
-              // onChange={handleSearchUser}
-              type="text"
-              placeholder="사용자 검색"
+          <input
+            value={search}
+            onChange={handleSearchAll}
+            // onChange={handleSearchUser}
+            type="text"
+            placeholder="사용자 및 글 검색"
             className={`py-3 rounded-full outline-none text-gray- w-full pl-12 ${theme.currentTheme === "light" ? "bg-stone-300" : "bg-[#151515]"}`}
-            />
+          />
           <span className="absolute top-0 left-0 pl-3 pt-3">
             <SearchIcon className="text-gray-400" />
           </span>
           {search && (
             <div
-              className={` overflow-y-scroll hideScrollbar absolute z-50 top-14  border-gray-400 h-[40vh] w-full rounded-md ${theme.currentTheme === "light" ? "bg-[#dbd9d9]" : "bg-[#151515] border"}`}
-
+              className={`absolute z-50 top-14  border-gray-400 h-[40vh] w-full rounded-md ${theme.currentTheme === "light" ? "bg-[#dbd9d9]" : "bg-[#151515] border"}`}
             >
               {auth.userSearchResult && auth.userSearchResult.map((item) => (
                 <div
@@ -108,11 +110,11 @@ const RightPart = () => {
                   ${theme.currentTheme === "light" ? "text-black hover:text-white" : "text-white  hover:text-black"} p-3 cursor-pointer`}
                   key={item.id} // 각 항목에 고유한 키를 제공합니다.
                 >
-                  <Avatar alt={item.fullName} src={item.image} />
+                  <Avatar alt={item.fullName} src={item.image ? item.image : "https://cdn.pixabay.com/photo/2023/10/24/01/42/art-8337199_1280.png"} loading="lazy" />
                   <div className={`ml-2`}>
                     <p>{item.fullName}</p>
                     <p className={`text-sm`}>
-                    {item.email.split(" ").join("_").toLowerCase()}
+                      {item.email.split(" ").join("_").toLowerCase()}
                     </p>
                   </div>
                 </div>
@@ -132,13 +134,13 @@ const RightPart = () => {
                   ${theme.currentTheme === "light" ? "text-black hover:text-white" : "text-white  hover:text-black"} p-3 cursor-pointer`}
                   key={item.id} // 각 항목에 고유한 키를 제공합니다.
                 >
-                  <NotesIcon alt={item.fullName}/>
+                  <NotesIcon alt={item.fullName} />
                   <div className={`ml-2 `}>
                     <p>{item.content}</p>
                     <p className={`text-sm`}>
-                    @{item.user.fullName.split(" ").join("_").toLowerCase()}
+                      @{item.user.fullName.split(" ").join("_").toLowerCase()}
                     </p>
-                    </div>
+                  </div>
                 </div>
               ))}
             </div>
@@ -151,12 +153,12 @@ const RightPart = () => {
         </div>
 
         <section
-          className={`my-5 `}
+          className={`my-5`}
         // ${
         //   theme.currentTheme === "dark" ? " bg-[#151515] p-5 rounded-md" : ""
         // }
         >
-          <h1 className="text-xl font-bold">그린체크</h1>
+          <h1 className="text-xl font-bold" >그린체크</h1>
           <h1 className="font-bold my-2">구독 후 사용해보세요!</h1>
           <Button
             onClick={handleOpenSubscriptionModal}
@@ -166,55 +168,50 @@ const RightPart = () => {
             {" "}
             체크 구독
           </Button>
+          
         </section>
 
+        <hr
+            style={{
+              marginTop: 30,
+              marginBottom: 1,
+              background: 'grey',
+              color: 'grey',
+              borderColor: 'grey',
+              height: '1px',
+            }}
+          />
+
         <section
-          className={`mt-7 space-y-5 `}
+          className={`mt-5 space-y-5 `}
         // ${
         //   theme.currentTheme === "dark" ? " bg-[#151515] p-5 rounded-md" : ""
         // }
         >
-          <h1 className="font-bold text-xl py-1">여긴 바꿀 부분</h1>
+          <h1 className="font-bold text-xl py-1">인기글</h1>
 
           <div>
-            <p className="text-sm">FIFA Women's World Cup · LIVE </p>
-            <p className="font-bold">Philippines vs Switzerland</p>
+            <p className="font-bold"> 좋아요 많은 글 </p>
           </div>
 
-          <div className="flex justify-between w-full">
-            <div>
-              <p>Entertainment · Trending</p>
-              <p className="font-bold">#TheMarvels</p>
-              <p>34.3K Tweets</p>
-            </div>
-
-            <MoreHorizIcon />
-          </div>
-          <div className="flex justify-between w-full">
-            <div>
-              <p>Entertainment · Trending</p>
-              <p className="font-bold">#TheMarvels</p>
-              <p>34.3K Tweets</p>
-            </div>
-
-            <MoreHorizIcon />
+          <div>
+            <LikeTop />
           </div>
 
-          <div className="flex justify-between w-full">
-            <div>
-              <p>Entertainment · Trending</p>
-              <p className="font-bold">#TheMarvels</p>
-              <p>34.3K Tweets</p>
-            </div>
-
-            <MoreHorizIcon />
+          <div>
+            <p className="font-bold"> 조회수 높은 글 </p>
           </div>
+
+          <div>
+            <ViewTop />
+          </div>
+
         </section>
-      </div>
       <SubscriptionModel
         open={openSubscriptionModal}
         handleClose={handleCloseSubscriptionMadal}
       />
+      </div>
     </div>
   );
 };

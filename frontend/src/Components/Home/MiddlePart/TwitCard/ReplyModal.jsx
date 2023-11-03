@@ -42,7 +42,6 @@ const ReplyModal = ({ handleClose, twitData, open }) => {
     //setRefreshTwits((prev) => prev + 1);
     handleClose()
   };
-  console.log("twitData", twitData);
 
   const formik = useFormik({
     initialValues: {
@@ -77,6 +76,7 @@ const ReplyModal = ({ handleClose, twitData, open }) => {
               alt="Avatar"
               src={twitData.user.image}
               className="cursor-pointer"
+              loading="lazy"
             />
             <div className="w-full">
               <div className="flex justify-between items-center ">
@@ -100,7 +100,7 @@ const ReplyModal = ({ handleClose, twitData, open }) => {
             className={`py-10 `}
           >
             <div className="flex space-x-6 ">
-              <Avatar alt="Avatar" src={auth.user?.image}/>
+              <Avatar alt="Avatar" src={auth.user?.image} loading="lazy" />
               <div className="w-full">
                 <form onSubmit={formik.handleSubmit}>
                   <div>
@@ -120,7 +120,7 @@ const ReplyModal = ({ handleClose, twitData, open }) => {
 
                   {!uploadingImage && selectedImage && (
                     <div>
-                      <img className="w-[28rem]" src={selectedImage} alt="" />
+                      <img className="w-[28rem]" src={selectedImage} alt="" loading="lazy" />
                     </div>
                   )}
 

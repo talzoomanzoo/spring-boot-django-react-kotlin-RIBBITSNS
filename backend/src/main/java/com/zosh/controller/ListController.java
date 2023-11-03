@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zosh.dto.ListDto;
-import com.zosh.dto.TwitDto;
 import com.zosh.dto.UserDto;
 import com.zosh.dto.mapper.ListDtoMapper;
 import com.zosh.dto.mapper.UserDtoMapper;
@@ -70,7 +69,6 @@ private UserRepository userRepository;
 		@RequestHeader("Authorization") String jwt) throws ListException, UserException {
 		User user= userService.findUserProfileByJwt(jwt);
 		ListModel listModel= listService.editList(req, user);
-		System.out.println("reqcheck" + req);
 		ListDto listDto =ListDtoMapper.toListDto(listModel, user);
 		return new ResponseEntity<>(listDto, HttpStatus.OK);
 	}
@@ -80,16 +78,12 @@ private UserRepository userRepository;
 			@PathVariable Long listId,
 			@RequestHeader("Authorization") String jwt)
 		throws ListException, UserException {
-		User user= userService.findUserProfileByJwt(jwt); // 사용자
-		User updatedUser = userService.followList(userId, listId); // List가 추가하는 user
-		//UserDto userDto=UserDtoMapper.toUserDto(updatedUser);
+		User user= userService.findUserProfileByJwt(jwt);
+		User updatedUser = userService.followList(userId, listId);
 		ListModel updatedList=listService.addUser(userId, listId);
 		ListDto listDto=ListDtoMapper.toListDto(updatedList, user);
 		UserDto userDto=UserDtoMapper.toUserDto(updatedUser);
 		userDto.setHasFollowedLists(ListUtil.isFollowedByReqList(updatedList, updatedUser));
-		//userRepository.save(updatedUser);
-		//System.out.println("updatedUserCheck" + updatedUser.isHasFollowedLists());
-		//System.out.println("ListUtilCheck" + ListUtil.isFollowedByReqList(updatedList, updatedUser));
 		return new ResponseEntity<>(listDto, HttpStatus.ACCEPTED);
 	}
 	
@@ -99,7 +93,7 @@ private UserRepository userRepository;
 		User user= userService.findUserProfileByJwt(jwt);
 		ListModel listModel=listService.findById(listId);
 		ListDto listDto=ListDtoMapper.toListDto(listModel, user);
-		System.out.println("listDto followers + " + listDto.getFollowings());
+		System.out.println("listDto followers + " + listDto.getFollowingsl());
 		return new ResponseEntity<>(listDto, HttpStatus.OK);
 	}
 	
@@ -117,15 +111,21 @@ private UserRepository userRepository;
 		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
 	
+	@GetMapping("/{listId}")
+	public ResponseEntity<ListDto> findListById(@PathVariable Long listId,
+			@RequestHeader("Authorization") String jwt) throws ListException, UserException {
+		User user = userService.findUserProfileByJwt(jwt);
+		ListModel listModel = listService.findById(listId);
+		ListDto listDto = ListDtoMapper.toListDto(listModel, user);
+		return new ResponseEntity<>(listDto, HttpStatus.ACCEPTED);
+	}
+	
 	@PostMapping("/{listId}/setPrivate")
 	public ResponseEntity<ListDto> setPrivate(@PathVariable Long listId, 
 			@RequestHeader("Authorization") String jwt) throws ListException, UserException {
-		
-		
 		User user = userService.findUserProfileByJwt(jwt);
 		ListModel listModel=listService.setPrivateById(listId, user.getId());
 		ListDto listDto=ListDtoMapper.toListDto(listModel, user);
-		
 		return new ResponseEntity<>(listDto, HttpStatus.CREATED);
 	}
 }

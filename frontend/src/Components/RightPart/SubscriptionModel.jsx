@@ -65,6 +65,7 @@ console.log("plan ",plan)
                   className="w-24 h-24"
                   src="https://cdn.pixabay.com/photo/2016/01/20/18/59/confirmation-1152155_1280.png"
                   alt=""
+                  loading="lazy"
                 />
               </div>
 

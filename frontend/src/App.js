@@ -42,7 +42,7 @@ setCurrentTheme(localStorage.getItem("theme"))
         <Route path='/signin' element={<Authentication/>}></Route>
         <Route path='/signup' element={<Authentication/>}></Route>
         <Route path='/verified' element={<VerifiedSuccess/>}></Route>
-        {/* <Route path='/profile' element={<HomePage/>}></Route> */}
+        <Route path='/profile' element={<HomePage/>}></Route>
       </Routes>
       </Box>
     

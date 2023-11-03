@@ -4,11 +4,10 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.zosh.exception.ComException;
 import com.zosh.exception.ListException;
 import com.zosh.exception.UserException;
 import com.zosh.model.User;
-
-import io.swagger.v3.oas.annotations.servers.Server;
 
 @Service
 public interface UserService {
@@ -23,8 +22,9 @@ public interface UserService {
 	
 	public User followList(Long userId, Long listId) throws UserException, ListException;
 	
-	public List<User> searchUser(String query);
+	public User followCom(Long userId, Long comId) throws UserException, ComException;
 	
+	public List<User> searchUser(String query);
 	
 	public void deleteaccount(User user) throws UserException;//계정삭제
 	

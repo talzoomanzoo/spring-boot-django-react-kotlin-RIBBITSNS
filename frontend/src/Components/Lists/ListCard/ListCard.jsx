@@ -6,20 +6,21 @@ import { useSelector } from "react-redux/es/hooks/useSelector";
 import { useNavigate } from "react-router-dom";
 import { deleteList } from "../../../Store/List/Action";
 import ListsModel2 from "../ListsModel2";
+import "./ListCard.css"
 
-const ListCard = memo(({ list }) => {
+const ListCard = ({ list }) => {
   const navigate = useNavigate();
   const [openListsModel, setOpenListsModel] = useState();
   const handleCloseListsModel = () => setOpenListsModel(false);
   const handleOpenListsModel = () => setOpenListsModel(true);
   const dispatch = useDispatch();
 
-  const handleNavigateToListsDetail = () => {
+  const handleNavigateToListsDetail = async() => {
     navigate(`/lists/${list.id}`);
-    //window.location.reload();
   };
 
-  const { theme, auth } = useSelector((store) => store);
+
+  const { auth } = useSelector((store) => store);
   const showDeleteButton = list.user.id === auth.user.id;
 
   const handleDelete = async () => {
@@ -34,7 +35,7 @@ const ListCard = memo(({ list }) => {
 
   return (
     <div class="flex space-x-5">
-      <ListIcon
+      <div
         onClick={handleNavigateToListsDetail}
         className="cursor-pointer"
       />
@@ -42,28 +43,20 @@ const ListCard = memo(({ list }) => {
         <div class="flex justify-between items-center">
           <div
             onClick={handleNavigateToListsDetail}
-            className="flex cursor-pointer items-center space-x-2"
+            className="flex cursor-pointer items-center space-x-1"
           >
-            <span class="text-xl">{list.listName}</span>
+            <li className="list-css"><span>{list.listName}</span></li>
           </div>
         </div>
       </div>
-      <section>
-        <ListsModel2
-          list={list}
-          open={openListsModel}
-          handleClose={handleCloseListsModel}
-        />
-      </section>
       {showDeleteButton && (
         <>
           <section>
             <Button
               onClick={handleDelete}
-              //   handleClose={handleCloseListsModel}
               sx={{ borderRadius: "20px" }}
               variant="outlined"
-              className="rounded-full"
+              className="rounded-full btn btn-primary btn-ghost btn-close"
             >
               삭제
             </Button>
@@ -72,7 +65,7 @@ const ListCard = memo(({ list }) => {
           <section>
             <Button
               onClick={handleOpenListsModel}
-              handleClose={handleCloseListsModel}
+             //handleClose={handleCloseListsModel}
               sx={{ borderRadius: "20px" }}
               variant="outlined"
               className="rounded-full"
@@ -80,10 +73,18 @@ const ListCard = memo(({ list }) => {
               수정
             </Button>
           </section>
+
+          <section>
+            <ListsModel2
+              list={list}
+              open={openListsModel}
+              handleClose={handleCloseListsModel}
+            />
+          </section>
         </>
       )}
     </div>
   );
-});
+};
 
 export default ListCard;

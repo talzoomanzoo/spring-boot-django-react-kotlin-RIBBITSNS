@@ -12,9 +12,10 @@ import {
   Button,
   CircularProgress,
   Divider,
+  Modal,
 } from "@mui/material";
 import Tab from "@mui/material/Tab";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, Suspense } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { FollowUserAction, findUserById } from "../../Store/Auth/Action";
@@ -25,26 +26,47 @@ import {
   viewPlus,
 } from "../../Store/Tweet/Action";
 import TwitCard from "../Home/MiddlePart/TwitCard/TwitCard";
-import SnackbarComponent from "../Snackbar/SnackbarComponent";
-import Maplocation from "./Maplocation";
-import ProfileModel from "./ProfileModel";
+//import Maplocation from "./Maplocation";
+//import ProfileModel from "./ProfileModel";
+import "./Profile.css";
+import Loading from "./Loading/Loading";
+
+const Maplocation = React.lazy(() => import("./Maplocation"));
+const ProfileModel = React.lazy(() => import("./ProfileModel"));
 
 const Profile = () => {
+
+  const style = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 500,
+    maxHeight: 500,
+    bgcolor: "background.paper",
+    boxShadow: 24,
+    p: 2,
+    borderRadius: 3,
+    outline: "none",
+    overflow: "scroll-y",
+  }
+
   const [address, setAddress] = useState("");
   const [tabValue, setTabValue] = useState("1");
-  const [isLocationFormOpen, setLocationFormOpen] = useState(false); 
+  const [isLocationFormOpen, setLocationFormOpen] = useState(false);
   const { auth, twit, theme } = useSelector((store) => store);
   const [openProfileModel, setOpenProfileModel] = useState(false);
   const [openSnackBar, setOpenSnackBar] = useState(false);
   const [followersClicked, setFollowersClicked] = useState(false);
   const [followingsClicked, setFollowingsClicked] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const followersListRef = useRef(null);
   const param = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleToggleLocationForm = () => {
-    setLocationFormOpen((prev) => !prev); 
+    setLocationFormOpen((prev) => !prev);
   };
 
   const handleBack = () => {
@@ -124,13 +146,40 @@ const Profile = () => {
   const handleMapLocation = (newAddress) => {
     setAddress(newAddress);
   };
+  const [openFollowings, setOpenFollowings] = useState(false);
+  const [openFollowers, setOpenFollowers] = useState(false);
+
+  const openFollowingsModal = () => {
+    setOpenFollowings(true);
+  };
+
+  const closeFollowingsModal = () => {
+    setOpenFollowings(false);
+  };
+  
+  const openFollowersModal = () => {
+    setOpenFollowers(true);
+  };
+
+  const closeFollowersModal = () => {
+    setOpenFollowers(false);
+  }
+
+  const openFollowingsCloseFollowers = () => {
+    openFollowingsModal();
+    closeFollowersModal();
+  }
+
+  const openFollowersCloseFollowings = () => {
+    openFollowersModal();
+    closeFollowingsModal();
+  }
 
   return (
     <div>
       <section
-        className={`z-50 flex items-center sticky top-0 ${
-          theme.currentTheme === "light" ? "light" : "dark"
-        } bg-opacity-95`}
+        className={`z-50 flex items-center sticky top-0 ${theme.currentTheme === "light" ? "light" : "dark"
+          } bg-opacity-95`}
       >
         <KeyboardBackspaceIcon
           className="cursor-pointer"
@@ -148,25 +197,27 @@ const Profile = () => {
             "https://png.pngtree.com/thumb_back/fw800/background/20230304/pngtree-green-base-vector-smooth-background-image_1770922.jpg"
           }
           alt=""
+          loading="lazy"
         />
       </section>
       <section className="pl-6">
         <div className="flex justify-between items-start mt-5 h-[5rem]">
           <Avatar
             alt="Avatar"
-            src={auth.findUser?.image?  auth.findUser.image : "https://cdn.pixabay.com/photo/2023/10/24/01/42/01-42-37-630_1280.png"}
+            src={auth.findUser?.image ? auth.findUser.image : "https://cdn.pixabay.com/photo/2023/10/24/01/42/art-8337199_1280.png"}
             className="transform -translate-y-24"
             sx={{ width: "10rem", height: "10rem", border: "4px solid white" }}
+            loading="lazy"
           />
           {auth.findUser?.req_user ? (
-            <Button
+            <button
               onClick={handleOpenProfileModel}
               sx={{ borderRadius: "20px" }}
               variant="outlined"
-              className="rounded-full"
+              className="rounded-full profile--chage--btn"
             >
-              프로필 변경
-            </Button>
+              <a></a>
+            </button>
           ) : (
             <Button
               onClick={handleFollowUser}
@@ -182,67 +233,78 @@ const Profile = () => {
           <div>
             <div className="flex items-center">
               <h1 className="font-bold text-lg">{auth.findUser?.fullName}</h1>
-              {auth.findUser?.verified && (
+              {/* {auth.findUser?.verified && (
                 <img
                   className="ml-2 w-5 h-5"
                   src="https://abs.twimg.com/responsive-web/client-web/verification-card-v2@3x.8ebee01a.png"
                   alt=""
+                  loading="lazy"
                 />
-              )}
+              )} */}
             </div>
             <h1 className="text-gray-500">
               {auth.findUser?.email?.toLowerCase()}
             </h1>
+            <h1 className="text-gray-500">
+                {auth.findUser?.website?.toLowerCase()}
+            </h1>
           </div>
           <div className="mt-2 space-y-3">
             {auth.findUser?.bio && <p>{auth.findUser?.bio}</p>}
-            <div className="py-1 flex space-x-5">
+            <div style={{flexDirection: 'column'}}className="py-1 flex">
               {auth.findUser?.education ? (
-                <div className="flex items-center text-gray-500">
+                <div className="flex text-gray-500">
                   <>
-                    <BusinessCenterSharp />
+                    <BusinessCenterSharp  />
                     <p className="ml-2">{auth.findUser.education}</p>
+                  </>
+                </div>
+              ) : null}
+              {auth.findUser?.joinedAt ? (
+                <div className="flex text-gray-500">
+                  <>
+                    <CalendarMonthIcon />
+                    <p className="ml-2">
+                      {`${auth.findUser.joinedAt?.substr(0, 4) || ""}년 ${auth.findUser.joinedAt?.substring(5, 7) || ""
+                        }월 ${auth.findUser.joinedAt?.substring(8, 10) || ""
+                        }일에 가입함`}
+                    </p>
                   </>
                 </div>
               ) : null}
 
               <section>
-                <Button
-                  className="flex items-center text-gray-500"
+                <button
+                  style={{color: "#008000"}}
+                  className="flex text-gray-500"
                   onClick={handleToggleLocationForm}
                 >
                   <LocationOnIcon />
                   <p className="text-gray-500">
                     {auth.findUser?.location || address}
                   </p>
-                </Button>
+                </button>
               </section>
 
-              {auth.findUser?.joinedAt ? (
-                <div className="flex items-center text-gray-500">
-                  <>
-                    <CalendarMonthIcon />
-                    <p className="ml-2">
-                      {`${auth.findUser.joinedAt?.substr(0, 4) || ""}년 ${
-                        auth.findUser.joinedAt?.substring(5, 7) || ""
-                      }월 ${
-                        auth.findUser.joinedAt?.substring(8, 10) || ""
-                      }일에 가입함`}
-                    </p>
-                  </>
-                </div>
-              ) : null}
+
             </div>
             <div className="flex items-center space-x-5">
               <div className="flex items-center space-x-1 font-semibold">
-                <span onClick={handleFollowingsClick} className="text-gray-500">
+                <span onClick={openFollowingsModal} className="text-gray-500">
                   {auth.findUser?.followings?.length} followings
                 </span>
-                {followingsClicked && (
-                  <div
-                    ref={followersListRef}
-                    className={`overflow-y-scroll hideScrollbar absolute z-50 bg-white border rounded-md p-3 w-30`}
+                <Modal
+                  open={openFollowings}
+                  onClose={closeFollowingsModal}
+                >                
+                <Box
+                  sx={style}
                   >
+                    <Button sx={{ fontSize: "105%", marginRight: "16%", marginLeft: "16%", textDecoration: "underline" }}>followings</Button>
+                    <Button sx={{ fontSize: "75%", color: "darkgray"}}onClick={openFollowersCloseFollowings}>followers</Button>
+                  <div 
+                  ref={followersListRef}
+                  className={`overflow-y-scroll hideScrollbar h-[40vh]`}>
                     {auth.findUser?.followings &&
                       auth.findUser?.followings.map((item) => (
                         <div
@@ -252,12 +314,12 @@ const Profile = () => {
                             } else {
                               navigateToProfile(item.id);
                             }
-                            handleFollowingsClick();
+                            closeFollowingsModal();
                           }}
-                          className="flex items-center hover:bg-slate-800 p-3 cursor-pointer"
+                          className="flex items-center hover:bg-green-700 p-3 cursor-pointer"
                           key={item.id}
                         >
-                          <Avatar alt={item.fullName} src={item.image} />
+                          <Avatar alt={item.fullName} src={item.image} loading="lazy" />
                           <div className="ml-2">
                             <p>{item.fullName}</p>
                             <p className="text-sm text-gray-400">
@@ -268,18 +330,24 @@ const Profile = () => {
                         </div>
                       ))}
                   </div>
-                )}
+                  </Box>
+                  </Modal>
               </div>
               <div className="flex items-center space-x-1 font-semibold">
-                <span onClick={handleFollowersClick} className="text-gray-500">
+                <span onClick={openFollowersModal} className="text-gray-500">
                   {auth.findUser?.followers?.length} followers
                 </span>
-                {followersClicked && (
+                <Modal
+                  open={openFollowers}
+                  onClose={closeFollowersModal}
+                >                
+                <Box sx={style}>
+                <Button sx={{ marginRight: "17%", marginLeft: "18%", fontSize: "75%", color: "darkgray" }} onClick={openFollowingsCloseFollowers}>followings</Button>
+                <Button sx={{ fontSize: "105%", textDecoration: "underline" }}>followers</Button>
                   <div
-                    ref={followersListRef}
-                    className={`overflow-y-scroll hideScrollbar absolute z-50 bg-white border rounded-md p-3 w-30`}
-                  >
-                    {auth.findUser?.followers &&
+                ref={followersListRef}
+                className={`overflow-y-scroll hideScrollbar h-[40vh] `}>
+                   {auth.findUser?.followers &&
                       auth.findUser?.followers.map((item) => (
                         <div
                           onClick={() => {
@@ -288,12 +356,12 @@ const Profile = () => {
                             } else {
                               navigateToProfile(item.id);
                             }
-                            handleFollowersClick();
+                            closeFollowersModal();
                           }}
-                          className="flex items-center hover-bg-slate-800 p-3 cursor-pointer"
+                          className="flex items-center hover:bg-green-700 p-3 cursor-pointer"
                           key={item.id}
                         >
-                          <Avatar alt={item.fullName} src={item.image} />
+                          <Avatar alt={item.fullName} src={item.image} loading="lazy" />
                           <div className="ml-2">
                             <p>{item.fullName}</p>
                             <p className="text-sm text-gray-400">
@@ -304,14 +372,17 @@ const Profile = () => {
                         </div>
                       ))}
                   </div>
-                )}
+                  </Box>
+                  </Modal>
               </div>
             </div>
           </div>
         </div>
       </section>
       {isLocationFormOpen && (
+        <Suspense fallback = {<div> {uploading ? <Loading/> : null} </div>}>
         <Maplocation onLocationChange={handleMapLocation} />
+        </Suspense>
       )}
       <section>
         <Box sx={{ width: "100%", typography: "body1", marginTop: "20px" }}>
@@ -322,7 +393,7 @@ const Profile = () => {
                 aria-label="lab API tabs example"
               >
                 <Tab label="리빗" value="1" />
-                <Tab label="댓글" value="2" />
+                <Tab label="댓글 단 리빗" value="2" />
                 <Tab label="미디어" value="3" />
                 <Tab label="좋아요" value="4" />
               </TabList>
@@ -362,18 +433,20 @@ const Profile = () => {
         </Box>
       </section>
       <section>
+      <Suspense fallback = {<div> Loading... </div>}>
         <ProfileModel
           open={openProfileModel}
           handleClose={handleCloseProfileModel}
         />
+      </Suspense>
       </section>
       <section>
-        <Backdrop
+        {/* <Backdrop
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
           open={twit.loading}
         >
           <CircularProgress color="inherit" />
-        </Backdrop>
+        </Backdrop> */}
       </section>
       {/* <section>
         <SnackbarComponent

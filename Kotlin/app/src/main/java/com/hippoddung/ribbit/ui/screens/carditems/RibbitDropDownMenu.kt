@@ -19,60 +19,59 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.network.bodys.RibbitPost
 import com.hippoddung.ribbit.ui.RibbitScreen
-import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
-import com.hippoddung.ribbit.ui.viewmodel.HomeViewModel
-import com.hippoddung.ribbit.ui.viewmodel.UserUiState
-import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
+import com.hippoddung.ribbit.ui.viewmodel.CardViewModel
+import kotlinx.coroutines.runBlocking
 
 @Composable
 fun RibbitDropDownMenu(
     post: RibbitPost,
-    homeViewModel: HomeViewModel,
+    cardViewModel: CardViewModel,
     userId: Int,
-    navController: NavHostController
+    navController: NavHostController,
+    modifier: Modifier = Modifier
 ) {
     var isDropDownMenuExpanded by remember { mutableStateOf(false) }
 
     Box(
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
     ) {
         IconButton(
             onClick = { isDropDownMenuExpanded = true },
-            modifier = Modifier.align(Alignment.CenterEnd)
+            modifier = modifier.align(Alignment.CenterEnd)
+                .padding(start = 4.dp, end = 4.dp),
         ) {
             Icon(
                 imageVector = Icons.Default.MoreHoriz,
-                contentDescription = "RibbitDropDownMenu icon"
+                contentDescription = "RibbitDropDownMenu icon",
+                modifier = modifier.padding(start = 4.dp, end = 4.dp),
             )
         }
 
-        Box(modifier = Modifier.align(Alignment.BottomEnd)) {
+        Box(modifier = modifier.align(Alignment.BottomEnd)) {
             DropdownMenu(
                 expanded = isDropDownMenuExpanded,
                 onDismissRequest = { isDropDownMenuExpanded = false },
-                modifier = Modifier
+                modifier = modifier
                     .wrapContentSize()
-                    .padding(4.dp),
+                    .padding(start = 4.dp, end = 4.dp),
             ) {
                 if (post.user.id == userId) {
                     DropdownMenuItem(
                         onClick = {
                             // 본인 계정이 아닌 경우 서버에서 삭제를 거부함. UI단계에서 타 계정의 접근을 막아야 함.
-                            homeViewModel.deleteRibbitPost(post.id)
+                            runBlocking { cardViewModel.deleteRibbitPost(post.id) }
                             Log.d("HippoLog, RibbitDropDownMenu", "${post.id}")
                             isDropDownMenuExpanded = false
-                            homeViewModel.getRibbitPosts()
+                            cardViewModel.getRibbitPosts()
                         },
                         text = {
                             Text(
@@ -95,21 +94,15 @@ fun RibbitDropDownMenu(
                                 color = Color.Blue,
                                 fontStyle = FontStyle.Italic,
                                 fontSize = 14.sp,
-                                style = TextStyle(
-                                    shadow = Shadow(
-                                        color = Color.Black,
-                                        offset = Offset(3f, 3f),
-                                        blurRadius = 3f
-                                    )
-                                )
+                                style = TextStyle(shadow = Shadow(Color.Black))
                             )
                         }
                     )
                 }
                 DropdownMenuItem(
                     onClick = {
-                        homeViewModel.getPostIdPost(post.id)
-                        navController.navigate(RibbitScreen.TwitIdScreen.name)
+                        cardViewModel.getPostIdPost(post.id)    // 뷰 카운트 메소드 호출을 getPostIdPost메소드에서 실행하도록 함.
+                        navController.navigate(RibbitScreen.PostIdScreen.name)
                         isDropDownMenuExpanded = false
                     },
                     text = {

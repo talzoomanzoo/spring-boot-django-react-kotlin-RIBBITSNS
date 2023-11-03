@@ -38,14 +38,16 @@ public class Twit {
     @JoinColumn(name = "twit_id")
     private List<Twit> replyTwits = new ArrayList<>(); //여러개의 twit에 하나의 reply 리스트
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.DETACH)
     private List<User> retwitUser = new ArrayList<>();
 
     @ManyToOne // 붙는 엔티티가 M, 상대가 1
     private Twit replyFor; // 하나의 트윗에 대해 M개의 댓글, Twit의 내용을 넣기 위해 사용
 
     @Column(nullable = false)
-    private LocalDateTime createdAt; 
+    private LocalDateTime createdAt;
+
+    private LocalDateTime retwitAt;
 
     private String editedAt; 
     

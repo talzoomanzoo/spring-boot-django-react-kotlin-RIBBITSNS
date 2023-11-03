@@ -2,6 +2,7 @@ package com.zosh.service;
 
 import java.util.List;
 
+import com.zosh.exception.ListException;
 import com.zosh.exception.TwitException;
 import com.zosh.exception.UserException;
 import com.zosh.model.Twit;
@@ -34,6 +35,8 @@ public interface TwitService {
 	
 	public List<Twit> getUsersTwit(User user);
 	
+	public List<Twit> getUsersRetwitTwit(User user);
+	
 	public List<Twit> getUsersReplies(Long userId);
 	
 	public List<Twit> findByLikesContainsUser(User user);
@@ -43,4 +46,10 @@ public interface TwitService {
 	public Twit updateView(Twit twit) throws TwitException;
 	
 	public List<Twit> searchTwit(String query);
+
+	public List<Twit> findTwitsByListId(Long listId) throws ListException, UserException, TwitException;
+		
+	public List<Twit> findTwitsByTopLike() throws UserException, TwitException;
+
+	public List<Twit> findTwitsByTopView() throws UserException, TwitException;
 }

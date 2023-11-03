@@ -14,12 +14,14 @@
     <string name="loading_screen">LoadingScreen</string>
     <string name="error_screen">ErrorScreen</string>
     <string name="home_screen">HomeScreen</string>
-    <string name="twit_id_screen">TwitIdScreen</string>
+    <string name="post_id_screen">PostIdScreen</string>
     <string name="sign_up_screen">SingUpScreen</string>
     <string name="login_screen">LoginScreen</string>
     <string name="logout_screen">LogoutScreen</string>
     <string name="profile_screen">ProfileScreen</string>
-    <string name="twit_create_screen">TwitCreateScreen</string>
+    <string name="profile_replies_screen">ProfileRepliesScreen</string>
+    <string name="profile_likes_screen">ProfileLikesScreen</string>
+    <string name="creating_post_screen">CreatingPostScreen</string>
     <string name="pick_image_screen">PickImageScreen</string>
 
     <!--    LogIn   -->

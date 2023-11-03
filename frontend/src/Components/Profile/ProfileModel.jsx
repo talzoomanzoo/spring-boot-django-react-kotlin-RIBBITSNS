@@ -66,7 +66,7 @@ const ProfileModel = ({ handleClose, open }) => {
       // location: auth.user.location || "",
       bio: auth.user.bio || "",
       backgroundImage: auth.user.backgroundImage || "",
-      image: auth.user.image? auth.user.image : "https://cdn.pixabay.com/photo/2023/10/24/01/42/01-42-37-630_1280.png" || "",
+      image: auth.user.image? auth.user.image : "https://cdn.pixabay.com/photo/2023/10/24/01/42/art-8337199_1280.png" || "",
       education: auth.user.education || "",
       birthDate: auth.user.birthDate || "",
     });
@@ -190,6 +190,7 @@ const ProfileModel = ({ handleClose, open }) => {
                           }
                           alt="Img"
                           className="w-full h-[12rem] object-cover object-center"
+                          loading="lazy"
                         />
                         {/* Hidden file input */}
                         <input
@@ -213,6 +214,7 @@ const ProfileModel = ({ handleClose, open }) => {
                             height: "10rem",
                             border: "4px solid white",
                           }}
+                          loading="lazy"
                         />
                         {/* Hidden file input */}
                         <input
@@ -303,7 +305,7 @@ const ProfileModel = ({ handleClose, open }) => {
                     />
                   </div>
                 </div>
-                <BackdropComponent open={loading} />
+                {loading ? <Loading/> : null}
 
               </form>
             </Box>
@@ -366,6 +368,7 @@ const ProfileModel = ({ handleClose, open }) => {
                         display: 'block',
                         margin: '0 auto',
                       }}
+                      loading="lazy"
                     />
                     <Button
                       style={{
