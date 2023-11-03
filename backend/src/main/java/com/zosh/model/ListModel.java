@@ -43,6 +43,6 @@ public class ListModel {
 
 	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.DETACH)
-	private List<User> followings = new ArrayList<>();
+	private List<User> followingsl = new ArrayList<>();
 
 }

@@ -69,7 +69,6 @@ private UserRepository userRepository;
 		@RequestHeader("Authorization") String jwt) throws ListException, UserException {
 		User user= userService.findUserProfileByJwt(jwt);
 		ListModel listModel= listService.editList(req, user);
-		System.out.println("reqcheck" + req);
 		ListDto listDto =ListDtoMapper.toListDto(listModel, user);
 		return new ResponseEntity<>(listDto, HttpStatus.OK);
 	}
@@ -94,7 +93,7 @@ private UserRepository userRepository;
 		User user= userService.findUserProfileByJwt(jwt);
 		ListModel listModel=listService.findById(listId);
 		ListDto listDto=ListDtoMapper.toListDto(listModel, user);
-		System.out.println("listDto followers + " + listDto.getFollowings());
+		System.out.println("listDto followers + " + listDto.getFollowingsl());
 		return new ResponseEntity<>(listDto, HttpStatus.OK);
 	}
 	

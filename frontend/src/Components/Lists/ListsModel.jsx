@@ -38,7 +38,6 @@ const ListsModel = ({ handleClose, open }) => {
   const [backgroundImage, setBackgroundImage] = useState("");
   const [listName, setListName] = useState("");
   const [description, setDescription] = useState("");
-  const [isEnabled, setIsEnabled] = useState(false);
 
   const handleSubmit = (values, actions) => {
     dispatch(createListModel(values));
@@ -174,7 +173,7 @@ const ListsModel = ({ handleClose, open }) => {
                       marginRight: 20,
                     }}
                     trackColor={{ false: "#767577", true: "#81b0ff" }}
-                    thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
+                    thumbColor={formik.values.privateMode ? "#f5dd4b" : "#f4f3f4"}
                     ios_backgroundColor="#3e3e3e"
                     //onValueChange={toggleSwitch}
                     //value={isEnabled}

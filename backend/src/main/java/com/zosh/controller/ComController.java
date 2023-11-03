@@ -68,11 +68,13 @@ private UserService userService;
 		return new ResponseEntity<>(comDto, HttpStatus.ACCEPTED);
 	}
 	
-//	@PostMapping("/update")
-//	public ResponseEntity<ComDto> editCom(@RequestBody Community req,
-//			@RequestHeader("Authorization") String jwt) throws ComException, UserException {
-//		User user = userService.findUserProfileByJwt(jwt);
-//		Community community = comService.editCom
-//	}
+	@PostMapping("/update")
+	public ResponseEntity<ComDto> editCom(@RequestBody Community req,
+			@RequestHeader("Authorization") String jwt) throws ComException, UserException {
+		User user = userService.findUserProfileByJwt(jwt);
+		Community community = comService.editCom(req, user);
+		ComDto comDto = ComDtoMapper1.toComDto(community, user);
+		return new ResponseEntity<>(comDto, HttpStatus.OK);
+	}
 	
 }

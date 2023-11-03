@@ -16,4 +16,6 @@ public interface ComService {
 	public Community addUser(Long userId, Long comId) throws ComException, UserException;
 	
 	public Community findById(Long comId) throws ComException;
+	
+	public Community editCom(Community req, User user) throws ComException, UserException;
 }

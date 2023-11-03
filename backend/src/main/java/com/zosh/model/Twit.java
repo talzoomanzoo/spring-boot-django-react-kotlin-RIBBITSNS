@@ -45,7 +45,9 @@ public class Twit {
     private Twit replyFor; // 하나의 트윗에 대해 M개의 댓글, Twit의 내용을 넣기 위해 사용
 
     @Column(nullable = false)
-    private LocalDateTime createdAt; 
+    private LocalDateTime createdAt;
+
+    private LocalDateTime retwitAt;
 
     private String editedAt; 
     
