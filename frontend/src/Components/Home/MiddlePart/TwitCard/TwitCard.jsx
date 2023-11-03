@@ -573,6 +573,16 @@ const TwitCard = ({ twit }) => {
               )}
             </div>
           </div>
+          <hr
+            style={{
+              marginTop: 3,
+              marginBottom: 10,
+              background: 'grey',
+              color: 'grey',
+              borderColor: 'grey',
+              height: '1px',
+            }}
+          />
         </div>
       </div>
 

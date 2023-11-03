@@ -7,12 +7,13 @@ import { useState } from "react";
 const LikeTop = () => {
     const dispatch = useDispatch();
     const { twit } = useSelector(store => store);
-    const [refreshTwits, setRefreshTwits] = useState(0);
+    //const [refreshTwits, setRefreshTwits] = useState(0);
     twit.topLikesTwits.sort((a, b) => b.totalLikes - a.totalLikes);
 
     useEffect(() => {
         dispatch(findByTopLikes());
-    }, [refreshTwits])
+        //console.log("useEffect test2");
+    }, [])
 
     return (
             <div>

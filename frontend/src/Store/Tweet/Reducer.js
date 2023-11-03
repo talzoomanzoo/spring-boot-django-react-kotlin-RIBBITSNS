@@ -73,6 +73,7 @@ const tweetReducer = (state = initialState, action) => {
         ...state,
         loading: true,
         error: null,
+        twits:[]
       };
     case FIND_TWEET_BY_ID_REQUEST:
       return {
