@@ -7,11 +7,14 @@ import { useState } from "react";
 const ViewTop = () => {
     const dispatch = useDispatch();
     const { twit } = useSelector(store => store);
-    const [refreshTwits, setRefreshTwits] = useState(0);
+ //   const [refreshTwits, setRefreshTwits] = useState(0);
 
     useEffect(() => {
         dispatch(findByTopViews());
-    }, [refreshTwits])
+        //console.log("useEffect test1");
+    }, [])
+
+    
 
     return (
         <div>
