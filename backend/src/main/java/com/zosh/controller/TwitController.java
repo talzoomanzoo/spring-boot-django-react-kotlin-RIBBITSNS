@@ -126,11 +126,13 @@ public class TwitController {
 	}
 	
 	@GetMapping("/{listId}/listTwit") // ambiguous handler
-	public void findTwitByListId (@PathVariable Long listId,
+	public ResponseEntity<List<TwitDto>> findTwitByListId (@PathVariable Long listId,
 			@RequestHeader("Authorization") String jwt) throws TwitException, ListException, UserException {
 		User user= userService.findUserProfileByJwt(jwt);
 		ListModel listModel=listService.findById(listId);
-		System.out.println("-----------------------------");
+		List<Twit> twits = twitService.findTwitsByListId(listModel.getId());
+		List<TwitDto> twitDtos=TwitDtoMapper.toTwitDtos(twits,user);
+		return new ResponseEntity<List<TwitDto>>(twitDtos,HttpStatus.OK);
 	}
 	
 	@GetMapping("/")

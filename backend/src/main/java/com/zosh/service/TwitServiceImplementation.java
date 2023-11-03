@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.zosh.exception.ListException;
 import com.zosh.exception.TwitException;
 import com.zosh.exception.UserException;
 import com.zosh.model.Twit;
@@ -231,5 +232,11 @@ public class TwitServiceImplementation implements TwitService {
 	public List<Twit> findTwitsByTopView() throws UserException, TwitException {
 		// TODO Auto-generated method stub
 		return twitRepository.findTwitsByTopView();
+	}
+
+	@Override
+	public List<Twit> findTwitsByListId(Long listId) throws ListException, UserException, TwitException {
+		// TODO Auto-generated method stub
+		return twitRepository.searchListFollowedTwit(listId);
 	}
 }

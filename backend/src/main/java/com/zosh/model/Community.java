@@ -38,6 +38,7 @@ public class Community {
 	@Column(nullable = false)
 	private LocalDateTime createdAt;
 
+	@Column(nullable = false)
 	private String comName;
 
 	private String description;
