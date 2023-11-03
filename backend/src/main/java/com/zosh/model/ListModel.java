@@ -32,6 +32,7 @@ public class ListModel {
 	@Column(nullable = false)
 	private LocalDateTime createdAt;
 
+	@Column(nullable= false)
 	private String listName;
 
 	private String description;
@@ -42,6 +43,6 @@ public class ListModel {
 
 	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.DETACH)
-	private List<User> followings = new ArrayList<>();
+	private List<User> followingsl = new ArrayList<>();
 
 }

@@ -1,18 +1,19 @@
 package com.zosh.service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.zosh.config.JwtProvider;
+import com.zosh.exception.ComException;
 import com.zosh.exception.ListException;
 import com.zosh.exception.UserException;
+import com.zosh.model.Community;
 import com.zosh.model.ListModel;
 import com.zosh.model.Twit;
 import com.zosh.model.User;
+import com.zosh.repository.ComRepository;
 import com.zosh.repository.ListRepository;
 import com.zosh.repository.TwitRepository;
 import com.zosh.repository.UserRepository;
@@ -22,6 +23,7 @@ public class UserServiceImplementation implements UserService {
 	private final UserRepository userRepository;
 	private final ListRepository listRepository;
 	private final TwitRepository twitRepository;
+	private final ComRepository comRepository;
 	private final JwtProvider jwtProvider;
 
 	@Autowired
@@ -29,11 +31,13 @@ public class UserServiceImplementation implements UserService {
 			UserRepository userRepository,
 			ListRepository listRepository,
 			TwitRepository twitRepository,
+			ComRepository comRepository,
 			JwtProvider jwtProvider) {
 		
 		this.userRepository=userRepository;
 		this.listRepository=listRepository;
 		this.twitRepository = twitRepository;
+		this.comRepository = comRepository;
 		this.jwtProvider=jwtProvider;
 		
 	}
@@ -118,21 +122,43 @@ public class UserServiceImplementation implements UserService {
 		return userRepository.searchUser(query);
 	}
 
-	public ListModel findById(Long listId) throws ListException {
+	public ListModel findByListId(Long listId) throws ListException {
 		// TODO Auto-generated method stub
 		ListModel listModel = listRepository.findById(listId)
 				.orElseThrow(()-> new ListException("List Not Found with Id" + listId));
 		return listModel;
 	}
+	
+	public Community findByComId(Long comId) throws ComException {
+		// TODO Auto-generated method stub
+		Community community = comRepository.findById(comId)
+				.orElseThrow(()-> new ComException("Com Not Found with Id" + comId));
+		return community;
+	}
+	
 	@Override
 	public User followList(Long userId, Long listId) throws UserException, ListException {
 		// TODO Auto-generated method stub
 		User user=findUserById(userId);
-		ListModel listModel=findById(listId);
+		ListModel listModel=findByListId(listId);
 		if (user.getFollowedLists().contains(listModel) ) {
 			user.getFollowedLists().remove(listModel);
 		} else {
 			user.getFollowedLists().add(listModel);
+		}
+		userRepository.save(user);
+		return user;
+	}
+	
+	@Override
+	public User followCom(Long userId, Long comId) throws UserException, ComException {
+		// TODO Auto-generated method stub
+		User user=findUserById(userId);
+		Community community=findByComId(comId);
+		if (user.getFollowedComs().contains(community)) {
+			user.getFollowedComs().remove(community);
+		} else {
+			user.getFollowedComs().add(community);
 		}
 		userRepository.save(user);
 		return user;

@@ -10,6 +10,7 @@ import {
 } from "../../Store/Community/Action";
 import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
 import BackdropComponent from "../Backdrop/Backdrop";
+import Loading from "../Profile/Loading/Loading";
 //npm install --save react-native-infinite-scroll --save --legacy-peer-deps
 //npm install react-native-web
 
@@ -173,7 +174,7 @@ const ComModel = ({ handleClose, open }) => {
                                             marginRight: 20,
                                         }}
                                         trackColor={{ false: "#767577", true: "#81b0ff" }}
-                                        thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
+                                        thumbColor={formik.values.privateMode ? "#f5dd4b" : "#f4f3f4"}
                                         ios_backgroundColor="#3e3e3e"
                                         //onValueChange={toggleSwitch}
                                         //value={isEnabled}
@@ -200,7 +201,7 @@ const ComModel = ({ handleClose, open }) => {
                                 />
                             </div>
                         </div>
-                        <BackdropComponent open={uploading} />
+                        {uploading ? <Loading/> : null}
                     </form>
                 </Box>
             </Modal>

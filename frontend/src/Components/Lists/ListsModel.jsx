@@ -10,9 +10,10 @@ import {
 } from "../../Store/List/Action";
 import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
 import BackdropComponent from "../Backdrop/Backdrop";
+import Loading from "../Profile/Loading/Loading";
 //npm install --save react-native-infinite-scroll --save --legacy-peer-deps
 //npm install react-native-web
-
+import "./ListCard/ListCard.css";
 const style = {
   position: "absolute",
   top: "50%",
@@ -37,7 +38,6 @@ const ListsModel = ({ handleClose, open }) => {
   const [backgroundImage, setBackgroundImage] = useState("");
   const [listName, setListName] = useState("");
   const [description, setDescription] = useState("");
-  const [isEnabled, setIsEnabled] = useState(false);
 
   const handleSubmit = (values, actions) => {
     dispatch(createListModel(values));
@@ -98,7 +98,7 @@ const ListsModel = ({ handleClose, open }) => {
               <Button type="submit">저장</Button>
             </div>
 
-            <div className="customeScrollbar overflow-y-scroll  overflow-x-hidden h-[80vh]">
+            <div className="customeScrollbar overflow-y-scroll  overflow-x-hidden h-[55vh]">
               <div className="">
                 <div className="w-full">
                   <div className="relative">
@@ -173,7 +173,7 @@ const ListsModel = ({ handleClose, open }) => {
                       marginRight: 20,
                     }}
                     trackColor={{ false: "#767577", true: "#81b0ff" }}
-                    thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
+                    thumbColor={formik.values.privateMode ? "#f5dd4b" : "#f4f3f4"}
                     ios_backgroundColor="#3e3e3e"
                     //onValueChange={toggleSwitch}
                     //value={isEnabled}
@@ -200,7 +200,7 @@ const ListsModel = ({ handleClose, open }) => {
                 />
               </div>
             </div>
-            <BackdropComponent open={uploading} />
+            {uploading ? <Loading/> : null}
           </form>
         </Box>
       </Modal>

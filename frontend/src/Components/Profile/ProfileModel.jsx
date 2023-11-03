@@ -66,7 +66,7 @@ const ProfileModel = ({ handleClose, open }) => {
       // location: auth.user.location || "",
       bio: auth.user.bio || "",
       backgroundImage: auth.user.backgroundImage || "",
-      image: auth.user.image? auth.user.image : "" || "",
+      image: auth.user.image? auth.user.image : "https://cdn.pixabay.com/photo/2023/10/24/01/42/art-8337199_1280.png" || "",
       education: auth.user.education || "",
       birthDate: auth.user.birthDate || "",
     });
@@ -305,7 +305,7 @@ const ProfileModel = ({ handleClose, open }) => {
                     />
                   </div>
                 </div>
-                <BackdropComponent open={loading} />
+                {loading ? <Loading/> : null}
 
               </form>
             </Box>

@@ -69,7 +69,6 @@ private UserRepository userRepository;
 		@RequestHeader("Authorization") String jwt) throws ListException, UserException {
 		User user= userService.findUserProfileByJwt(jwt);
 		ListModel listModel= listService.editList(req, user);
-		System.out.println("reqcheck" + req);
 		ListDto listDto =ListDtoMapper.toListDto(listModel, user);
 		return new ResponseEntity<>(listDto, HttpStatus.OK);
 	}
@@ -79,16 +78,12 @@ private UserRepository userRepository;
 			@PathVariable Long listId,
 			@RequestHeader("Authorization") String jwt)
 		throws ListException, UserException {
-		User user= userService.findUserProfileByJwt(jwt); // 사용자
-		User updatedUser = userService.followList(userId, listId); // List가 추가하는 user
-		//UserDto userDto=UserDtoMapper.toUserDto(updatedUser);
+		User user= userService.findUserProfileByJwt(jwt);
+		User updatedUser = userService.followList(userId, listId);
 		ListModel updatedList=listService.addUser(userId, listId);
 		ListDto listDto=ListDtoMapper.toListDto(updatedList, user);
 		UserDto userDto=UserDtoMapper.toUserDto(updatedUser);
 		userDto.setHasFollowedLists(ListUtil.isFollowedByReqList(updatedList, updatedUser));
-		//userRepository.save(updatedUser);
-		//System.out.println("updatedUserCheck" + updatedUser.isHasFollowedLists());
-		//System.out.println("ListUtilCheck" + ListUtil.isFollowedByReqList(updatedList, updatedUser));
 		return new ResponseEntity<>(listDto, HttpStatus.ACCEPTED);
 	}
 	
@@ -98,7 +93,7 @@ private UserRepository userRepository;
 		User user= userService.findUserProfileByJwt(jwt);
 		ListModel listModel=listService.findById(listId);
 		ListDto listDto=ListDtoMapper.toListDto(listModel, user);
-		System.out.println("listDto followers + " + listDto.getFollowings());
+		System.out.println("listDto followers + " + listDto.getFollowingsl());
 		return new ResponseEntity<>(listDto, HttpStatus.OK);
 	}
 	

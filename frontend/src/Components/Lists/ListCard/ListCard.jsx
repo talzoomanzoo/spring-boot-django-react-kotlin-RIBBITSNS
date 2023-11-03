@@ -56,7 +56,7 @@ const ListCard = ({ list }) => {
               onClick={handleDelete}
               sx={{ borderRadius: "20px" }}
               variant="outlined"
-              className="rounded-full"
+              className="rounded-full btn btn-primary btn-ghost btn-close"
             >
               삭제
             </Button>

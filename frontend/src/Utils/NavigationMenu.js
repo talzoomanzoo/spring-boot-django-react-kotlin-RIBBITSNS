@@ -1,6 +1,5 @@
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import ExploreIcon from "@mui/icons-material/Explore";
 import ForumIcon from "@mui/icons-material/Forum";
 import GroupsIcon from "@mui/icons-material/Groups";
 import HouseIcon from "@mui/icons-material/House";
@@ -14,19 +13,6 @@ export const navigationMenu = [
     title: "홈",
     icon: <HouseIcon />,
     path: "/",
-    pattern: {
-      y: 16,
-      squares: [
-        [0, 1],
-        [1, 3],
-      ],
-    },
-  },
-  {
-    id: 2,
-    title: "탐색",
-    icon: <ExploreIcon />,
-    path: "/explore",
     pattern: {
       y: 16,
       squares: [

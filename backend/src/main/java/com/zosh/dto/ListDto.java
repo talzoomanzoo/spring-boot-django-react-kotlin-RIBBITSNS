@@ -29,5 +29,5 @@ public class ListDto {
 	
 	private boolean privateMode;
 	
-	private List<UserDto> followings=new ArrayList<>();
+	private List<UserDto> followingsl=new ArrayList<>();
 }

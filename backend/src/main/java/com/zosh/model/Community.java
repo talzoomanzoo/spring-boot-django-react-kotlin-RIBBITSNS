@@ -38,6 +38,7 @@ public class Community {
 	@Column(nullable = false)
 	private LocalDateTime createdAt;
 
+	@Column(nullable = false)
 	private String comName;
 
 	private String description;
@@ -48,5 +49,5 @@ public class Community {
 
 	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.DETACH)
-	private List<User> followings = new ArrayList<>();
+	private List<User> followingsc = new ArrayList<>();
 }

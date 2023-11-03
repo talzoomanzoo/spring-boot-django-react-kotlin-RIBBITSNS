@@ -39,7 +39,6 @@ import {
   UPDATE_TWEET_SUCCESS,
 } from "../../../../Store/Tweet/ActionType";
 import { uploadToCloudinary } from "../../../../Utils/UploadToCloudinary";
-import BackdropComponent from "../../../Backdrop/Backdrop";
 import Loading from "../../../Profile/Loading/Loading";
 import Maplocation from "../../../Profile/Maplocation";
 import ReplyModal from "./ReplyModal";
@@ -134,6 +133,7 @@ const TwitCard = ({ twit }) => {
     } else {
       console.log("unable to create reribbit");
     }
+    window.location.reload();
   };
 
   const handleCloseReplyModel = () => setOpenReplyModel(false);
@@ -362,13 +362,16 @@ const TwitCard = ({ twit }) => {
     <div className="">
       {loading ? <Loading /> : null}
       {auth.findUser?.id !== twit.user.id &&
-      location.pathname === `/profile/${auth.findUser?.id}` &&
-      twit.retwitUsersId.length > 0 ? (
-        <div className="flex items-center font-semibold text-pink-700 py-2">
-          <RepeatIcon />
-          <p className="ml-3">Reribbit</p>
-        </div>
-      ) : null}
+        location.pathname === `/profile/${auth.findUser?.id}` &&
+        twit.retwitUsersId.length > 0 ?
+        (
+          <div className="flex items-center font-semibold text-yellow-500 py-2">
+            <RepeatIcon />
+            <p className="ml-3">Reribbit</p>
+          </div>
+        ) :
+        null
+      }
       <div className="flex space-x-5 ">
         <Avatar
           onClick={() => navigate(`/profile/${twit.user.id}`)}
@@ -633,6 +636,16 @@ const TwitCard = ({ twit }) => {
               )}
             </div>
           </div>
+          <hr
+            style={{
+              marginTop: 3,
+              marginBottom: 10,
+              background: 'grey',
+              color: 'grey',
+              borderColor: 'grey',
+              height: '1px',
+            }}
+          />
         </div>
       </div>
 
@@ -643,7 +656,7 @@ const TwitCard = ({ twit }) => {
       />
 
       <section>
-        <BackdropComponent open={loading} />
+      {loading ? <Loading/> : null}
       </section>
     </div>
   );

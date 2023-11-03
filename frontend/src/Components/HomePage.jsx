@@ -1,26 +1,35 @@
 import { Grid } from "@mui/material";
-import React from "react";
+import React, { Suspense, useState } from "react";
 import { useSelector } from "react-redux";
 import { Route, Routes } from "react-router-dom";
-import Chatroom from "./Chat/Chat";
-import Communities from "./Communities/Communities";
-import FollowTwit from "./FollowTwit/FollowTwit";
+// import FollowTwit from "./FollowTwit/FollowTwit";
 import HomeSection from "./Home/MiddlePart/HomeSection";
-import TwitDetail from "./Home/MiddlePart/TwitDetail";
-import Lists from "./Lists/Lists";
-import ListsDetail from "./Lists/ListsDetail";
+// import TwitDetail from "./Home/MiddlePart/TwitDetail";
+// import Lists from "./Lists/Lists";
 import Navigation from "./Navigation/Navigation";
-import Notifications from "./Notifications/Notifications";
-import Profile from "./Profile/Profile";
+// import Profile from "./Profile/Profile";
+import Loading from "./Profile/Loading/Loading";
 import RightPart from "./RightPart/RightPart";
+// import Chatroom from "./Chat/Chat";
+// import ListsDetail from "./Lists/ListsDetail";
+// import Communities from "./Communities/Communities";
+
+const FollowTwit = React.lazy(() => import("./FollowTwit/FollowTwit"));
+const TwitDetail = React.lazy(() => import("./Home/MiddlePart/TwitDetail"));
+const Lists = React.lazy(() => import("./Lists/Lists"));
+const Profile = React.lazy(() => import("./Profile/Profile"));
+const Chatroom = React.lazy(() => import("./Chat/Chat"));
+const ListsDetail = React.lazy(() => import("./Lists/ListsDetail"));
+const Communities = React.lazy(() => import("./Communities/Communities"));
 
 
 const HomePage = () => {
   const { theme } = useSelector((store) => store);
+  const [uploading, setUploading] = useState(false);
   return (
     <Grid container className="px-5 lg:px-36 justify-between" xs={12}>
       <Grid item xs={0} lg={2.5} className="hidden lg:block  w-full relative">
-        <Navigation />
+          <Navigation />
       </Grid>
       <Grid
         item
@@ -31,18 +40,40 @@ const HomePage = () => {
         } `}
       >
         <Routes>
-          <Route path="/" element={<HomeSection />}></Route>
-          <Route path="/profile/:id" element={<Profile />}></Route>
-          <Route path="/followTwit" element={<FollowTwit />}></Route>
-          <Route path="/notifications" element={<Notifications />}></Route>
-          <Route path="/messages" element={<Chatroom />}></Route>
-          <Route path="/lists" element={<Lists />}></Route>
-          <Route path="/communities" element={<Communities />}></Route>
-          <Route path="/twit/:id" element={<TwitDetail />}></Route>
-          <Route path="/lists/:id" element={<ListsDetail />}></Route>
+          <Route path="/" element={
+              <HomeSection />
+          }></Route>
+          <Route path="/profile/:id" element={
+            <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
+              <Profile />
+            </Suspense>}></Route>
+          <Route path="/followTwit" element={
+            <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
+              <FollowTwit />
+            </Suspense>}></Route>
+          <Route path="/messages" element={
+            <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
+              <Chatroom />
+            </Suspense>}></Route>
+          <Route path="/lists" element={
+            <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
+              <Lists />
+            </Suspense>}></Route>
+          <Route path="/communities" element={
+            <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
+              <Communities />
+            </Suspense>}></Route>
+          <Route path="/twit/:id" element={
+            <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
+              <TwitDetail />
+            </Suspense>}></Route>
+          <Route path="/lists/:id" element={
+            <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
+              <ListsDetail />
+            </Suspense>}></Route>
         </Routes>
       </Grid>
-      <Grid item xs={0} lg={3} className="hidden lg:block overflow-y-scroll hideScrollbar h-[110vh]">
+      <Grid item xs={0} lg={3} className="hidden lg:block">
         <RightPart />
       </Grid>
     </Grid>
