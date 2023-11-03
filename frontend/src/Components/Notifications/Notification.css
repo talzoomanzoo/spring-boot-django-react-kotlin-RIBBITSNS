@@ -11,19 +11,6 @@
     position: absolute;
     font-weight: bold;
     color: white;
-    margin-top: -10px;
+    margin-top: -25px;
     margin-left: 12px;
-}
-
-.icon{
-    display: flex;
-    align-items: center;
-    margin-top: 15px;
-    margin-left: 15px;
-    cursor: pointer;
-}
-
-.iconImg{
-    width: 20px;
-    height: 20px;
 }
