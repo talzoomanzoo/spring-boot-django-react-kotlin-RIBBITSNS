@@ -25,6 +25,7 @@ import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
 import BackdropComponent from "../Backdrop/Backdrop";
 import { Switch } from 'react-native'; // 여기서만 import 할것, switch 건들 ㄴㄴ
 import { getUserAction } from "../../Store/List/Action";
+import Loading from "../Profile/Loading/Loading";
 
 const style = {
   position: "absolute",
@@ -383,7 +384,7 @@ const ListsModel2 = ({ list, handleClose, open }) => {
               </div>
 
             </div>
-            <BackdropComponent open={uploading} />
+            {uploading ? <Loading/> : null} 
           </form>
         </Box>
       </Modal>

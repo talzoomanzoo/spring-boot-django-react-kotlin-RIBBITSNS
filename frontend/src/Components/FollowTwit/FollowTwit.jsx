@@ -26,7 +26,7 @@ const FollowTwit = () => {
           className="cursor-pointer"
           onClick={handleBack}
         />
-        <h1 className="py-5 text-xl font-bold opacity-90 ml-5 ${}"> {"팔로우 한 리빗"} </h1>
+        <h1 className="py-5 text-xl font-bold opacity-90 ml-5 ${}"> {"팔로우한 리빗"} </h1>
       </section>
       <section
         className={`${theme.currentTheme === "dark" ? "pt-14" : ""} space-y-5`}

@@ -280,7 +280,7 @@ const HomeSection = () => {
         </div>
       </section>
       <section>
-        <BackdropComponent open={uploadingImage} />
+        {uploadingImage ? <Loading/> : null}
       </section>
     </div>
   );

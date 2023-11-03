@@ -39,7 +39,7 @@ const HomePage = () => {
             <Route path="/lists/:id" element={<ListsDetail />}></Route>
         </Routes>
       </Grid>
-      <Grid item xs={0} lg={3} className="hidden lg:block overflow-y-scroll hideScrollbar h-[110vh]">
+      <Grid item xs={0} lg={3} className="hidden lg:block overflow-y-scroll hideScrollbar h-[100vh]">
         <RightPart />
       </Grid>
     </Grid>

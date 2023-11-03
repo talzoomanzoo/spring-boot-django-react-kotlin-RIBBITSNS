@@ -10,6 +10,7 @@ import {
 } from "../../Store/List/Action";
 import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
 import BackdropComponent from "../Backdrop/Backdrop";
+import Loading from "../Profile/Loading/Loading";
 //npm install --save react-native-infinite-scroll --save --legacy-peer-deps
 //npm install react-native-web
 
@@ -200,7 +201,7 @@ const ListsModel = ({ handleClose, open }) => {
                 />
               </div>
             </div>
-            <BackdropComponent open={uploading} />
+            {uploading ? <Loading/> : null}
           </form>
         </Box>
       </Modal>

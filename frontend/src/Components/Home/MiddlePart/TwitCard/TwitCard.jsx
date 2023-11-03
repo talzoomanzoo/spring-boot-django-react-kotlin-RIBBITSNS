@@ -583,7 +583,7 @@ const TwitCard = ({ twit }) => {
       />
 
       <section>
-        <BackdropComponent open={loading} />
+      {loading ? <Loading/> : null}
       </section>
     </div>
   );
