@@ -1,17 +1,17 @@
 package com.zosh.dto.mapper;
 
-import com.zosh.dto.ChatroomDto;
-import com.zosh.model.Chatroom;
+import com.zosh.dto.ChatRoomDto;
+import com.zosh.model.ChatRoom;
 
-public class ChatroomDtoMapper {
+public class ChatRoomDtoMapper {
 	
-	public static ChatroomDto chatUserDto(Chatroom chatroom) {
-		ChatroomDto chatroomDto = new ChatroomDto();
-		chatroomDto.setName(chatroom.getName());
-		chatroomDto.setTime(chatroom.getTime());
-		chatroomDto.setParticipants(chatroom.getParticipants());
+	public static ChatRoomDto toChatRoomDto(ChatRoom chatRoom) {
+		ChatRoomDto chatRoomDto = new ChatRoomDto();
+		chatRoomDto.setId(chatRoom.getId());
+		chatRoomDto.setName(chatRoom.getName());
+		chatRoomDto.setRoomId(chatRoom.getRoomId());
 		
-		return chatroomDto;
+		return chatRoomDto;
 	}
 
 }

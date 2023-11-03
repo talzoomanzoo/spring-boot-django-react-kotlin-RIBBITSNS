@@ -14,6 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -54,13 +55,14 @@ public class AppConfig {
             @Override
             public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                 CorsConfiguration cfg = new CorsConfiguration();
-                cfg.setAllowedOrigins(Arrays.asList(
-                    "http://localhost:3000",
-                    //"http://localhost:4000",
-                    "http://localhost:8000",
-                    "https://twitter-clone-two-woad.vercel.app",
-                    "https://twitter-clone-six-kohl.vercel.app"
-                ));
+//                cfg.setAllowedOrigins(Arrays.asList(
+//                    "http://localhost:3000",
+//                    //"http://localhost:4000",
+//                    "http://localhost:8000",
+//                    "https://twitter-clone-two-woad.vercel.app",
+//                    "https://twitter-clone-six-kohl.vercel.app"
+//                ));
+                cfg.setAllowedOriginPatterns(Collections.singletonList("*"));
                 cfg.setAllowedMethods(Collections.singletonList("*"));
                 cfg.setAllowCredentials(true);
                 cfg.setAllowedHeaders(Collections.singletonList("*"));

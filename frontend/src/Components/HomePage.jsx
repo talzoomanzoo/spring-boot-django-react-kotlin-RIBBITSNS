@@ -10,7 +10,6 @@ import Navigation from "./Navigation/Navigation";
 import Profile from "./Profile/Profile";
 import RightPart from "./RightPart/RightPart";
 import Chat from "./Chat/Chat";
-import ChatList from "./Chat/ChatList";
 
 import ListsDetail from "./Lists/ListsDetail";
 
@@ -34,7 +33,7 @@ const HomePage = () => {
           <Route path="/" element={<HomeSection />}></Route>
           <Route path="/profile/:id" element={<Profile />}></Route>
           <Route path="/followTwit" element={<FollowTwit />}></Route>
-          <Route path="/messages" element={<ChatList />}></Route>
+          <Route path="/messages" element={<Chat />}></Route>
           <Route path="/lists" element={<Lists />}></Route>
           <Route path="/twit/:id" element={<TwitDetail />}></Route>
             <Route path="/lists/:id" element={<ListsDetail />}></Route>

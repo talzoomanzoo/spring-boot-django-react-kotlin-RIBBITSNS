@@ -1,12 +1,5 @@
 package com.zosh.dto;
 
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
-
-import com.zosh.model.Chatuser;
-import com.zosh.model.Status;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,12 +9,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatroomDto {
+public class ChatRoomDto {
+
 	private Long id;
-	
-	private String name;
-	
-	private LocalDateTime time;
-	
-	private List<Chatuser> participants;
+	private String roomId; // 채팅방 아이디
+    private String name; // 채팅방 이름
+
+    
 }

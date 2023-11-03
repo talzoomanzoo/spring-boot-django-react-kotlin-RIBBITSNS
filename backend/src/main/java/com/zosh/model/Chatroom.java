@@ -1,32 +1,28 @@
 package com.zosh.model;
 
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.OneToMany;
+import lombok.Data;
 
-@Getter
-@Setter
 @Entity
-@Table(name="chatroom")
-public class Chatroom {
+@Data
+public class ChatRoom {
+	
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 	
-	private String name;
+    private String roomId;
+    private String name;
+
+//    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+//    private List<Chat> messages;
 	
-	private LocalDateTime time;
-	
-	@ManyToMany
-    private List<Chatuser> participants;
 }

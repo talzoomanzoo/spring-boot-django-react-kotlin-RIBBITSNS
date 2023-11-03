@@ -2,69 +2,72 @@ package com.zosh.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.zosh.dto.ChatroomDto;
-import com.zosh.dto.MessageDto;
-import com.zosh.dto.mapper.ChatroomDtoMapper;
-import com.zosh.dto.mapper.MessageDtoMapper;
-import com.zosh.model.Chatroom;
-import com.zosh.model.Message;
-import com.zosh.model.Status;
-import com.zosh.service.ChatroomService;
-import com.zosh.service.MessageService;
+import com.zosh.dto.ChatDto;
+import com.zosh.dto.ChatRoomDto;
+import com.zosh.dto.mapper.ChatDtoMapper;
+import com.zosh.dto.mapper.ChatRoomDtoMapper;
+import com.zosh.model.Chat;
+import com.zosh.model.Chat.MessageType;
+import com.zosh.model.ChatRoom;
+import com.zosh.service.ChatService;
 
-@Controller
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@RestController
+@Slf4j
+@RequiredArgsConstructor
+@RequestMapping("/chat")
 public class ChatController {
+	
+	private final ChatService service;
 
-    @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
-    
-    @Autowired
-    private MessageService messageService;
-    
-    @Autowired
-    private ChatroomService chatroomService;
-    
-    @MessageMapping("/message")
-    @SendTo("/chatroom/public")
-    public ResponseEntity<MessageDto> receiveMessage(@Payload Message message) {
-    	System.out.println("receive message: "+message);
-    	
-    	MessageDto messageDto = new MessageDto();
-    	
-    	if(message.getStatus() == Status.MESSAGE) {
-    		Message message2 = messageService.createMessage(message);
-        	messageDto = MessageDtoMapper.toEntity(message2);
-    	}
-    	
-    	return new ResponseEntity<>(messageDto,HttpStatus.CREATED);
-    	
-    }
-    
     @PostMapping("/createroom")
-    public ResponseEntity<ChatroomDto> createChatRoom(@RequestBody Chatroom chatroom){
-    	Chatroom chatroom2 = chatroomService.createroom(chatroom);
-    	ChatroomDto chatroomDto = ChatroomDtoMapper.chatUserDto(chatroom2);
-    	return new ResponseEntity<>(chatroomDto,HttpStatus.CREATED);
+    public ResponseEntity<ChatRoomDto> createRoom(@RequestParam String name){
+    	ChatRoom createdroom = service.createRoom(name);
+    	ChatRoomDto chatRoomDto = ChatRoomDtoMapper.toChatRoomDto(createdroom);
+        return new ResponseEntity<>(chatRoomDto,HttpStatus.CREATED);
     }
-    
+
     @GetMapping("/allrooms")
-    public ResponseEntity<List<Chatroom>> getAllChatRooms(){
-    	List<Chatroom> chatrooms = chatroomService.getallrooms();
-    	return new ResponseEntity<>(chatrooms,HttpStatus.OK);
+    public ResponseEntity<List<ChatRoom>> findAllRooms(){
+    	List<ChatRoom> allrooms = service.findAllRoom();
+        return new ResponseEntity<>(allrooms,HttpStatus.OK);
     }
+
+    @MessageMapping("/savechat")
+    public ResponseEntity<ChatDto> savechat(@Payload Chat chat){
+    	Chat chat2 = service.saveChat(chat);
+    	ChatDto chatDto = ChatDtoMapper.toChatDto(chat2);
+    	return new ResponseEntity<>(chatDto,HttpStatus.CREATED);
+    }
+	
+    @PostMapping("/enter")
+    public ResponseEntity<List<Chat>> enterchatroom(@RequestBody Chat chat){
+    	MessageType type = chat.getType();
+    	String roomId = chat.getRoomId();
+    	String sender = chat.getSender();
+    	
+    	Chat savechat = new Chat();
+    	savechat.setType(type);
+    	savechat.setRoomId(roomId);
+    	savechat.setSender(sender);
+    	service.saveChat(savechat);
     
+    	List<Chat> chatHistory = service.chathistory(roomId);
+    	
+		return new ResponseEntity<>(chatHistory,HttpStatus.OK);
+    }
 }
