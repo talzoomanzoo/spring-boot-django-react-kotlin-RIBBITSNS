@@ -32,6 +32,7 @@ public class ListModel {
 	@Column(nullable = false)
 	private LocalDateTime createdAt;
 
+	@Column(nullable= false)
 	private String listName;
 
 	private String description;
