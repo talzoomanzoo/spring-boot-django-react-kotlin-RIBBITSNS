@@ -201,7 +201,7 @@ const ComModel = ({ handleClose, open }) => {
                                 />
                             </div>
                         </div>
-                        <Loading open={uploading} />
+                        {uploading ? <Loading/> : null}
                     </form>
                 </Box>
             </Modal>

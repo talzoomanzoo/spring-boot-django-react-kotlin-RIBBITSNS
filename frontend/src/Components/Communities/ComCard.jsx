@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { deleteList } from "../../Store/List/Action";
 import ListsModel2 from "../Lists/ListsModel2";
 import GroupsIcon from '@mui/icons-material/Groups';
+import "./ComCard.css";
 
 const ComCard = ({ com }) => {
     const navigate = useNavigate();
@@ -43,9 +44,9 @@ const ComCard = ({ com }) => {
                 <div class="flex justify-between items-center">
                     <div
                         onClick={handleNavigateToListsDetail}
-                        className="flex cursor-pointer items-center space-x-2"
+                        className="flex cursor-pointer items-center space-x-2 com--btn effect04"
                     >
-                        <span class="text-xl">{com.comName}</span>
+                        <span class="text-xl" data-sm-link-text="CLICK" target="_blank">{com.comName}</span>
                         <p class="text-xl">{com.description}</p>
                     </div>
                 </div>
