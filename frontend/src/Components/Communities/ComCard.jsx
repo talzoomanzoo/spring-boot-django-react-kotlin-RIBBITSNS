@@ -1,11 +1,10 @@
-import ListIcon from "@mui/icons-material/List";
 import { Button } from "@mui/material";
 import { memo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux/es/hooks/useSelector";
 import { useNavigate } from "react-router-dom";
 import { deleteList } from "../../Store/List/Action";
-import ListsModel2 from "../Lists/ListsModel2";
+import ComModel2 from "./ComModel2";
 import GroupsIcon from '@mui/icons-material/Groups';
 
 const ComCard = ({ com }) => {
@@ -20,7 +19,7 @@ const ComCard = ({ com }) => {
     };
 
 
-    const { auth } = useSelector((store) => store);
+    const { auth, theme } = useSelector((store) => store);
     const showDeleteButton = com.user.id === auth.user.id;
 
     const handleDelete = async () => {
@@ -34,46 +33,52 @@ const ComCard = ({ com }) => {
     };
 
     return (
-        <div class="flex space-x-5">
-            <GroupsIcon
-                onClick={handleNavigateToListsDetail}
-                className="cursor-pointer"
-            />
-            <div class="w-full">
-                <div class="flex justify-between items-center">
-                    <div
-                        onClick={handleNavigateToListsDetail}
-                        className="flex cursor-pointer items-center space-x-2"
-                    >
-                        <span class="text-xl">{com.comName}</span>
-                        <p class="text-xl">{com.description}</p>
-                    </div>
-                </div>
-            </div>
-            {showDeleteButton && (
-                <>
-                    <section>
-                        <Button
-                            onClick={handleOpenListsModel}
-                            //handleClose={handleCloseListsModel}
-                            sx={{ borderRadius: "20px" }}
-                            variant="outlined"
-                            className="rounded-full"
-                        >
-                            관리
-                        </Button>
-                    </section>
+            <section className="space-x-5 py-3 rounded-full items-center justify-content">
+                <section className="my-5 space-x-5 items-center justify-content mt-5" style={{ marginTop: 3 }}>
+                    
+                        <GroupsIcon />
+                        {showDeleteButton && (
+                            <>
+                                <Button
+                                    onClick={handleOpenListsModel}
+                                    //handleClose={handleCloseListsModel}
+                                    sx={{ borderRadius: "20px" }}
+                                    variant="outlined"
+                                    className="rounded-full"
+                                >
+                                    관리
+                                </Button>
+                            
 
-                    <section>
-                        <ListsModel2
-                            list={com}
-                            open={openListsModel}
-                            handleClose={handleCloseListsModel}
-                        />
+                        <section>
+                            <ComModel2
+                                com={com}
+                                open={openListsModel}
+                                handleClose={handleCloseListsModel}
+                            />
+                        </section>
+                    </>
+                )}
+                
+                    <hr
+                        style={{
+                            marginTop: 10,
+                            marginBottom: 1,
+                            background: 'grey',
+                            color: 'grey',
+                            borderColor: 'grey',
+                            height: '1px',
+                        }}
+                    />
+                    <section
+                        className="mt-5 items-center justify-content cursor-pointer"
+                        onClick={handleNavigateToListsDetail}>
+                        <div className="text-xl items-center justify-content" >{com.comName}</div>
+                        <div className="text-xl items-center justify-content">{com.description}</div>
                     </section>
-                </>
-            )}
-        </div>
+                </section>
+            </section>
+
     );
 };
 

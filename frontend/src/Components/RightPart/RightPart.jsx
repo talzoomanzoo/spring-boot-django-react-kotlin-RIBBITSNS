@@ -79,8 +79,8 @@ const RightPart = () => {
   };
 
   return (
-    <div className="py-5 sticky top-0 overflow-y-hidden">
-      <div className="hideScrollbar overflow-y-scroll">
+    <div className="sticky top-0">
+      <div className="py-5 overflow-y-scroll hideScrollbar h-[110vh]">
         <div className="relative flex items-center">
           <input
             value={search}
@@ -95,7 +95,7 @@ const RightPart = () => {
           </span>
           {search && (
             <div
-              className={` overflow-y-scroll hideScrollbar absolute z-50 top-14  border-gray-400 h-[40vh] w-full rounded-md ${theme.currentTheme === "light" ? "bg-[#dbd9d9]" : "bg-[#151515] border"}`}
+              className={`absolute z-50 top-14  border-gray-400 h-[40vh] w-full rounded-md ${theme.currentTheme === "light" ? "bg-[#dbd9d9]" : "bg-[#151515] border"}`}
             >
               {auth.userSearchResult && auth.userSearchResult.map((item) => (
                 <div
@@ -153,12 +153,12 @@ const RightPart = () => {
         </div>
 
         <section
-          className={`my-5 `}
+          className={`my-5`}
         // ${
         //   theme.currentTheme === "dark" ? " bg-[#151515] p-5 rounded-md" : ""
         // }
         >
-          <h1 className="text-xl font-bold">그린체크</h1>
+          <h1 className="text-xl font-bold" >그린체크</h1>
           <h1 className="font-bold my-2">구독 후 사용해보세요!</h1>
           <Button
             onClick={handleOpenSubscriptionModal}
@@ -168,10 +168,22 @@ const RightPart = () => {
             {" "}
             체크 구독
           </Button>
+          
         </section>
 
+        <hr
+            style={{
+              marginTop: 30,
+              marginBottom: 1,
+              background: 'grey',
+              color: 'grey',
+              borderColor: 'grey',
+              height: '1px',
+            }}
+          />
+
         <section
-          className={`mt-7 space-y-5 `}
+          className={`mt-5 space-y-5 `}
         // ${
         //   theme.currentTheme === "dark" ? " bg-[#151515] p-5 rounded-md" : ""
         // }
@@ -183,7 +195,7 @@ const RightPart = () => {
           </div>
 
           <div>
-            <LikeTop/>
+            <LikeTop />
           </div>
 
           <div>
@@ -191,15 +203,15 @@ const RightPart = () => {
           </div>
 
           <div>
-            <ViewTop/>
+            <ViewTop />
           </div>
 
         </section>
-      </div>
       <SubscriptionModel
         open={openSubscriptionModal}
         handleClose={handleCloseSubscriptionMadal}
       />
+      </div>
     </div>
   );
 };
