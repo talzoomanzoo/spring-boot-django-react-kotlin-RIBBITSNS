@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import {Modal} from "@mui/material";
+import Modal from 'react-modal';
 
 const customStyles = {
   content: {
@@ -13,7 +13,7 @@ const customStyles = {
   },
 };
 
-function Chat() {
+const Chat = () => {
   const [roomName, setRoomName] = useState("");
   const [chatRooms, setChatRooms] = useState([]);
   const [selectedRoom, setSelectedRoom] = useState(null);
@@ -29,6 +29,9 @@ function Chat() {
         name: roomName,
       });
       // Handle response, e.g., update chatRooms state
+      if(response.status === 200){
+        setChatRooms([...chatRooms, response.data]);
+      }
     } catch (error) {
       // Handle error
     }
@@ -39,6 +42,9 @@ function Chat() {
     try {
       const response = await axios.get('http://localhost:8080/chat/allrooms');
       // Handle response, e.g., update chatRooms state
+      if(response.status === 200){
+        setChatRooms(response.data);
+      }
     } catch (error) {
       // Handle error
     }
@@ -49,12 +55,16 @@ function Chat() {
     try {
       const response = await axios.post('http://localhost:8080/chat/enter', {
         type: 'ENTER',
-        roomId:'',
-        sender:'',
+        roomId:roomId,
+        sender:sender,
       });
       // Handle response, e.g., update chatHistory state
-      setModalIsOpen(true); // Open the chat modal
-      setSelectedRoom(roomId);
+      
+      if(response.status === 200){
+        setChatHistory(response.data);
+        setModalIsOpen(true); // Open the chat modal
+        setSelectedRoom(roomId);
+      }
     } catch (error) {
       // Handle error
     }
@@ -66,11 +76,14 @@ function Chat() {
       const response = await axios.post('http://localhost:8080/chat/savechat', {
         type: 'TALK',
         roomId: selectedRoom,
-        sender:'',
-        message:'',
+        sender:sender,
+        message:message,
       });
       // Handle response, e.g., update chatHistory state
-      setMessage(''); // Clear the input field
+      if(response.status === 201){
+        setMessage(''); // Clear the input field
+      }
+      
     } catch (error) {
       // Handle error
     }
