@@ -47,7 +47,7 @@ const ListsModel2 = ({ list, handleClose, open }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { theme, auth } = useSelector((store) => store);
-  const [followingsClicked, setFollowingsClicked] = useState(false);
+  const [followings1Clicked, setFollowings1Clicked] = useState(false);
 
   const handleSubmit = (values) => {
     dispatch(updateListModel(values));
@@ -61,13 +61,14 @@ const ListsModel2 = ({ list, handleClose, open }) => {
       listName: "",
       description: "",
       backgroundImage: "",
+      // privateMode: false,
     },
     onSubmit: handleSubmit,
   });
 
   const itemsCheck = (item) => {
-    for (let i = 0; i < list.followings.length; i++) {
-      if (list.followings[i].id === item.id) {
+    for (let i = 0; i < list.followingsl.length; i++) {
+      if (list.followingsl[i].id === item.id) {
         return true;
       }
     }
@@ -79,6 +80,7 @@ const ListsModel2 = ({ list, handleClose, open }) => {
       listName: list.listName || "",
       description: list.description || "",
       backgroundImage: list.backgroundImage || "",
+      //privateMode: list.privateMode || "",
     });
 
     if (document.getElementById("element") !== null) {
@@ -119,8 +121,8 @@ const ListsModel2 = ({ list, handleClose, open }) => {
     dispatch(getUserAction(listId));
   };
 
-  const handleFollowingsClick = () => {
-    setFollowingsClicked(!followingsClicked);
+  const handleFollowingslClick = () => {
+    setFollowings1Clicked(!followings1Clicked);
   };
 
   const [isEnabled, setIsEnabled] = useState(list.privateMode);
@@ -135,7 +137,7 @@ const ListsModel2 = ({ list, handleClose, open }) => {
       <div className="overflow-y-scroll hideScrollbar border-gray-700 h-[20vh] w-full rounded-md">
         <section className="space-y-5">
           <div className="flex justify-between" style={{ flexDirection: "column" }}>
-            {listVal.followings?.map((item) => (
+            {listVal.followingsl?.map((item) => (
               <div className="flex justify-between items-center" key={item.id}>
                 <div
                   style={{ paddingRight: 300, marginTop: 10, }}
@@ -145,7 +147,7 @@ const ListsModel2 = ({ list, handleClose, open }) => {
                     } else {
                       navigateToProfile(item.id);
                     }
-                    handleFollowingsClick();
+                    handleFollowingslClick();
                   }}
                   className="flex items-center absolute left-2 justify-between hover:bg-green-700 relative right-5 cursor-pointer"
                 >

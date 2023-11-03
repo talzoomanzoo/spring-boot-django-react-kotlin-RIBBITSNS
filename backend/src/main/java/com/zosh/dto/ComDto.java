@@ -31,5 +31,5 @@ public class ComDto {
 	
 	private boolean privateMode;
 	
-	private List<User> followings = new ArrayList<>();
+	private List<User> followingsc = new ArrayList<>();
 }

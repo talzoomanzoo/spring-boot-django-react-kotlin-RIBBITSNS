@@ -6,10 +6,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.zosh.exception.ComException;
-import com.zosh.exception.ListException;
 import com.zosh.exception.UserException;
 import com.zosh.model.Community;
-import com.zosh.model.ListModel;
 import com.zosh.model.User;
 import com.zosh.repository.ComRepository;
 import com.zosh.repository.UserRepository;
@@ -64,12 +62,26 @@ public class ComServiceImplementation implements ComService{
 		// TODO Auto-generated method stub
 		Community community = findById(comId);
 		User followToUser = findUserById(userId);
-		if (community.getFollowings().contains(followToUser)) {
-			community.getFollowings().remove(followToUser);
+		if (community.getFollowingsc().contains(followToUser)) {
+			community.getFollowingsc().remove(followToUser);
 		} else {
-			community.getFollowings().add(followToUser);
+			community.getFollowingsc().add(followToUser);
 		}
 		comRepository.save(community);
+		return community;
+	}
+
+	@Override
+	public Community editCom(Community req, User user) throws ComException, UserException {
+		// TODO Auto-generated method stub
+		Community community = findById(req.getId());
+		
+		community.setBackgroundImage(req.getBackgroundImage());
+		community.setDescription(req.getDescription());
+		community.setComName(req.getComName());
+		community.setPrivateMode(req.isPrivateMode());
+		comRepository.save(community);
+		
 		return community;
 	}
 

@@ -13,6 +13,7 @@ import com.zosh.exception.TwitException;
 import com.zosh.exception.UserException;
 import com.zosh.model.Twit;
 import com.zosh.model.User;
+import com.zosh.repository.ListRepository;
 import com.zosh.repository.TwitRepository;
 import com.zosh.request.TwitReplyRequest;
 
@@ -20,9 +21,11 @@ import com.zosh.request.TwitReplyRequest;
 public class TwitServiceImplementation implements TwitService {
 
 	private TwitRepository twitRepository;
+	private ListRepository listRepository;
 
-	public TwitServiceImplementation(TwitRepository twitRepository) {
+	public TwitServiceImplementation(TwitRepository twitRepository, ListRepository listRepository) {
 		this.twitRepository = twitRepository;
+		this.listRepository = listRepository;
 	}
 
 	@Override
@@ -31,6 +34,7 @@ public class TwitServiceImplementation implements TwitService {
 		Twit twit = new Twit();
 		twit.setContent(req.getContent());
 		twit.setCreatedAt(LocalDateTime.now());
+		twit.setRetwitAt(LocalDateTime.now());
 		twit.setImage(req.getImage());
 		twit.setUser(user);
 		twit.setReply(false);
@@ -94,7 +98,7 @@ public class TwitServiceImplementation implements TwitService {
 		} else {
 			twit.getRetwitUser().add(user);
 		}
-
+		twit.setRetwitAt(LocalDateTime.now());
 		return twitRepository.save(twit);
 	}
 
@@ -189,6 +193,12 @@ public class TwitServiceImplementation implements TwitService {
 	public List<Twit> getUsersTwit(User user) {
 
 		return twitRepository.findByRetwitUserContainsOrUser_IdAndIsTwitTrueOrderByCreatedAtDesc(user, user.getId());
+	}
+	
+	@Override
+	public List<Twit> getUsersRetwitTwit(User user) {
+
+		return twitRepository.findByRetwitUserContainsOrUser_IdAndIsTwitTrueOrderByRetwitAtDesc(user, user.getId());
 	}
 	
 	@Override

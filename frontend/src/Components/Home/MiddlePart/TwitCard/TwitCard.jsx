@@ -114,6 +114,7 @@ const TwitCard = ({ twit }) => {
     } else {
       console.log("unable to create reribbit")
     }
+    window.location.reload();
   };
 
   const handleCloseReplyModel = () => setOpenReplyModel(false);

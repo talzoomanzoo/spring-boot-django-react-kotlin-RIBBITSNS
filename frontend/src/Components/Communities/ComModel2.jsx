@@ -18,9 +18,8 @@ import { useNavigate } from "react-router-dom";
 import { searchUser } from "../../Store/Auth/Action";
 import {
     addUserAction,
-    setPrivate,
-    updateListModel,
-} from "../../Store/List/Action";
+    updateCom,
+} from "../../Store/Community/Action";
 import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
 import BackdropComponent from "../Backdrop/Backdrop";
 import { Switch } from 'react-native'; // 여기서만 import 할것, switch 건들 ㄴㄴ
@@ -46,10 +45,10 @@ const ComModel2 = ({ com, handleClose, open }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { theme, auth } = useSelector((store) => store);
-    const [followingsClicked, setFollowingsClicked] = useState(false);
+    const [followingscClicked, setFollowingscClicked] = useState(false);
 
     const handleSubmit = (values) => {
-        dispatch(updateListModel(values));
+        dispatch(updateCom(values));
         handleClose();
         window.location.reload();
     };
@@ -60,13 +59,14 @@ const ComModel2 = ({ com, handleClose, open }) => {
             comName: "",
             description: "",
             backgroundImage: "",
+            privateMode: false,
         },
         onSubmit: handleSubmit,
     });
 
     const itemsCheck = (item) => {
-        for (let i = 0; i < com.followings.length; i++) {
-            if (com.followings[i].id === item.id) {
+        for (let i = 0; i < com.followingsc.length; i++) {
+            if (com.followingsc[i].id === item.id) {
                 return true;
             }
         }
@@ -75,19 +75,19 @@ const ComModel2 = ({ com, handleClose, open }) => {
     useEffect(() => {
         formik.setValues({
             id: com.id || "",
-            listName: com.listName || "",
+            comName: com.comName || "",
             description: com.description || "",
             backgroundImage: com.backgroundImage || "",
+            privateMode: com.privateMode || "",
         });
 
         if (document.getElementById("element") !== null) {
             const domNode = document.getElementById("element");
             const element1 = createRoot(domNode);
-            element1.render(<Element listVal={com} />);
+            element1.render(<Element comVal={com} />);
         } else {
             console.log("not exists");
         }
-        //list.followings, list.hasFollowedLists
     }, []);
 
     const handleImageChange = async (event) => {
@@ -116,23 +116,16 @@ const ComModel2 = ({ com, handleClose, open }) => {
         dispatch(getUserAction(comId));
     };
 
-    const handleFollowingsClick = () => {
-        setFollowingsClicked(!followingsClicked);
+    const handleFollowingscClick = () => {
+        setFollowingscClicked(!followingscClicked);
     };
 
-    const [isEnabled, setIsEnabled] = useState(com.privateMode);
-
-    const toggleSwitch = () => {
-        setIsEnabled(previousState => !previousState);
-        dispatch(setPrivate(com.id));
-    };
-
-    const Element = memo(({ listVal }) => {
+    const Element = memo(({ comVal }) => {
         return (
             <div className="overflow-y-scroll hideScrollbar border-gray-700 h-[20vh] w-full rounded-md">
                 <section className="space-y-5">
                     <div className="flex justify-between" style={{ flexDirection: "column" }}>
-                        {listVal.followings?.map((item) => (
+                        {comVal.followingsc?.map((item) => (
                             <div className="flex justify-between items-center" key={item.id}>
                                 <div
                                     style={{ paddingRight: 300, marginTop: 10, }}
@@ -142,7 +135,7 @@ const ComModel2 = ({ com, handleClose, open }) => {
                                         } else {
                                             navigateToProfile(item.id);
                                         }
-                                        handleFollowingsClick();
+                                        handleFollowingscClick();
                                     }}
                                     className="flex items-center absolute left-2 justify-between hover:bg-green-700 relative right-5 cursor-pointer"
                                 >
@@ -159,14 +152,14 @@ const ComModel2 = ({ com, handleClose, open }) => {
                                         style={{ marginLeft: 30 }}
                                         className="flex hover:bg-green-700 relative right-5 cursor-pointer"
                                         onClick={() => {
-                                            handleAddUser(com.id, item.id, com);
+                                            handleAddUser(com.id, item.id);
                                         }}
                                     ></RemoveIcon>
                                 ) : (
                                     <AddIcon
                                         className="flex hover:bg-green-700 relative right-5 cursor-pointer"
                                         onClick={() => {
-                                            handleAddUser(com.id, item.id, com);
+                                            handleAddUser(com.id, item.id);
                                         }}
                                     ></AddIcon>
                                 )}
@@ -340,7 +333,7 @@ const ComModel2 = ({ com, handleClose, open }) => {
 
                             <div id="element">
                                 <div>
-                                    <Element listVal={com} />
+                                    <Element comVal={com} />
                                 </div>
                             </div>
 
@@ -360,16 +353,23 @@ const ComModel2 = ({ com, handleClose, open }) => {
                                 <div className="flex items-center justify-between font-xl">
                                     비공개 활성화
                                     <Switch
+                                        name="privateMode"
                                         style={{
                                             marginTop: 10,
                                             marginRight: 20,
                                         }}
-
                                         trackColor={{ false: "#767577", true: "#81b0ff" }}
-                                        thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
+                                        thumbColor={formik.values.privateMode ? "#f5dd4b" : "#f4f3f4"}
                                         ios_backgroundColor="#3e3e3e"
-                                        onValueChange={toggleSwitch}
-                                        value={isEnabled}
+                                        value={formik.values.privateMode}
+                                        onValueChange={value => formik.setFieldValue('privateMode', value)}
+                                        error={
+                                            formik.touched.description &&
+                                            Boolean(formik.errors.description)
+                                        }
+                                        helperText={
+                                            formik.touched.description && formik.errors.description
+                                        }
                                     />
                                 </div>
 

@@ -149,7 +149,7 @@ public class TwitController {
 			throws UserException{
 		User reqUser=userService.findUserProfileByJwt(jwt);
 		User user=userService.findUserById(userId);
-		List<Twit> twits=twitService.getUsersTwit(user);
+		List<Twit> twits=twitService.getUsersRetwitTwit(user);
 		List<TwitDto> twitDtos=TwitDtoMapper.toTwitDtos(twits,reqUser);
 		return new ResponseEntity<List<TwitDto>>(twitDtos,HttpStatus.OK);
 	}

@@ -15,5 +15,6 @@ public interface ListRepository extends JpaRepository<ListModel, Long>{
 //	List<ListModel> findPrivateOrderByCreatedAtDesc(Long userId);
 	
 	@Query("SELECT l from ListModel l JOIN l.user u WHERE l.privateMode=false OR u.id= :userId ORDER BY l.createdAt DESC")
-	List<ListModel> findAllOrderByCreatedAtDesc(Long userId);
+	public List<ListModel> findAllOrderByCreatedAtDesc(Long userId);
+
 }

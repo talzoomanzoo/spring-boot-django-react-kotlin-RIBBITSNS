@@ -26,6 +26,7 @@ public class UserDtoMapper {
 		userDto.setLocation(user.getLocation());
 		userDto.setVerified(UserUtil.isVerified(user.getVerification().getEndsAt()));
 		userDto.setJoinedAt(user.getJoinedAt());
+		userDto.setWebsite(user.getWebsite());
 		//userDto.setHasFollowedLists(user.isHasFollowedLists());
 		userDto.setWebsite(user.getWebsite());
 		return userDto;

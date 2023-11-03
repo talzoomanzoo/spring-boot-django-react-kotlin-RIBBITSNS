@@ -35,6 +35,8 @@ public interface TwitService {
 	
 	public List<Twit> getUsersTwit(User user);
 	
+	public List<Twit> getUsersRetwitTwit(User user);
+	
 	public List<Twit> getUsersReplies(Long userId);
 	
 	public List<Twit> findByLikesContainsUser(User user);
