@@ -1,5 +1,8 @@
 package com.zosh.dto.mapper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.zosh.dto.ChatRoomDto;
 import com.zosh.model.ChatRoom;
 
@@ -14,4 +17,13 @@ public class ChatRoomDtoMapper {
 		return chatRoomDto;
 	}
 
+	public static List<ChatRoomDto> toChatRoomDtos(List<ChatRoom> chatRooms){
+		List<ChatRoomDto> chatRoomDtos = new ArrayList<>();
+		for (ChatRoom chatRoom : chatRooms) {
+			ChatRoomDto chatRoomDto = toChatRoomDto(chatRoom);
+			chatRoomDtos.add(chatRoomDto);
+		}
+		
+		return chatRoomDtos;
+	}
 }

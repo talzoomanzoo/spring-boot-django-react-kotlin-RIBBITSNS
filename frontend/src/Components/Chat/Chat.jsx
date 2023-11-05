@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
+import SockJS from 'sockjs-client';
+import Stomp from 'stompjs';
+
 
 const customStyles = {
   content: {
@@ -22,71 +25,107 @@ const Chat = () => {
   const [sender, setSender] = useState("");
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
-  // Function to create a chat room
-  const createRoom = async () => {
-    try {
-      const response = await axios.post('http://localhost:8080/chat/createroom', {
-        name: roomName,
+  const [stompClient, setStompClient] = useState(null); // WebSocket client
+
+  useEffect(() => {
+    // Connect to WebSocket server
+    const socket = new SockJS('http://localhost:8080/ws');
+    const stompClient = Stomp.over(socket);
+    const stoconnect = stompClient.connect({}, () => {
+      setStompClient(stompClient);
+    });
+
+    console.log("stoconnect: ",stoconnect);
+  }, []);
+
+  // Subscribe to chat topic
+  useEffect(() => {
+    if (stompClient) {
+      stompClient.subscribe('/topic/chat', (message) => {
+        // Handle incoming messages (e.g., chat history)
+        const chatMessage = JSON.parse(message.body);
+        // Update chatHistory state with new message
+        setChatHistory((prevChatHistory) => [...prevChatHistory, chatMessage]);
+        console.log("chatMessage: ",chatMessage);
       });
-      // Handle response, e.g., update chatRooms state
-      if(response.status === 200){
+      console.log("stompCLient: ",stompClient);
+    }
+  }, [stompClient]);
+
+  const createRoom = () => {
+    // Send a request to create a chat room
+    axios.post('http://localhost:8080/chat/createroom', {
+      name: roomName,
+    })
+    .then((response) => {
+      if (response.status === 201) {
         setChatRooms([...chatRooms, response.data]);
       }
-    } catch (error) {
+    })
+    .catch((error) => {
       // Handle error
-    }
+    });
   };
 
   // Function to fetch chat rooms
-  const fetchChatRooms = async () => {
-    try {
-      const response = await axios.get('http://localhost:8080/chat/allrooms');
-      // Handle response, e.g., update chatRooms state
-      if(response.status === 200){
-        setChatRooms(response.data);
-      }
-    } catch (error) {
-      // Handle error
-    }
+  const fetchChatRooms = () => {
+    axios.get('http://localhost:8080/chat/allrooms')
+      .then((response) => {
+        if (response.status === 200) {
+          setChatRooms(response.data);
+        }
+      })
+      .catch((error) => {
+        // Handle error
+      });
   };
 
   // Function to enter a chat room
-  const enterChatRoom = async (roomId, sender) => {
-    try {
-      const response = await axios.post('http://localhost:8080/chat/enter', {
+  const enterChatRoom = (roomId, sender) => {
+    console.log("roomid: ",roomId);
+    console.log("sender: ",sender);
+    const enterconnect = stompClient.connect({}, () => {
+      // WebSocket 연결이 성공하면 실행
+      const enterresponse = stompClient.send('/app/chat/enter', {}, JSON.stringify({
         type: 'ENTER',
-        roomId:roomId,
-        sender:sender,
-      });
-      // Handle response, e.g., update chatHistory state
+        roomId: roomId,
+        sender: sender,
+      }));
+      console.log("enterresponse: ",enterresponse);
       
-      if(response.status === 200){
-        setChatHistory(response.data);
-        setModalIsOpen(true); // Open the chat modal
-        setSelectedRoom(roomId);
-      }
-    } catch (error) {
-      // Handle error
-    }
+      const topicresponse = stompClient.subscribe('/topic/' + roomId, (message) => {
+        // 서버에서 받은 메시지 처리
+        const response = JSON.parse(message.body);
+        console.log("enterchat: ",response);
+        if (response.status === 200) {
+          setChatHistory(response.data);
+          setSelectedRoom(roomId);
+        }
+      });
+      console.log("topicresponse: ",topicresponse);
+
+    });
+    console.log("enterconnect: ",enterconnect);
+    setModalIsOpen(true); // Open the chat modal
   };
 
   // Function to send a chat message
-  const sendMessage = async () => {
-    try {
-      const response = await axios.post('http://localhost:8080/chat/savechat', {
-        type: 'TALK',
-        roomId: selectedRoom,
-        sender:sender,
-        message:message,
-      });
-      // Handle response, e.g., update chatHistory state
-      if(response.status === 201){
+  const sendMessage = () => {
+    // Send a chat message
+    axios.post('http://localhost:8080/chat/savechat', {
+      type: 'TALK',
+      roomId: selectedRoom,
+      sender: sender,
+      message: message,
+    })
+    .then((response) => {
+      if (response.status === 201) {
         setMessage(''); // Clear the input field
       }
-      
-    } catch (error) {
+    })
+    .catch((error) => {
       // Handle error
-    }
+    });
   };
 
   // Fetch chat rooms when the component mounts
@@ -98,6 +137,13 @@ const Chat = () => {
   return (
     <div>
       <h1>Chat Rooms</h1>
+      <input
+        type="text"
+        placeholder="Enter room name"
+        value={roomName}
+        onChange={(e) => setRoomName(e.target.value)} // 사용자가 입력한 값을 상태에 업데이트
+      />
+      <button onClick={createRoom}>Create Chat Room</button> 
       <ul>
         {chatRooms.length > 0 ? (
             chatRooms.map((room) => (

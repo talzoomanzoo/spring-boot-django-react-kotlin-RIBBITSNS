@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,18 +34,21 @@ import lombok.extern.slf4j.Slf4j;
 public class ChatController {
 	
 	private final ChatService service;
+	
+	private final SimpMessagingTemplate messagingTemplate;
 
     @PostMapping("/createroom")
-    public ResponseEntity<ChatRoomDto> createRoom(@RequestParam String name){
+    public ResponseEntity<ChatRoomDto> createRoom(@RequestBody String name){
     	ChatRoom createdroom = service.createRoom(name);
     	ChatRoomDto chatRoomDto = ChatRoomDtoMapper.toChatRoomDto(createdroom);
         return new ResponseEntity<>(chatRoomDto,HttpStatus.CREATED);
     }
 
     @GetMapping("/allrooms")
-    public ResponseEntity<List<ChatRoom>> findAllRooms(){
+    public ResponseEntity<List<ChatRoomDto>> findAllRooms(){
     	List<ChatRoom> allrooms = service.findAllRoom();
-        return new ResponseEntity<>(allrooms,HttpStatus.OK);
+    	List<ChatRoomDto> chatRoomDtos = ChatRoomDtoMapper.toChatRoomDtos(allrooms);
+    	return new ResponseEntity<List<ChatRoomDto>>(chatRoomDtos,HttpStatus.OK);
     }
 
     @MessageMapping("/savechat")
@@ -54,8 +58,10 @@ public class ChatController {
     	return new ResponseEntity<>(chatDto,HttpStatus.CREATED);
     }
 	
-    @PostMapping("/enter")
-    public ResponseEntity<List<Chat>> enterchatroom(@RequestBody Chat chat){
+    @MessageMapping("/enter")
+    public ResponseEntity<List<Chat>> enterchatroom(@Payload Chat chat){
+    	
+    	System.out.println("enterchat: "+chat);
     	MessageType type = chat.getType();
     	String roomId = chat.getRoomId();
     	String sender = chat.getSender();
@@ -65,6 +71,8 @@ public class ChatController {
     	savechat.setRoomId(roomId);
     	savechat.setSender(sender);
     	service.saveChat(savechat);
+    	
+    	
     
     	List<Chat> chatHistory = service.chathistory(roomId);
     	
