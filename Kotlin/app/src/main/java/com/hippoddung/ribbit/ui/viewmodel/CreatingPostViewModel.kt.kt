@@ -166,7 +166,6 @@ class CreatingPostViewModel @Inject constructor(
     }
 
     private suspend fun uploadVideoCloudinary(videoFile: File?) {
-//        viewModelScope.launch(Dispatchers.IO) {   // 호출함수에서 coroutin으로 접근하기 때문에 여기서는 그냥 지연함수로 둠
         UploadVideoCloudinaryUiState.None
         if (videoFile != null) {
             UploadVideoCloudinaryUiState.Loading
@@ -182,6 +181,5 @@ class CreatingPostViewModel @Inject constructor(
                 Log.d("HippoLog, TwitCreateViewModel, Error", "${e.stackTrace}, ${e.message}")
             }
         }
-//        }
     }
 }

@@ -56,8 +56,7 @@ fun CardTopBar(
             AsyncImage(
                 model = ImageRequest.Builder(context = LocalContext.current)
                     .data(
-//                        post.user.image
-                        "https://img.animalplanet.co.kr/news/2020/01/13/700/sfu2275cc174s39hi89k.jpg"
+                        post.user.image ?: "https://img.animalplanet.co.kr/news/2020/01/13/700/sfu2275cc174s39hi89k.jpg"
                     )
                     .crossfade(true).build(),
                 error = painterResource(R.drawable.ic_broken_image),

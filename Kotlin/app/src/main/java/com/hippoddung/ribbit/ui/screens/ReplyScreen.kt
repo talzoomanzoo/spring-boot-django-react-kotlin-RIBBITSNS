@@ -164,7 +164,7 @@ fun InputReplyScreen(
                 modifier = modifier
             ) {
                 Text(
-                    text = stringResource(R.string.Cancel),
+                    text = stringResource(R.string.cancel),
                     modifier = modifier
                 )
             }

@@ -1,6 +1,7 @@
 package com.hippoddung.ribbit.data.network
 
 import com.hippoddung.ribbit.network.RibbitApiService
+import com.hippoddung.ribbit.network.bodys.User
 import com.hippoddung.ribbit.network.bodys.requestbody.ReplyRequest
 import com.hippoddung.ribbit.network.bodys.requestbody.TwitCreateRequest
 import javax.inject.Inject

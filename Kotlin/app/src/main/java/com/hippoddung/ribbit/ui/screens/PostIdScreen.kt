@@ -6,14 +6,10 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -30,18 +26,15 @@ import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.screens.carditems.RibbitCard
 import com.hippoddung.ribbit.ui.screens.screenitems.HomeTopAppBar
 import com.hippoddung.ribbit.ui.screens.screenitems.PostIdPostsGrid
-import com.hippoddung.ribbit.ui.screens.screenitems.PostsGrid
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
 import com.hippoddung.ribbit.ui.viewmodel.CardViewModel
-import com.hippoddung.ribbit.ui.viewmodel.CreatingPostViewModel
 import com.hippoddung.ribbit.ui.viewmodel.PostIdUiState
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostIdScreen(
 //    scrollBehavior: TopAppBarScrollBehavior,
@@ -85,7 +78,6 @@ fun PostIdScreen(
 
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "RememberReturnType")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostIdSuccessScreen(
     cardViewModel: CardViewModel,

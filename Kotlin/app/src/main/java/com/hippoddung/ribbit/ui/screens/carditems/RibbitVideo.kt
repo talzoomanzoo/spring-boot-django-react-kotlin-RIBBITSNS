@@ -2,12 +2,9 @@ package com.hippoddung.ribbit.ui.screens.carditems
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
-import android.media.MediaMetadataRetriever
-import android.os.Build
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -26,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hippoddung.ribbit.R
@@ -33,9 +31,6 @@ import com.hippoddung.ribbit.ui.viewmodel.CardViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.net.SocketTimeoutException
-import java.util.concurrent.Callable
-import java.util.concurrent.Executors
-import java.util.concurrent.Future
 
 @SuppressLint("SetJavaScriptEnabled", "CoroutineCreationDuringComposition")
 @Composable
@@ -46,13 +41,20 @@ fun RibbitVideo(
 ) {
     var isVideoPlayed by remember { mutableStateOf(false) }
     var videoThumbnail: Bitmap? by remember { mutableStateOf(null) }
-    rememberCoroutineScope().launch(Dispatchers.IO) {
-        try {
-            videoThumbnail = cardViewModel.retrieveThumbnailFromVideo(videoUrl).get()
-        } catch (e: SocketTimeoutException) {
-            Log.d("HippoLog, RibbitVideo", "Exception: ${e.message}")
-        } catch (e: Exception) {
-            Log.d("HippoLog, RibbitVideo", "SocketTimeoutException: ${e.message}")
+    var isCodeExecuted by remember { mutableStateOf(false) }
+    if (!isCodeExecuted) {
+        // videoThumbnail을 불러오는 과정에서 recomposition이 발생하고 이에 따라 다시 videoThumbnail을 실행하는 무한루프 발견
+        // 해결을 위한 1회 실행 코드 삽입
+        rememberCoroutineScope().launch(Dispatchers.IO) {
+            try {
+                videoThumbnail = cardViewModel.retrieveThumbnailFromVideo(videoUrl).get()
+                Log.d("HippoLog, RibbitVideo", "cardViewModel.retrieveThumbnailFromVideo")
+                isCodeExecuted = true   // 여러 recomposition 중 성공시 정지하게 함.
+            } catch (e: SocketTimeoutException) {
+                Log.d("HippoLog, RibbitVideo", "Exception: ${e.message}")
+            } catch (e: Exception) {
+                Log.d("HippoLog, RibbitVideo", "SocketTimeoutException: ${e.message}")
+            }
         }
     }
 
@@ -71,30 +73,31 @@ fun RibbitVideo(
     } else {
         Box(
             contentAlignment = Alignment.Center,
-            modifier = modifier.fillMaxSize()
+            modifier = modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
         ) {
             if (videoThumbnail == null) {   // thumbnail을 불러오지 못한 경우
                 Image(
                     painter = painterResource(R.drawable.loading_img),
                     contentDescription = "Loading",
+                    contentScale = ContentScale.Fit,
                     modifier = modifier
-                        .size(300.dp)
                         .padding(8.dp)
                 )
             } else {
                 Image(
                     bitmap = videoThumbnail!!.asImageBitmap(),  // thumbnail을 불러온 경우
                     contentDescription = "Success",
+                    contentScale = ContentScale.Fit,
                     modifier = modifier
-                        .size(300.dp)
                         .padding(8.dp)
                 )
             }
             IconButton(
                 onClick = { isVideoPlayed = true },
                 modifier = modifier
-                    .size(300.dp)
-                    .padding(8.dp)
+                    .matchParentSize()
             ) {
                 Icon(
                     Icons.Filled.PlayCircleOutline,

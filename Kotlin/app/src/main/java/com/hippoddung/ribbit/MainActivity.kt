@@ -22,14 +22,12 @@ import com.hippoddung.ribbit.ui.theme.RibbitTheme
 import com.hippoddung.ribbit.ui.viewmodel.AuthUiState
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
 import com.hippoddung.ribbit.ui.viewmodel.CardViewModel
-import com.hippoddung.ribbit.ui.viewmodel.CreatingPostUiState
 import com.hippoddung.ribbit.ui.viewmodel.CreatingPostViewModel
 import com.hippoddung.ribbit.ui.viewmodel.EmailUiState
 import com.hippoddung.ribbit.ui.viewmodel.PWUiState
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @AndroidEntryPoint

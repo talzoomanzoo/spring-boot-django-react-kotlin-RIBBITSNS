@@ -22,7 +22,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.hippoddung.ribbit.network.bodys.RibbitPost
@@ -39,161 +38,266 @@ fun CardBottomBar(
     modifier: Modifier = Modifier
 ) {
     Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier.fillMaxWidth()
     ) {
-        Row(
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = modifier
-        ) {
-            IconButton(
-                onClick = {
-                    cardViewModel.replyPostIdUiState = post.id
-                    cardViewModel.replyClickedUiState = ReplyClickedUiState.Clicked
-                    Log.d("HippLog, CardBottomBar", "replyButton")
-                },
-                content = {
+        IconButton(
+            onClick = {
+                cardViewModel.replyPostIdUiState = post.id
+                cardViewModel.replyClickedUiState = ReplyClickedUiState.Clicked
+                Log.d("HippLog, CardBottomBar", "replyButton")
+            },
+            content = {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = modifier.fillMaxWidth()
+                ) {
                     Icon(
                         imageVector = Icons.Default.ChatBubbleOutline,
                         contentDescription = "replyButton",
                         modifier = modifier
                     )
-                },
-                modifier = modifier
-            )
-            Text(
-                text = "${post.totalReplies}",
-                modifier = modifier
-                )
-        }
-        Row(
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = modifier
-        ) {
-            var isRetwited by remember { mutableStateOf(post.retwitUsersId.contains(myId)) }
-            var retwited by remember { mutableStateOf(isRetwited) }
-            if (!retwited) {
-                IconButton(
-                    onClick = {
-                        cardViewModel.putPostIdRepost(post.id)
-                        retwited = true
-                    },
-                    content = {
-                        Icon(
-                            imageVector = Icons.Default.Repeat,
-                            contentDescription = "Repost Button"
-                        )
-                    },
-                    modifier = modifier
-                )
-            } else {
-                IconButton(
-                    onClick = {
-                        cardViewModel.putPostIdRepost(post.id)
-                        retwited = false
-                    },
-                    content = {
-                        Icon(
-                            imageVector = Icons.Default.Repeat,
-                            contentDescription = "Cancel Repost",
-                            tint = MaterialTheme.colorScheme.onSurface
-                        )
-                    },
-                    modifier = modifier
-                )
-            }
-            if (retwited == isRetwited) {
-                Text(
-                    text = "${post.totalRetweets}",
-                    modifier = modifier
-                    )
-            } else {
-                if (isRetwited) {
                     Text(
-                        text = "${post.totalRetweets - 1}",
-                        modifier = modifier
-                    )
-                } else {
-                    Text(
-                        text = "${post.totalRetweets + 1}",
+                        text = "${post.totalReplies}",
                         modifier = modifier
                     )
                 }
-            }
-        }
-        Row(
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically,
+            },
             modifier = modifier
-        ) {
-            var isLiked by remember { mutableStateOf(post.liked) }
-            if (!isLiked) {
+                .fillMaxWidth(0.25f)
+                .padding(horizontal = 12.dp)
+        )
+
+        val isRePosted by remember { mutableStateOf(post.retwitUsersId.contains(myId)) }
+        var rePosted by remember { mutableStateOf(isRePosted) }
+        if (post.user.id != myId) {
+            if (!rePosted) {
                 IconButton(
                     onClick = {
-                        cardViewModel.postPostIdLike(post.id)
-                        isLiked = true
+                        cardViewModel.putPostIdRepost(post.id)
+                        rePosted = true
                     },
                     content = {
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = modifier.fillMaxWidth()
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Repeat,
+                                contentDescription = "Repost Button",
+                                modifier = modifier
+                            )
+                            if (rePosted == isRePosted) {
+                                Text(
+                                    text = "${post.totalRetweets}",
+                                    modifier = modifier
+                                )
+                            } else {
+                                if (isRePosted) {
+                                    Text(
+                                        text = "${post.totalRetweets - 1}",
+                                        modifier = modifier
+                                    )
+                                } else {
+                                    Text(
+                                        text = "${post.totalRetweets + 1}",
+                                        modifier = modifier
+                                    )
+                                }
+                            }
+                        }
+                    },
+                    modifier = modifier
+                        .fillMaxWidth(1/3f)
+                        .padding(horizontal = 12.dp)
+                )
+            } else {
+                IconButton(
+                    onClick = {
+                        cardViewModel.putPostIdRepost(post.id)
+                        rePosted = false
+                    },
+                    content = {
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = modifier.fillMaxWidth()
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Repeat,
+                                contentDescription = "Cancel Repost",
+                                tint = MaterialTheme.colorScheme.onSurface,
+                                modifier = modifier
+                            )
+                            if (rePosted == isRePosted) {
+                                Text(
+                                    text = "${post.totalRetweets}",
+                                    modifier = modifier
+                                )
+                            } else {
+                                if (isRePosted) {
+                                    Text(
+                                        text = "${post.totalRetweets - 1}",
+                                        modifier = modifier
+                                    )
+                                } else {
+                                    Text(
+                                        text = "${post.totalRetweets + 1}",
+                                        modifier = modifier
+                                    )
+                                }
+                            }
+                        }
+                    },
+                    modifier = modifier
+                        .fillMaxWidth(1/3f)
+                        .padding(horizontal = 12.dp)
+                )
+            }
+        } else {
+            IconButton(
+                onClick = {},   // 본인의 post인 경우 클릭 비활성화
+                content = {
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = modifier.fillMaxWidth()
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Repeat,
+                            contentDescription = "Cancel Repost",
+                            modifier = modifier
+                        )
+                        if (rePosted == isRePosted) {
+                            Text(
+                                text = "${post.totalRetweets}",
+                                modifier = modifier
+                            )
+                        } else {
+                            if (isRePosted) {
+                                Text(
+                                    text = "${post.totalRetweets - 1}",
+                                    modifier = modifier
+                                )
+                            } else {
+                                Text(
+                                    text = "${post.totalRetweets + 1}",
+                                    modifier = modifier
+                                )
+                            }
+                        }
+                    }
+                },
+                modifier = modifier
+                    .fillMaxWidth(1/3f)
+                    .padding(horizontal = 12.dp)
+            )
+        }
+
+        var isLiked by remember { mutableStateOf(post.liked) }
+        if (!isLiked) {
+            IconButton(
+                onClick = {
+                    cardViewModel.postPostIdLike(post.id)
+                    isLiked = true
+                },
+                content = {
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = modifier.fillMaxWidth()
+                    ) {
                         Icon(
                             imageVector = Icons.Default.Favorite,
                             contentDescription = "LikeButton",
                             modifier = modifier
                         )
-                    },
-                    modifier = modifier
-                )
-            } else {
-                IconButton(
-                    onClick = {
-                        cardViewModel.postPostIdLike(post.id)
-                        isLiked = false
-                    },
-                    content = {
+                        if (isLiked == post.liked) {
+                            Text(
+                                text = "${post.totalLikes}",
+                                modifier = modifier
+                            )
+                        } else {
+                            if (post.liked) {
+                                Text(
+                                    text = "${post.totalLikes - 1}",
+                                    modifier = modifier
+                                )
+                            } else {
+                                Text(
+                                    text = "${post.totalLikes + 1}",
+                                    modifier = modifier
+                                )
+                            }
+                        }
+                    }
+                },
+                modifier = modifier
+                    .fillMaxWidth(0.5f)
+                    .padding(horizontal = 12.dp)
+            )
+        } else {
+            IconButton(
+                onClick = {
+                    cardViewModel.postPostIdLike(post.id)
+                    isLiked = false
+                },
+                content = {
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = modifier.fillMaxWidth()
+                    ) {
                         Icon(
                             imageVector = Icons.Default.Favorite,
                             contentDescription = "DislikeButton",
                             tint = MaterialTheme.colorScheme.onSurface,
                             modifier = modifier
                         )
-                    },
-                    modifier = modifier
-                )
-            }
-            if (isLiked == post.liked) {
-                Text(
-                    text = "${post.totalLikes}",
-                    modifier = modifier
-                )
-            } else {
-                if (post.liked) {
-                    Text(
-                        text = "${post.totalLikes - 1}",
-                        modifier = modifier
-                    )
-                } else {
-                    Text(
-                        text = "${post.totalLikes + 1}",
-                        modifier = modifier
-                    )
-                }
-            }
+                        if (isLiked == post.liked) {
+                            Text(
+                                text = "${post.totalLikes}",
+                                modifier = modifier
+                            )
+                        } else {
+                            if (post.liked) {
+                                Text(
+                                    text = "${post.totalLikes - 1}",
+                                    modifier = modifier
+                                )
+                            } else {
+                                Text(
+                                    text = "${post.totalLikes + 1}",
+                                    modifier = modifier
+                                )
+                            }
+                        }
+                    }
+                },
+                modifier = modifier
+                    .fillMaxWidth(0.5f)
+                    .padding(horizontal = 12.dp)
+            )
         }
+
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically,
             modifier = modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp)
         ) {
             Icon(
                 imageVector = Icons.Default.RemoveRedEye,
                 contentDescription = "viewCount",
-                modifier = modifier.padding(4.dp)
+                modifier = modifier
             )
             Text(
                 text = "${post.viewCount}",
-                modifier = modifier.padding(4.dp)
+                modifier = modifier
             )
         }
     }

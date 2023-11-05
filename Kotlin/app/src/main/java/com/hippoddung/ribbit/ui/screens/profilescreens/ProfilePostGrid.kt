@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,7 +18,6 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -30,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -44,7 +41,6 @@ import com.hippoddung.ribbit.R
 import com.hippoddung.ribbit.network.bodys.RibbitPost
 import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.screens.carditems.RibbitCard
-import com.hippoddung.ribbit.ui.theme.Shapes
 import com.hippoddung.ribbit.ui.viewmodel.CardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.ProfileUiState
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
@@ -74,8 +70,9 @@ fun ProfilePostsGrid(
                 ) {
                     AsyncImage(
                         model = ImageRequest.Builder(context = LocalContext.current).data(
-                            //                                userViewModel.user.value?.backgroundImage
-                            "https://res.heraldm.com/content/image/2015/06/15/20150615000967_0.jpg"
+                            if (userViewModel.profileUiState is ProfileUiState.Exist) {
+                                (userViewModel.profileUiState as ProfileUiState.Exist).user.backgroundImage?: "https://res.heraldm.com/content/image/2015/06/15/20150615000967_0.jpg"
+                            }else{}
                         )
                             .crossfade(true).build(),
                         contentDescription = stringResource(R.string.user_image),
@@ -96,8 +93,9 @@ fun ProfilePostsGrid(
                     ) {
                         AsyncImage(
                             model = ImageRequest.Builder(context = LocalContext.current).data(
-                                //                                userViewModel.user.value?.image
-                                "https://img.animalplanet.co.kr/news/2020/01/13/700/sfu2275cc174s39hi89k.jpg"
+                                if (userViewModel.profileUiState is ProfileUiState.Exist) {
+                                    (userViewModel.profileUiState as ProfileUiState.Exist).user.image?: "https://img.animalplanet.co.kr/news/2020/01/13/700/sfu2275cc174s39hi89k.jpg"
+                                }else{}
                             )
                                 .crossfade(true).build(),
                             contentDescription = stringResource(R.string.user_image),
@@ -128,15 +126,10 @@ fun ProfilePostsGrid(
                                         modifier = modifier
                                     )
                                 }
-                                if ((userViewModel.profileUiState as ProfileUiState.Exist).user.id == userViewModel.myProfile.value?.id) {
+                                if ((userViewModel.profileUiState as ProfileUiState.Exist).user.id == userViewModel.myProfile.value?.id) {  // 접근 Id와 프로필 Id가 일치할 경우 프로필수정버튼 활성화
                                     OutlinedButton(
                                         onClick = {
-                                            userViewModel.myProfile.value?.id?.let {
-                                                cardViewModel.getUserIdPosts(
-                                                    userId = it
-                                                )
-                                            }   // userViewModel의 user가 없는 경우 접근 자체가 불가능
-                                            navController.navigate(RibbitScreen.ProfileScreen.name)
+                                            navController.navigate(RibbitScreen.EditProfileScreen.name)
                                         },
                                         modifier = modifier.align(Alignment.BottomEnd),
                                     ) {

@@ -5,10 +5,8 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -16,24 +14,18 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.network.bodys.RibbitPost
-import com.hippoddung.ribbit.ui.RibbitScreen
-import com.hippoddung.ribbit.ui.screens.carditems.RibbitCard
 import com.hippoddung.ribbit.ui.screens.screenitems.HomeTopAppBar
 import com.hippoddung.ribbit.ui.screens.screenitems.PostsGrid
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
 import com.hippoddung.ribbit.ui.viewmodel.CardViewModel
-import com.hippoddung.ribbit.ui.viewmodel.CreatingPostUiState
 import com.hippoddung.ribbit.ui.viewmodel.CreatingPostViewModel
 import com.hippoddung.ribbit.ui.viewmodel.HomeUiState
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
@@ -41,7 +33,6 @@ import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
 
 @RequiresApi(Build.VERSION_CODES.O)
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
 //    scrollBehavior: TopAppBarScrollBehavior,

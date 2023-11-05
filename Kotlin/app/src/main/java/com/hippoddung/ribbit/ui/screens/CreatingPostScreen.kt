@@ -125,7 +125,7 @@ fun InputTwitScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = stringResource(R.string.twit_create),
+            text = stringResource(R.string.ribbit_create),
             color = Color.Black,
             modifier = modifier
                 .padding(bottom = 16.dp)
@@ -205,7 +205,7 @@ fun InputTwitScreen(
                 modifier = modifier.padding(14.dp)
             ) {
                 Text(
-                    text = stringResource(R.string.Cancel),
+                    text = stringResource(R.string.cancel),
                     modifier = modifier
                 )
             }
@@ -220,7 +220,7 @@ fun InputTwitScreen(
                 modifier = modifier.padding(14.dp)
             ) {
                 Text(
-                    text = stringResource(R.string.twit_create),
+                    text = stringResource(R.string.ribbit_create),
                     modifier = modifier
                 )
             }

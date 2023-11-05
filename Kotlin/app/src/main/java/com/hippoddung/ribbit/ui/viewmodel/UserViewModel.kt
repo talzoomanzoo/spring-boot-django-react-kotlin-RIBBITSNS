@@ -1,17 +1,19 @@
 package com.hippoddung.ribbit.ui.viewmodel
 
+import android.graphics.Bitmap
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.hippoddung.ribbit.data.network.UploadCloudinaryRepository
 import com.hippoddung.ribbit.data.network.UserRepository
 import com.hippoddung.ribbit.network.bodys.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.runBlocking
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
@@ -29,15 +31,49 @@ sealed interface ProfileUiState {
     data class Error(val errorCode: String) : ProfileUiState
 }
 
+sealed interface EditingProfileUiState {
+    object Ready : EditingProfileUiState
+    object Loading : EditingProfileUiState
+    object Success : EditingProfileUiState
+    object Error : EditingProfileUiState
+}
+
+sealed interface UploadProfileImageCloudinaryUiState {
+    object Loading : UploadProfileImageCloudinaryUiState
+    data class Success(val profileImageUrl: String) : UploadProfileImageCloudinaryUiState
+    data class Error(val error: Exception) : UploadProfileImageCloudinaryUiState
+    object None : UploadProfileImageCloudinaryUiState
+}
+
+sealed interface UploadProfileBackgroundImageCloudinaryUiState {
+    object Loading : UploadProfileBackgroundImageCloudinaryUiState
+    data class Success(val profileBackgroundImageUrl: String) :
+        UploadProfileBackgroundImageCloudinaryUiState
+
+    data class Error(val error: Exception) : UploadProfileBackgroundImageCloudinaryUiState
+    object None : UploadProfileBackgroundImageCloudinaryUiState
+}
+
 @HiltViewModel
 class UserViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val uploadCloudinaryRepository: UploadCloudinaryRepository
 ) : BaseViewModel() {
+    var myProfile = MutableLiveData<User?>()
     var myProfileUiState: MyProfileUiState by mutableStateOf(MyProfileUiState.Lack)
         private set
-    var myProfile = MutableLiveData<User?>()
 
     var profileUiState: ProfileUiState by mutableStateOf(ProfileUiState.Loading)
+        private set
+
+    var editingProfileUiState: EditingProfileUiState by mutableStateOf(EditingProfileUiState.Ready)
+    private var uploadProfileImageCloudinaryUiState: UploadProfileImageCloudinaryUiState by mutableStateOf(
+        UploadProfileImageCloudinaryUiState.None
+    )
+        private set
+    private var uploadProfileBackgroundImageCloudinaryUiState: UploadProfileBackgroundImageCloudinaryUiState by mutableStateOf(
+        UploadProfileBackgroundImageCloudinaryUiState.None
+    )
         private set
 
     fun getMyProfile() {
@@ -97,6 +133,135 @@ class UserViewModel @Inject constructor(
                 }
             }
             Log.d("HippoLog, UserViewModel", "getProfile, $profileUiState")
+        }
+    }
+
+    fun editProfile(
+        inputFullName: String?,
+        inputBio: String?,
+        inputWebsite: String?,
+        inputEducation: String?,
+        inputBirthDate: String?,
+        profileImage: Bitmap?,
+        profileBackgroundImage: Bitmap?,
+    ) {
+        var profileImageUrl: String? = null
+        var profileBackgroundImageUrl: String? = null
+
+        Log.d("HippoLog, UserViewModel", "editProfile 1")
+
+        viewModelScope.launch(Dispatchers.IO) {
+            editingProfileUiState = EditingProfileUiState.Loading
+            uploadProfileImageCloudinaryUiState = UploadProfileImageCloudinaryUiState.None
+            uploadProfileBackgroundImageCloudinaryUiState =
+                UploadProfileBackgroundImageCloudinaryUiState.None
+            Log.d("HippoLog, UserViewModel", "editProfile 2")
+            runBlocking {
+                launch(Dispatchers.IO) {
+                    Log.d("HippoLog, UserViewModel", "editProfile 2-1")
+                    if (profileImage != null) {
+                        uploadProfileImageCloudinaryUiState =
+                            UploadProfileImageCloudinaryUiState.Loading
+                        uploadProfileImageCloudinary(profileImage = profileImage)
+                        // 성공하면 uploadImageCloudinary 함수에서 UploadImageCloudinaryUiState.Success 로 업데이트함
+                        when (uploadProfileImageCloudinaryUiState) {
+                            is UploadProfileImageCloudinaryUiState.Success -> {
+                                profileImageUrl =
+                                    (uploadProfileImageCloudinaryUiState as UploadProfileImageCloudinaryUiState.Success).profileImageUrl
+                            }
+
+                            else -> {}  // 다른 경우 처리를 위함, 아직 미구현
+                        }
+                    }
+                }
+                launch(Dispatchers.IO) {
+                    Log.d("HippoLog, UserViewModel", "editProfile 2-2")
+                    if (profileBackgroundImage != null) {
+                        uploadProfileBackgroundImageCloudinaryUiState =
+                            UploadProfileBackgroundImageCloudinaryUiState.Loading
+                        uploadProfileBackgroundImageCloudinary(profileBackgroundImage = profileBackgroundImage)
+                        // 성공하면 uploadVideoCloudinary 함수에서 UploadVideoCloudinaryUiState.Success 로 업데이트함
+                        when (uploadProfileBackgroundImageCloudinaryUiState) {
+                            is UploadProfileBackgroundImageCloudinaryUiState.Success -> {
+                                profileBackgroundImageUrl =
+                                    (uploadProfileBackgroundImageCloudinaryUiState as UploadProfileBackgroundImageCloudinaryUiState.Success).profileBackgroundImageUrl
+                            }
+
+                            else -> {}  // 다른 경우 처리를 위함, 아직 미구현
+                        }
+                    }
+                }
+            }
+            Log.d("HippoLog, UserViewModel", "editProfile 3")
+            Log.d("HippoLog, UserViewModel", "$uploadProfileImageCloudinaryUiState")
+            Log.d("HippoLog, UserViewModel", "$uploadProfileBackgroundImageCloudinaryUiState")
+            if (
+                ((uploadProfileImageCloudinaryUiState is UploadProfileImageCloudinaryUiState.Success) or (uploadProfileImageCloudinaryUiState is UploadProfileImageCloudinaryUiState.None))
+                and ((uploadProfileBackgroundImageCloudinaryUiState is UploadProfileBackgroundImageCloudinaryUiState.Success) or (uploadProfileBackgroundImageCloudinaryUiState is UploadProfileBackgroundImageCloudinaryUiState.None))
+
+            ) {
+                Log.d("HippoLog, UserViewModel", "editProfile 4")
+                putEditingProfile(
+                    User(
+                        backgroundImage = profileBackgroundImageUrl,
+                        bio = inputBio,
+                        birthDate = inputBirthDate,
+                        education = inputEducation,
+                        email = myProfile.value!!.email,
+                        fullName = inputFullName,
+                        image = profileImageUrl,
+                        website = inputWebsite
+                    )
+                )
+            } else {    // uploadImageCloudinaryUiState와 uploadVideoCloudinaryUiState 가 다른 상태일 때 처리를 위함 미구현
+            }
+        }
+    }
+
+    private suspend fun putEditingProfile(user: User) {
+        Log.d("HippoLog, UserViewModel", "putEditingProfile user: $user")
+        try {
+            userRepository.putEditingProfile(user)
+            Log.d("HippoLog, UserViewModel", "putEditingProfile")
+            editingProfileUiState = EditingProfileUiState.Success
+        } catch (e: IOException) {
+            editingProfileUiState = EditingProfileUiState.Error
+            Log.d("HippoLog, UserViewModel", "putEditingProfile error: ${e.message}")
+        } catch (e: ExceptionInInitializerError) {
+            editingProfileUiState = EditingProfileUiState.Error
+            Log.d("HippoLog, UserViewModel", "putEditingProfile error: ${e.message}")
+        }
+    }
+
+    private suspend fun uploadProfileImageCloudinary(profileImage: Bitmap?) { // CreatingPostViewModel에 있던 함수, 어떻게 불러와서 쓸지 결정을 못해서 우선 복붙함.
+        if (profileImage != null) {
+            try {
+                val result = uploadCloudinaryRepository.uploadImageCloudinary(profileImage)
+                Log.d("HippoLog, UserViewModel", "result: $result")
+                uploadProfileImageCloudinaryUiState = UploadProfileImageCloudinaryUiState.Success(
+                    profileImageUrl = result.url
+                )
+            } catch (e: Exception) {
+                uploadProfileImageCloudinaryUiState =
+                    UploadProfileImageCloudinaryUiState.Error(e)
+                Log.d("HippoLog, UserViewModel", "error: ${e.stackTrace}, ${e.message}")
+            }
+        }
+    }
+
+    private suspend fun uploadProfileBackgroundImageCloudinary(profileBackgroundImage: Bitmap?) { // CreatingPostViewModel에 있던 함수, 어떻게 불러와서 쓸지 결정을 못해서 우선 복붙함.
+        if (profileBackgroundImage != null) {
+            try {
+                val result = uploadCloudinaryRepository.uploadImageCloudinary(profileBackgroundImage)
+                Log.d("HippoLog, UserViewModel", "result: $result")
+                uploadProfileBackgroundImageCloudinaryUiState = UploadProfileBackgroundImageCloudinaryUiState.Success(
+                    profileBackgroundImageUrl = result.url
+                )
+            } catch (e: Exception) {
+                uploadProfileBackgroundImageCloudinaryUiState =
+                    UploadProfileBackgroundImageCloudinaryUiState.Error(e)
+                Log.d("HippoLog, UserViewModel", "error: ${e.stackTrace}, ${e.message}")
+            }
         }
     }
 }

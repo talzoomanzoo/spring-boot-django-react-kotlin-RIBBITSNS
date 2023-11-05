@@ -73,11 +73,6 @@ sealed interface ReplyClickedUiState {
     object NotClicked : ReplyClickedUiState
 }
 
-sealed interface WhereReplyClickedUiState {
-    object HomeScreen : WhereReplyClickedUiState
-    object PostIdScreen : WhereReplyClickedUiState
-}
-
 @HiltViewModel
 class CardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으나 ViewModel의 기능을 적절히 설명하기 위해 이름을 변경
     private val ribbitRepository: RibbitRepository
@@ -92,9 +87,9 @@ class CardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으나
     var replyPostIdUiState: Int? by mutableStateOf(null)
     var postReplyUiState: PostReplyUiState by mutableStateOf(PostReplyUiState.Ready)
     var replyClickedUiState: ReplyClickedUiState by mutableStateOf(ReplyClickedUiState.NotClicked)
-    var whereReplyClickedUiState: WhereReplyClickedUiState by mutableStateOf(
-        WhereReplyClickedUiState.HomeScreen
-    )
+//    var whereReplyClickedUiState: WhereReplyClickedUiState by mutableStateOf( // 현재 viewModel에 접근하는 스크린의 정보상태를 저장하려고 했으나 아래의 currentScreenState로 대체
+//        WhereReplyClickedUiState.HomeScreen
+//    )
 
     private val currentScreenState = mutableStateOf(RibbitScreen.HomeScreen)    // 현재 viewModel에 접근하는 스크린의 정보를 가져온다.
     fun getCurrentScreen(): State<RibbitScreen> {
@@ -303,12 +298,7 @@ class CardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으나
                 var mediaMetadataRetriever: MediaMetadataRetriever?
                 mediaMetadataRetriever = MediaMetadataRetriever()
                 mediaMetadataRetriever.setDataSource(videoUrl, HashMap())
-                var retrievalCount = 0
-                val maxRetrievalCount = 2 // Adjust this value as needed
-                if (retrievalCount >= maxRetrievalCount) {
-                    // You've reached the limit, so return null or handle it as needed
-                    return@Callable null
-                }
+
                 try {
                     Log.d(
                         "HippoLog, HomeScreen, retrieve",
@@ -329,7 +319,6 @@ class CardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으나
                 } finally {
                     mediaMetadataRetriever.release()
                 }
-                retrievalCount++
                 return@Callable bitmap
             }
         )
@@ -352,19 +341,17 @@ class CardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으나
             }
             when (currentScreenState.value) {
                 RibbitScreen.HomeScreen -> {
-                    getRibbitPosts()    // 댓글수 정보를 정확하게 표시하기 위해 다시 로딩
+                    getRibbitPosts()    // 댓글수 정보를 정확하게 표시하기 위해 다시 request
                 }
                 RibbitScreen.PostIdScreen -> {
-                    getPostIdPost((postIdUiState as PostIdUiState.Success).post.id) //
-                    whereReplyClickedUiState =
-                        WhereReplyClickedUiState.HomeScreen  // 기본값으로 HomeScreen으로 한다.
+                    getPostIdPost((postIdUiState as PostIdUiState.Success).post.id) // 새로운 댓글을 표시하기 위해 다시 request
                 }
                 else -> {}
             }
         }
     }
 
-    fun postPostIdLike(postId: Int) {    // 이 통신으로 like, dislike를 다 함.
+    fun postPostIdLike(postId: Int) {    // 이 통신으로 like, deleteLike를 다 함.
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 ribbitRepository.postPostIdLike(postId)
@@ -376,7 +363,7 @@ class CardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으나
         }
     }
 
-    fun deletePostIdLike(postId: Int) {  // 서버 컨트롤러에 있지만 쓰지 않음.
+    fun deletePostIdLike(postId: Int) {  // 서버 컨트롤러에 있지만 서버에서 구현되지 않은 기능.
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 ribbitRepository.deletePostIdLike(postId)
@@ -388,7 +375,7 @@ class CardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으나
         }
     }
 
-    fun putPostIdRepost(postId: Int) {   // 얘도 이것만으로 repost와 cancel을 다 함.
+    fun putPostIdRepost(postId: Int) {   // 얘도 이것 만으로 repost 와 deleteRepost 를 다 함.
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 ribbitRepository.putPostIdRepost(postId)
@@ -399,5 +386,4 @@ class CardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으나
             }
         }
     }
-
 }
