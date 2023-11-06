@@ -3,6 +3,7 @@ package com.hippoddung.ribbit.ui.screens.screenitems
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -22,10 +23,10 @@ fun SearchedUsersGrid(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    LazyColumn(modifier = modifier) {
-        items(items = sortedUsers, key = { user -> user.id!! }) {
+    Column(modifier = modifier) {
+        sortedUsers.forEach { user ->
             UserCard(
-                user = it,
+                user = user,
                 getCardViewModel = getCardViewModel,
                 navController = navController,
                 userViewModel = userViewModel,
