@@ -49,18 +49,19 @@ public class AppConfig {
 	}
 	
     // CORS Configuration
-    private CorsConfigurationSource corsConfigurationSource() {
+     private CorsConfigurationSource corsConfigurationSource() {
         return new CorsConfigurationSource() {
             @Override
             public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                 CorsConfiguration cfg = new CorsConfiguration();
-                cfg.setAllowedOrigins(Arrays.asList(
-                    "http://localhost:3000",
-                    //"http://localhost:4000",
-                    "http://localhost:8000",
-                    "https://twitter-clone-two-woad.vercel.app",
-                    "https://twitter-clone-six-kohl.vercel.app"
-                ));
+            //    cfg.setAllowedOrigins(Arrays.asList(
+            //        "http://localhost:3000",
+            //        //"http://localhost:4000",
+            //        "http://localhost:8000",
+            //        "https://twitter-clone-two-woad.vercel.app",
+            //        "https://twitter-clone-six-kohl.vercel.app"
+            //    ));
+                cfg.setAllowedOriginPatterns(Collections.singletonList("*"));
                 cfg.setAllowedMethods(Collections.singletonList("*"));
                 cfg.setAllowCredentials(true);
                 cfg.setAllowedHeaders(Collections.singletonList("*"));

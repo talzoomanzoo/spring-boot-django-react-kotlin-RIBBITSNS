@@ -21,15 +21,19 @@ import { useFormik } from "formik";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
+// import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // React Toastify 스타일
 import * as Yup from "yup";
 import { api } from "../../../../Config/apiConfig";
+// import { incrementNotificationCount } from "../../../../Store/Notification/Action";
+import { incrementNotificationCount } from "../../../../Store/Notification/Action";
 import {
   createRetweet,
   createTweet,
   deleteTweet,
   getTime,
   likeTweet,
-  viewPlus,
+  viewPlus
 } from "../../../../Store/Tweet/Action";
 import {
   UPDATE_TWEET_FAILURE,
@@ -37,10 +41,9 @@ import {
   UPDATE_TWEET_SUCCESS,
 } from "../../../../Store/Tweet/ActionType";
 import { uploadToCloudinary } from "../../../../Utils/UploadToCloudinary";
-import BackdropComponent from "../../../Backdrop/Backdrop";
+import Loading from "../../../Profile/Loading/Loading";
 import Maplocation from "../../../Profile/Maplocation";
 import ReplyModal from "./ReplyModal";
-import Loading from "../../../Profile/Loading/Loading";
 
 const validationSchema = Yup.object().shape({
   content: Yup.string().required("내용이 없습니다"),
@@ -54,6 +57,8 @@ const TwitCard = ({ twit }) => {
   const [openEmoji, setOpenEmoji] = useState(false);
   const handleOpenEmoji = () => setOpenEmoji(!openEmoji);
   const handleCloseEmoji = () => setOpenEmoji(false);
+
+  const [twits, setTwits] = useState([]);
 
   const dispatch = useDispatch();
   const { theme, auth } = useSelector((store) => store);
@@ -100,6 +105,15 @@ const TwitCard = ({ twit }) => {
   };
 
   const handleLikeTweet = (num) => {
+    if (!isLiked) {
+      // FavoriteIcon이 눌리지 않은 상태일 때만 카운트를 증가시킴
+      const TuserId = twit.user.id;
+      // const likingUserId = auth.user.id; // 좋아요를 누른 계정의 아이디를 가져옵니다.
+  
+      dispatch(incrementNotificationCount(TuserId)); // 알림 카운트 증가
+      // handleLikeNotification(likingUserId); // 좋아요를 누른 계정의 아이디를 전달합니다.
+      // dispatch(notificationPlus(twit.id));
+    }
     dispatch(likeTweet(twit.id));
     setIsLiked(!isLiked);
     setLikes(likes + num);
@@ -108,6 +122,9 @@ const TwitCard = ({ twit }) => {
 
   const handleCreateRetweet = () => {
     if (auth.user.id !== twit.user.id) {
+      const TuserId = twit.user.id
+      dispatch(incrementNotificationCount(TuserId)); 
+      // dispatch(notificationPlus(twit.id));
       dispatch(createRetweet(twit.id));
       setRetwit(isRetwit ? retwit - 1 : retwit + 1);
       setIsRetwit(!retwit);
@@ -299,6 +316,47 @@ const TwitCard = ({ twit }) => {
   const dateedit = new Date(edittime).getTime();
   const timeEdit = getTime(dateedit, currTimestamp);
 
+  //  // 상태 변수를 사용하여 알림 메시지를 저장합니다.
+  //  const [notifications, setNotifications] = useState([]);
+
+  //  const eventSource = new EventSource(
+  //    "http://localhost:8080/notifications/subscribe/1"
+  //  );
+ 
+  //  console.log("eventSource", eventSource.onmessage);
+ 
+  //  eventSource.onmessage = (event) => {
+  //    const data = JSON.parse(event.data);
+  //    console.log("data", data);
+  //    console.log("event", event);
+ 
+  //    if (data.eventType === "like") {
+  //      // "like" 이벤트를 처리하고 알림을 표시합니다.
+  //      handleLikeNotification(data.message);
+  //    }
+  //  };
+ 
+  //  eventSource.onopen = () => {
+  //    console.log("SSE connection opened.");
+  //  };
+ 
+  //  eventSource.onerror = (error) => {
+  //    console.error("SSE connection error:", error);
+  //  };
+ 
+  //  const handleLikeNotification = (message) => {
+  //    // 사용자에게 알림을 표시합니다.
+  //    console.log("message", message);
+ 
+  //    toast.success(message, {
+  //      position: "top-right",
+  //      autoClose: 3000, // 알림이 자동으로 사라지는 시간 (밀리초 단위)
+  //    });
+ 
+  //    // 알림 메시지를 상태 변수에 추가합니다.
+  //    setNotifications((prevNotifications) => [...prevNotifications, message]);
+  //  };
+
   return (
     <div className="">
       {loading ? <Loading /> : null}
@@ -478,7 +536,7 @@ const TwitCard = ({ twit }) => {
                 </div>
               )}
             </div>
-
+            {/* <ToastContainer /> */}
             <div className="flex justify-between items-center mt-5">
               <div className="flex space-x-5 items-center">
                 {isEditing && (

@@ -8,8 +8,8 @@ import HomeSection from "./Home/MiddlePart/HomeSection";
 // import Lists from "./Lists/Lists";
 import Navigation from "./Navigation/Navigation";
 // import Profile from "./Profile/Profile";
-import RightPart from "./RightPart/RightPart";
 import Loading from "./Profile/Loading/Loading";
+import RightPart from "./RightPart/RightPart";
 // import Chatroom from "./Chat/Chat";
 // import ListsDetail from "./Lists/ListsDetail";
 // import Communities from "./Communities/Communities";
@@ -35,8 +35,9 @@ const HomePage = () => {
         item
         xs={12}
         lg={6}
-        className={`px-5 lg:px-9 border ${theme.currentTheme === "dark" ? "border-gray-800" : ""
-          } `}
+        className={`px-5 lg:px-9 border ${
+          theme.currentTheme === "dark" ? "border-gray-800" : ""
+        } `}
       >
         <Routes>
           <Route path="/" element={

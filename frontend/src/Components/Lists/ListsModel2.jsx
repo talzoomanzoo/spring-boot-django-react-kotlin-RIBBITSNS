@@ -8,6 +8,7 @@ import {
   Button,
   IconButton,
   Modal,
+  Switch,
   TextField,
 } from "@mui/material";
 import { useFormik } from "formik";
@@ -18,13 +19,11 @@ import { useNavigate } from "react-router-dom";
 import { searchUser } from "../../Store/Auth/Action";
 import {
   addUserAction,
+  getUserAction,
   setPrivate,
   updateListModel,
 } from "../../Store/List/Action";
 import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
-import BackdropComponent from "../Backdrop/Backdrop";
-import { Switch } from 'react-native'; // 여기서만 import 할것, switch 건들 ㄴㄴ
-import { getUserAction } from "../../Store/List/Action";
 import Loading from "../Profile/Loading/Loading";
 
 const style = {
@@ -136,11 +135,14 @@ const ListsModel2 = ({ list, handleClose, open }) => {
     return (
       <div className="overflow-y-scroll hideScrollbar border-gray-700 h-[20vh] w-full rounded-md">
         <section className="space-y-5">
-          <div className="flex justify-between" style={{ flexDirection: "column" }}>
-            {listVal.followingsl?.map((item) => (
+          <div
+            className="flex justify-between"
+            style={{ flexDirection: "column" }}
+          >
+            {listVal.followings?.map((item) => (
               <div className="flex justify-between items-center" key={item.id}>
                 <div
-                  style={{ paddingRight: 300, marginTop: 10, }}
+                  style={{ paddingRight: 300, marginTop: 10 }}
                   onClick={() => {
                     if (Array.isArray(item)) {
                       item.forEach((i) => navigateToProfile(i));
@@ -269,16 +271,22 @@ const ListsModel2 = ({ list, handleClose, open }) => {
                   onChange={handleSearchUser}
                   type="text"
                   placeholder="사용자를 검색하여 추가하거나 삭제할 수 있습니다."
-                  className={`py-3 rounded-full outline-none text-gray-500 w-full pl-12 ${theme.currentTheme === "light" ? "bg-stone-300" : "bg-[#151515]"
-                    }`}
+                  className={`py-3 rounded-full onutline-none text-gray-500 w-full pl-12 ${
+                    theme.currentTheme === "light"
+                      ? "bg-stone-300"
+                      : "bg-[#151515]"
+                  }`}
                 />
                 <span className="absolute top-0 left-0 pl-3 pt-3">
                   <SearchIcon className="text-gray-500" />
                 </span>
                 {search && (
                   <div
-                    className={`overflow-y-scroll hideScrollbar absolute z-50 top-14  border-gray-700 h-[40vh] w-full rounded-md ${theme.currentTheme === "light" ? "bg-white" : "bg-[#151515] border"
-                      }`}
+                    className={`overflow-y-scroll hideScrollbar absolute z-50 top-14  border-gray-700 h-[40vh] w-full rounded-md ${
+                      theme.currentTheme === "light"
+                        ? "bg-white"
+                        : "bg-[#151515] border"
+                    }`}
                   >
                     {auth.userSearchResult &&
                       auth.userSearchResult.map((item) => (
@@ -311,7 +319,11 @@ const ListsModel2 = ({ list, handleClose, open }) => {
                             <div className="ml-2">
                               <p>{item.fullName}</p>
                               <p className="text-sm">
-                                @{item.fullName.split(" ").join("_").toLowerCase()}
+                                @
+                                {item.fullName
+                                  .split(" ")
+                                  .join("_")
+                                  .toLowerCase()}
                               </p>
                             </div>
                           </div>
