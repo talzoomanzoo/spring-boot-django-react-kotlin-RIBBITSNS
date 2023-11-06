@@ -3,6 +3,7 @@ import { useFormik } from "formik";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
+import { incrementNotificationCount } from "../../../../Store/Notification/Action";
 import { createTweetReply } from "../../../../Store/Tweet/Action";
 
 
@@ -30,15 +31,17 @@ const ReplyModal = ({ handleClose, twitData, open }) => {
   const [selectedImage, setSelectedImage] = useState("");
   const [refreshTwits, setRefreshTwits] = useState(0);
   const dispatch = useDispatch();
-
+  
   const { auth, theme } = useSelector((store) => store);
   // const jwt=localStorage.getItem("jwt")
   const handleSubmit = (values, actions) => {
+    const AuserId = auth.user.id;
+    dispatch(incrementNotificationCount(AuserId));
     console.log("val", values);
     dispatch(createTweetReply(values));
     actions.resetForm();
     //setSelectedImage("");
-    window.location.reload();
+    // window.location.reload();
     //setRefreshTwits((prev) => prev + 1);
     handleClose()
   };

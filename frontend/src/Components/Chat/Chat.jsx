@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import '../../App.css';
 import WebSocket from 'react-websocket';
+import '../../App.css';
 
 class Chat extends Component {
     constructor(props) {
