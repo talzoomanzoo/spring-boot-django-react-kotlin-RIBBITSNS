@@ -12,6 +12,9 @@ import {
     ADD_USER_REQUEST,
     ADD_USER_SUCCESS,
     ADD_USER_FAILURE,
+    GET_USER_REQUEST,
+    GET_USER_SUCCESS,
+    GET_USER_FAILURE,
 } from "./ActionType";
 
 export const createComRequest = () => ({
@@ -80,14 +83,27 @@ export const updateCom = (reqData) => async (dispatch) => {
     }
 };
 
-export const addUserAction = (comId, userId) => async (dispatch) => {
+export const addUserActionCom = (comId, userId) => async (dispatch) => {
     dispatch({ type: ADD_USER_REQUEST });
     //dispatch({type: ADD_USER_USERDTO_REQUEST})
     try {
-        const response = await api.post(`/api/communities/${comId}/add/${userId}`);
+        const response = await api.post(`/api/communities/${comId}/add2/${userId}`);
         const com = response.data;
         dispatch({ type: ADD_USER_SUCCESS, payload: com });
     } catch (error) {
         dispatch({ type: ADD_USER_FAILURE, payload: error.message });
+    }
+};
+
+export const getUserActionCom = (comId) => async (dispatch) => {
+    dispatch({ type: GET_USER_REQUEST });
+    try {
+        console.log("comId get", comId);
+        const response = await api.get(`/api/communities/${comId}/get`);
+        const com = response.data;
+        console.log("getUserAction list data", com);
+        dispatch({ type: GET_USER_SUCCESS, payload: com });
+    } catch (error) {
+        dispatch({ type: GET_USER_FAILURE, payload: error.message });
     }
 };

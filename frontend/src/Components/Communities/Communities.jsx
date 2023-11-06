@@ -22,7 +22,6 @@ const Communities = () => {
 
     useEffect(() => {
         dispatch(getAllComs());
-        dispatch(getAllLists());
     }, []);
 
     console.log("comcheck", com);

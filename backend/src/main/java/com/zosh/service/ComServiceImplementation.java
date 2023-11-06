@@ -1,6 +1,7 @@
 package com.zosh.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -33,6 +34,9 @@ public class ComServiceImplementation implements ComService{
 		community.setDescription(req.getDescription());
 		community.setBackgroundImage(req.getBackgroundImage());
 		community.setPrivateMode(req.isPrivateMode());
+		List<User> comfollowingsc = new ArrayList<>();
+		comfollowingsc.add(user);
+		community.setFollowingsc(comfollowingsc);
 		return comRepository.save(community);
 	}
 

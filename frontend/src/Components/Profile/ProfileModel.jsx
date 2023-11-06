@@ -12,7 +12,6 @@ import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateUserProfile } from "../../Store/Auth/Action";
 import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
-import BackdropComponent from "../Backdrop/Backdrop";
 import "./ProfileModel.css";
 import axios from 'axios';
 import Loading from "./Loading/Loading";
