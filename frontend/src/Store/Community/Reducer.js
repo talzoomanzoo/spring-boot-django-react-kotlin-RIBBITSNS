@@ -11,6 +11,15 @@ import {
     ADD_USER_REQUEST,
     ADD_USER_SUCCESS,
     ADD_USER_FAILURE,
+    GET_USER_REQUEST,
+    GET_USER_SUCCESS,
+    GET_USER_FAILURE,
+    SIGNUP_REQUEST,
+    SIGNUP_SUCCESS,
+    SIGNUP_FAILURE,
+    FIND_COM_BY_ID_REQUEST,
+    FIND_COM_BY_ID_SUCCESS,
+    FIND_COM_BY_ID_FAILURE,
 } from "./ActionType";
 
 const initialState = {
@@ -22,11 +31,10 @@ const initialState = {
 };
 
 const comReducer = (state = initialState, action) => {
-    switch (
-    action.type
-    ) {
+    switch (action.type) {
         case COM_CREATE_REQUEST:
         case GET_COMS_REQUEST:
+        case GET_USER_REQUEST:
         case UPDATE_COM_REQUEST:
             return {
                 ...state,
@@ -39,6 +47,13 @@ const comReducer = (state = initialState, action) => {
                 loading: true,
                 error: null
             };
+        case SIGNUP_REQUEST:
+        case FIND_COM_BY_ID_REQUEST:
+            return {
+                ...state,
+                loading: true,
+                error: null,
+            }
         case COM_CREATE_SUCCESS:
             return {
                 ...state,
@@ -67,9 +82,33 @@ const comReducer = (state = initialState, action) => {
                 com: action.payload,
                 error: null,
             };
+        case GET_USER_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                com: action.payload,
+                error: null,
+            }
+        case SIGNUP_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                coms: [action.payload, ...state.coms],
+                error: null,
+            };
+        case FIND_COM_BY_ID_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                com: action.payload,
+                error: null,
+            }
         case COM_CREATE_FAILURE:
+        case FIND_COM_BY_ID_FAILURE:
         case GET_COMS_FAILURE:
+        case GET_USER_FAILURE:
         case UPDATE_COM_FAILURE:
+        case SIGNUP_FAILURE:
         case ADD_USER_FAILURE:
         default:
             return state;

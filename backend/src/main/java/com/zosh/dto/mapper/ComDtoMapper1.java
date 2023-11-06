@@ -19,6 +19,7 @@ public class ComDtoMapper1 {
 		comDto.setDescription(community.getDescription());
 		comDto.setBackgroundImage(community.getBackgroundImage());
 		comDto.setFollowingsc(community.getFollowingsc());
+		comDto.setFollowingscReady(community.getFollowingscReady());
 		comDto.setPrivateMode(community.isPrivateMode());
 		
 		return comDto;
@@ -37,6 +38,7 @@ public class ComDtoMapper1 {
 			comDto.setDescription(community.getDescription());
 			comDto.setBackgroundImage(community.getBackgroundImage());
 			comDto.setFollowingsc(community.getFollowingsc());
+			comDto.setFollowingscReady(community.getFollowingscReady());
 			comDto.setPrivateMode(community.isPrivateMode());
 			comDtos.add(comDto);
 		}

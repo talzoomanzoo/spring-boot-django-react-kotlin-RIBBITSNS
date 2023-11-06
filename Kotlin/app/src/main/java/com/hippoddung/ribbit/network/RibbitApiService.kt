@@ -23,6 +23,11 @@ interface RibbitApiService {
         @Body twitCreateRequest: TwitCreateRequest
     ): RibbitPost
 
+    @POST("api/twits/edit")
+    suspend fun postEditPost(
+        @Body post: RibbitPost
+    ): RibbitPost
+
     @DELETE("api/twits/{twitId}")
     suspend fun deletePost(
         @Path("twitId") postId : Int

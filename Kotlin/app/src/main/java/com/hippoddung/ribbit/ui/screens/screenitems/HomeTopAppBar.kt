@@ -14,7 +14,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,7 +30,7 @@ import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.R
 import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
-import com.hippoddung.ribbit.ui.viewmodel.CardViewModel
+import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
@@ -40,7 +39,7 @@ import kotlinx.coroutines.runBlocking
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeTopAppBar(
-    cardViewModel: CardViewModel,
+    getCardViewModel: GetCardViewModel,
     authViewModel: AuthViewModel,
     tokenViewModel: TokenViewModel,
     userViewModel: UserViewModel,
@@ -57,7 +56,7 @@ fun HomeTopAppBar(
                     TextButton(
                         onClick = {
                             navController.navigate(RibbitScreen.HomeScreen.name)
-                            cardViewModel.getRibbitPosts()
+                            getCardViewModel.getRibbitPosts()
                         },
                         modifier = modifier
                     ) {
@@ -73,11 +72,11 @@ fun HomeTopAppBar(
             navigationIcon = { MainDropDownMenu(navController, modifier) },
             actions = {
                 ProfileDropDownMenu(
-                    navController,
-                    tokenViewModel,
-                    authViewModel,
-                    cardViewModel,
-                    userViewModel,
+                    navController = navController,
+                    tokenViewModel = tokenViewModel,
+                    authViewModel = authViewModel,
+                    getCardViewModel = getCardViewModel,
+                    userViewModel = userViewModel,
                     modifier = modifier
                 )
             },
@@ -164,7 +163,7 @@ fun ProfileDropDownMenu(
     navController: NavHostController,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
-    cardViewModel: CardViewModel,
+    getCardViewModel: GetCardViewModel,
     userViewModel: UserViewModel,
     modifier: Modifier
 ) {
@@ -190,7 +189,10 @@ fun ProfileDropDownMenu(
     ) {
         DropdownMenuItem(
             onClick = {
-                userViewModel.user.value?.id?.let { cardViewModel.getUserIdPosts(userId = it) }   // userViewModel의 user가 없는 경우 접근 자체가 불가능
+                userViewModel.myProfile.value?.id?.let {
+                    getCardViewModel.getUserIdPosts(userId = it)
+                    userViewModel.getProfile(userId = it)
+                }   // userViewModel의 user가 없는 경우 접근 자체가 불가능
                 navController.navigate(RibbitScreen.ProfileScreen.name)
                 isDropDownMenuExpanded = false
             },
@@ -210,7 +212,7 @@ fun ProfileDropDownMenu(
                 runBlocking {
                     Log.d("HippoLog, HomeTopAppBar", "LogOut")
                     launch {
-                        userViewModel.resetUser()   // 유저 정보 리셋
+                        userViewModel.resetMyProfile()   // 유저 정보 리셋
                         authViewModel.deleteLoginInfo() // 로그인 정보 삭제
                         tokenViewModel.deleteToken()    // 토큰 정보 삭제. token을 먼저 지우면 다시 로그인 됨
                     }

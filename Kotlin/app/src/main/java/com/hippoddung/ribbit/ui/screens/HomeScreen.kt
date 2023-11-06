@@ -5,10 +5,8 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -16,46 +14,39 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.network.bodys.RibbitPost
-import com.hippoddung.ribbit.ui.RibbitScreen
-import com.hippoddung.ribbit.ui.screens.carditems.RibbitCard
 import com.hippoddung.ribbit.ui.screens.screenitems.HomeTopAppBar
 import com.hippoddung.ribbit.ui.screens.screenitems.PostsGrid
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
-import com.hippoddung.ribbit.ui.viewmodel.CardViewModel
-import com.hippoddung.ribbit.ui.viewmodel.CreatingPostUiState
-import com.hippoddung.ribbit.ui.viewmodel.CreatingPostViewModel
+import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.HomeUiState
+import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
 
 @RequiresApi(Build.VERSION_CODES.O)
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
 //    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
-    cardViewModel: CardViewModel,
+    getCardViewModel: GetCardViewModel,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
-    creatingPostViewModel: CreatingPostViewModel,
-    userId: Int,
+    postingViewModel: PostingViewModel,
+    myId: Int,
     onNavigateToCreatingPostScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    when (cardViewModel.homeUiState) {
+    when (getCardViewModel.homeUiState) {
 
         is HomeUiState.Loading -> {
             Log.d("HippoLog, HomeScreen", "Loading")
@@ -64,17 +55,17 @@ fun HomeScreen(
 
         is HomeUiState.Success -> {
             Log.d("HippoLog, HomeScreen", "Success")
-            val ribbitPosts = (cardViewModel.homeUiState as HomeUiState.Success).posts
+            val ribbitPosts = (getCardViewModel.homeUiState as HomeUiState.Success).posts
             HomeSuccessScreen(
-                cardViewModel = cardViewModel,
+                getCardViewModel = getCardViewModel,
                 authViewModel = authViewModel,
                 tokenViewModel = tokenViewModel,
                 userViewModel = userViewModel,
-                creatingPostViewModel = creatingPostViewModel,
+                postingViewModel = postingViewModel,
 //                scrollBehavior = scrollBehavior,
                 navController = navController,
                 ribbitPosts = ribbitPosts,
-                userId = userId,
+                myId = myId,
                 onNavigateToCreatingPostScreen = onNavigateToCreatingPostScreen,
                 modifier = modifier
             )
@@ -92,15 +83,15 @@ fun HomeScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeSuccessScreen(
-    cardViewModel: CardViewModel,
+    getCardViewModel: GetCardViewModel,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
-    creatingPostViewModel: CreatingPostViewModel,
+    postingViewModel: PostingViewModel,
 //    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
     ribbitPosts: List<RibbitPost>,
-    userId: Int,
+    myId: Int,
     onNavigateToCreatingPostScreen: () -> Unit,
     modifier: Modifier
 ) {
@@ -111,7 +102,7 @@ fun HomeSuccessScreen(
         // navigation 위(RibbitApp)에 있던 scrollBehavior을 navigation 하위에 있는 HomeScreen으로 옮겨서 해결.
         topBar = {
             HomeTopAppBar(
-                cardViewModel = cardViewModel,
+                getCardViewModel = getCardViewModel,
                 tokenViewModel = tokenViewModel,
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
@@ -129,8 +120,10 @@ fun HomeSuccessScreen(
             Box(modifier = modifier) {
                 PostsGrid(
                     posts = ribbitPosts,
-                    cardViewModel = cardViewModel,
-                    userId = userId,
+                    getCardViewModel = getCardViewModel,
+                    userViewModel = userViewModel,
+                    postingViewModel = postingViewModel,
+                    myId = myId,
                     navController = navController,
                     modifier = modifier
                 )

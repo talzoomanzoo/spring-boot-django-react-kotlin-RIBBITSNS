@@ -11,15 +11,19 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.network.bodys.RibbitPost
 import com.hippoddung.ribbit.ui.screens.carditems.RibbitCard
-import com.hippoddung.ribbit.ui.viewmodel.CardViewModel
+import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
+import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
+import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun PostsGrid(
     posts: List<RibbitPost>,
-    cardViewModel: CardViewModel,
-    userId: Int,
+    getCardViewModel: GetCardViewModel,
+    userViewModel: UserViewModel,
+    postingViewModel: PostingViewModel,
+    myId: Int,
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
@@ -31,9 +35,11 @@ fun PostsGrid(
         items(items = sortedRibbitPost, key = { post -> post.id }) { it ->
             RibbitCard(
                 post = it,
-                cardViewModel = cardViewModel,
-                userId = userId,
+                getCardViewModel = getCardViewModel,
+                myId = myId,
                 navController = navController,
+                userViewModel = userViewModel,
+                postingViewModel = postingViewModel,
                 modifier = modifier
             )
         }

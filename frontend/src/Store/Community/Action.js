@@ -12,6 +12,15 @@ import {
     ADD_USER_REQUEST,
     ADD_USER_SUCCESS,
     ADD_USER_FAILURE,
+    GET_USER_REQUEST,
+    GET_USER_SUCCESS,
+    GET_USER_FAILURE,
+    SIGNUP_REQUEST,
+    SIGNUP_SUCCESS,
+    SIGNUP_FAILURE,
+    FIND_COM_BY_ID_REQUEST,
+    FIND_COM_BY_ID_SUCCESS,
+    FIND_COM_BY_ID_FAILURE,
 } from "./ActionType";
 
 export const createComRequest = () => ({
@@ -80,14 +89,51 @@ export const updateCom = (reqData) => async (dispatch) => {
     }
 };
 
-export const addUserAction = (comId, userId) => async (dispatch) => {
+export const addUserActionCom = (comId, userId) => async (dispatch) => {
     dispatch({ type: ADD_USER_REQUEST });
     //dispatch({type: ADD_USER_USERDTO_REQUEST})
     try {
-        const response = await api.post(`/api/communities/${comId}/add/${userId}`);
+        const response = await api.post(`/api/communities/${comId}/add2/${userId}`);
         const com = response.data;
         dispatch({ type: ADD_USER_SUCCESS, payload: com });
     } catch (error) {
         dispatch({ type: ADD_USER_FAILURE, payload: error.message });
     }
 };
+
+export const getUserActionCom = (comId) => async (dispatch) => {
+    dispatch({ type: GET_USER_REQUEST });
+    try {
+        console.log("comId get", comId);
+        const response = await api.get(`/api/communities/${comId}/get`);
+        const com = response.data;
+        console.log("getUserAction list data", com);
+        dispatch({ type: GET_USER_SUCCESS, payload: com });
+    } catch (error) {
+        dispatch({ type: GET_USER_FAILURE, payload: error.message });
+    }
+};
+
+export const addReady = (comId) => async (dispatch) => {
+    dispatch({ type: SIGNUP_REQUEST });
+    try {
+        const response = await api.post(`/api/communities/${comId}/signup`, comId);
+        const signup = response.data;
+        dispatch({ type: SIGNUP_SUCCESS, payload: signup});
+    } catch (error) {
+        dispatch({ type: SIGNUP_FAILURE, payload: error.message });
+    }
+};
+
+export const findComById = (comId) =>  async(dispatch) => {
+        dispatch({ type: FIND_COM_BY_ID_REQUEST });
+        try {
+            const response = await api.get(`/api/communities/${comId}`);
+            const com = response.data;
+            dispatch({ type: FIND_COM_BY_ID_SUCCESS, payload: com });
+            console.log("findComById check", com);
+        } catch (error) {
+            dispatch({ type: FIND_COM_BY_ID_FAILURE, payload: error.message });
+            console.log("findComById error", error.message);
+        }
+    };

@@ -10,6 +10,7 @@ import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +21,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.OndemandVideo
@@ -42,62 +45,71 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.R
+import com.hippoddung.ribbit.network.bodys.RibbitPost
+import com.hippoddung.ribbit.network.bodys.User
 import com.hippoddung.ribbit.ui.RibbitScreen
+import com.hippoddung.ribbit.ui.screens.carditems.RibbitImage
+import com.hippoddung.ribbit.ui.screens.carditems.RibbitVideo
 import com.hippoddung.ribbit.ui.screens.screenitems.InputTextField
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
-import com.hippoddung.ribbit.ui.viewmodel.CreatingPostUiState
+import com.hippoddung.ribbit.ui.viewmodel.EditingPostUiState
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
+import com.hippoddung.ribbit.ui.viewmodel.ProfileUiState
 import java.io.File
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun CreatingPostScreen(
+fun EditingPostScreen(
     postingViewModel: PostingViewModel,
     getCardViewModel: GetCardViewModel,
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    when (postingViewModel.creatingPostUiState) {
-        is CreatingPostUiState.Ready -> {
-            Log.d("HippoLog, CreatingPostScreen", "Ready")
-            InputPostScreen(
+    when (postingViewModel.editingPostUiState) {
+        is EditingPostUiState.Ready -> {
+            Log.d("HippoLog, EditingPostScreen", "Ready")
+            EditPostScreen(
                 navController = navController,
                 postingViewModel = postingViewModel,
-//                cardViewModel = cardViewModel,
+                getCardViewModel = getCardViewModel,
                 modifier = modifier
             )
         }
 
-        is CreatingPostUiState.Success -> {
-            Log.d("HippoLog, CreatingPostScreen", "Success")
+        is EditingPostUiState.Success -> {
+            Log.d("HippoLog, EditingPostScreen", "Success")
             getCardViewModel.getRibbitPosts()
             navController.navigate(RibbitScreen.HomeScreen.name)
-            postingViewModel.creatingPostUiState = CreatingPostUiState.Ready
+            postingViewModel.editingPostUiState = EditingPostUiState.Ready(RibbitPost())
         }
 
-        is CreatingPostUiState.Loading -> {
-            Log.d("HippoLog, CreatingPostScreen", "Loading")
+        is EditingPostUiState.Loading -> {
+            Log.d("HippoLog, EditingPostScreen", "Loading")
             LoadingScreen(modifier = modifier)
         }
 
-        is CreatingPostUiState.Error -> {
-            Log.d("HippoLog, CreatingPostScreen", "Error")
+        is EditingPostUiState.Error -> {
+            Log.d("HippoLog, EditingPostScreen", "Error")
             ErrorScreen(modifier = modifier)
         }
     }
 }
 
 @Composable
-fun InputPostScreen(
+fun EditPostScreen(
     navController: NavHostController,
     postingViewModel: PostingViewModel,
-//    cardViewModel: CardViewModel,
+    getCardViewModel: GetCardViewModel,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    var inputText by remember { mutableStateOf("") }
+    var post by remember { mutableStateOf(RibbitPost()) }// state check 실행을 위해 initializing
+    if (postingViewModel.editingPostUiState is EditingPostUiState.Ready) {   // navigation으로 이동시 현재 스크린을 backStack으로 보내면서 재실행, state casting 오류가 발생, state check 삽입
+        post = (postingViewModel.editingPostUiState as EditingPostUiState.Ready).post
+    }
+    var inputText by remember { mutableStateOf(post.content) }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     var videoUri by remember { mutableStateOf<Uri?>(null) }
     val bitmap = remember { mutableStateOf<Bitmap?>(null) }
@@ -116,12 +128,13 @@ fun InputPostScreen(
     Column(
         modifier = modifier
             .padding(40.dp)
-            .fillMaxSize(),
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = stringResource(R.string.create_ribbit),
+            text = stringResource(R.string.edit_ribbit),
             color = Color.Black,
             modifier = modifier
                 .padding(bottom = 16.dp)
@@ -152,8 +165,41 @@ fun InputPostScreen(
                             bitmap = btm.asImageBitmap(),
                             contentScale = ContentScale.Fit,
                             contentDescription = null,
-                            modifier = modifier.size(200.dp)
+                            modifier = modifier
+                                .size(200.dp)
+                                .clickable { imageLauncher.launch("image/*") }
                         )
+                    }
+                }
+            }
+        } else {
+            if (post.image != null) {
+                Box(
+                    modifier = modifier
+                        .clickable(
+                            onClick = {
+                                imageLauncher.launch("image/*")
+                                Log.d("HippoLog, EditingPostScreen", "Clicked RibbitImage")
+                            }
+                        )
+                ) {
+                    RibbitImage(
+                        image = post.image!!,
+                        modifier = modifier
+                    )
+                }
+            } else {
+                Button(
+                    onClick = { imageLauncher.launch("image/*") },
+                    modifier.padding(14.dp)
+                ) {
+                    Row(modifier = modifier) {
+                        Icon(
+                            imageVector = Icons.Filled.Image,
+                            contentDescription = "Select Image",
+                            modifier = modifier
+                        )
+                        Text(text = " Select Image", modifier = modifier)
                     }
                 }
             }
@@ -172,29 +218,31 @@ fun InputPostScreen(
                     modifier = modifier.padding(8.dp)
                 )
             }
-        }
-        Row(modifier = modifier) {
-            Button(
-                onClick = { imageLauncher.launch("image/*") },
-                modifier.padding(14.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Image,
-                    contentDescription = "Pick Image button.",
+        } else {
+            if (post.video != null) {
+                RibbitVideo(
+                    videoUrl = post.video!!,
+                    getCardViewModel = getCardViewModel,
                     modifier = modifier
+                        .clickable { videoLauncher.launch("video/*") }
                 )
-            }
-            Button(
-                onClick = { videoLauncher.launch("video/*") },
-                modifier = modifier.padding(14.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.OndemandVideo,
-                    contentDescription = "Pick Video button.",
-                    modifier = modifier
-                )
+            } else {
+                Button(
+                    onClick = { videoLauncher.launch("video/*") },
+                    modifier = modifier.padding(14.dp)
+                ) {
+                    Row(modifier = modifier) {
+                        Icon(
+                            imageVector = Icons.Filled.OndemandVideo,
+                            contentDescription = "Select Video",
+                            modifier = modifier
+                        )
+                        Text(text = " Select Video", modifier = modifier)
+                    }
+                }
             }
         }
+
         Row(modifier = modifier) {
             Button(
                 onClick = { navController.navigate(RibbitScreen.HomeScreen.name) },
@@ -207,7 +255,7 @@ fun InputPostScreen(
             }
             Button(
                 onClick = {
-                    postingViewModel.createPost(
+                    postingViewModel.editPost(
                         image = bitmap.value,
                         videoFile = videoFile,
                         inputText = inputText
@@ -216,7 +264,7 @@ fun InputPostScreen(
                 modifier = modifier.padding(14.dp)
             ) {
                 Text(
-                    text = stringResource(R.string.create_ribbit),
+                    text = stringResource(R.string.edit_ribbit),
                     modifier = modifier
                 )
             }

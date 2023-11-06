@@ -65,17 +65,17 @@ public class LikeController {
 		return new ResponseEntity<>(likeDto,HttpStatus.CREATED);
 	}
 	
-	@GetMapping("/twit/{twitId}")
-	public ResponseEntity<List<LikeDto>>getAllLike(
-			@PathVariable Long twitId,@RequestHeader("Authorization") String jwt) throws UserException, TwitException{
-		User user=userService.findUserProfileByJwt(jwt);
-		
-		List<Like> likes =likeService.getAllLikes(twitId);
-		
-		List<LikeDto> likeDtos=LikeDtoMapper.toLikeDtos(likes,user);
-		
-		return new ResponseEntity<>(likeDtos,HttpStatus.CREATED);
-	}
+//	@GetMapping("/twit/{twitId}")
+//	public ResponseEntity<List<LikeDto>>getAllLike(
+//			@PathVariable Long twitId,@RequestHeader("Authorization") String jwt) throws UserException, TwitException{
+//		User user=userService.findUserProfileByJwt(jwt);
+//		
+//		List<Like> likes =likeService.getAllLikes(twitId);
+//		
+//		List<LikeDto> likeDtos=LikeDtoMapper.toLikeDtos(likes,user);
+//		
+//		return new ResponseEntity<>(likeDtos,HttpStatus.CREATED);
+//	}
 
 
 }

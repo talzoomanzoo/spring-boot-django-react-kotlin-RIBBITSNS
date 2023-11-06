@@ -17,13 +17,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { searchUser } from "../../Store/Auth/Action";
 import {
-    addUserAction,
+    addUserActionCom,
+    getUserActionCom,
     updateCom,
 } from "../../Store/Community/Action";
 import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
 import BackdropComponent from "../Backdrop/Backdrop";
 import { Switch } from 'react-native'; // 여기서만 import 할것, switch 건들 ㄴㄴ
-import { getUserAction } from "../../Store/List/Action";
 
 const style = {
     position: "absolute",
@@ -109,11 +109,11 @@ const ComModel2 = ({ com, handleClose, open }) => {
         setSearch("");
     };
 
-    const handleAddUser = (comId, userId) => {
+    const handleAddUserCom = (comId, userId) => {
 
-        dispatch(addUserAction(comId, userId));
+        dispatch(addUserActionCom(comId, userId));
         setSearch("");
-        dispatch(getUserAction(comId));
+        dispatch(getUserActionCom(comId));
     };
 
     const handleFollowingscClick = () => {
@@ -152,14 +152,14 @@ const ComModel2 = ({ com, handleClose, open }) => {
                                         style={{ marginLeft: 30 }}
                                         className="flex hover:bg-green-700 relative right-5 cursor-pointer"
                                         onClick={() => {
-                                            handleAddUser(com.id, item.id);
+                                            handleAddUserCom(com.id, item.id);
                                         }}
                                     ></RemoveIcon>
                                 ) : (
                                     <AddIcon
                                         className="flex hover:bg-green-700 relative right-5 cursor-pointer"
                                         onClick={() => {
-                                            handleAddUser(com.id, item.id);
+                                            handleAddUserCom(com.id, item.id);
                                         }}
                                     ></AddIcon>
                                 )}
@@ -313,7 +313,7 @@ const ComModel2 = ({ com, handleClose, open }) => {
                                                             style={{ marginLeft: 30 }}
                                                             className="flex hover:bg-green-700 float-right absolute right-5 cursor-pointer"
                                                             onClick={() => {
-                                                                handleAddUser(com.id, item.id, com);
+                                                                handleAddUserCom(com.id, item.id);
                                                             }}
                                                         ></RemoveIcon>
                                                     ) : (
@@ -321,7 +321,7 @@ const ComModel2 = ({ com, handleClose, open }) => {
                                                             style={{ marginLeft: 0 }}
                                                             className={`flex hover:bg-green-700 float-right absolute right-5 cursor-pointer`}
                                                             onClick={() => {
-                                                                handleAddUser(com.id, item.id, com);
+                                                                handleAddUserCom(com.id, item.id);
                                                             }}
                                                         ></AddIcon>
                                                     )}

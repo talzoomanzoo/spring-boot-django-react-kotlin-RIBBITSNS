@@ -1,18 +1,20 @@
 import CloseIcon from "@mui/icons-material/Close";
-import { Box, Button, IconButton, Modal, TextField } from "@mui/material";
-import { useFormik } from "formik";
-import { useState } from "react";
-import { Switch } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import {
-    createCom,
+    Box,
+    Button,
+    IconButton,
+    Modal,
+    TextField,
+} from "@mui/material";
+import { useFormik } from "formik";
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import {
+    updateCom,
+    addReady,
 } from "../../Store/Community/Action";
 import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
 import BackdropComponent from "../Backdrop/Backdrop";
-import Loading from "../Profile/Loading/Loading";
-//npm install --save react-native-infinite-scroll --save --legacy-peer-deps
-//npm install react-native-web
 
 const style = {
     position: "absolute",
@@ -20,7 +22,6 @@ const style = {
     left: "50%",
     transform: "translate(-50%, -50%)",
     width: 600,
-    height: 600,
     bgcolor: "background.paper",
     boxShadow: 24,
     p: 2,
@@ -29,29 +30,26 @@ const style = {
     overflow: "scroll-y",
 };
 
-const ComModel = ({ handleClose, open }) => {
+const ComModel3 = ({ com, handleClose, open }) => {
     const [uploading, setUploading] = useState(false);
     const dispatch = useDispatch();
-    const navigate = useNavigate();
-    const [backgroundImage, setBackgroundImage] = useState("");
-    const [comName, setComName] = useState("");
-    const [description, setDescription] = useState("");
-    const [isEnabled, setIsEnabled] = useState(false);
+    const {auth} = useSelector((store) => store);
 
-    const handleSubmit = (values, actions) => {
-        dispatch(createCom(values));
-        actions.resetForm();
-        setComName("");
-        setDescription("");
-        setBackgroundImage("");
-        console.log("listsmodel values", values);
+    const handleSubmit = (values) => {
+        dispatch(updateCom(values));
         handleClose();
         window.location.reload();
     };
 
+    const handleSignup = (comId) => {
+        dispatch(addReady(comId));
+        handleClose();
+        window.location.reload();
+    };
 
     const formik = useFormik({
         initialValues: {
+            id: "",
             comName: "",
             description: "",
             backgroundImage: "",
@@ -60,6 +58,13 @@ const ComModel = ({ handleClose, open }) => {
         onSubmit: handleSubmit,
     });
 
+    useEffect(() => {
+        formik.setValues({
+            comName: com.comName || "",
+            description: com.description || "",
+            backgroundImage: com.backgroundImage || "",
+        });
+    }, []);
 
     const handleImageChange = async (event) => {
         setUploading(true);
@@ -70,12 +75,13 @@ const ComModel = ({ handleClose, open }) => {
         setUploading(false);
     };
 
-    // const toggleSwitch = async () => {
-    //   setIsEnabled((previousState) => !previousState);
-    //   formik.setFieldValue("privateMode", isEnabled); //여기부터 고치기
-    //   console.log("isEnabled", { isEnabled });
-    //   //dispatch(setPrivate(list.id));
-    // };
+    const itemsCheck = () => {
+        for (let i = 0; i < com.followingscReady.length; i++) {
+            if (com.followingscReady[i].id === auth.user.id) {
+                return true;
+            }
+        }
+    }
 
     return (
         <div>
@@ -92,13 +98,11 @@ const ComModel = ({ handleClose, open }) => {
                                 <IconButton onClick={handleClose} aria-label="delete">
                                     <CloseIcon />
                                 </IconButton>
-                                <p>커뮤니티 생성</p>
+                                <p>커뮤니티 정보</p>
                             </div>
-                            <Button type="submit">저장</Button>
                         </div>
-
-                        <div className="customeScrollbar overflow-y-scroll  overflow-x-hidden h-[80vh]">
-                            <div className="">
+                        <div className="customeScrollbar overflow-y-scroll  overflow-x-hidden h-[50vh]">
+                        <div className="">
                                 <div className="w-full">
                                     <div className="relative">
                                         <img
@@ -107,7 +111,7 @@ const ComModel = ({ handleClose, open }) => {
                                                 "https://png.pngtree.com/thumb_back/fw800/background/20230304/pngtree-green-base-vector-smooth-background-image_1770922.jpg"
                                             }
                                             alt="Img"
-                                            className="w-full h-[12rem] object-cover object-center"
+                                            className="w-full h-[10rem] object-cover object-center"
                                             loading="lazy"
                                         />
                                         <input
@@ -118,16 +122,15 @@ const ComModel = ({ handleClose, open }) => {
                                         />
                                     </div>
                                 </div>
-                                <div className="w-full transform -translate-y-20 translate-x-4 h-[3rem]"></div>
                             </div>
-
+                        <div className="w-full transform -translate-y-10 translate-x-4 h-[1rem]"></div>
                             <div className="space-y-3">
                                 <TextField
                                     fullWidth
                                     id="comName"
                                     label="커뮤니티 이름"
                                     value={formik.values.comName}
-                                    onChange={formik.handleChange}
+                                    disabled="true"
                                     error={
                                         formik.touched.comName && Boolean(formik.errors.comName)
                                     }
@@ -141,7 +144,7 @@ const ComModel = ({ handleClose, open }) => {
                                     name="description"
                                     label="커뮤니티 정보"
                                     value={formik.values.description}
-                                    onChange={formik.handleChange}
+                                    disabled="true"
                                     error={
                                         formik.touched.description &&
                                         Boolean(formik.errors.description)
@@ -150,60 +153,23 @@ const ComModel = ({ handleClose, open }) => {
                                         formik.touched.description && formik.errors.description
                                     }
                                 />
-                            </div>
-
-                            <div className="space-y-3" style={{ marginTop: 10 }}>
-                                <hr
-                                    style={{
-                                        background: "grey",
-                                        color: "grey",
-                                        borderColor: "grey",
-                                        height: "1px",
-                                    }}
-                                />
+                                <div className="space-y-3" style={{ marginTop: 5 }}>
 
                                 <div className="flex items-center justify-between font-xl">
-                                    {" "}
-                                    비공개 활성화
-                                    <Switch
-                                        name="privateMode"
-                                        style={{
-                                            marginTop: 10,
-                                            marginRight: 20,
-                                        }}
-                                        trackColor={{ false: "#767577", true: "#81b0ff" }}
-                                        thumbColor={formik.values.privateMode ? "#f5dd4b" : "#f4f3f4"}
-                                        ios_backgroundColor="#3e3e3e"
-                                        //onValueChange={toggleSwitch}
-                                        //value={isEnabled}
-                                        value={formik.values.privateMode}
-                                        onValueChange={value => formik.setFieldValue('privateMode', value)}
-                                        error={
-                                            formik.touched.description &&
-                                            Boolean(formik.errors.description)
-                                        }
-                                        helperText={
-                                            formik.touched.description && formik.errors.description
-                                        }
-                                    />
+                                    {com.privateMode? "비공개 커뮤니티입니다." : "공개 커뮤니티입니다."}
+                                    <></>
+                                    {itemsCheck() ? <span className="flex items-center">  가입승인 대기중입니다. <Button onClick={() => handleSignup(com.id)}> 가입신청 취소</Button> </span>: 
+                                    <Button onClick={() => handleSignup(com.id)}> 가입신청 </Button>}
                                 </div>
-
-                                <hr
-                                    style={{
-                                        marginTop: 20,
-                                        background: "grey",
-                                        color: "grey",
-                                        borderColor: "grey",
-                                        height: "1px",
-                                    }}
-                                />
+                            </div>
                             </div>
                         </div>
-                        {uploading ? <Loading/> : null}
+                        <BackdropComponent open={uploading} />
                     </form>
                 </Box>
             </Modal>
         </div>
     );
 };
-export default ComModel;
+
+export default ComModel3;

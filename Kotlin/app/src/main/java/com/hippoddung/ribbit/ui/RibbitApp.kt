@@ -20,21 +20,25 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.hippoddung.ribbit.R
 import com.hippoddung.ribbit.ui.screens.CreatingPostScreen
+import com.hippoddung.ribbit.ui.screens.EditingPostScreen
 import com.hippoddung.ribbit.ui.screens.HomeScreen
 import com.hippoddung.ribbit.ui.screens.PostIdScreen
-import com.hippoddung.ribbit.ui.screens.profilescreens.ProfileScreen
 import com.hippoddung.ribbit.ui.screens.authscreens.LoginScreen
 import com.hippoddung.ribbit.ui.screens.authscreens.SignUpScreen
+import com.hippoddung.ribbit.ui.screens.profilescreens.EditProfileScreen
 import com.hippoddung.ribbit.ui.screens.profilescreens.ProfileLikesScreen
+import com.hippoddung.ribbit.ui.screens.profilescreens.ProfileMediasScreen
 import com.hippoddung.ribbit.ui.screens.profilescreens.ProfileRepliesScreen
+import com.hippoddung.ribbit.ui.screens.profilescreens.ProfileScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthUiState
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
-import com.hippoddung.ribbit.ui.viewmodel.CardViewModel
-import com.hippoddung.ribbit.ui.viewmodel.CreatingPostViewModel
+import com.hippoddung.ribbit.ui.viewmodel.EditingPostUiState
+import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
+import com.hippoddung.ribbit.ui.viewmodel.MyProfileUiState
+import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
-import com.hippoddung.ribbit.ui.viewmodel.UserUiState
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
 enum class RibbitScreen(@StringRes val title: Int) {
@@ -44,9 +48,12 @@ enum class RibbitScreen(@StringRes val title: Int) {
     LogoutScreen(title = R.string.logout_screen),
     ProfileScreen(title = R.string.profile_screen),
     ProfileRepliesScreen(title = R.string.profile_replies_screen),
+    ProfileMediasScreen(title = R.string.profile_medias_screen),
     ProfileLikesScreen(title = R.string.profile_likes_screen),
+    EditProfileScreen(title = R.string.edit_profile_screen),
     SignUpScreen(title = R.string.sign_up_screen),
     CreatingPostScreen(title = R.string.creating_post_screen),
+    EditingPostScreen(title = R.string.editing_post_screen),
     LoadingScreen(title = R.string.loading_screen),
     ErrorScreen(title = R.string.error_screen)
 }
@@ -54,10 +61,10 @@ enum class RibbitScreen(@StringRes val title: Int) {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RibbitApp(
-    cardViewModel: CardViewModel,
+    getCardViewModel: GetCardViewModel,
     authViewModel: AuthViewModel,
     tokenViewModel: TokenViewModel,
-    creatingPostViewModel: CreatingPostViewModel,
+    postingViewModel: PostingViewModel,
     userViewModel: UserViewModel,
     modifier: Modifier = Modifier
 ) {
@@ -65,10 +72,10 @@ fun RibbitApp(
         is AuthUiState.Login -> {
             Log.d("HippoLog, RibbitApp", "Login")
             RibbitScreen(
-                cardViewModel = cardViewModel,
+                getCardViewModel = getCardViewModel,
                 authViewModel = authViewModel,
                 tokenViewModel = tokenViewModel,
-                creatingPostViewModel = creatingPostViewModel,
+                postingViewModel = postingViewModel,
                 userViewModel = userViewModel,
                 modifier = modifier
             )
@@ -92,16 +99,19 @@ fun RibbitApp(
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RibbitScreen(
-    cardViewModel: CardViewModel,
+    getCardViewModel: GetCardViewModel,
     authViewModel: AuthViewModel,
     tokenViewModel: TokenViewModel,
-    creatingPostViewModel: CreatingPostViewModel,
+    postingViewModel: PostingViewModel,
     userViewModel: UserViewModel,
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController()
 ) {
+    val myId: Int = (userViewModel.myProfileUiState as MyProfileUiState.Exist).myProfile.id!!
+        // myProfile 은 다양한 페이지에서 쓰이므로 여기서 composable에 기억시킨다.
+        // myProfile 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 상황이다.
 //    val backStackEntry by navController.currentBackStackEntryAsState()
-//    val currentScreen = RibbitScreen.valueOf(backStackEntry?.destination?.route ?: RibbitScreen.SignUpScreen.name)
+//    val currentScreen = RibbitScreen.valueOf(backStackEntry?.destination?.route ?: RibbitScreen.HomeScreen.name)
 //    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Log.d("HippoLog, RibbitApp", "RibbitScreen")
     NavHost(
@@ -116,12 +126,12 @@ fun RibbitScreen(
             HomeScreen(
 //                scrollBehavior = scrollBehavior,
                 navController = navController,
-                cardViewModel = cardViewModel,
+                getCardViewModel = getCardViewModel,
                 tokenViewModel = tokenViewModel,
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
-                creatingPostViewModel = creatingPostViewModel,
-                userId = ((userViewModel.userUiState as UserUiState.Exist).user.id)!!,   // 유저 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 것으로 가정한다.
+                postingViewModel = postingViewModel,
+                myId = myId,   // myProfile 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 것으로 가정한다.
                 onNavigateToCreatingPostScreen = { navController.navigate(RibbitScreen.CreatingPostScreen.name) },
                 modifier = modifier
             )
@@ -129,61 +139,91 @@ fun RibbitScreen(
         composable(route = RibbitScreen.PostIdScreen.name) {
             Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> TwitIdScreen")
             PostIdScreen(
-//                scrollBehavior = scrollBehavior,
                 navController = navController,
-                cardViewModel = cardViewModel,
+                getCardViewModel = getCardViewModel,
                 tokenViewModel = tokenViewModel,
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
-                creatingPostViewModel = creatingPostViewModel,
-                userId = ((userViewModel.userUiState as UserUiState.Exist).user.id)!!,   // 유저 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 것으로 가정한다.
+                postingViewModel = postingViewModel,
+                myId = myId,   // 유저 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 것으로 가정한다.
                 modifier = modifier
             )
         }
         composable(route = RibbitScreen.ProfileScreen.name) {
             Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> ProfileScreen")
             ProfileScreen(
-//                scrollBehavior = scrollBehavior,
                 navController = navController,
-                cardViewModel = cardViewModel,
+                getCardViewModel = getCardViewModel,
                 tokenViewModel = tokenViewModel,
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
-                userId = ((userViewModel.userUiState as UserUiState.Exist).user.id)!!,   // 유저 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 것으로 가정한다.
+                postingViewModel = postingViewModel,
+                myId = myId,
                 modifier = modifier
             )
         }
         composable(route = RibbitScreen.ProfileRepliesScreen.name) {
             Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> ProfileRepliesScreen")
             ProfileRepliesScreen(
-//                scrollBehavior = scrollBehavior,
                 navController = navController,
-                cardViewModel = cardViewModel,
+                getCardViewModel = getCardViewModel,
                 tokenViewModel = tokenViewModel,
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
-                userId = ((userViewModel.userUiState as UserUiState.Exist).user.id)!!,   // 유저 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 것으로 가정한다.
+                postingViewModel = postingViewModel,
+                myId = myId,   // 유저 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 것으로 가정한다.
+                modifier = modifier
+            )
+        }
+        composable(route = RibbitScreen.ProfileMediasScreen.name) {
+            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> ProfileMediasScreen")
+            ProfileMediasScreen(
+                navController = navController,
+                getCardViewModel = getCardViewModel,
+                tokenViewModel = tokenViewModel,
+                authViewModel = authViewModel,
+                userViewModel = userViewModel,
+                postingViewModel = postingViewModel,
+                myId = myId,   // 유저 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 것으로 가정한다.
                 modifier = modifier
             )
         }
         composable(route = RibbitScreen.ProfileLikesScreen.name) {
             Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> ProfileLikesScreen")
             ProfileLikesScreen(
-//                scrollBehavior = scrollBehavior,
                 navController = navController,
-                cardViewModel = cardViewModel,
+                getCardViewModel = getCardViewModel,
                 tokenViewModel = tokenViewModel,
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
-                userId = ((userViewModel.userUiState as UserUiState.Exist).user.id)!!,   // 유저 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 것으로 가정한다.
+                postingViewModel = postingViewModel,
+                myId = myId,   // 유저 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 것으로 가정한다.
+                modifier = modifier
+            )
+        }
+        composable(route = RibbitScreen.EditProfileScreen.name) {
+            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> EditProfileScreen")
+            EditProfileScreen(
+                navController = navController,
+                userViewModel = userViewModel,
+                myId = myId,
                 modifier = modifier
             )
         }
         composable(route = RibbitScreen.CreatingPostScreen.name) {
-            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> TwitCreateScreen")
+            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> CreatingPostScreen")
             CreatingPostScreen(
-                creatingPostViewModel = creatingPostViewModel,
-                cardViewModel = cardViewModel,
+                postingViewModel = postingViewModel,
+                getCardViewModel = getCardViewModel,
+                navController = navController,
+                modifier = modifier
+            )
+        }
+        composable(route = RibbitScreen.EditingPostScreen.name) {
+            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> EditingPostScreen")
+            EditingPostScreen(
+                postingViewModel = postingViewModel,
+                getCardViewModel = getCardViewModel,
                 navController = navController,
                 modifier = modifier
             )
@@ -203,7 +243,6 @@ fun RibbitScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AuthScreen(
     authViewModel: AuthViewModel,

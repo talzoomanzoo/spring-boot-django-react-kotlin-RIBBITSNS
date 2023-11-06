@@ -21,7 +21,7 @@ const Profile = React.lazy(() => import("./Profile/Profile"));
 const Chatroom = React.lazy(() => import("./Chat/Chat"));
 const ListsDetail = React.lazy(() => import("./Lists/ListsDetail"));
 const Communities = React.lazy(() => import("./Communities/Communities"));
-
+const ComDetail = React.lazy(() => import("./Communities/ComDetail"));
 
 const HomePage = () => {
   const { theme } = useSelector((store) => store);
@@ -70,6 +70,10 @@ const HomePage = () => {
           <Route path="/lists/:id" element={
             <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
               <ListsDetail />
+            </Suspense>}></Route>
+            <Route path="/communities/:id" element={
+            <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
+              <ComDetail />
             </Suspense>}></Route>
         </Routes>
       </Grid>
