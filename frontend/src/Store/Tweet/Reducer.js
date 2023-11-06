@@ -56,7 +56,6 @@ const initialState = {
   topLikesTwits: [],
   topViewsTwits: [],
   listTwits: [],
-  // usersTwit
 };
 
 const tweetReducer = (state = initialState, action) => {

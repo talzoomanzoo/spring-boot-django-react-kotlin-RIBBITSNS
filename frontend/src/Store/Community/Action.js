@@ -15,6 +15,12 @@ import {
     GET_USER_REQUEST,
     GET_USER_SUCCESS,
     GET_USER_FAILURE,
+    SIGNUP_REQUEST,
+    SIGNUP_SUCCESS,
+    SIGNUP_FAILURE,
+    FIND_COM_BY_ID_REQUEST,
+    FIND_COM_BY_ID_SUCCESS,
+    FIND_COM_BY_ID_FAILURE,
 } from "./ActionType";
 
 export const createComRequest = () => ({
@@ -107,3 +113,27 @@ export const getUserActionCom = (comId) => async (dispatch) => {
         dispatch({ type: GET_USER_FAILURE, payload: error.message });
     }
 };
+
+export const addReady = (comId) => async (dispatch) => {
+    dispatch({ type: SIGNUP_REQUEST });
+    try {
+        const response = await api.post(`/api/communities/${comId}/signup`, comId);
+        const signup = response.data;
+        dispatch({ type: SIGNUP_SUCCESS, payload: signup});
+    } catch (error) {
+        dispatch({ type: SIGNUP_FAILURE, payload: error.message });
+    }
+};
+
+export const findComById = (comId) =>  async(dispatch) => {
+        dispatch({ type: FIND_COM_BY_ID_REQUEST });
+        try {
+            const response = await api.get(`/api/communities/${comId}`);
+            const com = response.data;
+            dispatch({ type: FIND_COM_BY_ID_SUCCESS, payload: com });
+            console.log("findComById check", com);
+        } catch (error) {
+            dispatch({ type: FIND_COM_BY_ID_FAILURE, payload: error.message });
+            console.log("findComById error", error.message);
+        }
+    };

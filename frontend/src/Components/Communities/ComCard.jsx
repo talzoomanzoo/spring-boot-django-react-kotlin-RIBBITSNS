@@ -13,6 +13,7 @@ import {
     Modal,
 } from "@mui/material";
 import "./ComCard.css";
+import ComModel3 from "./ComModel3";
 
 const ComCard = ({ com }) => {
 
@@ -33,8 +34,11 @@ const ComCard = ({ com }) => {
 
     const navigate = useNavigate();
     const [openComModel, setOpenComModel] = useState();
+    const [openComModel3, setOpenComModel3] = useState();
     const handleCloseComModel = () => setOpenComModel(false);
     const handleOpenComModel = () => setOpenComModel(true);
+    const handleCloseComModel3 = () => setOpenComModel3(false);
+    const handleOpenComModel3 = () => setOpenComModel3(true);
     const dispatch = useDispatch();
     const MembersListRef = useRef(null);
 
@@ -52,12 +56,13 @@ const ComCard = ({ com }) => {
         navigate(`/profile/${id}`);
     };
 
-    const handleNavigateToComDetail = async () => {
+    const handleNavigateToComDetail = async() => {
         navigate(`/communities/${com.id}`);
     };
 
 
     const { auth } = useSelector((store) => store);
+
     const showDeleteButton = com.user.id === auth.user.id;
 
     const handleDelete = async () => {
@@ -76,7 +81,8 @@ const ComCard = ({ com }) => {
         <section className="space-x-5 py-3 rounded-full items-center justify-content">
             <section className="my-5 space-x-5 items-center justify-content mt-5" style={{ marginTop: 3 }}>
 
-                <GroupsIcon onClick={openMembersModal} />
+                <GroupsIcon className="cursor-pointer" onClick={openMembersModal} />
+
                 <Modal
                     open={openMembers}
                     onClose={closeMembersModal}
@@ -102,13 +108,14 @@ const ComCard = ({ com }) => {
                                         </p>
                                     </div>
                                     {item.id === com.user.id ? 
-                                        <Button sx={{ fontSize: "105%", left: "50%"}}>관리자</Button>
+                                        <Button sx={{ fontSize: "105%", left: "50%", color: "gray"}}>관리자</Button>
                                         : null}
                                 </div>
                             ))}
                         </div>
                     </Box>
                 </Modal>
+
                 {showDeleteButton ? (
                         <Button
                             onClick={handleOpenComModel}
@@ -118,8 +125,19 @@ const ComCard = ({ com }) => {
                             className="rounded-full"
                         >
                             관리
-                        </Button>) :
-                        null}
+                        </Button>
+                        ) :
+                        (
+                            <Button
+                                onClick={handleOpenComModel3}
+                                //handleClose={handleCloseListsModel}
+                                sx={{ borderRadius: "20px" }}
+                                variant="outlined"
+                                className="rounded-full"
+                            >
+                                정보 보기
+                            </Button>
+                            ) }
 
 
                         <section>
@@ -127,6 +145,14 @@ const ComCard = ({ com }) => {
                                 com={com}
                                 open={openComModel}
                                 handleClose={handleCloseComModel}
+                            />
+                        </section>
+
+                        <section>
+                            <ComModel3
+                                com={com}
+                                open={openComModel3}
+                                handleClose={handleCloseComModel3}
                             />
                         </section>
 
@@ -145,7 +171,6 @@ const ComCard = ({ com }) => {
                     className="mt-5 items-center justify-content cursor-pointer"
                     onClick={handleNavigateToComDetail}>
                     <div className="text-xl items-center justify-content" >{com.comName}</div>
-                    <div className="text-xl items-center justify-content">{com.description}</div>
                 </section>
             </section>
         </section>
