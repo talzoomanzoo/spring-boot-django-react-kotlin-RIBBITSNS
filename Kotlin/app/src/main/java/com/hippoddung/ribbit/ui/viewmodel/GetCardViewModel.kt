@@ -127,7 +127,6 @@ class GetCardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으
             } catch (e: IOException) {
                 Log.d("HippoLog, GetCardViewModel", "${e.stackTrace}, ${e.message}")
                 HomeUiState.Error(e.message.toString())
-
             } catch (e: ExceptionInInitializerError) {
                 Log.d("HippoLog, GetCardViewModel", "${e.stackTrace}, ${e.message}")
                 HomeUiState.Error(e.message.toString())

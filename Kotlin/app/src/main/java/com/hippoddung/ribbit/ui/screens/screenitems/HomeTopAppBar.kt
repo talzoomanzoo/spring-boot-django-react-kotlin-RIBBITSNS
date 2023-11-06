@@ -1,41 +1,63 @@
 package com.hippoddung.ribbit.ui.screens.screenitems
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.R
+import com.hippoddung.ribbit.network.bodys.User
 import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeTopAppBar(
@@ -69,14 +91,21 @@ fun HomeTopAppBar(
                     }
                 }
             },
-            navigationIcon = { MainDropDownMenu(navController, modifier) },
-            actions = {
-                ProfileDropDownMenu(
+            navigationIcon = {
+                MainDropDownMenu(
                     navController = navController,
                     tokenViewModel = tokenViewModel,
                     authViewModel = authViewModel,
                     getCardViewModel = getCardViewModel,
                     userViewModel = userViewModel,
+                    modifier = modifier
+                )
+            },
+            actions = {
+                UserSearchBar(
+                    navController = navController,
+                    userViewModel = userViewModel,
+                    getCardViewModel = getCardViewModel,
                     modifier = modifier
                 )
             },
@@ -101,6 +130,10 @@ fun HomeTopAppBar(
 @Composable
 fun MainDropDownMenu(
     navController: NavHostController,
+    tokenViewModel: TokenViewModel,
+    authViewModel: AuthViewModel,
+    getCardViewModel: GetCardViewModel,
+    userViewModel: UserViewModel,
     modifier: Modifier
 ) {
     var isDropDownMenuExpanded by remember { mutableStateOf(false) }
@@ -141,54 +174,6 @@ fun MainDropDownMenu(
         )
         DropdownMenuItem(
             onClick = {
-                println("Hello 5")
-                isDropDownMenuExpanded = false
-            },
-            text = {
-                Text(
-                    text = "Print Hello 5",
-                    color = Color(0xFF006400),
-                    fontSize = 14.sp,
-                    style = MaterialTheme.typography.labelSmall,
-                    modifier = modifier
-                )
-            },
-            modifier = modifier
-        )
-    }
-}
-
-@Composable
-fun ProfileDropDownMenu(
-    navController: NavHostController,
-    tokenViewModel: TokenViewModel,
-    authViewModel: AuthViewModel,
-    getCardViewModel: GetCardViewModel,
-    userViewModel: UserViewModel,
-    modifier: Modifier
-) {
-    var isDropDownMenuExpanded by remember { mutableStateOf(false) }
-
-    OutlinedButton(
-        onClick = { isDropDownMenuExpanded = true },
-        modifier = modifier
-    ) {
-        Text(
-            text = "Profile",
-            color = Color(0xFF006400),
-            modifier = modifier
-        )
-    }
-
-    DropdownMenu(
-        expanded = isDropDownMenuExpanded,
-        onDismissRequest = { isDropDownMenuExpanded = false },
-        modifier = modifier
-            .wrapContentSize()
-            .padding(4.dp)
-    ) {
-        DropdownMenuItem(
-            onClick = {
                 userViewModel.myProfile.value?.id?.let {
                     getCardViewModel.getUserIdPosts(userId = it)
                     userViewModel.getProfile(userId = it)
@@ -211,11 +196,9 @@ fun ProfileDropDownMenu(
             onClick = {
                 runBlocking {
                     Log.d("HippoLog, HomeTopAppBar", "LogOut")
-                    launch {
-                        userViewModel.resetMyProfile()   // 유저 정보 리셋
-                        authViewModel.deleteLoginInfo() // 로그인 정보 삭제
-                        tokenViewModel.deleteToken()    // 토큰 정보 삭제. token을 먼저 지우면 다시 로그인 됨
-                    }
+                    userViewModel.resetMyProfile()   // 유저 정보 리셋
+                    authViewModel.deleteLoginInfo() // 로그인 정보 삭제
+                    tokenViewModel.deleteToken()    // 토큰 정보 삭제. token을 먼저 지우면 다시 로그인 됨
                 }
                 isDropDownMenuExpanded = false
             },
@@ -230,6 +213,129 @@ fun ProfileDropDownMenu(
             },
             modifier = modifier
         )
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun UserSearchBar(
+    navController: NavHostController,
+    userViewModel: UserViewModel,
+    getCardViewModel: GetCardViewModel,
+    modifier: Modifier
+) {
+    var isExpanded by remember { mutableStateOf(false) }
+    var searchQuery by remember { mutableStateOf(TextFieldValue()) }
+    val usersData by userViewModel.usersData.collectAsState()
+    var isSearched by remember { mutableStateOf(false) }
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .animateContentSize(
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioNoBouncy,
+                    stiffness = Spring.StiffnessMedium
+                )
+            )
+    ) {
+        if (isExpanded) {
+            val comparator = compareByDescending<User> { it.id }
+            val sortedUsers = remember(usersData, comparator) {
+                usersData.sortedWith(comparator)
+            }   // LazyColumn items에 List를 바로 주는 것이 아니라 Comparator로 정렬하여 remember로 기억시켜서 recomposition을 방지하여 성능을 올린다.
+            Column(modifier = modifier) {
+                TextField(
+                    value = searchQuery,
+                    onValueChange = {
+                        searchQuery = it
+                        if (it.text.isNotEmpty()) {
+                            // 사용자가 검색어를 입력하면 여기에서 작업을 수행할 수 있음
+                            // 예: 자동완성 결과 업데이트, 네트워크 요청 등
+                            userViewModel.getUsersSearch(it.text)
+                            isSearched = true
+                        }
+                    },
+                    label = {
+                        Text(
+                            text = "Search User",
+                            modifier = modifier
+                        )
+                    },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Search",
+                            tint = Color(0xFF006400),
+                            modifier = modifier
+                        )
+                    },
+                    trailingIcon = {
+                        Row(modifier = modifier) {
+                            OutlinedButton(
+                                onClick = {
+                                    isExpanded = !isExpanded
+                                },
+                                modifier = modifier
+                            ) {
+                                Text(
+                                    text = "Search",
+                                    modifier = modifier
+                                )
+                            }
+                            IconButton(
+                                onClick = {
+                                    isExpanded = !isExpanded
+                                },
+                                modifier = modifier.padding(4.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = "Collapse",
+                                    tint = Color(0xFF006400),
+                                    modifier = modifier
+                                )
+                            }
+                        }
+                    },
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Search
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onSearch = { }
+                    ),
+                    singleLine = true,
+                    textStyle = TextStyle(fontSize = 16.sp),
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .padding(4.dp)
+                        .background(Color.White)
+                )
+                if(isSearched) {
+                    Log.d("HippoLog, HomeTopAppBar", "SearcheduserGrid: $sortedUsers")
+                    SearchedUsersGrid(
+                        sortedUsers = sortedUsers,
+                        getCardViewModel = getCardViewModel,
+                        userViewModel = userViewModel,
+                        navController = navController,
+                        modifier = modifier
+                    )
+                }
+            }
+        }
+
+        IconButton(
+            onClick = {
+                isExpanded = !isExpanded
+            },
+            modifier = modifier.padding(16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = "Expand",
+                tint = Color(0xFF006400),
+                modifier = modifier
+            )
+        }
     }
 }
 

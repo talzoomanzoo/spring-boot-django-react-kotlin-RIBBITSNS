@@ -76,15 +76,11 @@ fun SignUpScreen(
             value = pW,
             onValueChange = { pW = it },
             modifier = Modifier
-                .padding(bottom = 32.dp)
-                .fillMaxWidth()
         )
         InputPWCheckField(
             value = pWCheck,
             onValueChange = { pWCheck = it },
             modifier = Modifier
-                .padding(bottom = 32.dp)
-                .fillMaxWidth()
         )
         InputFullNameField(
             value = fullName,

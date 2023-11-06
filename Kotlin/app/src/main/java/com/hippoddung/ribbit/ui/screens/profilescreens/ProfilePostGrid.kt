@@ -2,6 +2,7 @@ package com.hippoddung.ribbit.ui.screens.profilescreens
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +21,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Repeat
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -42,6 +45,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -49,11 +53,16 @@ import com.hippoddung.ribbit.R
 import com.hippoddung.ribbit.network.bodys.RibbitPost
 import com.hippoddung.ribbit.network.bodys.User
 import com.hippoddung.ribbit.ui.RibbitScreen
+import com.hippoddung.ribbit.ui.screens.ReplyScreen
 import com.hippoddung.ribbit.ui.screens.carditems.RibbitCard
+import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
 import com.hippoddung.ribbit.ui.viewmodel.ProfileUiState
+import com.hippoddung.ribbit.ui.viewmodel.ReplyClickedUiState
+import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
+import kotlinx.coroutines.runBlocking
 
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("UnrememberedMutableState")
@@ -63,12 +72,14 @@ fun ProfilePostsGrid(
     getCardViewModel: GetCardViewModel,
     userViewModel: UserViewModel,
     postingViewModel: PostingViewModel,
+    authViewModel: AuthViewModel,
+    tokenViewModel: TokenViewModel,
     myId: Int,
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
     val comparator by remember { mutableStateOf(compareByDescending<RibbitPost> { it.id }) }
-    var sortedRibbitPost = remember(posts, comparator) {
+    val sortedRibbitPost = remember(posts, comparator) {
         posts.sortedWith(comparator)
     }   // LazyColumn items에 List를 바로 주는 것이 아니라 Comparator로 정렬하여 remember로 기억시켜서 recomposition을 방지하여 성능을 올린다.
     val profileUser by remember {
@@ -80,6 +91,7 @@ fun ProfilePostsGrid(
             mutableStateOf(User())
         }
     }
+    var withdrawalIsClicked by remember { mutableStateOf(false) }
     LazyColumn(modifier = modifier) {
         item {
             Column(modifier = modifier) {
@@ -105,6 +117,23 @@ fun ProfilePostsGrid(
                         contentScale = ContentScale.Crop,
 
                         )
+                    // 탈퇴 버튼
+                    if (profileUser.id == userViewModel.myProfile.value?.id) {
+                        OutlinedButton(
+                            onClick = {
+                                withdrawalIsClicked = true
+                            },
+                            modifier = modifier.align(Alignment.TopEnd)
+                        ) {
+                            Text(
+                                text = "Withdrawal",
+                                color = Color(0xFF006400),
+                                fontSize = 14.sp,
+                                modifier = modifier
+                            )
+                        }
+                    }
+
                     Row(
                         modifier = modifier
                             .align(Alignment.BottomStart)
@@ -297,5 +326,54 @@ fun ProfilePostsGrid(
                 modifier = modifier
             )
         }
+    }
+    if (withdrawalIsClicked) {
+        AlertDialog(
+            onDismissRequest = { withdrawalIsClicked = false },
+            confirmButton = {
+                OutlinedButton(
+                    onClick = {
+                        withdrawalIsClicked = false
+                        runBlocking {
+                            Log.d("HippoLog, HomeTopAppBar", "LogOut")
+                            userViewModel.postWithdrawal()  // 서버에 탈퇴 요청
+                            userViewModel.resetMyProfile()   // 유저 정보 리셋
+                            authViewModel.deleteLoginInfo() // 로그인 정보 삭제
+                            tokenViewModel.deleteToken()    // 토큰 정보 삭제. token을 먼저 지우면 다시 로그인 됨
+                        }
+                    },
+                    content = {
+                        Text(
+                            text = "Withdraw",
+                            color = Color(0xFF006400),
+                            fontSize = 14.sp,
+                            modifier = modifier
+                        )
+                    },
+                    modifier = modifier,
+                )
+            },
+            dismissButton = {
+                OutlinedButton(
+                    onClick = { withdrawalIsClicked = false },
+                    content = {
+                        Text(
+                            text = "Cancel",
+                            color = Color(0xFF006400),
+                            fontSize = 14.sp,
+                            modifier = modifier
+                        )
+                    },
+                    modifier = modifier
+                )
+            },
+            text = {
+                Text(
+                    text = "Are you really going to withdraw your account?",
+                    modifier = modifier
+                )
+            },
+            modifier = modifier
+        )
     }
 }

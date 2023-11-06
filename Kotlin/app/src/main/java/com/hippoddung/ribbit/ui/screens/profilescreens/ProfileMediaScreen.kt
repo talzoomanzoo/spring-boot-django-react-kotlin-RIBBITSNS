@@ -124,6 +124,8 @@ fun ProfileMediasSuccessScreen(
                 getCardViewModel = getCardViewModel,
                 userViewModel = userViewModel,
                 postingViewModel = postingViewModel,
+                authViewModel = authViewModel,
+                tokenViewModel = tokenViewModel,
                 myId = myId,
                 navController = navController,
                 modifier = modifier

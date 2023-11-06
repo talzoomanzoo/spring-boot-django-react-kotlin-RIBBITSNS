@@ -12,6 +12,9 @@ import com.hippoddung.ribbit.data.network.UserRepository
 import com.hippoddung.ribbit.network.bodys.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import retrofit2.HttpException
@@ -36,6 +39,20 @@ sealed interface EditingProfileUiState {
     object Loading : EditingProfileUiState
     object Success : EditingProfileUiState
     object Error : EditingProfileUiState
+}
+
+sealed interface WithdrawingUserUiState {
+    object Ready : WithdrawingUserUiState
+    object Loading : WithdrawingUserUiState
+    object Success : WithdrawingUserUiState
+    object Error : WithdrawingUserUiState
+}
+
+sealed interface SearchingUserUiState {
+    object Ready : SearchingUserUiState
+    object Loading : SearchingUserUiState
+    data class Success(val users: List<User>) : SearchingUserUiState
+    object Error : SearchingUserUiState
 }
 
 sealed interface UploadProfileImageCloudinaryUiState {
@@ -67,6 +84,10 @@ class UserViewModel @Inject constructor(
         private set
 
     var editingProfileUiState: EditingProfileUiState by mutableStateOf(EditingProfileUiState.Ready)
+
+    var withdrawingUserUiState: WithdrawingUserUiState by mutableStateOf(WithdrawingUserUiState.Ready)
+
+    var searchingUserUiState: SearchingUserUiState by mutableStateOf(SearchingUserUiState.Ready)
     private var uploadProfileImageCloudinaryUiState: UploadProfileImageCloudinaryUiState by mutableStateOf(
         UploadProfileImageCloudinaryUiState.None
     )
@@ -75,6 +96,9 @@ class UserViewModel @Inject constructor(
         UploadProfileBackgroundImageCloudinaryUiState.None
     )
         private set
+
+    private var _usersData = MutableStateFlow<List<User>>(listOf())
+    val usersData: StateFlow<List<User>> = _usersData.asStateFlow()
 
     fun getMyProfile() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -245,6 +269,37 @@ class UserViewModel @Inject constructor(
         }
     }
 
+    suspend fun postWithdrawal() {
+        Log.d("HippoLog, UserViewModel", "postWithdrawal")
+        try {
+            userRepository.postWithdrawal()
+            Log.d("HippoLog, UserViewModel", "postWithdrawal")
+            withdrawingUserUiState = WithdrawingUserUiState.Success
+        } catch (e: IOException) {
+            withdrawingUserUiState = WithdrawingUserUiState.Error
+            Log.d("HippoLog, UserViewModel", "postWithdrawal error: ${e.message}")
+        } catch (e: ExceptionInInitializerError) {
+            withdrawingUserUiState = WithdrawingUserUiState.Error
+            Log.d("HippoLog, UserViewModel", "postWithdrawal error: ${e.message}")
+        }
+    }
+
+    fun getUsersSearch(searchQuery: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            Log.d("HippoLog, UserViewModel", "getUserSearch")
+            try {
+                Log.d("HippoLog, UserViewModel", "getUserSearch")
+                _usersData.value = (userRepository.getUsersSearch(searchQuery))
+            } catch (e: IOException) {
+                Log.d("HippoLog, UserViewModel", "getUserSearch error: ${e.message}")
+                SearchingUserUiState.Error
+            } catch (e: ExceptionInInitializerError) {
+                Log.d("HippoLog, UserViewModel", "getUserSearch error: ${e.message}")
+                SearchingUserUiState.Error
+            }
+        }
+    }
+
     private suspend fun uploadProfileImageCloudinary(profileImage: Bitmap?) { // CreatingPostViewModel에 있던 함수, 어떻게 불러와서 쓸지 결정을 못해서 우선 복붙함.
         if (profileImage != null) {
             try {
@@ -264,11 +319,13 @@ class UserViewModel @Inject constructor(
     private suspend fun uploadProfileBackgroundImageCloudinary(profileBackgroundImage: Bitmap?) { // CreatingPostViewModel에 있던 함수, 어떻게 불러와서 쓸지 결정을 못해서 우선 복붙함.
         if (profileBackgroundImage != null) {
             try {
-                val result = uploadCloudinaryRepository.uploadImageCloudinary(profileBackgroundImage)
+                val result =
+                    uploadCloudinaryRepository.uploadImageCloudinary(profileBackgroundImage)
                 Log.d("HippoLog, UserViewModel", "result: $result")
-                uploadProfileBackgroundImageCloudinaryUiState = UploadProfileBackgroundImageCloudinaryUiState.Success(
-                    profileBackgroundImageUrl = result.url
-                )
+                uploadProfileBackgroundImageCloudinaryUiState =
+                    UploadProfileBackgroundImageCloudinaryUiState.Success(
+                        profileBackgroundImageUrl = result.url
+                    )
             } catch (e: Exception) {
                 uploadProfileBackgroundImageCloudinaryUiState =
                     UploadProfileBackgroundImageCloudinaryUiState.Error(e)

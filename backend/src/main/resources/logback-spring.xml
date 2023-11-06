@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-	<property name="LOG_PATH" value="D:\tmp\logs" />
+	<property name="LOG_PATH" value="/home/ubuntu/my_service/logs" />
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<target>System.out</target>
 		<encoder>
