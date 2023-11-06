@@ -11,7 +11,6 @@ import * as Yup from "yup";
 import { api } from "../../../Config/apiConfig";
 import { getAllTweets } from "../../../Store/Tweet/Action";
 import { uploadToCloudinary } from "../../../Utils/UploadToCloudinary";
-import BackdropComponent from "../../Backdrop/Backdrop";
 import Loading from "../../Profile/Loading/Loading";
 import Maplocation from "../../Profile/Maplocation";
 import TwitCard from "./TwitCard/TwitCard";

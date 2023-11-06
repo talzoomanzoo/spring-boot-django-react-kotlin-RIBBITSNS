@@ -26,6 +26,9 @@ import {
   LIKE_TWEET_FAILURE,
   LIKE_TWEET_REQUEST,
   LIKE_TWEET_SUCCESS,
+  // NOTIFICATION_PLUS_FAILURE,
+  // NOTIFICATION_PLUS_REQUEST,
+  // NOTIFICATION_PLUS_SUCCESS,
   REPLY_TWEET_SUCCESS,
   RETWEET_CREATE_FAILURE,
   RETWEET_CREATE_REQUEST,
@@ -44,7 +47,7 @@ import {
   USER_LIKE_TWEET_SUCCESS,
   VIEW_PLUS_FAILURE,
   VIEW_PLUS_REQUEST,
-  VIEW_PLUS_SUCCESS
+  VIEW_PLUS_SUCCESS,
 } from "./ActionType";
 
 const initialState = {
@@ -56,6 +59,7 @@ const initialState = {
   topLikesTwits: [],
   topViewsTwits: [],
   listTwits: [],
+  // notifications: {},
   // usersTwit
 };
 
@@ -180,6 +184,7 @@ const tweetReducer = (state = initialState, action) => {
           error:null,
           count:action.payload
         }
+  
     case TWEET_DELETE_SUCCESS:
       const twitIdToDelete = action.payload;
       return {

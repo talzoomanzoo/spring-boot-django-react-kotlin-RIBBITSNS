@@ -2,6 +2,7 @@ import BarChartIcon from "@mui/icons-material/BarChart";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FileUploadIcon from "@mui/icons-material/FileUpload";
 import FmdGoodIcon from "@mui/icons-material/FmdGood";
 import ImageIcon from "@mui/icons-material/Image";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
@@ -20,10 +21,11 @@ import { useFormik } from "formik";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-// import { io } from "socket.io-client";
-import { ToastContainer, toast } from "react-toastify"; // React Toastify 라이브러리
+// import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // React Toastify 스타일
 import * as Yup from "yup";
 import { api } from "../../../../Config/apiConfig";
+// import { incrementNotificationCount } from "../../../../Store/Notification/Action";
 import { incrementNotificationCount } from "../../../../Store/Notification/Action";
 import {
   createRetweet,
@@ -31,7 +33,7 @@ import {
   deleteTweet,
   getTime,
   likeTweet,
-  viewPlus,
+  viewPlus
 } from "../../../../Store/Tweet/Action";
 import {
   UPDATE_TWEET_FAILURE,
@@ -55,6 +57,8 @@ const TwitCard = ({ twit }) => {
   const [openEmoji, setOpenEmoji] = useState(false);
   const handleOpenEmoji = () => setOpenEmoji(!openEmoji);
   const handleCloseEmoji = () => setOpenEmoji(false);
+
+  const [twits, setTwits] = useState([]);
 
   const dispatch = useDispatch();
   const { theme, auth } = useSelector((store) => store);
@@ -85,15 +89,6 @@ const TwitCard = ({ twit }) => {
   const [address, setAddress] = useState("");
   const [refreshTwits, setRefreshTwits] = useState(0);
 
-  // useEffect(()=>{
-  //   const socket = io("https://localhost:5000")
-  //   console.log(socket)
-  // },[])
-
-  // const handleNotification =() => {
-  //   setLikes(true);
-  // }
-
   const handleMapLocation = (newAddress) => {
     setAddress(newAddress);
   };
@@ -113,25 +108,28 @@ const TwitCard = ({ twit }) => {
     if (!isLiked) {
       // FavoriteIcon이 눌리지 않은 상태일 때만 카운트를 증가시킴
       const TuserId = twit.user.id;
-      const likingUserId = auth.user.id; // 좋아요를 누른 계정의 아이디를 가져옵니다.
-
+      // const likingUserId = auth.user.id; // 좋아요를 누른 계정의 아이디를 가져옵니다.
+  
       dispatch(incrementNotificationCount(TuserId)); // 알림 카운트 증가
-      // handleLikeNotification(TuserId);
-      handleLikeNotification(likingUserId); // 좋아요를 누른 계정의 아이디를 전달합니다.
-
+      // handleLikeNotification(likingUserId); // 좋아요를 누른 계정의 아이디를 전달합니다.
+      // dispatch(notificationPlus(twit.id));
     }
     dispatch(likeTweet(twit.id));
     setIsLiked(!isLiked);
     setLikes(likes + num);
+    window.location.reload();
   };
 
   const handleCreateRetweet = () => {
     if (auth.user.id !== twit.user.id) {
+      const TuserId = twit.user.id
+      dispatch(incrementNotificationCount(TuserId)); 
+      // dispatch(notificationPlus(twit.id));
       dispatch(createRetweet(twit.id));
       setRetwit(isRetwit ? retwit - 1 : retwit + 1);
       setIsRetwit(!retwit);
     } else {
-      console.log("unable to create reribbit");
+      console.log("unable to create reribbit")
     }
     window.location.reload();
   };
@@ -280,6 +278,7 @@ const TwitCard = ({ twit }) => {
       content: "",
       image: "",
       video: "",
+
     },
     validationSchema,
     onSubmit: handleSubmit,
@@ -317,46 +316,46 @@ const TwitCard = ({ twit }) => {
   const dateedit = new Date(edittime).getTime();
   const timeEdit = getTime(dateedit, currTimestamp);
 
-   // 상태 변수를 사용하여 알림 메시지를 저장합니다.
-   const [notifications, setNotifications] = useState([]);
+  //  // 상태 변수를 사용하여 알림 메시지를 저장합니다.
+  //  const [notifications, setNotifications] = useState([]);
 
-   const eventSource = new EventSource(
-     "http://localhost:8080/notifications/subscribe/1"
-   );
+  //  const eventSource = new EventSource(
+  //    "http://localhost:8080/notifications/subscribe/1"
+  //  );
  
-   console.log("eventSource", eventSource.onmessage);
+  //  console.log("eventSource", eventSource.onmessage);
  
-   eventSource.onmessage = (event) => {
-     const data = JSON.parse(event.data);
-     console.log("data", data);
-     console.log("event", event);
+  //  eventSource.onmessage = (event) => {
+  //    const data = JSON.parse(event.data);
+  //    console.log("data", data);
+  //    console.log("event", event);
  
-     if (data.eventType === "like") {
-       // "like" 이벤트를 처리하고 알림을 표시합니다.
-       handleLikeNotification(data.message);
-     }
-   };
+  //    if (data.eventType === "like") {
+  //      // "like" 이벤트를 처리하고 알림을 표시합니다.
+  //      handleLikeNotification(data.message);
+  //    }
+  //  };
  
-   eventSource.onopen = () => {
-     console.log("SSE connection opened.");
-   };
+  //  eventSource.onopen = () => {
+  //    console.log("SSE connection opened.");
+  //  };
  
-   eventSource.onerror = (error) => {
-     console.error("SSE connection error:", error);
-   };
+  //  eventSource.onerror = (error) => {
+  //    console.error("SSE connection error:", error);
+  //  };
  
-   const handleLikeNotification = (message) => {
-     // 사용자에게 알림을 표시합니다.
-     console.log("message", message);
+  //  const handleLikeNotification = (message) => {
+  //    // 사용자에게 알림을 표시합니다.
+  //    console.log("message", message);
  
-     toast.success(message, {
-       position: "top-right",
-       autoClose: 3000, // 알림이 자동으로 사라지는 시간 (밀리초 단위)
-     });
+  //    toast.success(message, {
+  //      position: "top-right",
+  //      autoClose: 3000, // 알림이 자동으로 사라지는 시간 (밀리초 단위)
+  //    });
  
-     // 알림 메시지를 상태 변수에 추가합니다.
-     setNotifications((prevNotifications) => [...prevNotifications, message]);
-   };
+  //    // 알림 메시지를 상태 변수에 추가합니다.
+  //    setNotifications((prevNotifications) => [...prevNotifications, message]);
+  //  };
 
   return (
     <div className="">
@@ -376,11 +375,7 @@ const TwitCard = ({ twit }) => {
         <Avatar
           onClick={() => navigate(`/profile/${twit.user.id}`)}
           alt="Avatar"
-          src={
-            twit.user.image
-              ? twit.user.image
-              : "https://cdn.pixabay.com/photo/2023/10/24/01/42/art-8337199_1280.png"
-          }
+          src={twit.user.image ? twit.user.image : "https://cdn.pixabay.com/photo/2023/10/24/01/42/art-8337199_1280.png"}
           className="cursor-pointer"
           loading="lazy"
         />
@@ -411,7 +406,12 @@ const TwitCard = ({ twit }) => {
                 </p>
               </span> */}
               {twit.user.verified && (
-                <img className="ml-2 w-5 h-5" src="" alt="" loading="lazy" />
+                <img
+                  className="ml-2 w-5 h-5"
+                  src=""
+                  alt=""
+                  loading="lazy"
+                />
               )}
             </div>
             <div>
@@ -463,11 +463,10 @@ const TwitCard = ({ twit }) => {
               {isEditing ? (
                 <div>
                   <TextareaAutosize
-                    className={`${
-                      theme.currentTheme === "light"
-                        ? "bg-white"
-                        : "bg-[#151515]"
-                    }`}
+                    className={`${theme.currentTheme === "light"
+                      ? "bg-white"
+                      : "bg-[#151515]"
+                      }`}
                     minRows={0}
                     maxRows={0}
                     value={editedContent}
@@ -537,7 +536,7 @@ const TwitCard = ({ twit }) => {
                 </div>
               )}
             </div>
-
+            {/* <ToastContainer /> */}
             <div className="flex justify-between items-center mt-5">
               <div className="flex space-x-5 items-center">
                 {isEditing && (
@@ -602,9 +601,8 @@ const TwitCard = ({ twit }) => {
                     {/* twit 객체의 totalReplies 속성 값이 0보다 큰 경우에만 해당 값을 포함하는 <p> 태그로 래핑 시도*/}
                   </div>
                   <div
-                    className={`${
-                      isRetwit ? "text-pink-600" : "text-gray-600"
-                    } space-x-3 flex items-center`}
+                    className={`${isRetwit ? "text-yellow-500" : "text-gray-600"
+                      } space-x-3 flex items-center`}
                   >
                     <RepeatIcon
                       className={` cursor-pointer`}
@@ -613,9 +611,8 @@ const TwitCard = ({ twit }) => {
                     {retwit > 0 && <p>{retwit}</p>}
                   </div>
                   <div
-                    className={`${
-                      isLiked ? "text-pink-600" : "text-gray-600"
-                    } space-x-3 flex items-center `}
+                    className={`${isLiked ? "text-yellow-500" : "text-gray-600"
+                      } space-x-3 flex items-center `}
                   >
                     {isLiked ? (
                       <FavoriteIcon onClick={() => handleLikeTweet(-1)} />
@@ -629,8 +626,7 @@ const TwitCard = ({ twit }) => {
                     <p>{twit.viewCount}</p>
                   </div>
                   <div className="flex items-center text-gray-600">
-                    {/* <FileUploadIcon /> */}
-                    <ToastContainer />
+                    <FileUploadIcon />
                   </div>
                 </>
               )}

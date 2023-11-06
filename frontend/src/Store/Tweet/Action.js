@@ -301,6 +301,19 @@ export const viewPlus = (twitId) => {
   };
 };
 
+// export const notificationPlus = (twitId) => {
+//   return async (dispatch) => {
+//     dispatch({type:NOTIFICATION_PLUS_REQUEST});
+//     try {
+//       const {data} = await api.post(`/api/twits/${twitId}/Ncount`, {});
+//       console.log("notification plus ",data)
+//       dispatch({type:NOTIFICATION_PLUS_SUCCESS,payload:data});
+//     } catch (error) {
+//       dispatch({type:NOTIFICATION_PLUS_FAILURE,payload:error.message});
+//     }
+//   };
+// };
+
 export const deleteTweet = (tweetId) => {
   return async (dispatch) => {
     dispatch(deleteTweetRequest());
