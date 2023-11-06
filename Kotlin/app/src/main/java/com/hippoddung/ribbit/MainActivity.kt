@@ -21,10 +21,10 @@ import com.hippoddung.ribbit.ui.RibbitApp
 import com.hippoddung.ribbit.ui.theme.RibbitTheme
 import com.hippoddung.ribbit.ui.viewmodel.AuthUiState
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
-import com.hippoddung.ribbit.ui.viewmodel.CardViewModel
-import com.hippoddung.ribbit.ui.viewmodel.CreatingPostViewModel
 import com.hippoddung.ribbit.ui.viewmodel.EmailUiState
+import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.PWUiState
+import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,9 +34,9 @@ import javax.inject.Inject
 class MainActivity @Inject constructor() : ComponentActivity() {
     private val authViewModel: AuthViewModel by viewModels()
     private val tokenViewModel: TokenViewModel by viewModels()
-    private val creatingPostViewModel: CreatingPostViewModel by viewModels()
+    private val postingViewModel: PostingViewModel by viewModels()
     private val userViewModel: UserViewModel by viewModels()
-    private val cardViewModel: CardViewModel by viewModels()
+    private val getCardViewModel: GetCardViewModel by viewModels()
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,11 +50,11 @@ class MainActivity @Inject constructor() : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background    // 백그라운드 컬러가 아님, Theme에서 바꿔줘야 함.
                 ) {
                     RibbitApp(
-                        cardViewModel,
-                        authViewModel,
-                        tokenViewModel,
-                        creatingPostViewModel,
-                        userViewModel
+                        getCardViewModel = getCardViewModel,
+                        authViewModel = authViewModel,
+                        tokenViewModel = tokenViewModel,
+                        postingViewModel = postingViewModel,
+                        userViewModel = userViewModel
                     )
                 }
             }
@@ -123,7 +123,7 @@ class MainActivity @Inject constructor() : ComponentActivity() {
 
                 else -> {
                     Log.d("HippoLog, MainActivity", "유저정보 있는 경우")
-                    cardViewModel.getRibbitPosts()
+                    getCardViewModel.getRibbitPosts()
                     authViewModel.authUiState =
                         AuthUiState.Login   // myProfile 정보가 있으면 최종로그인이 된 것으로 보고 AuthUiState를 로그인으로 바꿔준다.
                 }

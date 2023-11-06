@@ -18,11 +18,19 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Repeat
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,9 +47,11 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.hippoddung.ribbit.R
 import com.hippoddung.ribbit.network.bodys.RibbitPost
+import com.hippoddung.ribbit.network.bodys.User
 import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.screens.carditems.RibbitCard
-import com.hippoddung.ribbit.ui.viewmodel.CardViewModel
+import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
+import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
 import com.hippoddung.ribbit.ui.viewmodel.ProfileUiState
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
@@ -50,16 +60,26 @@ import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 @Composable
 fun ProfilePostsGrid(
     posts: List<RibbitPost>,
-    cardViewModel: CardViewModel,
+    getCardViewModel: GetCardViewModel,
     userViewModel: UserViewModel,
+    postingViewModel: PostingViewModel,
     myId: Int,
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    val comparator = compareByDescending<RibbitPost> { it.id }
+    val comparator by remember { mutableStateOf(compareByDescending<RibbitPost> { it.id }) }
     var sortedRibbitPost = remember(posts, comparator) {
         posts.sortedWith(comparator)
     }   // LazyColumn items에 List를 바로 주는 것이 아니라 Comparator로 정렬하여 remember로 기억시켜서 recomposition을 방지하여 성능을 올린다.
+    val profileUser by remember {
+        if (userViewModel.profileUiState is ProfileUiState.Exist) {
+            // navigation 중 backstack으로 보내면서 재실행, state casting이 정상적으로 되지 않아 fatal error가 발생
+            // state check를 넣음
+            mutableStateOf((userViewModel.profileUiState as ProfileUiState.Exist).user)
+        } else {
+            mutableStateOf(User())
+        }
+    }
     LazyColumn(modifier = modifier) {
         item {
             Column(modifier = modifier) {
@@ -70,9 +90,9 @@ fun ProfilePostsGrid(
                 ) {
                     AsyncImage(
                         model = ImageRequest.Builder(context = LocalContext.current).data(
-                            if (userViewModel.profileUiState is ProfileUiState.Exist) {
-                                (userViewModel.profileUiState as ProfileUiState.Exist).user.backgroundImage?: "https://res.heraldm.com/content/image/2015/06/15/20150615000967_0.jpg"
-                            }else{}
+                            profileUser.backgroundImage
+                                ?: "https://res.heraldm.com/content/image/2015/06/15/20150615000967_0.jpg"
+
                         )
                             .crossfade(true).build(),
                         contentDescription = stringResource(R.string.user_image),
@@ -93,9 +113,9 @@ fun ProfilePostsGrid(
                     ) {
                         AsyncImage(
                             model = ImageRequest.Builder(context = LocalContext.current).data(
-                                if (userViewModel.profileUiState is ProfileUiState.Exist) {
-                                    (userViewModel.profileUiState as ProfileUiState.Exist).user.image?: "https://img.animalplanet.co.kr/news/2020/01/13/700/sfu2275cc174s39hi89k.jpg"
-                                }else{}
+                                profileUser.image
+                                    ?: "https://img.animalplanet.co.kr/news/2020/01/13/700/sfu2275cc174s39hi89k.jpg"
+
                             )
                                 .crossfade(true).build(),
                             contentDescription = stringResource(R.string.user_image),
@@ -106,43 +126,76 @@ fun ProfilePostsGrid(
                             error = painterResource(R.drawable.ic_broken_image),
                             contentScale = ContentScale.Crop,
                         )
-                        if (userViewModel.profileUiState is ProfileUiState.Exist) {
-                            // navigation 중 backstack으로 보내면서 재실행, state casting이 정상적으로 되지 않아 fatal error가 발생
-                            // state check를 넣음
+                        Box(
+                            modifier = modifier
+                                .fillMaxSize()
+                                .padding(4.dp)
+                        ) {
                             Box(
                                 modifier = modifier
-                                    .fillMaxSize()
-                                    .padding(4.dp)
+                                    .align(Alignment.BottomStart)
+                                    .wrapContentSize()
+                                    .padding(8.dp),
+                                contentAlignment = Alignment.Center
                             ) {
-                                Box(
+                                Text(
+                                    text = profileUser.email,
                                     modifier = modifier
-                                        .align(Alignment.BottomStart)
-                                        .wrapContentSize()
-                                        .padding(8.dp),
-                                    contentAlignment = Alignment.Center
+                                )
+                            }
+                            // 접근 Id와 프로필 Id가 일치할 경우 프로필수정버튼 활성화
+                            if (profileUser.id == userViewModel.myProfile.value?.id) {
+                                OutlinedButton(
+                                    onClick = {
+                                        navController.navigate(RibbitScreen.EditProfileScreen.name)
+                                    },
+                                    modifier = modifier.align(Alignment.BottomEnd)
                                 ) {
                                     Text(
-                                        text = (userViewModel.profileUiState as ProfileUiState.Exist).user.email,
+                                        text = "Edit Profile",
+                                        color = Color(0xFF006400),
+                                        fontSize = 14.sp,
                                         modifier = modifier
                                     )
                                 }
-                                if ((userViewModel.profileUiState as ProfileUiState.Exist).user.id == userViewModel.myProfile.value?.id) {  // 접근 Id와 프로필 Id가 일치할 경우 프로필수정버튼 활성화
+                            } else {    // 접근 Id와 프로필 Id가 다를 경우 follow, unFollow 버튼 활성화
+                                val isFollowed by remember { mutableStateOf(profileUser.followed) }
+                                var followed by remember { mutableStateOf(isFollowed) }
+                                if (!followed) {
                                     OutlinedButton(
                                         onClick = {
-                                            navController.navigate(RibbitScreen.EditProfileScreen.name)
+                                            profileUser.id?.let { userViewModel.putUserIdFollow(it) }
+                                            followed = true
                                         },
-                                        modifier = modifier.align(Alignment.BottomEnd),
+                                        modifier = modifier.align(Alignment.BottomEnd)
                                     ) {
                                         Text(
-                                            text = "Edit Profile",
+                                            text = "Follow",
+                                            color = Color(0xFF006400),
+                                            fontSize = 14.sp,
+                                            modifier = modifier
+                                        )
+                                    }
+                                } else {
+                                    OutlinedButton(
+                                        onClick = {
+                                            profileUser.id?.let { userViewModel.putUserIdFollow(it) }
+                                            followed = false
+                                        },
+                                        modifier = modifier.align(Alignment.BottomEnd)
+                                    ) {
+                                        Text(
+                                            text = "Unfollow",
                                             color = Color(0xFF006400),
                                             fontSize = 14.sp,
                                             modifier = modifier
                                         )
                                     }
                                 }
+
                             }
                         }
+
                     }
                 }
                 Spacer(modifier = modifier.height(20.dp))
@@ -154,7 +207,7 @@ fun ProfilePostsGrid(
                     TextButton(
                         onClick = {
                             userViewModel.myProfile.value?.id?.let {
-                                cardViewModel.getUserIdPosts(
+                                getCardViewModel.getUserIdPosts(
                                     userId = it
                                 )
                             }   // userViewModel의 user가 없는 경우 접근 자체가 불가능
@@ -172,7 +225,7 @@ fun ProfilePostsGrid(
                     TextButton(
                         onClick = {
                             userViewModel.myProfile.value?.id?.let {
-                                cardViewModel.getUserIdReplies(
+                                getCardViewModel.getUserIdReplies(
                                     userId = it
                                 )
                             }   // userViewModel의 user가 없는 경우 접근 자체가 불가능
@@ -204,7 +257,7 @@ fun ProfilePostsGrid(
                     TextButton(
                         onClick = {
                             userViewModel.myProfile.value?.id?.let {
-                                cardViewModel.getUserIdLikes(
+                                getCardViewModel.getUserIdLikes(
                                     userId = it
                                 )
                             }   // userViewModel의 user가 없는 경우 접근 자체가 불가능
@@ -236,10 +289,11 @@ fun ProfilePostsGrid(
         items(items = sortedRibbitPost, key = { post -> post.id }) { it ->
             RibbitCard(
                 post = it,
-                cardViewModel = cardViewModel,
+                getCardViewModel = getCardViewModel,
                 myId = myId,
                 navController = navController,
                 userViewModel = userViewModel,
+                postingViewModel = postingViewModel,
                 modifier = modifier
             )
         }

@@ -37,29 +37,29 @@ import com.hippoddung.ribbit.R
 import com.hippoddung.ribbit.network.bodys.RibbitPost
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
-import com.hippoddung.ribbit.ui.viewmodel.CardViewModel
+import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.PostReplyUiState
 import com.hippoddung.ribbit.ui.viewmodel.ReplyClickedUiState
 
 @Composable
 fun ReplyScreen(
     post: RibbitPost,
-    cardViewModel: CardViewModel,
+    getCardViewModel: GetCardViewModel,
     modifier: Modifier = Modifier
 ) {
-    when (cardViewModel.postReplyUiState) {
+    when (getCardViewModel.postReplyUiState) {
         is PostReplyUiState.Ready -> {
             Log.d("HippoLog, ReplyScreen", "Ready")
             InputReplyScreen(
                 post = post,
-                cardViewModel = cardViewModel,
+                getCardViewModel = getCardViewModel,
                 modifier = modifier
             )
         }
 
         is PostReplyUiState.Success -> {
             Log.d("HippoLog, ReplyScreen", "Success")
-            cardViewModel.postReplyUiState = PostReplyUiState.Ready
+            getCardViewModel.postReplyUiState = PostReplyUiState.Ready
         }
 
         is PostReplyUiState.Loading -> {
@@ -81,7 +81,7 @@ fun ReplyScreen(
 @Composable
 fun InputReplyScreen(
     post: RibbitPost,
-    cardViewModel: CardViewModel,
+    getCardViewModel: GetCardViewModel,
     modifier: Modifier = Modifier
 ) {
     var inputText by remember { mutableStateOf("") }
@@ -95,7 +95,7 @@ fun InputReplyScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = (stringResource(R.string.reply) + " to No.${cardViewModel.replyPostIdUiState}, ${post.user.email}"),
+            text = (stringResource(R.string.reply) + " to No.${getCardViewModel.replyPostIdUiState}, ${post.user?.email}"),
             fontSize = 16.sp,
             modifier = modifier
                 .padding(start = 28.dp, top = 28.dp, end = 0.dp, bottom = 0.dp)
@@ -159,7 +159,7 @@ fun InputReplyScreen(
         ) {
             Button(
                 onClick = {
-                    cardViewModel.replyClickedUiState = ReplyClickedUiState.NotClicked
+                    getCardViewModel.replyClickedUiState = ReplyClickedUiState.NotClicked
                 },
                 modifier = modifier
             ) {
@@ -170,13 +170,13 @@ fun InputReplyScreen(
             }
             Button(
                 onClick = {
-                    cardViewModel.replyPostIdUiState?.let {
-                        cardViewModel.postReply(
+                    getCardViewModel.replyPostIdUiState?.let {
+                        getCardViewModel.postReply(
                             inputText = inputText,
                             postId = it
                         )
                     }
-                    cardViewModel.replyClickedUiState = ReplyClickedUiState.NotClicked
+                    getCardViewModel.replyClickedUiState = ReplyClickedUiState.NotClicked
                 },
                 modifier = modifier
             ) {

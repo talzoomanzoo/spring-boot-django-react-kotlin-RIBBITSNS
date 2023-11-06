@@ -27,7 +27,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hippoddung.ribbit.R
-import com.hippoddung.ribbit.ui.viewmodel.CardViewModel
+import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.net.SocketTimeoutException
@@ -36,7 +36,7 @@ import java.net.SocketTimeoutException
 @Composable
 fun RibbitVideo(
     videoUrl: String,
-    cardViewModel: CardViewModel,
+    getCardViewModel: GetCardViewModel,
     modifier: Modifier
 ) {
     var isVideoPlayed by remember { mutableStateOf(false) }
@@ -47,7 +47,7 @@ fun RibbitVideo(
         // 해결을 위한 1회 실행 코드 삽입
         rememberCoroutineScope().launch(Dispatchers.IO) {
             try {
-                videoThumbnail = cardViewModel.retrieveThumbnailFromVideo(videoUrl).get()
+                videoThumbnail = getCardViewModel.retrieveThumbnailFromVideo(videoUrl).get()
                 Log.d("HippoLog, RibbitVideo", "cardViewModel.retrieveThumbnailFromVideo")
                 isCodeExecuted = true   // 여러 recomposition 중 성공시 정지하게 함.
             } catch (e: SocketTimeoutException) {

@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.hippoddung.ribbit.network.bodys.RibbitPost
 import com.hippoddung.ribbit.ui.screens.ReplyScreen
-import com.hippoddung.ribbit.ui.viewmodel.CardViewModel
+import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.ReplyClickedUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -34,7 +34,7 @@ import com.hippoddung.ribbit.ui.viewmodel.ReplyClickedUiState
 fun CardBottomBar(
     myId: Int,
     post: RibbitPost,
-    cardViewModel: CardViewModel,
+    getCardViewModel: GetCardViewModel,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -44,8 +44,8 @@ fun CardBottomBar(
     ) {
         IconButton(
             onClick = {
-                cardViewModel.replyPostIdUiState = post.id
-                cardViewModel.replyClickedUiState = ReplyClickedUiState.Clicked
+                getCardViewModel.replyPostIdUiState = post.id
+                getCardViewModel.replyClickedUiState = ReplyClickedUiState.Clicked
                 Log.d("HippLog, CardBottomBar", "replyButton")
             },
             content = {
@@ -72,11 +72,11 @@ fun CardBottomBar(
 
         val isRePosted by remember { mutableStateOf(post.retwitUsersId.contains(myId)) }
         var rePosted by remember { mutableStateOf(isRePosted) }
-        if (post.user.id != myId) {
+        if (post.user?.id != myId) {
             if (!rePosted) {
                 IconButton(
                     onClick = {
-                        cardViewModel.putPostIdRepost(post.id)
+                        getCardViewModel.putPostIdRepost(post.id)
                         rePosted = true
                     },
                     content = {
@@ -117,7 +117,7 @@ fun CardBottomBar(
             } else {
                 IconButton(
                     onClick = {
-                        cardViewModel.putPostIdRepost(post.id)
+                        getCardViewModel.putPostIdRepost(post.id)
                         rePosted = false
                     },
                     content = {
@@ -201,7 +201,7 @@ fun CardBottomBar(
         if (!isLiked) {
             IconButton(
                 onClick = {
-                    cardViewModel.postPostIdLike(post.id)
+                    getCardViewModel.postPostIdLike(post.id)
                     isLiked = true
                 },
                 content = {
@@ -242,7 +242,7 @@ fun CardBottomBar(
         } else {
             IconButton(
                 onClick = {
-                    cardViewModel.postPostIdLike(post.id)
+                    getCardViewModel.postPostIdLike(post.id)
                     isLiked = false
                 },
                 content = {
@@ -301,15 +301,15 @@ fun CardBottomBar(
             )
         }
     }
-    if (cardViewModel.replyClickedUiState is ReplyClickedUiState.Clicked) {
+    if (getCardViewModel.replyClickedUiState is ReplyClickedUiState.Clicked) {
         Dialog(
             onDismissRequest = {
-                cardViewModel.replyClickedUiState = ReplyClickedUiState.NotClicked
+                getCardViewModel.replyClickedUiState = ReplyClickedUiState.NotClicked
             },
             content = {
                 ReplyScreen(
                     post = post,
-                    cardViewModel = cardViewModel,
+                    getCardViewModel = getCardViewModel,
                     modifier = modifier
                 )
             }

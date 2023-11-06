@@ -10,4 +10,5 @@ class UserRepository @Inject constructor(
     suspend fun getMyProfile() = userApiService.getMyProfile()
     suspend fun getProfile(userId: Int) = userApiService.getProfile(userId)
     suspend fun putEditingProfile(user: User) = userApiService.putEditingProfile(user)
+    suspend fun putUserIdFollow(userId: Int) = userApiService.putUserIdFollow(userId)
 }

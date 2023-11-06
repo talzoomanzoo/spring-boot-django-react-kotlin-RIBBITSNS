@@ -21,8 +21,9 @@ import com.hippoddung.ribbit.ui.screens.screenitems.HomeTopAppBar
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
-import com.hippoddung.ribbit.ui.viewmodel.CardViewModel
+import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.GetUserIdPostsUiState
+import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
@@ -32,14 +33,15 @@ import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 fun ProfileMediasScreen(
 //    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
-    cardViewModel: CardViewModel,
+    getCardViewModel: GetCardViewModel,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
+    postingViewModel: PostingViewModel,
     myId: Int,
     modifier: Modifier
 ) {
-    when (cardViewModel.getUserIdPostsUiState) {
+    when (getCardViewModel.getUserIdPostsUiState) {
 
         is GetUserIdPostsUiState.Loading -> {
             Log.d("HippoLog, ProfileScreen", "Loading")
@@ -54,10 +56,11 @@ fun ProfileMediasScreen(
         is GetUserIdPostsUiState.Success -> {
             Log.d("HippoLog, ProfileScreen", "Success")
             ProfileMediasSuccessScreen(
-                cardViewModel = cardViewModel,
+                getCardViewModel = getCardViewModel,
                 authViewModel = authViewModel,
                 tokenViewModel = tokenViewModel,
                 userViewModel = userViewModel,
+                postingViewModel = postingViewModel,
 //                scrollBehavior = scrollBehavior,
                 navController = navController,
                 myId = myId,
@@ -72,10 +75,11 @@ fun ProfileMediasScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileMediasSuccessScreen(
-    cardViewModel: CardViewModel,
+    getCardViewModel: GetCardViewModel,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
+    postingViewModel: PostingViewModel,
 //    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
     myId: Int,
@@ -89,7 +93,7 @@ fun ProfileMediasSuccessScreen(
         // navigation 위(RibbitApp)에 있던 scrollBehavior을 navigation 하위에 있는 HomeScreen으로 옮겨서 해결.
         topBar = {
             HomeTopAppBar(
-                cardViewModel = cardViewModel,
+                getCardViewModel = getCardViewModel,
                 tokenViewModel = tokenViewModel,
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
@@ -105,8 +109,8 @@ fun ProfileMediasSuccessScreen(
                 .padding(it)
         ) {
             var posts by remember { mutableStateOf(listOf<RibbitPost>()) }
-            if (cardViewModel.getUserIdPostsUiState is GetUserIdPostsUiState.Success) {
-                posts = (cardViewModel.getUserIdPostsUiState as GetUserIdPostsUiState.Success).posts
+            if (getCardViewModel.getUserIdPostsUiState is GetUserIdPostsUiState.Success) {
+                posts = (getCardViewModel.getUserIdPostsUiState as GetUserIdPostsUiState.Success).posts
                 // navigation으로 ProfileScreen main으로 이동시 getUserIdPostsUiState 를 공유하는 현재 페이지를 백스택으로 넣으면서 문제가 발생.
                 // state check 를 추가.
             }
@@ -117,8 +121,9 @@ fun ProfileMediasSuccessScreen(
             }
             ProfilePostsGrid(
                 posts = userIdMedias,
-                cardViewModel = cardViewModel,
+                getCardViewModel = getCardViewModel,
                 userViewModel = userViewModel,
+                postingViewModel = postingViewModel,
                 myId = myId,
                 navController = navController,
                 modifier = modifier

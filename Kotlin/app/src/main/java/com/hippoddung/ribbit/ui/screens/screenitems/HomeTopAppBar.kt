@@ -30,7 +30,7 @@ import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.R
 import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
-import com.hippoddung.ribbit.ui.viewmodel.CardViewModel
+import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 import kotlinx.coroutines.launch
@@ -39,7 +39,7 @@ import kotlinx.coroutines.runBlocking
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeTopAppBar(
-    cardViewModel: CardViewModel,
+    getCardViewModel: GetCardViewModel,
     authViewModel: AuthViewModel,
     tokenViewModel: TokenViewModel,
     userViewModel: UserViewModel,
@@ -56,7 +56,7 @@ fun HomeTopAppBar(
                     TextButton(
                         onClick = {
                             navController.navigate(RibbitScreen.HomeScreen.name)
-                            cardViewModel.getRibbitPosts()
+                            getCardViewModel.getRibbitPosts()
                         },
                         modifier = modifier
                     ) {
@@ -72,11 +72,11 @@ fun HomeTopAppBar(
             navigationIcon = { MainDropDownMenu(navController, modifier) },
             actions = {
                 ProfileDropDownMenu(
-                    navController,
-                    tokenViewModel,
-                    authViewModel,
-                    cardViewModel,
-                    userViewModel,
+                    navController = navController,
+                    tokenViewModel = tokenViewModel,
+                    authViewModel = authViewModel,
+                    getCardViewModel = getCardViewModel,
+                    userViewModel = userViewModel,
                     modifier = modifier
                 )
             },
@@ -163,7 +163,7 @@ fun ProfileDropDownMenu(
     navController: NavHostController,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
-    cardViewModel: CardViewModel,
+    getCardViewModel: GetCardViewModel,
     userViewModel: UserViewModel,
     modifier: Modifier
 ) {
@@ -190,7 +190,7 @@ fun ProfileDropDownMenu(
         DropdownMenuItem(
             onClick = {
                 userViewModel.myProfile.value?.id?.let {
-                    cardViewModel.getUserIdPosts(userId = it)
+                    getCardViewModel.getUserIdPosts(userId = it)
                     userViewModel.getProfile(userId = it)
                 }   // userViewModel의 user가 없는 경우 접근 자체가 불가능
                 navController.navigate(RibbitScreen.ProfileScreen.name)

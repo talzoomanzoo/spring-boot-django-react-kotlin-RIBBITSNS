@@ -104,6 +104,18 @@ class UserViewModel @Inject constructor(
         }
     }
 
+    fun putUserIdFollow(userId: Int) {   // 얘도 이것 만으로 follow 와 unfollow 를 다 함.
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                userRepository.putUserIdFollow(userId)
+            } catch (e: IOException) {
+                Log.d("HippoLog, UserViewModel", "putUserIdFollow: ${e.stackTrace}, ${e.message}")
+            } catch (e: ExceptionInInitializerError) {
+                Log.d("HippoLog, UserViewModel", "putUserIdFollow: ${e.stackTrace}, ${e.message}")
+            }
+        }
+    }
+
     fun resetMyProfile() {
         myProfile.postValue(null)
         Log.d("HippoLog, UserViewModel", "유저정보 리셋")

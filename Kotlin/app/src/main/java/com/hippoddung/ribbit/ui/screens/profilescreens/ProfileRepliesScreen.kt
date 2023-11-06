@@ -16,8 +16,9 @@ import com.hippoddung.ribbit.ui.screens.screenitems.HomeTopAppBar
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
-import com.hippoddung.ribbit.ui.viewmodel.CardViewModel
+import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.GetUserIdRepliesUiState
+import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
@@ -27,14 +28,15 @@ import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 fun ProfileRepliesScreen(
 //    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
-    cardViewModel: CardViewModel,
+    getCardViewModel: GetCardViewModel,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
+    postingViewModel: PostingViewModel,
     myId: Int,
     modifier: Modifier
 ) {
-    when (cardViewModel.getUserIdRepliesUiState) {
+    when (getCardViewModel.getUserIdRepliesUiState) {
 
         is GetUserIdRepliesUiState.Loading -> {
             Log.d("HippoLog, ProfileRepliesScreen", "Loading")
@@ -49,10 +51,11 @@ fun ProfileRepliesScreen(
         is GetUserIdRepliesUiState.Success -> {
             Log.d("HippoLog, ProfileRepliesScreen", "Success")
             ProfileRepliesSuccessScreen(
-                cardViewModel = cardViewModel,
+                getCardViewModel = getCardViewModel,
                 authViewModel = authViewModel,
                 tokenViewModel = tokenViewModel,
                 userViewModel = userViewModel,
+                postingViewModel = postingViewModel,
 //                scrollBehavior = scrollBehavior,
                 navController = navController,
                 myId = myId,
@@ -67,10 +70,11 @@ fun ProfileRepliesScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileRepliesSuccessScreen(
-    cardViewModel: CardViewModel,
+    getCardViewModel: GetCardViewModel,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
+    postingViewModel: PostingViewModel,
 //    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
     myId: Int,
@@ -84,7 +88,7 @@ fun ProfileRepliesSuccessScreen(
         // navigation 위(RibbitApp)에 있던 scrollBehavior을 navigation 하위에 있는 HomeScreen으로 옮겨서 해결.
         topBar = {
             HomeTopAppBar(
-                cardViewModel = cardViewModel,
+                getCardViewModel = getCardViewModel,
                 tokenViewModel = tokenViewModel,
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
@@ -99,11 +103,12 @@ fun ProfileRepliesSuccessScreen(
                 .fillMaxSize()
                 .padding(it)
         ) {
-            Log.d("HippoLog, ProfileRepliesScreen", "posts: ${(cardViewModel.getUserIdRepliesUiState as GetUserIdRepliesUiState.Success).posts}")
+            Log.d("HippoLog, ProfileRepliesScreen", "posts: ${(getCardViewModel.getUserIdRepliesUiState as GetUserIdRepliesUiState.Success).posts}")
             ProfilePostsGrid(
-                posts = (cardViewModel.getUserIdRepliesUiState as GetUserIdRepliesUiState.Success).posts,
-                cardViewModel = cardViewModel,
+                posts = (getCardViewModel.getUserIdRepliesUiState as GetUserIdRepliesUiState.Success).posts,
+                getCardViewModel = getCardViewModel,
                 userViewModel = userViewModel,
+                postingViewModel = postingViewModel,
                 myId = myId,
                 navController = navController,
                 modifier = modifier

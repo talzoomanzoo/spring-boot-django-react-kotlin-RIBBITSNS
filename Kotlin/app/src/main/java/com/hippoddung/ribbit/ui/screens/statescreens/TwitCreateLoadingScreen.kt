@@ -19,11 +19,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.hippoddung.ribbit.ui.viewmodel.CreatingPostViewModel
+import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
 
 @Composable
 fun CreatingPostLoadingScreen(
-    creatingPostViewModel: CreatingPostViewModel,
+    postingViewModel: PostingViewModel,
     navController: NavHostController,
     modifier: Modifier
 ) {

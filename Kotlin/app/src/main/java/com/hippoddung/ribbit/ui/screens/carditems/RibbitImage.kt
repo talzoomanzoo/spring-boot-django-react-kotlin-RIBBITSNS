@@ -3,6 +3,7 @@ package com.hippoddung.ribbit.ui.screens.carditems
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
@@ -37,9 +38,7 @@ fun RibbitImage(
             contentScale = ContentScale.Fit,
             modifier = modifier
                 .padding(8.dp)
-                .clickable {
-
-                }
+                .height(300.dp)
         )
     }
 }

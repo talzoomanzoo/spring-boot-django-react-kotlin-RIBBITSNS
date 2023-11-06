@@ -25,9 +25,9 @@ import com.hippoddung.ribbit.ui.screens.screenitems.PostsGrid
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
-import com.hippoddung.ribbit.ui.viewmodel.CardViewModel
-import com.hippoddung.ribbit.ui.viewmodel.CreatingPostViewModel
+import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.HomeUiState
+import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
@@ -37,16 +37,16 @@ import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 fun HomeScreen(
 //    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
-    cardViewModel: CardViewModel,
+    getCardViewModel: GetCardViewModel,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
-    creatingPostViewModel: CreatingPostViewModel,
+    postingViewModel: PostingViewModel,
     myId: Int,
     onNavigateToCreatingPostScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    when (cardViewModel.homeUiState) {
+    when (getCardViewModel.homeUiState) {
 
         is HomeUiState.Loading -> {
             Log.d("HippoLog, HomeScreen", "Loading")
@@ -55,13 +55,13 @@ fun HomeScreen(
 
         is HomeUiState.Success -> {
             Log.d("HippoLog, HomeScreen", "Success")
-            val ribbitPosts = (cardViewModel.homeUiState as HomeUiState.Success).posts
+            val ribbitPosts = (getCardViewModel.homeUiState as HomeUiState.Success).posts
             HomeSuccessScreen(
-                cardViewModel = cardViewModel,
+                getCardViewModel = getCardViewModel,
                 authViewModel = authViewModel,
                 tokenViewModel = tokenViewModel,
                 userViewModel = userViewModel,
-                creatingPostViewModel = creatingPostViewModel,
+                postingViewModel = postingViewModel,
 //                scrollBehavior = scrollBehavior,
                 navController = navController,
                 ribbitPosts = ribbitPosts,
@@ -83,11 +83,11 @@ fun HomeScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeSuccessScreen(
-    cardViewModel: CardViewModel,
+    getCardViewModel: GetCardViewModel,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
-    creatingPostViewModel: CreatingPostViewModel,
+    postingViewModel: PostingViewModel,
 //    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
     ribbitPosts: List<RibbitPost>,
@@ -102,7 +102,7 @@ fun HomeSuccessScreen(
         // navigation 위(RibbitApp)에 있던 scrollBehavior을 navigation 하위에 있는 HomeScreen으로 옮겨서 해결.
         topBar = {
             HomeTopAppBar(
-                cardViewModel = cardViewModel,
+                getCardViewModel = getCardViewModel,
                 tokenViewModel = tokenViewModel,
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
@@ -120,8 +120,9 @@ fun HomeSuccessScreen(
             Box(modifier = modifier) {
                 PostsGrid(
                     posts = ribbitPosts,
-                    cardViewModel = cardViewModel,
+                    getCardViewModel = getCardViewModel,
                     userViewModel = userViewModel,
+                    postingViewModel = postingViewModel,
                     myId = myId,
                     navController = navController,
                     modifier = modifier

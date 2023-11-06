@@ -20,4 +20,9 @@ interface UserApiService {
     suspend fun putEditingProfile(
         @Body user: User
     ): User
+
+    @PUT("api/users/{userId}/follow")
+    suspend fun putUserIdFollow(
+        @Path("userId") userId: Int
+    ): User
 }

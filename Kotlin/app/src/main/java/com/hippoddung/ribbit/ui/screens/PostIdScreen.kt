@@ -29,8 +29,9 @@ import com.hippoddung.ribbit.ui.screens.screenitems.PostIdPostsGrid
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
-import com.hippoddung.ribbit.ui.viewmodel.CardViewModel
+import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.PostIdUiState
+import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
@@ -39,14 +40,15 @@ import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 fun PostIdScreen(
 //    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
-    cardViewModel: CardViewModel,
+    getCardViewModel: GetCardViewModel,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
+    postingViewModel: PostingViewModel,
     myId: Int,
     modifier: Modifier = Modifier
 ) {
-    when (cardViewModel.postIdUiState) {
+    when (getCardViewModel.postIdUiState) {
 
         is PostIdUiState.Loading -> {
             Log.d("HippoLog, PostIdScreen", "Loading")
@@ -55,12 +57,13 @@ fun PostIdScreen(
 
         is PostIdUiState.Success -> {
             Log.d("HippoLog, PostIdScreen", "Success")
-            val post = (cardViewModel.postIdUiState as PostIdUiState.Success).post
+            val post = (getCardViewModel.postIdUiState as PostIdUiState.Success).post
             PostIdSuccessScreen(
-                cardViewModel = cardViewModel,
+                getCardViewModel = getCardViewModel,
                 tokenViewModel = tokenViewModel,
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
+                postingViewModel = postingViewModel,
 //                scrollBehavior = scrollBehavior,
                 navController = navController,
                 post = post,
@@ -80,10 +83,11 @@ fun PostIdScreen(
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "RememberReturnType")
 @Composable
 fun PostIdSuccessScreen(
-    cardViewModel: CardViewModel,
+    getCardViewModel: GetCardViewModel,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
+    postingViewModel: PostingViewModel,
 //    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
     post: RibbitPost,
@@ -92,7 +96,7 @@ fun PostIdSuccessScreen(
 ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreen = RibbitScreen.valueOf(backStackEntry?.destination?.route ?: RibbitScreen.HomeScreen.name)
-    cardViewModel.setCurrentScreen(currentScreen)
+    getCardViewModel.setCurrentScreen(currentScreen)
     Scaffold(
         modifier = modifier,
 //        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -100,7 +104,7 @@ fun PostIdSuccessScreen(
         // navigation 위(RibbitApp)에 있던 scrollBehavior을 navigation 하위에 있는 HomeScreen으로 옮겨서 해결.
         topBar = {
             HomeTopAppBar(
-                cardViewModel = cardViewModel,
+                getCardViewModel = getCardViewModel,
                 tokenViewModel = tokenViewModel,
                 userViewModel = userViewModel,
                 authViewModel = authViewModel,
@@ -120,8 +124,9 @@ fun PostIdSuccessScreen(
                     PostIdPostsGrid(
                         post = post,
                         posts = post.replyTwits as List<RibbitPost>,    // Null or Empty check를 하였음에도 컴파일오류가 계속되어 강제 캐스팅함.
-                        cardViewModel = cardViewModel,
+                        getCardViewModel = getCardViewModel,
                         userViewModel = userViewModel,
+                        postingViewModel = postingViewModel,
                         myId = myId,
                         navController = navController,
                         modifier = modifier
@@ -129,10 +134,11 @@ fun PostIdSuccessScreen(
                 } else {    // lazyColumn이 차지하는 리소스를 줄이기위해 댓글이 없는 경우 바로 보여주는 방식 채택
                     RibbitCard(
                         post = post,
-                        cardViewModel = cardViewModel,
+                        getCardViewModel = getCardViewModel,
+                        userViewModel = userViewModel,
+                        postingViewModel = postingViewModel,
                         myId = myId,
                         navController = navController,
-                        userViewModel = userViewModel,
                         modifier = modifier
                     )
                 }

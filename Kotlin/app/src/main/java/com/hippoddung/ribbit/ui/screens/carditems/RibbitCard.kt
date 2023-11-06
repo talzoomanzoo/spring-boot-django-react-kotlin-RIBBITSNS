@@ -29,7 +29,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.hippoddung.ribbit.network.bodys.RibbitPost
 import com.hippoddung.ribbit.ui.RibbitScreen
-import com.hippoddung.ribbit.ui.viewmodel.CardViewModel
+import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
+import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
 import com.hippoddung.ribbit.ui.viewmodel.ProfileUiState
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
@@ -39,8 +40,9 @@ import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 @Composable
 fun RibbitCard(
     post: RibbitPost,
-    cardViewModel: CardViewModel,
+    getCardViewModel: GetCardViewModel,
     userViewModel: UserViewModel,
+    postingViewModel: PostingViewModel,
     myId: Int,
     navController: NavHostController,
     modifier: Modifier
@@ -52,7 +54,7 @@ fun RibbitCard(
     Card(
         onClick = {
             Log.d("HippoLog, RibbitCard", "Card: ${post.id}")
-            cardViewModel.getPostIdPost(post.id)    // 뷰 카운트 + 호출을 getPostIdPost메소드에서 실행하도록 함.
+            getCardViewModel.getPostIdPost(post.id)    // 뷰 카운트 + 호출을 getPostIdPost메소드에서 실행하도록 함.
             navController.navigate(RibbitScreen.PostIdScreen.name)
         },
         shape = MaterialTheme.shapes.extraSmall,
@@ -67,7 +69,7 @@ fun RibbitCard(
         Column(modifier = modifier) {
             if (currentScreen == RibbitScreen.ProfileScreen) {
                 if (userViewModel.profileUiState is ProfileUiState.Exist) {
-                    if ((userViewModel.profileUiState as ProfileUiState.Exist).user.id != post.user.id) {
+                    if ((userViewModel.profileUiState as ProfileUiState.Exist).user.id != post.user?.id) {
                         Row(
                             modifier = modifier,
                             verticalAlignment = Alignment.CenterVertically
@@ -90,8 +92,9 @@ fun RibbitCard(
             }
             CardTopBar(
                 post = post,
-                cardViewModel = cardViewModel,
+                getCardViewModel = getCardViewModel,
                 userViewModel = userViewModel,
+                postingViewModel = postingViewModel,
                 myId = myId,
                 navController = navController,
                 modifier = modifier
@@ -104,7 +107,7 @@ fun RibbitCard(
             )
             if (post.image != null) {
                 RibbitImage(
-                    image = post.image,
+                    image = post.image!!,
                     modifier = modifier
                 )
             }
@@ -112,15 +115,15 @@ fun RibbitCard(
             if (post.video != null) {
                 Log.d("HippoLog, RibbitCard", "RibbitVideo")
                 RibbitVideo(
-                    videoUrl = post.video,
-                    cardViewModel = cardViewModel,
+                    videoUrl = post.video!!,
+                    getCardViewModel = getCardViewModel,
                     modifier = modifier
                 )
             }
             CardBottomBar(
                 myId = myId,
                 post = post,
-                cardViewModel = cardViewModel
+                getCardViewModel = getCardViewModel
             )
             Canvas(
                 modifier = modifier,
