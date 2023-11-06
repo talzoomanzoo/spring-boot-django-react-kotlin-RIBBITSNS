@@ -32,9 +32,7 @@ const style = {
 const ComModel = ({ handleClose, open }) => {
     const [uploading, setUploading] = useState(false);
     const dispatch = useDispatch();
-    const [search, setSearch] = useState("");
     const navigate = useNavigate();
-    const { list, theme, auth } = useSelector((store) => store);
     const [backgroundImage, setBackgroundImage] = useState("");
     const [comName, setComName] = useState("");
     const [description, setDescription] = useState("");

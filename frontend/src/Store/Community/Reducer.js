@@ -11,6 +11,9 @@ import {
     ADD_USER_REQUEST,
     ADD_USER_SUCCESS,
     ADD_USER_FAILURE,
+    GET_USER_REQUEST,
+    GET_USER_SUCCESS,
+    GET_USER_FAILURE,
 } from "./ActionType";
 
 const initialState = {
@@ -27,6 +30,7 @@ const comReducer = (state = initialState, action) => {
     ) {
         case COM_CREATE_REQUEST:
         case GET_COMS_REQUEST:
+        case GET_USER_REQUEST:
         case UPDATE_COM_REQUEST:
             return {
                 ...state,
@@ -67,8 +71,16 @@ const comReducer = (state = initialState, action) => {
                 com: action.payload,
                 error: null,
             };
+        case GET_USER_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                com: action.payload,
+                error: null,
+            }
         case COM_CREATE_FAILURE:
         case GET_COMS_FAILURE:
+        case GET_USER_FAILURE:
         case UPDATE_COM_FAILURE:
         case ADD_USER_FAILURE:
         default:

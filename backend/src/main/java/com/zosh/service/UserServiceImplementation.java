@@ -26,7 +26,6 @@ public class UserServiceImplementation implements UserService {
 	private final ComRepository comRepository;
 	private final JwtProvider jwtProvider;
 
-	@Autowired
 	public UserServiceImplementation(
 			UserRepository userRepository,
 			ListRepository listRepository,
