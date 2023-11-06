@@ -32,4 +32,6 @@ public class ComDto {
 	private boolean privateMode;
 	
 	private List<User> followingsc = new ArrayList<>();
+	
+	private List<User> followingscReady = new ArrayList<>();
 }

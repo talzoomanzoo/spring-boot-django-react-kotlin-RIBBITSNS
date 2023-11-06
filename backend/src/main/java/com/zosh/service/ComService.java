@@ -18,4 +18,6 @@ public interface ComService {
 	public Community findById(Long comId) throws ComException;
 	
 	public Community editCom(Community req, User user) throws ComException, UserException;
+	
+	public Community addUserSignUp(Long comId, User user) throws ComException, UserException;
 }

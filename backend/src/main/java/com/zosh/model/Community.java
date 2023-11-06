@@ -50,4 +50,8 @@ public class Community {
 	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.DETACH)
 	private List<User> followingsc = new ArrayList<>();
+	
+	@JsonIgnore
+	@ManyToMany(cascade = CascadeType.DETACH)
+	private List<User> followingscReady = new ArrayList<>();
 }

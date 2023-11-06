@@ -89,4 +89,18 @@ public class ComServiceImplementation implements ComService{
 		return community;
 	}
 
+	@Override
+	public Community addUserSignUp(Long comId, User user) throws ComException, UserException {
+		// TODO Auto-generated method stub
+		Community community = findById(comId);
+		User followToUser = findUserById(user.getId());
+		if (community.getFollowingscReady().contains(followToUser)) {
+			community.getFollowingsc().remove(followToUser);
+		} else {
+			community.getFollowingscReady().add(followToUser);
+		}
+		comRepository.save(community);
+		return community;
+	}
+
 }
