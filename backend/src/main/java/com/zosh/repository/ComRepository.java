@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.zosh.model.Community;
+import com.zosh.model.Twit;
 
 public interface ComRepository extends JpaRepository<Community, Long>{
 	

@@ -42,6 +42,8 @@ public class TwitDto {
     
     private boolean isRetwit;
     
+    private boolean isCom;
+    
     private boolean isReply;
 
 	private String location;

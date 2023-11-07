@@ -47,7 +47,10 @@ import {
   USER_LIKE_TWEET_SUCCESS,
   VIEW_PLUS_FAILURE,
   VIEW_PLUS_REQUEST,
-  VIEW_PLUS_SUCCESS
+  VIEW_PLUS_SUCCESS,
+  FIND_TWEET_BY_COM_ID_REQUEST,
+  FIND_TWEET_BY_COM_ID_SUCCESS,
+  FIND_TWEET_BY_COM_ID_FAILURE,
 } from "./ActionType";
 
 export const createTweetRequest = () => ({
@@ -224,6 +227,18 @@ export const findTwitsByListId = (listId) => {
       dispatch({type:FIND_TWEET_BY_LIST_ID_FAILURE,payload:error.message});
     }
   }
+};
+
+export const findTwitsByComId = (comId)  => {
+  return async (dispatch) => {
+      dispatch({type: FIND_TWEET_BY_COM_ID_REQUEST})
+      try {
+        const response = await api.get(`/api/twits/${comId}/comTwit`);
+        dispatch({type:FIND_TWEET_BY_COM_ID_SUCCESS,payload:response.data});
+      } catch (error) {
+        dispatch({type:FIND_TWEET_BY_COM_ID_FAILURE,payload:error.message});
+      }
+    }
 };
 
 export const createTweet = (tweetData) => {

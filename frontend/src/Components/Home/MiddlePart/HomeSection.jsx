@@ -91,6 +91,7 @@ const HomeSection = () => {
     setSelectedImage("");
     setSelectedVideo("");
     handleCloseEmoji();
+    window.location.reload();
   };
 
   const ethicreveal = async (twitid, twitcontent) => {
@@ -190,6 +191,7 @@ const HomeSection = () => {
                   name="content"
                   placeholder="뭔 일 있음?"
                   className={`border-none outline-none text-xl bg-transparent`}
+                  size="50"
                   {...formik.getFieldProps("content")}
                 />
                 {formik.errors.content && formik.touched.content && (

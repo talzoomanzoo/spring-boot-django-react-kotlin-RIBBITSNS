@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.zosh.dto.TwitDto;
 import com.zosh.dto.mapper.TwitDtoMapper;
+import com.zosh.exception.ComException;
 import com.zosh.exception.ListException;
 import com.zosh.exception.TwitException;
 import com.zosh.exception.UserException;
@@ -176,7 +177,7 @@ public class TwitController {
 		return new ResponseEntity<List<TwitDto>>(twitDtos,HttpStatus.OK);
 	}
 
-	@PostMapping({"/{twitId}/count"})
+	@PostMapping("/{twitId}/count")
 	public ResponseEntity<TwitDto> count(@PathVariable Long twitId, @RequestHeader("Authorization") String jwt) throws Exception {
 		User user = userService.findUserProfileByJwt(jwt);
 		Twit twit = twitService.findById(twitId);
@@ -228,4 +229,13 @@ public class TwitController {
 		List<TwitDto> twitDtos=TwitDtoMapper.toTwitDtos(twits,user);
 		return new ResponseEntity<List<TwitDto>>(twitDtos,HttpStatus.OK);
 	}
+	
+	@GetMapping("/{comId}/comTwit")
+	public ResponseEntity<List<TwitDto>> findTwitsByComId(@RequestHeader("Authorization") String jwt,
+			@PathVariable Long comId) throws ComException, UserException,TwitException{
+		User user = userService.findUserProfileByJwt(jwt);
+		List<Twit> twits = twitService.findTwitsByComId(comId);
+		List<TwitDto> twitDtos= TwitDtoMapper.toTwitDtos(twits, user);
+		return new ResponseEntity<List<TwitDto>>(twitDtos, HttpStatus.OK);
+		}
 }
