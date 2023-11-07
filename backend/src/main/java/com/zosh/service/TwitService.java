@@ -2,6 +2,7 @@ package com.zosh.service;
 
 import java.util.List;
 
+import com.zosh.exception.ComException;
 import com.zosh.exception.ListException;
 import com.zosh.exception.TwitException;
 import com.zosh.exception.UserException;
@@ -52,4 +53,6 @@ public interface TwitService {
 	public List<Twit> findTwitsByTopLike() throws UserException, TwitException;
 
 	public List<Twit> findTwitsByTopView() throws UserException, TwitException;
+
+	public List<Twit> findTwitsByComId(Long comId) throws ComException;
 }

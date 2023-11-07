@@ -12,7 +12,7 @@ import ComCard from "./ComCard";
 const Communities = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { com, list } = useSelector((store) => store);
+    const { com } = useSelector((store) => store);
     const handleBack = () => {
         navigate(-1);
     };
@@ -41,10 +41,10 @@ const Communities = () => {
                     </h1>
                 </div>
                 <div
-                    className="absolute right-0 cursor-pointer" // 오른쪽 정렬, 클릭 커서
+                    className="flex items-center absolute right-0 cursor-pointer" // 오른쪽 정렬, 클릭 커서
                     onClick={handleOpenComModel} //커뮤니티 추가
-                >
-                    <GroupAddIcon />
+                >커뮤니티 추가<GroupAddIcon/>
+                
                 </div>
             </section>
 

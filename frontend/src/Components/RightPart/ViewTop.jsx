@@ -18,9 +18,9 @@ const ViewTop = () => {
 
     return (
         <div>
-            {twit.topViewsTwits && twit.topViewsTwits.length > 0 ?
+            {twit?.topViewsTwits && twit.topViewsTwits?.length > 0 ?
                 (
-                    twit.topViewsTwits.map((item) => <TwitCard twit={item} key={item.id} />)
+                    twit.topViewsTwits?.map((item) => <TwitCard twit={item} key={item.id} />)
                 ) :
                 (
                     <div>게시된 리빗이 없습니다.</div>
