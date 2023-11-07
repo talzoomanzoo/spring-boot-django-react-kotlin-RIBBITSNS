@@ -97,7 +97,7 @@ const ComModel = ({ handleClose, open }) => {
                             <Button type="submit">저장</Button>
                         </div>
 
-                        <div className="customeScrollbar overflow-y-scroll  overflow-x-hidden h-[80vh]">
+                        <div className="customeScrollbar overflow-y-scroll hideScrollbar overflow-x-hidden h-[58vh]">
                             <div className="">
                                 <div className="w-full">
                                     <div className="relative">
@@ -171,8 +171,8 @@ const ComModel = ({ handleClose, open }) => {
                                             marginTop: 10,
                                             marginRight: 20,
                                         }}
-                                        trackColor={{ false: "#767577", true: "#81b0ff" }}
-                                        thumbColor={formik.values.privateMode ? "#f5dd4b" : "#f4f3f4"}
+                                        trackColor={{ false: "#767577", true: "#36d916" }}
+                                        // thumbColor={formik.values.privateMode ? "#f5dd4b" : "#f4f3f4"}
                                         ios_backgroundColor="#3e3e3e"
                                         //onValueChange={toggleSwitch}
                                         //value={isEnabled}

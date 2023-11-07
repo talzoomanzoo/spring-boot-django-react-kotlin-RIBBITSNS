@@ -40,7 +40,7 @@ const Lists = () => {
                     className="absolute right-0 cursor-pointer" // 오른쪽 정렬, 클릭 커서
                     onClick={handleOpenListsModel} //리스트 추가
                 >
-                    <PlaylistAddIcon />
+                    <PlaylistAddIcon /> 리스트 추가
                 </div>
             </section>
 
