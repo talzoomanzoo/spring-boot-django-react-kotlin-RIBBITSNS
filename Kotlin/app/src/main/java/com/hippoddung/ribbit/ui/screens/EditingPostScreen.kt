@@ -9,6 +9,7 @@ import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -43,30 +44,30 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.R
 import com.hippoddung.ribbit.network.bodys.RibbitPost
-import com.hippoddung.ribbit.network.bodys.User
 import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.screens.carditems.RibbitImage
 import com.hippoddung.ribbit.ui.screens.carditems.RibbitVideo
-import com.hippoddung.ribbit.ui.screens.screenitems.InputTextField
+import com.hippoddung.ribbit.ui.screens.textfielditems.InputTextField
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.EditingPostUiState
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
-import com.hippoddung.ribbit.ui.viewmodel.ProfileUiState
 import java.io.File
 
+@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun EditingPostScreen(
-    postingViewModel: PostingViewModel,
     getCardViewModel: GetCardViewModel,
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
+    val postingViewModel: PostingViewModel = hiltViewModel()
     when (postingViewModel.editingPostUiState) {
         is EditingPostUiState.Ready -> {
             Log.d("HippoLog, EditingPostScreen", "Ready")
@@ -97,6 +98,7 @@ fun EditingPostScreen(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun EditPostScreen(
     navController: NavHostController,
@@ -258,7 +260,8 @@ fun EditPostScreen(
                     postingViewModel.editPost(
                         image = bitmap.value,
                         videoFile = videoFile,
-                        inputText = inputText
+                        inputText = inputText,
+                        edited = true
                     )
                 },
                 modifier = modifier.padding(14.dp)

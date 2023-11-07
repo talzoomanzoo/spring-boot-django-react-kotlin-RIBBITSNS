@@ -1,4 +1,4 @@
-package com.hippoddung.ribbit.ui.screens
+package com.hippoddung.ribbit.ui.screens.listscreens
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.VideoLibrary
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -47,72 +48,68 @@ import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.screens.textfielditems.InputTextField
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
+import com.hippoddung.ribbit.ui.viewmodel.CreatingListUiState
 import com.hippoddung.ribbit.ui.viewmodel.CreatingPostUiState
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
+import com.hippoddung.ribbit.ui.viewmodel.ListViewModel
 import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
+import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 import java.io.File
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun CreatingPostScreen(
-    getCardViewModel: GetCardViewModel,
+fun CreatingListScreen(
+    listViewModel: ListViewModel,
+    userViewModel: UserViewModel,
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    val postingViewModel: PostingViewModel = hiltViewModel()
-    when (postingViewModel.creatingPostUiState) {
-        is CreatingPostUiState.Ready -> {
-            Log.d("HippoLog, CreatingPostScreen", "Ready")
-            InputPostScreen(
+    when (listViewModel.creatingListUiState) {
+        is CreatingListUiState.Ready -> {
+            Log.d("HippoLog, CreatingListScreen", "Ready")
+            InputListScreen(
                 navController = navController,
-                postingViewModel = postingViewModel,
-//                cardViewModel = cardViewModel,
+                listViewModel = listViewModel,
+                userViewModel = userViewModel,
                 modifier = modifier
             )
         }
 
-        is CreatingPostUiState.Success -> {
-            Log.d("HippoLog, CreatingPostScreen", "Success")
-            getCardViewModel.getRibbitPosts()
-            navController.navigate(RibbitScreen.HomeScreen.name)
-            postingViewModel.creatingPostUiState = CreatingPostUiState.Ready
+        is CreatingListUiState.Success -> {
+            Log.d("HippoLog, CreatingListScreen", "Success")
+            navController.navigate(RibbitScreen.ListScreen.name)
+            listViewModel.creatingListUiState = CreatingListUiState.Ready
         }
 
-        is CreatingPostUiState.Loading -> {
-            Log.d("HippoLog, CreatingPostScreen", "Loading")
+        is CreatingListUiState.Loading -> {
+            Log.d("HippoLog, CreatingListScreen", "Loading")
             LoadingScreen(modifier = modifier)
         }
 
-        is CreatingPostUiState.Error -> {
-            Log.d("HippoLog, CreatingPostScreen", "Error")
+        is CreatingListUiState.Error -> {
+            Log.d("HippoLog, CreatingListScreen", "Error")
             ErrorScreen(modifier = modifier)
         }
     }
 }
 
 @Composable
-fun InputPostScreen(
+fun InputListScreen(
     navController: NavHostController,
-    postingViewModel: PostingViewModel,
-//    cardViewModel: CardViewModel,
+    listViewModel: ListViewModel,
+    userViewModel: UserViewModel,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    var inputText by remember { mutableStateOf("") }
+    var inputListName by remember { mutableStateOf("") }
+    var inputListInfo by remember { mutableStateOf("") }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
-    var videoUri by remember { mutableStateOf<Uri?>(null) }
     val bitmap = remember { mutableStateOf<Bitmap?>(null) }
-    var videoAbsolutePath by remember { mutableStateOf<String?>(null) }
-    var videoFile by remember { mutableStateOf<File?>(null) }
 
     val imageLauncher = rememberLauncherForActivityResult(
         contract =
         ActivityResultContracts.GetContent()
     ) { uri: Uri? -> imageUri = uri }
-    val videoLauncher = rememberLauncherForActivityResult(
-        contract =
-        ActivityResultContracts.GetContent()
-    ) { uri: Uri? -> videoUri = uri }
 
     Column(
         modifier = modifier
@@ -122,15 +119,24 @@ fun InputPostScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = stringResource(R.string.create_ribbit),
+            text = stringResource(R.string.create_list),
             color = Color.Black,
             modifier = modifier
                 .padding(bottom = 16.dp)
                 .align(alignment = Alignment.Start)
         )
-        InputTextField(
-            value = inputText,
-            onValueChange = { inputText = it },
+        TextField(
+            value = inputListName,
+            onValueChange = { inputListName = it },
+            label = {Text(text = "List Name", modifier = modifier)},
+            modifier = modifier
+                .padding(bottom = 32.dp)
+                .fillMaxWidth()
+        )
+        TextField(
+            value = inputListInfo,
+            onValueChange = { inputListInfo = it },
+            label = {Text(text = "List Information", modifier = modifier)},
             modifier = modifier
                 .padding(bottom = 32.dp)
                 .fillMaxWidth()
@@ -147,7 +153,6 @@ fun InputPostScreen(
                             .createSource(context.contentResolver, it)
                         bitmap.value = ImageDecoder.decodeBitmap(source)
                     }
-
                     bitmap.value?.let { btm ->
                         Image(
                             bitmap = btm.asImageBitmap(),
@@ -159,21 +164,7 @@ fun InputPostScreen(
                 }
             }
         }
-        if (videoUri != null) {
-            videoAbsolutePath = postingViewModel.getFilePathFromUri(context, videoUri!!)
-            videoFile = videoAbsolutePath?.let { File(it) }
-            Row(modifier = modifier) {
-                Icon(
-                    imageVector = Icons.Default.VideoLibrary,
-                    contentDescription = "Video Uri",
-                    modifier = modifier.padding(8.dp)
-                )
-                Text(
-                    text = videoFile!!.name,
-                    modifier = modifier.padding(8.dp)
-                )
-            }
-        }
+
         Row(modifier = modifier) {
             Button(
                 onClick = { imageLauncher.launch("image/*") },
@@ -185,20 +176,10 @@ fun InputPostScreen(
                     modifier = modifier
                 )
             }
-            Button(
-                onClick = { videoLauncher.launch("video/*") },
-                modifier = modifier.padding(14.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.OndemandVideo,
-                    contentDescription = "Pick Video button.",
-                    modifier = modifier
-                )
-            }
         }
         Row(modifier = modifier) {
             Button(
-                onClick = { navController.navigate(RibbitScreen.HomeScreen.name) },
+                onClick = { navController.navigate(RibbitScreen.ListScreen.name) },
                 modifier = modifier.padding(14.dp)
             ) {
                 Text(
@@ -208,10 +189,11 @@ fun InputPostScreen(
             }
             Button(
                 onClick = {
-                    postingViewModel.createPost(
-                        image = bitmap.value,
-                        videoFile = videoFile,
-                        inputText = inputText
+                    listViewModel.createList(
+                        listName = inputListName,
+                        listInfo = inputListInfo,
+                        listBackgroundImage = bitmap.value,
+                        user = userViewModel.myProfile.value
                     )
                 },
                 modifier = modifier.padding(14.dp)
