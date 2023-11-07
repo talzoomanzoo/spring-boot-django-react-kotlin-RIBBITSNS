@@ -38,6 +38,7 @@ public class EthicController {
 			@RequestHeader("Authorization") String jwt) throws UserException, TwitException{
 		
 		User user=userService.findUserProfileByJwt(jwt);
+		System.out.println("UserL: "+user.getFullName());
 		
 		String url = "http://localhost:8000/ethic/";
 		RestTemplate restTemplate = new RestTemplate();

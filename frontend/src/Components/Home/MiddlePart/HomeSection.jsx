@@ -58,7 +58,7 @@ const HomeSection = () => {
 
   useEffect(() => {
     dispatch(getAllTweets());
-  }, [dispatch]);
+  }, [refreshTwits]);
 
   const handleToggleLocationForm = () => {
     setLocationFormOpen((prev) => !prev);
