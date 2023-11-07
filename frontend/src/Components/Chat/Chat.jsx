@@ -38,23 +38,9 @@ const Chat = () => {
     console.log("stoconnect: ",stoconnect);
   }, []);
 
-  // Subscribe to chat topic
-  useEffect(() => {
-    if (stompClient) {
-      stompClient.subscribe('/topic/chat', (message) => {
-        // Handle incoming messages (e.g., chat history)
-        const chatMessage = JSON.parse(message.body);
-        // Update chatHistory state with new message
-        setChatHistory((prevChatHistory) => [...prevChatHistory, chatMessage]);
-        console.log("chatMessage: ",chatMessage);
-      });
-      console.log("stompCLient: ",stompClient);
-    }
-  }, [stompClient]);
-
   const createRoom = () => {
     // Send a request to create a chat room
-    axios.post('http://localhost:8080/chat/createroom', {
+    axios.post('http://localhost:8080/createroom', {
       name: roomName,
     })
     .then((response) => {
@@ -69,7 +55,7 @@ const Chat = () => {
 
   // Function to fetch chat rooms
   const fetchChatRooms = () => {
-    axios.get('http://localhost:8080/chat/allrooms')
+    axios.get('http://localhost:8080/allrooms')
       .then((response) => {
         if (response.status === 200) {
           setChatRooms(response.data);
@@ -82,51 +68,62 @@ const Chat = () => {
 
   // Function to enter a chat room
   const enterChatRoom = (roomId, sender) => {
-    console.log("roomid: ",roomId);
-    console.log("sender: ",sender);
-    const enterconnect = stompClient.connect({}, () => {
-      // WebSocket 연결이 성공하면 실행
-      const enterresponse = stompClient.send('/app/chat/enter', {}, JSON.stringify({
-        type: 'ENTER',
-        roomId: roomId,
-        sender: sender,
-      }));
-      console.log("enterresponse: ",enterresponse);
-      
-      const topicresponse = stompClient.subscribe('/topic/' + roomId, (message) => {
-        // 서버에서 받은 메시지 처리
-        const response = JSON.parse(message.body);
-        console.log("enterchat: ",response);
+    // Fetch chat history for the room
+    axios.post('http://localhost:8080/getchat', roomId, {
+      headers: {
+        'Content-Type': 'text/plain', // 명시적으로 텍스트 형식을 전송한다는 것을 설정
+      },
+    })
+      .then((response) => {
         if (response.status === 200) {
           setChatHistory(response.data);
-          setSelectedRoom(roomId);
+          console.log("enter: ", response.data);
         }
+      })
+      .catch((error) => {
+        // Handle error
       });
-      console.log("topicresponse: ",topicresponse);
-
-    });
-    console.log("enterconnect: ",enterconnect);
-    setModalIsOpen(true); // Open the chat modal
+  
+    // Open the chat modal
+    setSelectedRoom(roomId);
+    setModalIsOpen(true);
   };
 
   // Function to send a chat message
   const sendMessage = () => {
-    // Send a chat message
-    axios.post('http://localhost:8080/chat/savechat', {
-      type: 'TALK',
-      roomId: selectedRoom,
-      sender: sender,
-      message: message,
-    })
-    .then((response) => {
-      if (response.status === 201) {
-        setMessage(''); // Clear the input field
-      }
-    })
-    .catch((error) => {
-      // Handle error
-    });
-  };
+    if (stompClient) {
+      // 보낼 메시지 객체 생성
+      const chatMessage = {
+        type: "TALK",
+        roomId: selectedRoom,
+        sender: sender,
+        message: message,
+      };
+      console.log("chatmessage: ",chatMessage);
+      
+      // WebSocket을 통해 메시지 전송
+      stompClient.send(`/app/savechat/${selectedRoom}`, {}, JSON.stringify(chatMessage));
+      
+      setMessage(''); // 입력 필드 초기화
+    } else {
+      // stompClient가 없을 때 처리
+      console.error("WebSocket connection is not established.");
+    }
+  }
+
+  useEffect(() => {
+    if (stompClient && selectedRoom) {
+      const subscription = stompClient.subscribe(`/topic/${selectedRoom}`, (message) => {
+        const chatMessage = JSON.parse(message.body);
+        console.log("chatMessage: ",chatMessage);
+        setChatHistory((prevChatHistory) => [...prevChatHistory, chatMessage]);
+      });
+      
+      return () => {
+        subscription.unsubscribe();
+      };
+    }
+  }, [stompClient, selectedRoom]);
 
   // Fetch chat rooms when the component mounts
   useEffect(() => {
@@ -147,7 +144,7 @@ const Chat = () => {
       <ul>
         {chatRooms.length > 0 ? (
             chatRooms.map((room) => (
-            <li key={room.roomId} onClick={() => enterChatRoom(room.roomId, sender)}>
+            <li key={room.roomId} onClick={() => enterChatRoom(room.roomId, "sender")}>
                 {room.name}
             </li>
             ))
@@ -162,15 +159,17 @@ const Chat = () => {
         style={customStyles}
       >
         <h2>Chat Room: {selectedRoom}</h2>
-        <ul>
-            {chatHistory.length > 0 ? (
-                chatHistory.map((chat) => (
-                <li key={chat.id}>{chat.sender}: {chat.message}</li>
-                ))
-            ) : (
-                <li>아직 채팅 내역이 없습니다</li>
-            )}
-        </ul>
+        <div>
+          {chatHistory.length > 0 ? (
+            chatHistory.map((chat) => (
+              <div key={chat.id}>
+                <span>{chat.sender}: {chat.message}</span>
+              </div>
+            ))
+          ) : (
+            <div>아직 채팅 내역이 없습니다</div>
+          )}
+        </div>
         <input
           type="text"
           placeholder="Your message"

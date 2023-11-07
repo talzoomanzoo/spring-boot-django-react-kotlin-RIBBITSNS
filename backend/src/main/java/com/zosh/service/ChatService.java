@@ -64,15 +64,6 @@ public class ChatService {
     }
     
     public List<Chat> chathistory(String roomId){
-    	List<Chat> chat = chatRepository.findByRoomId(roomId);
-    	return chat;
-    }
-
-    public <T> void sendMessage(WebSocketSession session, T message) {
-        try{
-            session.sendMessage(new TextMessage(mapper.writeValueAsString(message)));
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-        }
+    	return chatRepository.findByRoomId(roomId);
     }
 }
