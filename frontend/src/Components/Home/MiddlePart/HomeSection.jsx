@@ -20,6 +20,7 @@ import {
   TWEET_CREATE_REQUEST,
   TWEET_CREATE_SUCCESS,
 } from "../../../Store/Tweet/ActionType";
+import ScrollToTop from "./ScrollToTop";
 
 const validationSchema = Yup.object().shape({
   content: Yup.string().required("내용이 없습니다"),
@@ -287,6 +288,7 @@ const HomeSection = () => {
       <section>
         {uploadingImage ? <Loading/> : null}
       </section>
+      <ScrollToTop/>
     </div>
   );
 };

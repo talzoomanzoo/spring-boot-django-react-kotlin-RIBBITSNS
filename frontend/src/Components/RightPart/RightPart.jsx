@@ -80,7 +80,7 @@ const RightPart = () => {
 
   return (
     <div className="sticky top-0">
-      <div className="py-5 overflow-y-scroll hideScrollbar h-[120vh]">
+      <div className="py-5 overflow-y-scroll hideScrollbar h-[100vh]">
         <div className="relative flex items-center">
           <input
             value={search}
@@ -95,7 +95,7 @@ const RightPart = () => {
           </span>
           {search && (
             <div
-              className={`absolute z-50 top-14  border-gray-400 h-[40vh] w-full rounded-md ${theme.currentTheme === "light" ? "bg-[#dbd9d9]" : "bg-[#151515] border"}`}
+              className={`absolute z-50 top-14 overflow-y-scroll hideScrollbar h-[40vh] border-gray-400 h-[40vh] w-full rounded-md ${theme.currentTheme === "light" ? "bg-[#dbd9d9]" : "bg-[#151515] border"}`}
             >
               {auth.userSearchResult && auth.userSearchResult.map((item) => (
                 <div
