@@ -17,16 +17,6 @@ code {
     monospace;
 }
 
-/* For webkit-based browsers (Chrome, Safari) */
-.hideScrollbar::-webkit-scrollbar {
-  
-  display: none;
-}
-
-
-
-
-
 
 @tailwind base;
 @tailwind components;
