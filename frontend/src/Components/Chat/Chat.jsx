@@ -27,6 +27,8 @@ const Chat = () => {
 
   const [stompClient, setStompClient] = useState(null); // WebSocket client
 
+  const jwtToken = localStorage.getItem("jwt");
+
   useEffect(() => {
     // Connect to WebSocket server
     const socket = new SockJS('http://localhost:8080/ws');
@@ -163,7 +165,9 @@ const Chat = () => {
           {chatHistory.length > 0 ? (
             chatHistory.map((chat) => (
               <div key={chat.id}>
-                <span>{chat.sender}: {chat.message}</span>
+                {chat.message && (
+                  <span>{chat.sender}: {chat.message}</span>
+                )}
               </div>
             ))
           ) : (
