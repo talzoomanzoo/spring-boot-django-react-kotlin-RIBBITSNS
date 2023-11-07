@@ -17,9 +17,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 @Entity
 @Data
+@RequiredArgsConstructor
 public class ListModel {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

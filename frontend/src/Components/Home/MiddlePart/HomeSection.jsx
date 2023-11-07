@@ -20,6 +20,7 @@ import {
   TWEET_CREATE_REQUEST,
   TWEET_CREATE_SUCCESS,
 } from "../../../Store/Tweet/ActionType";
+import ScrollToTop from "./ScrollToTop";
 
 const validationSchema = Yup.object().shape({
   content: Yup.string().required("내용이 없습니다"),
@@ -57,7 +58,7 @@ const HomeSection = () => {
 
   useEffect(() => {
     dispatch(getAllTweets());
-  }, [dispatch]);
+  }, [refreshTwits]);
 
   const handleToggleLocationForm = () => {
     setLocationFormOpen((prev) => !prev);
@@ -91,6 +92,7 @@ const HomeSection = () => {
     setSelectedImage("");
     setSelectedVideo("");
     handleCloseEmoji();
+    window.location.reload();
   };
 
   const ethicreveal = async (twitid, twitcontent) => {
@@ -190,6 +192,7 @@ const HomeSection = () => {
                   name="content"
                   placeholder="뭔 일 있음?"
                   className={`border-none outline-none text-xl bg-transparent`}
+                  size="50"
                   {...formik.getFieldProps("content")}
                 />
                 {formik.errors.content && formik.touched.content && (
@@ -287,6 +290,7 @@ const HomeSection = () => {
       <section>
         {uploadingImage ? <Loading/> : null}
       </section>
+      <ScrollToTop/>
     </div>
   );
 };

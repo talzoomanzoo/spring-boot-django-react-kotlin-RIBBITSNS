@@ -16,17 +16,23 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 @Entity
 @Data
+@RequiredArgsConstructor
 public class Twit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; 
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id") // 외래키를 매핑할 때 사용; name 속성에는 매핑할 외래키 이름 지정
     private User user;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "com_id") // 외래키를 매핑할 때 사용; name 속성에는 매핑할 외래키 이름 지정
+    private Community community;
 
     @Column(nullable = false)
     private String content; 
@@ -34,8 +40,8 @@ public class Twit {
     @OneToMany(mappedBy = "twit", cascade = CascadeType.ALL) // 붙는 엔티티가 List 1, 상대가 M
     private List<Like> likes = new ArrayList<>(); // 여러개의 twit에 하나의 like 리스트
 
-    @OneToMany(mappedBy = "twit", cascade = CascadeType.ALL) // 붙는 엔티티가 List 1, 상대가 M
-    private List<Notification> notifications = new ArrayList<>(); // 여러개의 twit에 하나의 like 리스트
+//    @OneToMany(mappedBy = "twit", cascade = CascadeType.ALL) // 붙는 엔티티가 List 1, 상대가 M
+//    private List<Notification> notifications = new ArrayList<>(); // 여러개의 twit에 하나의 like 리스트
 
     @OneToMany(cascade = {CascadeType.ALL, CascadeType.REMOVE}) // 붙는 엔티티가 List 1, 상대가 M
     @JoinColumn(name = "twit_id")
@@ -66,6 +72,7 @@ public class Twit {
 
     private String location;
     
+    private boolean isCom = false;
     private boolean isReply; 
     private boolean isTwit; 
     private boolean is_liked = false;

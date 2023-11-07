@@ -27,12 +27,12 @@ public class Community {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "user_id")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "com_user_id")
 	private User user;
 	
 	@OneToMany(cascade = {CascadeType.ALL, CascadeType.REMOVE})
-    @JoinColumn(name = "twit_id")
+    @JoinColumn(name = "com_twit_id")
     private List<Twit> comTwits = new ArrayList<>();
 	
 	@Column(nullable = false)

@@ -50,11 +50,11 @@ private UserService userService;
 	
 	@GetMapping("/")
 	public ResponseEntity<List<ComDto>> getAllComs(@RequestHeader("Authorization") String jwt) 
-			throws ComException, UserException{
-		
+			throws ComException, UserException {
+		System.out.println("jwt reqUser check");
 		User reqUser=userService.findUserProfileByJwt(jwt);
 		List<Community> communities = comService.findAllCom(reqUser);
-		List<ComDto> comDtos=ComDtoMapper1.toComDtos(communities,reqUser);
+		List<ComDto> comDtos=ComDtoMapper1.toComDtos(communities, reqUser);
 		return new ResponseEntity<>(comDtos, HttpStatus.ACCEPTED);
 	}
 	
