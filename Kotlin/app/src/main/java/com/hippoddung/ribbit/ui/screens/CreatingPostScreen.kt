@@ -31,7 +31,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,28 +46,25 @@ import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.screens.screenitems.InputTextField
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
-import com.hippoddung.ribbit.ui.viewmodel.CardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.CreatingPostUiState
-import com.hippoddung.ribbit.ui.viewmodel.CreatingPostViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
+import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
 import java.io.File
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun CreatingPostScreen(
-    creatingPostViewModel: CreatingPostViewModel,
-    cardViewModel: CardViewModel,
+    postingViewModel: PostingViewModel,
+    getCardViewModel: GetCardViewModel,
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    when (creatingPostViewModel.creatingPostUiState) {
+    when (postingViewModel.creatingPostUiState) {
         is CreatingPostUiState.Ready -> {
             Log.d("HippoLog, CreatingPostScreen", "Ready")
-            InputTwitScreen(
+            InputPostScreen(
                 navController = navController,
-                creatingPostViewModel = creatingPostViewModel,
+                postingViewModel = postingViewModel,
 //                cardViewModel = cardViewModel,
                 modifier = modifier
             )
@@ -76,9 +72,9 @@ fun CreatingPostScreen(
 
         is CreatingPostUiState.Success -> {
             Log.d("HippoLog, CreatingPostScreen", "Success")
-            cardViewModel.getRibbitPosts()
+            getCardViewModel.getRibbitPosts()
             navController.navigate(RibbitScreen.HomeScreen.name)
-            creatingPostViewModel.creatingPostUiState = CreatingPostUiState.Ready
+            postingViewModel.creatingPostUiState = CreatingPostUiState.Ready
         }
 
         is CreatingPostUiState.Loading -> {
@@ -94,9 +90,9 @@ fun CreatingPostScreen(
 }
 
 @Composable
-fun InputTwitScreen(
+fun InputPostScreen(
     navController: NavHostController,
-    creatingPostViewModel: CreatingPostViewModel,
+    postingViewModel: PostingViewModel,
 //    cardViewModel: CardViewModel,
     modifier: Modifier = Modifier
 ) {
@@ -125,7 +121,7 @@ fun InputTwitScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = stringResource(R.string.twit_create),
+            text = stringResource(R.string.create_ribbit),
             color = Color.Black,
             modifier = modifier
                 .padding(bottom = 16.dp)
@@ -163,7 +159,7 @@ fun InputTwitScreen(
             }
         }
         if (videoUri != null) {
-            videoAbsolutePath = creatingPostViewModel.getFilePathFromUri(context, videoUri!!)
+            videoAbsolutePath = postingViewModel.getFilePathFromUri(context, videoUri!!)
             videoFile = videoAbsolutePath?.let { File(it) }
             Row(modifier = modifier) {
                 Icon(
@@ -205,13 +201,13 @@ fun InputTwitScreen(
                 modifier = modifier.padding(14.dp)
             ) {
                 Text(
-                    text = stringResource(R.string.Cancel),
+                    text = stringResource(R.string.cancel),
                     modifier = modifier
                 )
             }
             Button(
                 onClick = {
-                    creatingPostViewModel.creatingPost(
+                    postingViewModel.createPost(
                         image = bitmap.value,
                         videoFile = videoFile,
                         inputText = inputText
@@ -220,7 +216,7 @@ fun InputTwitScreen(
                 modifier = modifier.padding(14.dp)
             ) {
                 Text(
-                    text = stringResource(R.string.twit_create),
+                    text = stringResource(R.string.create_ribbit),
                     modifier = modifier
                 )
             }

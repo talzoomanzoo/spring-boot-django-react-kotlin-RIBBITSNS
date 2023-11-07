@@ -3,15 +3,27 @@
 import { api } from "../../Config/apiConfig";
 //import { ethicreveal } from "../../Components/Home/MiddlePart/TwitCard/TwitCard";
 import {
+  FIND_BY_TOP_LIKES_FAILURE,
+  FIND_BY_TOP_LIKES_REQUEST,
+  FIND_BY_TOP_LIKES_SUCCESS,
+  FIND_BY_TOP_VIEWS_FAILURE,
+  FIND_BY_TOP_VIEWS_REQUEST,
+  FIND_BY_TOP_VIEWS_SUCCESS,
   FIND_TWEET_BY_ID_FAILURE,
   FIND_TWEET_BY_ID_REQUEST,
   FIND_TWEET_BY_ID_SUCCESS,
+  FIND_TWEET_BY_LIST_ID_FAILURE,
+  FIND_TWEET_BY_LIST_ID_REQUEST,
+  FIND_TWEET_BY_LIST_ID_SUCCESS,
   FOLLOW_TWIT_FAILURE,
   FOLLOW_TWIT_REQUEST,
   FOLLOW_TWIT_SUCCESS,
   GET_ALL_TWEETS_FAILURE,
   GET_ALL_TWEETS_REQUEST,
   GET_ALL_TWEETS_SUCCESS,
+  GET_USERS_REPLIES_FAILURE,
+  GET_USERS_REPLIES_REQUEST,
+  GET_USERS_REPLIES_SUCCESS,
   GET_USERS_TWEET_FAILURE,
   GET_USERS_TWEET_REQUEST,
   GET_USERS_TWEET_SUCCESS,
@@ -30,27 +42,12 @@ import {
   TWEET_DELETE_FAILURE,
   TWEET_DELETE_REQUEST,
   TWEET_DELETE_SUCCESS,
-  UPDATE_TWEET_FAILURE,
-  UPDATE_TWEET_REQUEST,
-  UPDATE_TWEET_SUCCESS,
-  FIND_TWEET_BY_LIST_ID_REQUEST,
-  FIND_TWEET_BY_LIST_ID_SUCCESS,
-  FIND_TWEET_BY_LIST_ID_FAILURE,
   USER_LIKE_TWEET_FAILURE,
   USER_LIKE_TWEET_REQUEST,
   USER_LIKE_TWEET_SUCCESS,
   VIEW_PLUS_FAILURE,
   VIEW_PLUS_REQUEST,
-  VIEW_PLUS_SUCCESS,
-  GET_USERS_REPLIES_REQUEST,
-  GET_USERS_REPLIES_SUCCESS,
-  GET_USERS_REPLIES_FAILURE,
-  FIND_BY_TOP_LIKES_REQUEST,
-  FIND_BY_TOP_LIKES_SUCCESS,
-  FIND_BY_TOP_LIKES_FAILURE,
-  FIND_BY_TOP_VIEWS_REQUEST,
-  FIND_BY_TOP_VIEWS_SUCCESS,
-  FIND_BY_TOP_VIEWS_FAILURE,
+  VIEW_PLUS_SUCCESS
 } from "./ActionType";
 
 export const createTweetRequest = () => ({
@@ -303,6 +300,19 @@ export const viewPlus = (twitId) => {
     }
   };
 };
+
+// export const notificationPlus = (twitId) => {
+//   return async (dispatch) => {
+//     dispatch({type:NOTIFICATION_PLUS_REQUEST});
+//     try {
+//       const {data} = await api.post(`/api/twits/${twitId}/Ncount`, {});
+//       console.log("notification plus ",data)
+//       dispatch({type:NOTIFICATION_PLUS_SUCCESS,payload:data});
+//     } catch (error) {
+//       dispatch({type:NOTIFICATION_PLUS_FAILURE,payload:error.message});
+//     }
+//   };
+// };
 
 export const deleteTweet = (tweetId) => {
   return async (dispatch) => {

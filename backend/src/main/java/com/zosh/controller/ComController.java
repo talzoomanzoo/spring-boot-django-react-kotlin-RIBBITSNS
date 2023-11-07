@@ -13,13 +13,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.zosh.dto.ComDto;
+import com.zosh.dto.ListDto;
 import com.zosh.dto.UserDto;
 import com.zosh.dto.mapper.ComDtoMapper1;
+import com.zosh.dto.mapper.ListDtoMapper;
 import com.zosh.dto.mapper.UserDtoMapper;
 import com.zosh.exception.ComException;
 import com.zosh.exception.ListException;
 import com.zosh.exception.UserException;
 import com.zosh.model.Community;
+import com.zosh.model.ListModel;
 import com.zosh.model.User;
 import com.zosh.service.ComService;
 import com.zosh.service.UserService;
@@ -75,6 +78,24 @@ private UserService userService;
 		Community community = comService.editCom(req, user);
 		ComDto comDto = ComDtoMapper1.toComDto(community, user);
 		return new ResponseEntity<>(comDto, HttpStatus.OK);
+	}
+	
+	@PostMapping("/{comId}/signup")
+	public ResponseEntity<ComDto> signupCom(@RequestBody Long comId, 
+			@RequestHeader("Authorization") String jwt) throws ComException, UserException {
+		User user = userService.findUserProfileByJwt(jwt);
+		Community community = comService.addUserSignUp(comId, user);
+		ComDto comDto = ComDtoMapper1.toComDto(community, user);
+		return new ResponseEntity<>(comDto,HttpStatus.OK);
+	}
+	
+	@GetMapping("/{comId}")
+	public ResponseEntity<ComDto> findComById(@PathVariable Long comId,
+			@RequestHeader("Authorization") String jwt) throws ComException, UserException {
+		User user = userService.findUserProfileByJwt(jwt);
+		Community community = comService.findById(comId);
+		ComDto comDto = ComDtoMapper1.toComDto(community, user);
+		return new ResponseEntity<>(comDto, HttpStatus.ACCEPTED);
 	}
 	
 }

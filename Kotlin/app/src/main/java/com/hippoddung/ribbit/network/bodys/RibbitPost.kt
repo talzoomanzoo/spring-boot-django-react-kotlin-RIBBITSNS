@@ -1,24 +1,24 @@
 package com.hippoddung.ribbit.network.bodys
 
 data class RibbitPost(
-    val content: String = "",
+    var content: String = "",
     val createdAt: String = "",
     val edited: Boolean = false,
-    val editedAt: String?,
-    val ethicrate: String?,
-    val id: Int,
-    val image: String?,
-    val label: Int?,
+    val editedAt: String? = null,
+    val ethicrate: String? = null,
+    val id: Int = 0,
+    var image: String? = null,
+    val label: Int? = null,
     val liked: Boolean = false,
     val reply: Boolean = false,
-    val replyTwits: List<RibbitPost?>?,   // listOf(): 비어있는 리스트를 리턴
+    val replyTwits: List<RibbitPost?>? = null,   // listOf(): 비어있는 리스트를 리턴
     val retwit: Boolean = false,
     val retwitUsersId: List<Int?> = listOf(),
-    val sentence: String?,
+    val sentence: String? = null,
     val totalLikes: Int = 0,
     val totalReplies: Int = 0,
     val totalRetweets: Int = 0,
-    val user: User,
-    val video: String?,
+    val user: User? = null,
+    var video: String? = null,
     val viewCount: Int = 0
 )

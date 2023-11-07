@@ -15,7 +15,7 @@ const Authentication = () => {
 
   const handleAuthModelClose = () => {
     setAuthModelOpen(false);
-    window.location.replace("/")
+    window.location.replace("/");
   };
 
   const handleAuthModelOpen = (path) => {
@@ -40,7 +40,7 @@ const Authentication = () => {
       {" "}
       <Grid className="overflow-y-hidden" container>
         <Grid className="hidden lg:block" item lg={7}>
-          <img  
+          <img
             className="w-full h-screen"
             src="https://cdn.pixabay.com/photo/2018/04/14/05/26/green-3318343_1280.jpg"
             alt=""
@@ -49,14 +49,12 @@ const Authentication = () => {
 
           <div className="absolute top-[26%] left-[19%]">
             <svg
-            height="300" width="300"
+              height="300"
+              width="300"
               viewBox="0 0 24 24"
               aria-hidden="true"
               class="r-jwli3a r-4qtqp9 r-yyyyoo r-labphf r-1777fci r-dnmrzs r-494qqr r-bnwqim r-1plcrui r-lrvibr"
-            >
-          
-
-            </svg>
+            ></svg>
           </div>
 
           
@@ -124,8 +122,8 @@ const Authentication = () => {
                 가입하기
               </Button>
               <p className="text-sm mt-2">
-              가입하시면 서비스 약관 및 개인정보 보호정책에 동의하게 됩니다.
-              (쿠키 사용을 포함한 정책.)
+                가입하시면 서비스 약관 및 개인정보 보호정책에 동의하게 됩니다.
+                (쿠키 사용을 포함한 정책.)
               </p>
             </div>
             <div className="mt-10">

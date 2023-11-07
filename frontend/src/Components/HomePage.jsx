@@ -8,8 +8,8 @@ import HomeSection from "./Home/MiddlePart/HomeSection";
 // import Lists from "./Lists/Lists";
 import Navigation from "./Navigation/Navigation";
 // import Profile from "./Profile/Profile";
-import RightPart from "./RightPart/RightPart";
 import Loading from "./Profile/Loading/Loading";
+import RightPart from "./RightPart/RightPart";
 // import Chatroom from "./Chat/Chat";
 // import ListsDetail from "./Lists/ListsDetail";
 // import Communities from "./Communities/Communities";
@@ -21,7 +21,7 @@ const Profile = React.lazy(() => import("./Profile/Profile"));
 const Chatroom = React.lazy(() => import("./Chat/Chat"));
 const ListsDetail = React.lazy(() => import("./Lists/ListsDetail"));
 const Communities = React.lazy(() => import("./Communities/Communities"));
-
+const ComDetail = React.lazy(() => import("./Communities/ComDetail"));
 
 const HomePage = () => {
   const { theme } = useSelector((store) => store);
@@ -35,8 +35,9 @@ const HomePage = () => {
         item
         xs={12}
         lg={6}
-        className={`px-5 lg:px-9 border ${theme.currentTheme === "dark" ? "border-gray-800" : ""
-          } `}
+        className={`px-5 lg:px-9 border ${
+          theme.currentTheme === "dark" ? "border-gray-800" : ""
+        } `}
       >
         <Routes>
           <Route path="/" element={
@@ -69,6 +70,10 @@ const HomePage = () => {
           <Route path="/lists/:id" element={
             <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
               <ListsDetail />
+            </Suspense>}></Route>
+            <Route path="/communities/:id" element={
+            <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
+              <ComDetail />
             </Suspense>}></Route>
         </Routes>
       </Grid>

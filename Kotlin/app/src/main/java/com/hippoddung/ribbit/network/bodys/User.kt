@@ -4,25 +4,25 @@ package com.hippoddung.ribbit.network.bodys
 import com.google.gson.annotations.SerializedName
 
 data class User(
-    val backgroundImage: String?,
-    val bio: String?,
-    val birthDate: String?,
-    val education: String?,
-    val email: String,
+    val backgroundImage: String? = null,
+    val bio: String? = null,
+    val birthDate: String? = null,
+    val education: String? = null,
+    val email: String = "",
     val followed: Boolean =false,
-    val followers: List<String?>?,
-    val followings: List<String?>?,
-    val fullName: String?,
+    val followers: List<User?>? = null,
+    val followings: List<User?>? = null,
+    val fullName: String? = null,
     val hasFollowedLists: Boolean = false,
-    val id: Int?,
-    val image: String?,
-    val joinedAt: String?,
-    val location: String?,
+    val id: Int? = null,
+    val image: String? = null,
+    val joinedAt: String? = null,
+    val location: String? = null,
     @SerializedName("login_with_google")
     val loginWithGoogle: Boolean = false,
-    val mobile: String?,
+    val mobile: String? = null,
     @SerializedName("req_user")
     val reqUser: Boolean = false,
     val verified: Boolean = false,
-    val website: String?
+    val website: String? = null
 )

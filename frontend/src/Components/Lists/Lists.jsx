@@ -2,11 +2,9 @@ import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getAllLists } from "../../Store/List/Action";
 import ListCard from "./ListCard/ListCard";
-import ListsDetail from "./ListsDetail";
-// import { Route, Routes } from "react-router-dom";
 import ListsModel from "./ListsModel";
 
 const Lists = () => {
@@ -42,7 +40,7 @@ const Lists = () => {
                     className="absolute right-0 cursor-pointer" // 오른쪽 정렬, 클릭 커서
                     onClick={handleOpenListsModel} //리스트 추가
                 >
-                    <PlaylistAddIcon />
+                    <PlaylistAddIcon /> 리스트 추가
                 </div>
             </section>
 

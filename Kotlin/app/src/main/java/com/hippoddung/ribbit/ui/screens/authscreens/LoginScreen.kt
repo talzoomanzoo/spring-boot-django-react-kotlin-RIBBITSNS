@@ -8,35 +8,25 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.R
 import com.hippoddung.ribbit.network.bodys.requestbody.AuthRequest
 import com.hippoddung.ribbit.ui.RibbitScreen
+import com.hippoddung.ribbit.ui.screens.textfielditems.InputEmailField
+import com.hippoddung.ribbit.ui.screens.textfielditems.InputPWField
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
-import com.hippoddung.ribbit.ui.viewmodel.CoroutinesErrorHandler
 
 @Composable
 fun LoginScreen(
@@ -77,8 +67,6 @@ fun LoginScreen(
             value = pW,
             onValueChange = { pW = it },
             modifier = modifier
-                .padding(bottom = 32.dp)
-                .fillMaxWidth()
         )
         Row(modifier = modifier) {
             Button(
@@ -86,7 +74,7 @@ fun LoginScreen(
                 modifier.padding(14.dp)
             ) {
                 Text(
-                    text = stringResource(R.string.Cancel),
+                    text = stringResource(R.string.cancel),
                     modifier = modifier
                     )
             }
@@ -117,50 +105,4 @@ fun LoginScreen(
         }
         Spacer(modifier = modifier.height(150.dp))
     }
-}
-
-@Composable
-fun InputEmailField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    TextField(
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-        label = { Text(stringResource(R.string.email)) },
-        value = value,
-        onValueChange = onValueChange,
-        modifier = modifier,
-    )
-}
-
-@Composable
-fun InputPWField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    var passwordVisible by rememberSaveable { mutableStateOf(false) }
-    TextField(
-        singleLine = true,
-        visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-        label = { Text(stringResource(R.string.pW)) },
-        value = value,
-        onValueChange = onValueChange,
-        trailingIcon = {
-            val image = if (passwordVisible)
-                Icons.Filled.Visibility
-            else Icons.Filled.VisibilityOff
-
-            // Please provide localized description for accessibility services
-            val description = if (passwordVisible) "Hide password" else "Show password"
-
-            IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                Icon(imageVector = image, description)
-            }
-        },
-        modifier = modifier,
-    )
 }

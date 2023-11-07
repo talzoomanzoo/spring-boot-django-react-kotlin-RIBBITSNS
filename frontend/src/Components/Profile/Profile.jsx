@@ -7,10 +7,8 @@ import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import {
   Avatar,
-  Backdrop,
   Box,
   Button,
-  CircularProgress,
   Divider,
   Modal,
 } from "@mui/material";
@@ -216,7 +214,6 @@ const Profile = () => {
               variant="outlined"
               className="rounded-full profile--chage--btn"
             >
-              <a></a>
             </button>
           ) : (
             <Button

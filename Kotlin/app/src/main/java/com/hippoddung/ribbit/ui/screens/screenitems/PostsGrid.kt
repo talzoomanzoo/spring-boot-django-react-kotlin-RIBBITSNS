@@ -11,15 +11,19 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.network.bodys.RibbitPost
 import com.hippoddung.ribbit.ui.screens.carditems.RibbitCard
-import com.hippoddung.ribbit.ui.viewmodel.CardViewModel
+import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
+import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
+import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun PostsGrid(
     posts: List<RibbitPost>,
-    cardViewModel: CardViewModel,
-    userId: Int,
+    getCardViewModel: GetCardViewModel,
+    userViewModel: UserViewModel,
+    postingViewModel: PostingViewModel,
+    myId: Int,
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
@@ -28,12 +32,14 @@ fun PostsGrid(
         posts.sortedWith(comparator)
     }   // LazyColumn items에 List를 바로 주는 것이 아니라 Comparator로 정렬하여 remember로 기억시켜서 recomposition을 방지하여 성능을 올린다.
     LazyColumn(modifier = modifier) {
-        items(items = sortedRibbitPost, key = { post -> post.id }) { it ->
+        items(items = sortedRibbitPost, key = { post -> post.id }) {
             RibbitCard(
                 post = it,
-                cardViewModel = cardViewModel,
-                userId = userId,
+                getCardViewModel = getCardViewModel,
+                myId = myId,
                 navController = navController,
+                userViewModel = userViewModel,
+                postingViewModel = postingViewModel,
                 modifier = modifier
             )
         }

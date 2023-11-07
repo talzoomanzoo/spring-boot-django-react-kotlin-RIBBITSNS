@@ -27,7 +27,7 @@ public class Community {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "user_id")
 	private User user;
 	
@@ -50,4 +50,8 @@ public class Community {
 	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.DETACH)
 	private List<User> followingsc = new ArrayList<>();
+	
+	@JsonIgnore
+	@ManyToMany(cascade = CascadeType.DETACH)
+	private List<User> followingscReady = new ArrayList<>();
 }

@@ -28,7 +28,9 @@ import coil.request.ImageRequest
 import com.hippoddung.ribbit.R
 import com.hippoddung.ribbit.network.bodys.RibbitPost
 import com.hippoddung.ribbit.ui.RibbitScreen
-import com.hippoddung.ribbit.ui.viewmodel.CardViewModel
+import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
+import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
+import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -38,8 +40,10 @@ import java.util.concurrent.TimeUnit
 @Composable
 fun CardTopBar(
     post: RibbitPost,
-    cardViewModel: CardViewModel,
-    userId: Int,
+    getCardViewModel: GetCardViewModel,
+    postingViewModel: PostingViewModel,
+    userViewModel: UserViewModel,
+    myId: Int,
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
@@ -54,8 +58,7 @@ fun CardTopBar(
             AsyncImage(
                 model = ImageRequest.Builder(context = LocalContext.current)
                     .data(
-//                        post.user.image
-                        "https://img.animalplanet.co.kr/news/2020/01/13/700/sfu2275cc174s39hi89k.jpg"
+                        post.user?.image ?: "https://img.animalplanet.co.kr/news/2020/01/13/700/sfu2275cc174s39hi89k.jpg"
                     )
                     .crossfade(true).build(),
                 error = painterResource(R.drawable.ic_broken_image),
@@ -66,7 +69,11 @@ fun CardTopBar(
                     .fillMaxSize()
                     .clip(CircleShape)
                     .clickable {    // 해당 Composable function 을 click 하여 "() -> unit" 을 받을 수 있는 형태로 만들어 줌.
-                        Log.d("HippoLog, HomeScreen", "onClick")
+                        Log.d("HippoLog, CardTopBar", "profileImageClick")
+                        post.user?.id?.let {
+                            getCardViewModel.getUserIdPosts(userId = it)
+                            userViewModel.getProfile(userId = it)
+                        }
                         navController.navigate(RibbitScreen.ProfileScreen.name)
                     }
             )
@@ -80,12 +87,14 @@ fun CardTopBar(
                 modifier = modifier.padding(start = 4.dp, end = 4.dp),
                 style = MaterialTheme.typography.headlineSmall
             )
-            Text(
-                text = post.user.email,
-                fontSize = 14.sp,
-                modifier = modifier.padding(start = 4.dp, end = 4.dp),
-                style = MaterialTheme.typography.headlineSmall
-            )
+            post.user?.let {
+                Text(
+                    text = it.email,
+                    fontSize = 14.sp,
+                    modifier = modifier.padding(start = 4.dp, end = 4.dp),
+                    style = MaterialTheme.typography.headlineSmall
+                )
+            }
             Text(
                 text = calculationTime(targetDateTimeStr = post.createdAt),
                 fontSize = 14.sp,
@@ -103,8 +112,9 @@ fun CardTopBar(
         }
         RibbitDropDownMenu(
             post = post,
-            cardViewModel = cardViewModel,
-            userId = userId,
+            getCardViewModel = getCardViewModel,
+            postingViewModel = postingViewModel,
+            myId = myId,
             navController = navController,
             modifier = modifier
         )

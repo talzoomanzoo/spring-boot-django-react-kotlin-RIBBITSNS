@@ -1,14 +1,16 @@
 <resources>
     <string name="app_name">Ribbit</string>
+    <string name="Ribbit_post">Ribbit post</string>
+
+
+    <!--    Basics   -->
+    <string name="text">Text</string>
     <string name="loading_failed">Failed to load</string>
     <string name="placeholder_result">Placeholder result text</string>
     <string name="retry">Retry</string>
     <string name="loading">Loading</string>
-    <string name="Ribbit_post">Ribbit post</string>
-    <string name="Cancel">Cancel</string>
-
-    <!--    Basics   -->
-    <string name="text">Text</string>
+    <string name="cancel">Cancel</string>
+    <string name="edit">Edit</string>
 
     <!--    Screens   -->
     <string name="loading_screen">LoadingScreen</string>
@@ -20,21 +22,21 @@
     <string name="logout_screen">LogoutScreen</string>
     <string name="profile_screen">ProfileScreen</string>
     <string name="profile_replies_screen">ProfileRepliesScreen</string>
+    <string name="profile_medias_screen">ProfileMediasScreen</string>
     <string name="profile_likes_screen">ProfileLikesScreen</string>
+    <string name="edit_profile_screen">EditProfileScreen</string>
     <string name="creating_post_screen">CreatingPostScreen</string>
+    <string name="editing_post_screen">EditingPostScreen</string>
     <string name="pick_image_screen">PickImageScreen</string>
 
-    <!--    LogIn   -->
+    <!--    Auth   -->
     <string name="login">Login</string>
-    <string name="email">Email</string>
-    <string name="pW">PW</string>
     <string name="pW_check">PW Check</string>
-    <string name="full_name">Full Name</string>
-    <string name="birth_date">Birth Date</string>
     <string name="sign_up">Sign up</string>
 
-    <!--    TwitCreate   -->
-    <string name="twit_create">Twit Create</string>
+    <!--    Posting Ribbit   -->
+    <string name="create_ribbit">Create Ribbit</string>
+    <string name="edit_ribbit">Edit Ribbit</string>
     <string name="user_image">User Image</string>
     <string name="title_activity_fullscreen_web_view">FullscreenWebViewActivity</string>
     <string name="dummy_button">Dummy Button</string>
@@ -42,4 +44,16 @@
 
     <!--    Reply   -->
     <string name="reply">Reply</string>
+
+    <!--    User   -->
+    <string name="profile">Profile</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="bio">Bio</string>
+    <string name="birth_date">Birth Date</string>
+    <string name="education">Education</string>
+    <string name="email">Email</string>
+    <string name="full_name">Full Name</string>
+    <string name="pW">PW</string>
+    <string name="website">Website</string>
+
 </resources>

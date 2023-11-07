@@ -1,6 +1,7 @@
 package com.zosh.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -33,6 +34,9 @@ public class ComServiceImplementation implements ComService{
 		community.setDescription(req.getDescription());
 		community.setBackgroundImage(req.getBackgroundImage());
 		community.setPrivateMode(req.isPrivateMode());
+		List<User> comfollowingsc = new ArrayList<>();
+		comfollowingsc.add(user);
+		community.setFollowingsc(comfollowingsc);
 		return comRepository.save(community);
 	}
 
@@ -82,6 +86,20 @@ public class ComServiceImplementation implements ComService{
 		community.setPrivateMode(req.isPrivateMode());
 		comRepository.save(community);
 		
+		return community;
+	}
+
+	@Override
+	public Community addUserSignUp(Long comId, User user) throws ComException, UserException {
+		// TODO Auto-generated method stub
+		Community community = findById(comId);
+		User followToUser = findUserById(user.getId());
+		if (community.getFollowingscReady().contains(followToUser)) {
+			community.getFollowingsc().remove(followToUser);
+		} else {
+			community.getFollowingscReady().add(followToUser);
+		}
+		comRepository.save(community);
 		return community;
 	}
 

@@ -6,6 +6,6 @@ import com.zosh.model.ChatRoom;
 import java.util.List;
 
 
-public interface ChatRoomRepository extends JpaRepository<ChatRoom, String>{
+public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long>{
 	ChatRoom findByRoomId(String roomId);
 }

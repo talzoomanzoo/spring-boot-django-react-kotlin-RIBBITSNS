@@ -1,0 +1,19 @@
+.scroll{
+    position:fixed;
+    right:31%;
+    bottom:5%;
+    z-index:1;
+    
+    .scroll--button{
+      font-weight: bold;
+      font-size: 10px;
+      padding: 15px 15px;
+      background-color: #42C924;
+      color: white;
+      border: 1px solid rgb(210, 204, 193);
+      border-radius: 50%;
+      outline: none;
+      cursor: pointer;
+    }  
+  
+  }

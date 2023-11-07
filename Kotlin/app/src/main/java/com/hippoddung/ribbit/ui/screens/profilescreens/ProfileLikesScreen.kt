@@ -13,14 +13,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.ui.screens.screenitems.HomeTopAppBar
-import com.hippoddung.ribbit.ui.screens.screenitems.ProfilePostsGrid
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
-import com.hippoddung.ribbit.ui.viewmodel.CardViewModel
+import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.GetUserIdLikesUiState
-import com.hippoddung.ribbit.ui.viewmodel.GetUserIdPostsUiState
-import com.hippoddung.ribbit.ui.viewmodel.GetUserIdRepliesUiState
+import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
@@ -30,14 +28,15 @@ import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 fun ProfileLikesScreen(
 //    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
-    cardViewModel: CardViewModel,
+    getCardViewModel: GetCardViewModel,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
-    userId: Int,
+    postingViewModel: PostingViewModel,
+    myId: Int,
     modifier: Modifier
 ) {
-    when (cardViewModel.getUserIdLikesUiState) {
+    when (getCardViewModel.getUserIdLikesUiState) {
 
         is GetUserIdLikesUiState.Loading -> {
             Log.d("HippoLog, ProfileRepliesScreen", "Loading")
@@ -52,13 +51,14 @@ fun ProfileLikesScreen(
         is GetUserIdLikesUiState.Success -> {
             Log.d("HippoLog, ProfileRepliesScreen", "Success")
             ProfileLikesSuccessScreen(
-                cardViewModel = cardViewModel,
+                getCardViewModel = getCardViewModel,
                 authViewModel = authViewModel,
                 tokenViewModel = tokenViewModel,
                 userViewModel = userViewModel,
+                postingViewModel = postingViewModel,
 //                scrollBehavior = scrollBehavior,
                 navController = navController,
-                userId = userId,
+                myId = myId,
                 modifier = modifier
             )
         }
@@ -70,13 +70,14 @@ fun ProfileLikesScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileLikesSuccessScreen(
-    cardViewModel: CardViewModel,
+    getCardViewModel: GetCardViewModel,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
+    postingViewModel: PostingViewModel,
 //    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
-    userId: Int,
+    myId: Int,
     modifier: Modifier
 ) {
     Log.d("HippoLog, ProfileLikesScreen", "ProfileLikesSuccessScreen")
@@ -87,7 +88,7 @@ fun ProfileLikesSuccessScreen(
         // navigation 위(RibbitApp)에 있던 scrollBehavior을 navigation 하위에 있는 HomeScreen으로 옮겨서 해결.
         topBar = {
             HomeTopAppBar(
-                cardViewModel = cardViewModel,
+                getCardViewModel = getCardViewModel,
                 tokenViewModel = tokenViewModel,
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
@@ -102,12 +103,15 @@ fun ProfileLikesSuccessScreen(
                 .fillMaxSize()
                 .padding(it)
         ) {
-            Log.d("HippoLog, ProfileLikesScreen", "posts: ${(cardViewModel.getUserIdLikesUiState as GetUserIdLikesUiState.Success).posts}")
+            Log.d("HippoLog, ProfileLikesScreen", "posts: ${(getCardViewModel.getUserIdLikesUiState as GetUserIdLikesUiState.Success).posts}")
             ProfilePostsGrid(
-                posts = (cardViewModel.getUserIdLikesUiState as GetUserIdLikesUiState.Success).posts,
-                cardViewModel = cardViewModel,
+                posts = (getCardViewModel.getUserIdLikesUiState as GetUserIdLikesUiState.Success).posts,
+                getCardViewModel = getCardViewModel,
                 userViewModel = userViewModel,
-                userId = userId,
+                postingViewModel = postingViewModel,
+                authViewModel = authViewModel,
+                tokenViewModel = tokenViewModel,
+                myId = myId,
                 navController = navController,
                 modifier = modifier
             )
