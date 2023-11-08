@@ -34,7 +34,6 @@ import javax.inject.Inject
 class MainActivity @Inject constructor() : ComponentActivity() {
     private val authViewModel: AuthViewModel by viewModels()
     private val tokenViewModel: TokenViewModel by viewModels()
-    private val postingViewModel: PostingViewModel by viewModels()
     private val userViewModel: UserViewModel by viewModels()
     private val getCardViewModel: GetCardViewModel by viewModels()
 
@@ -53,7 +52,6 @@ class MainActivity @Inject constructor() : ComponentActivity() {
                         getCardViewModel = getCardViewModel,
                         authViewModel = authViewModel,
                         tokenViewModel = tokenViewModel,
-                        postingViewModel = postingViewModel,
                         userViewModel = userViewModel
                     )
                 }

@@ -41,7 +41,6 @@ import java.util.concurrent.TimeUnit
 fun CardTopBar(
     post: RibbitPost,
     getCardViewModel: GetCardViewModel,
-    postingViewModel: PostingViewModel,
     userViewModel: UserViewModel,
     myId: Int,
     navController: NavHostController,
@@ -58,7 +57,8 @@ fun CardTopBar(
             AsyncImage(
                 model = ImageRequest.Builder(context = LocalContext.current)
                     .data(
-                        post.user?.image ?: "https://img.animalplanet.co.kr/news/2020/01/13/700/sfu2275cc174s39hi89k.jpg"
+                        post.user?.image
+                            ?: "https://img.animalplanet.co.kr/news/2020/01/13/700/sfu2275cc174s39hi89k.jpg"
                     )
                     .crossfade(true).build(),
                 error = painterResource(R.drawable.ic_broken_image),
@@ -101,9 +101,10 @@ fun CardTopBar(
                 modifier = modifier.padding(start = 4.dp, end = 4.dp),
                 style = MaterialTheme.typography.headlineSmall
             )
-            if (post.editedAt != null) {
+            if (post.edited) {
+                Log.d("HippoLog, CardTopBar", "${post.editedAt}")
                 Text(
-                    text = calculationTime(targetDateTimeStr = post.editedAt) + "수정됨",
+                    text = post.editedAt?.let { calculationTime(targetDateTimeStr = it) } + " 수정",
                     fontSize = 14.sp,
                     modifier = modifier.padding(start = 4.dp, end = 4.dp),
                     style = MaterialTheme.typography.headlineSmall
@@ -113,7 +114,6 @@ fun CardTopBar(
         RibbitDropDownMenu(
             post = post,
             getCardViewModel = getCardViewModel,
-            postingViewModel = postingViewModel,
             myId = myId,
             navController = navController,
             modifier = modifier
@@ -124,34 +124,41 @@ fun CardTopBar(
 @RequiresApi(Build.VERSION_CODES.O)
 fun calculationTime(targetDateTimeStr: String): String {
     val currentDateTime = LocalDateTime.now()
+    val formatterWithNoDigits = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+//    val formatterWith6Digits = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
+//    val formatterWith5Digits = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSS")
+//    val formatterWith4Digits = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSS")
+//    val formatterWith3Digits = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
 
-    val formatterWith6Digits = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
-    val formatterWith5Digits = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSS")
-    val formatterWith4Digits = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSS")
-    val formatterWith3Digits = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
+    val value: String
 
-    var value: String
-
-    var targetDateTime: LocalDateTime?
+    val targetDateTime: LocalDateTime?
 
     try {
-        targetDateTime = LocalDateTime.parse(targetDateTimeStr, formatterWith6Digits)
+        targetDateTime = LocalDateTime.parse(targetDateTimeStr.substring(0, 19), formatterWithNoDigits)
     } catch (e: Exception) {
-        try {
-            targetDateTime = LocalDateTime.parse(targetDateTimeStr, formatterWith5Digits)
-        } catch (e: Exception) {
-            try {
-                targetDateTime = LocalDateTime.parse(targetDateTimeStr, formatterWith4Digits)
-            } catch (e: Exception) {
-                try {
-                    targetDateTime = LocalDateTime.parse(targetDateTimeStr, formatterWith3Digits)
-                } catch (e: Exception) {
-                    Log.d("HippoLog, CardTopBar", "${e.message}")
-                    return "확인중"
-                }
-            }
-        }
+        Log.d("HippoLog, CardTopBar", "${e.message}")
+        return "확인중"
     }
+
+//    try {
+//        targetDateTime = LocalDateTime.parse(targetDateTimeStr, formatterWith6Digits)
+//    } catch (e: Exception) {
+//        try {
+//            targetDateTime = LocalDateTime.parse(targetDateTimeStr, formatterWith5Digits)
+//        } catch (e: Exception) {
+//            try {
+//                targetDateTime = LocalDateTime.parse(targetDateTimeStr, formatterWith4Digits)
+//            } catch (e: Exception) {
+//                try {
+//                    targetDateTime = LocalDateTime.parse(targetDateTimeStr, formatterWith3Digits)
+//                } catch (e: Exception) {
+//                    Log.d("HippoLog, CardTopBar", "${e.message}")
+//                    return "확인중"
+//                }
+//            }
+//        }
+//    }
     val differenceValue = Duration.between(targetDateTime, currentDateTime).toMillis()
 
     when {

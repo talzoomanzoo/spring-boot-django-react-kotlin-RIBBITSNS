@@ -11,6 +11,7 @@ import com.hippoddung.ribbit.network.AuthAuthenticator
 import com.hippoddung.ribbit.network.AuthInterceptor
 import com.hippoddung.ribbit.network.BASE_URL
 import com.hippoddung.ribbit.network.CLOUDINARY_URL
+import com.hippoddung.ribbit.network.ListApiService
 import com.hippoddung.ribbit.network.RibbitApiService
 import com.hippoddung.ribbit.network.UploadCloudinaryApiService
 import com.hippoddung.ribbit.network.UserApiService
@@ -94,6 +95,14 @@ class SingletonModule {
             .client(okHttpClient)
             .build()
             .create(UserApiService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideListAPIService(okHttpClient: OkHttpClient, retrofit: Retrofit.Builder): ListApiService =
+        retrofit
+            .client(okHttpClient)
+            .build()
+            .create(ListApiService::class.java)
 
     @Singleton
     @Provides

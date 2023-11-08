@@ -3,8 +3,8 @@ package com.hippoddung.ribbit.network.bodys
 data class RibbitPost(
     var content: String = "",
     val createdAt: String = "",
-    val edited: Boolean = false,
-    val editedAt: String? = null,
+    var edited: Boolean = false,
+    var editedAt: String? = null,
     val ethicrate: String? = null,
     val id: Int = 0,
     var image: String? = null,

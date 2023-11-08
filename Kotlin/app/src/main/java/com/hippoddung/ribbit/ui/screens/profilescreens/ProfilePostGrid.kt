@@ -19,13 +19,8 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -45,7 +40,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -53,14 +47,14 @@ import com.hippoddung.ribbit.R
 import com.hippoddung.ribbit.network.bodys.RibbitPost
 import com.hippoddung.ribbit.network.bodys.User
 import com.hippoddung.ribbit.ui.RibbitScreen
-import com.hippoddung.ribbit.ui.screens.ReplyScreen
 import com.hippoddung.ribbit.ui.screens.carditems.RibbitCard
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
+import com.hippoddung.ribbit.ui.viewmodel.ClassificationUiState
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
 import com.hippoddung.ribbit.ui.viewmodel.ProfileUiState
-import com.hippoddung.ribbit.ui.viewmodel.ReplyClickedUiState
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
+import com.hippoddung.ribbit.ui.viewmodel.UserIdClassificationUiState
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 import kotlinx.coroutines.runBlocking
 
@@ -71,7 +65,6 @@ fun ProfilePostsGrid(
     posts: List<RibbitPost>,
     getCardViewModel: GetCardViewModel,
     userViewModel: UserViewModel,
-    postingViewModel: PostingViewModel,
     authViewModel: AuthViewModel,
     tokenViewModel: TokenViewModel,
     myId: Int,
@@ -100,6 +93,7 @@ fun ProfilePostsGrid(
                         .fillMaxWidth()
                         .height(150.dp)
                 ) {
+                    // profile background image
                     AsyncImage(
                         model = ImageRequest.Builder(context = LocalContext.current).data(
                             profileUser.backgroundImage
@@ -117,7 +111,7 @@ fun ProfilePostsGrid(
                         contentScale = ContentScale.Crop,
 
                         )
-                    // 탈퇴 버튼
+                    // withdrawal button
                     if (profileUser.id == userViewModel.myProfile.value?.id) {
                         OutlinedButton(
                             onClick = {
@@ -140,6 +134,7 @@ fun ProfilePostsGrid(
                             .fillMaxWidth()
                             .height(100.dp)
                     ) {
+                        // profile image
                         AsyncImage(
                             model = ImageRequest.Builder(context = LocalContext.current).data(
                                 profileUser.image
@@ -158,15 +153,21 @@ fun ProfilePostsGrid(
                         Box(
                             modifier = modifier
                                 .fillMaxSize()
-                                .padding(4.dp)
+                                .padding(start = 4.dp, bottom = 0.dp)
                         ) {
-                            Box(
+                            Column(
                                 modifier = modifier
                                     .align(Alignment.BottomStart)
                                     .wrapContentSize()
                                     .padding(8.dp),
-                                contentAlignment = Alignment.Center
                             ) {
+                                Log.d("HippoLog, ProfilePostGrid", "${profileUser.joinedAt}")
+                                Text(
+                                    text = "${
+                                        profileUser.joinedAt?.substring(0, 10)
+                                    } 에 가입",
+                                    modifier = modifier
+                                )
                                 Text(
                                     text = profileUser.email,
                                     modifier = modifier
@@ -227,7 +228,22 @@ fun ProfilePostsGrid(
 
                     }
                 }
-                Spacer(modifier = modifier.height(20.dp))
+                Row(
+                    modifier = modifier
+                        .padding(12.dp)
+                        .fillMaxWidth()
+                ) {
+                    Text(
+                        text = "${profileUser.followings?.size ?: 0} followings",
+                        modifier = modifier
+                            .padding(start = 12.dp, end = 12.dp)
+                    )
+                    Text(
+                        text = "${profileUser.followers?.size ?: 0} followers",
+                        modifier = modifier
+                            .padding(start = 12.dp, end = 12.dp)
+                    )
+                }
                 Row(
                     modifier = modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly,
@@ -240,13 +256,19 @@ fun ProfilePostsGrid(
                                     userId = it
                                 )
                             }   // userViewModel의 user가 없는 경우 접근 자체가 불가능
-                            navController.navigate(RibbitScreen.ProfileScreen.name)
                         },
+                        colors = ButtonDefaults.textButtonColors(
+                            containerColor = if(getCardViewModel.userIdClassificationUiState is UserIdClassificationUiState.Ribbit){
+                                Color(0xFF006400)
+                            } else Color.White,
+                            contentColor = if(getCardViewModel.userIdClassificationUiState is UserIdClassificationUiState.Ribbit){
+                                Color.White
+                            } else Color(0xFF006400),
+                        ),
                         modifier = modifier
                     ) {
                         Text(
                             text = "Ribbit",
-                            color = Color(0xFF006400),
                             fontSize = 20.sp,
                             modifier = modifier
                         )
@@ -258,27 +280,46 @@ fun ProfilePostsGrid(
                                     userId = it
                                 )
                             }   // userViewModel의 user가 없는 경우 접근 자체가 불가능
-                            navController.navigate(RibbitScreen.ProfileRepliesScreen.name)
                         },
+                        colors = ButtonDefaults.textButtonColors(
+                            containerColor = if(getCardViewModel.userIdClassificationUiState is UserIdClassificationUiState.Replies){
+                                Color(0xFF006400)
+                            } else Color.White,
+                            contentColor = if(getCardViewModel.userIdClassificationUiState is UserIdClassificationUiState.Replies){
+                                Color.White
+                            } else Color(0xFF006400),
+                        ),
                         modifier = modifier
                     ) {
                         Text(
-                            text = "Rebbit",
-                            color = Color(0xFF006400),
+                            text = "Replies",
                             fontSize = 20.sp,
                             modifier = modifier
                         )
                     }
                     TextButton(
                         onClick = {
-                            // 서버에서 해당 컨트롤러가 없어서 안드로이드 자체 구현
-                            navController.navigate(RibbitScreen.ProfileMediasScreen.name)
+                            userViewModel.myProfile.value?.id?.let {
+                                getCardViewModel.getUserIdMedias(
+                                    userId = it
+                                )
+                            }
+                            // Media의 경우 서버에서 해당 컨트롤러가 없어서 안드로이드 자체 구현
+                            // getCardViewModel.getUserIdPosts 함수에 자체적으로 UiState를 업데이트하는 함수가 포함되어 있어서
+                            // state관리가 어려운 점이 있어 같은 통신을 쓰지만 uistate만 다르게 한 getCardViewModel.getUserIdMedias 함수를 만들어서 사용
                         },
+                        colors = ButtonDefaults.textButtonColors(
+                            containerColor = if(getCardViewModel.userIdClassificationUiState is UserIdClassificationUiState.Media){
+                                Color(0xFF006400)
+                            } else Color.White,
+                            contentColor = if(getCardViewModel.userIdClassificationUiState is UserIdClassificationUiState.Media){
+                                Color.White
+                            } else Color(0xFF006400),
+                        ),
                         modifier = modifier
                     ) {
                         Text(
                             text = "Media",
-                            color = Color(0xFF006400),
                             fontSize = 20.sp,
                             modifier = modifier
                         )
@@ -290,13 +331,19 @@ fun ProfilePostsGrid(
                                     userId = it
                                 )
                             }   // userViewModel의 user가 없는 경우 접근 자체가 불가능
-                            navController.navigate(RibbitScreen.ProfileLikesScreen.name)
                         },
+                        colors = ButtonDefaults.textButtonColors(
+                            containerColor = if(getCardViewModel.userIdClassificationUiState is UserIdClassificationUiState.Likes){
+                                Color(0xFF006400)
+                            } else Color.White,
+                            contentColor = if(getCardViewModel.userIdClassificationUiState is UserIdClassificationUiState.Likes){
+                                Color.White
+                            } else Color(0xFF006400),
+                        ),
                         modifier = modifier
                     ) {
                         Text(
                             text = "Likes",
-                            color = Color(0xFF006400),
                             fontSize = 20.sp,
                             modifier = modifier
                         )
@@ -322,7 +369,6 @@ fun ProfilePostsGrid(
                 myId = myId,
                 navController = navController,
                 userViewModel = userViewModel,
-                postingViewModel = postingViewModel,
                 modifier = modifier
             )
         }

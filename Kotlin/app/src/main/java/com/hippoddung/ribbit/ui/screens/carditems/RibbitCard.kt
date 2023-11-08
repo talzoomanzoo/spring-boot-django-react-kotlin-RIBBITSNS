@@ -32,6 +32,7 @@ import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
 import com.hippoddung.ribbit.ui.viewmodel.ProfileUiState
+import com.hippoddung.ribbit.ui.viewmodel.UserIdClassificationUiState
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,7 +43,6 @@ fun RibbitCard(
     post: RibbitPost,
     getCardViewModel: GetCardViewModel,
     userViewModel: UserViewModel,
-    postingViewModel: PostingViewModel,
     myId: Int,
     navController: NavHostController,
     modifier: Modifier
@@ -68,6 +68,7 @@ fun RibbitCard(
     ) {
         Column(modifier = modifier) {
             if (currentScreen == RibbitScreen.ProfileScreen) {
+                if(getCardViewModel.userIdClassificationUiState is UserIdClassificationUiState.Ribbit){
                 if (userViewModel.profileUiState is ProfileUiState.Exist) {
                     if ((userViewModel.profileUiState as ProfileUiState.Exist).user.id != post.user?.id) {
                         Row(
@@ -90,11 +91,11 @@ fun RibbitCard(
                     }
                 }
             }
+            }
             CardTopBar(
                 post = post,
                 getCardViewModel = getCardViewModel,
                 userViewModel = userViewModel,
-                postingViewModel = postingViewModel,
                 myId = myId,
                 navController = navController,
                 modifier = modifier

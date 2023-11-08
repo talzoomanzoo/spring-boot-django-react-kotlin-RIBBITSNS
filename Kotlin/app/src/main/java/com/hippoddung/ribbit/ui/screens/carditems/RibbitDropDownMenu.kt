@@ -25,6 +25,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.network.bodys.RibbitPost
 import com.hippoddung.ribbit.ui.RibbitScreen
@@ -37,11 +38,11 @@ import kotlinx.coroutines.runBlocking
 fun RibbitDropDownMenu(
     post: RibbitPost,
     getCardViewModel: GetCardViewModel,
-    postingViewModel: PostingViewModel,
     myId: Int,
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
+    val postingViewModel: PostingViewModel = hiltViewModel()
     var isDropDownMenuExpanded by remember { mutableStateOf(false) }
 
     Box(
@@ -49,7 +50,8 @@ fun RibbitDropDownMenu(
     ) {
         IconButton(
             onClick = { isDropDownMenuExpanded = true },
-            modifier = modifier.align(Alignment.CenterEnd)
+            modifier = modifier
+                .align(Alignment.CenterEnd)
                 .padding(start = 4.dp, end = 4.dp),
         ) {
             Icon(

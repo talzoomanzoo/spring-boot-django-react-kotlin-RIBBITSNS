@@ -1,4 +1,4 @@
-package com.hippoddung.ribbit.ui.screens
+package com.hippoddung.ribbit.ui.screens.postidscreen
 
 import android.annotation.SuppressLint
 import android.os.Build
@@ -23,13 +23,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.hippoddung.ribbit.network.bodys.RibbitPost
 import com.hippoddung.ribbit.ui.RibbitScreen
+import com.hippoddung.ribbit.ui.screens.RibbitTopAppBar
 import com.hippoddung.ribbit.ui.screens.carditems.RibbitCard
-import com.hippoddung.ribbit.ui.screens.screenitems.HomeTopAppBar
-import com.hippoddung.ribbit.ui.screens.screenitems.PostIdPostsGrid
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
+import com.hippoddung.ribbit.ui.viewmodel.ListViewModel
 import com.hippoddung.ribbit.ui.viewmodel.PostIdUiState
 import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
@@ -44,7 +44,7 @@ fun PostIdScreen(
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
-    postingViewModel: PostingViewModel,
+    listViewModel: ListViewModel,
     myId: Int,
     modifier: Modifier = Modifier
 ) {
@@ -63,7 +63,7 @@ fun PostIdScreen(
                 tokenViewModel = tokenViewModel,
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
-                postingViewModel = postingViewModel,
+                listViewModel = listViewModel,
 //                scrollBehavior = scrollBehavior,
                 navController = navController,
                 post = post,
@@ -87,7 +87,7 @@ fun PostIdSuccessScreen(
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
-    postingViewModel: PostingViewModel,
+    listViewModel: ListViewModel,
 //    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
     post: RibbitPost,
@@ -103,11 +103,12 @@ fun PostIdSuccessScreen(
         // scrollBehavior에 따라 리컴포지션이 트리거되는 것으로 추측, 해결할 방법을 찾아야 함.
         // navigation 위(RibbitApp)에 있던 scrollBehavior을 navigation 하위에 있는 HomeScreen으로 옮겨서 해결.
         topBar = {
-            HomeTopAppBar(
+            RibbitTopAppBar(
                 getCardViewModel = getCardViewModel,
                 tokenViewModel = tokenViewModel,
                 userViewModel = userViewModel,
                 authViewModel = authViewModel,
+                listViewModel = listViewModel,
 //                scrollBehavior = scrollBehavior,
                 navController = navController,
                 modifier = modifier
@@ -126,7 +127,6 @@ fun PostIdSuccessScreen(
                         posts = post.replyTwits as List<RibbitPost>,    // Null or Empty check를 하였음에도 컴파일오류가 계속되어 강제 캐스팅함.
                         getCardViewModel = getCardViewModel,
                         userViewModel = userViewModel,
-                        postingViewModel = postingViewModel,
                         myId = myId,
                         navController = navController,
                         modifier = modifier
@@ -136,7 +136,6 @@ fun PostIdSuccessScreen(
                         post = post,
                         getCardViewModel = getCardViewModel,
                         userViewModel = userViewModel,
-                        postingViewModel = postingViewModel,
                         myId = myId,
                         navController = navController,
                         modifier = modifier

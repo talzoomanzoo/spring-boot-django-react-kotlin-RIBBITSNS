@@ -10,7 +10,10 @@ import javax.inject.Inject
 class RibbitRepository @Inject constructor(
     private val ribbitApiService: RibbitApiService
 ) {
-    suspend fun getPosts() = ribbitApiService.getPosts()
+    suspend fun getRibbitPosts() = ribbitApiService.getRibbitPosts()
+    suspend fun getFollowingPosts() = ribbitApiService.getFollowingPosts()
+    suspend fun getTopViewsRibbitPosts() = ribbitApiService.getTopViewsRibbitPosts()
+    suspend fun getTopLikesRibbitPosts() = ribbitApiService.getTopLikesRibbitPosts()
     suspend fun postCreatePost(twitCreateRequest: TwitCreateRequest) = ribbitApiService.postCreatePost(twitCreateRequest)
     suspend fun postEditPost(post: RibbitPost) = ribbitApiService.postEditPost(post)
     suspend fun deletePost(postId: Int) = ribbitApiService.deletePost(postId)
@@ -23,4 +26,5 @@ class RibbitRepository @Inject constructor(
     suspend fun deletePostIdLike(postId: Int) = ribbitApiService.deletePostIdLike(postId)
     suspend fun putPostIdRepost(postId: Int) = ribbitApiService.putPostIdRepost(postId)
     suspend fun postPostIdCount(postId: Int) = ribbitApiService.postPostIdCount(postId)
+    suspend fun getPostsSearch(searchQuery: String) = ribbitApiService.getPostsSearch(searchQuery)
 }
