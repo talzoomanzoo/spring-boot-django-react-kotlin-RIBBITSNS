@@ -44,7 +44,6 @@ const AuthModel = ({ handleClose, isOpen }) => {
       >
         <Box sx={style}>
           <h1 className="text-center font-bold text-3xl pb-20">
-            계정 생성
           </h1>
           {/* <form onSubmit={formik.handleSubmit}>
         <Grid container spacing={2}>

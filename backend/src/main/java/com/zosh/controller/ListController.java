@@ -87,7 +87,7 @@ private UserRepository userRepository;
 		return new ResponseEntity<>(listDto, HttpStatus.ACCEPTED);
 	}
 	
-	@GetMapping("/{listId}/get")
+	@GetMapping("/{listId}/getUsers")
 	public ResponseEntity<ListDto> getUserList(@PathVariable Long listId,
 			@RequestHeader("Authorization") String jwt) throws ListException, UserException {
 		User user= userService.findUserProfileByJwt(jwt);

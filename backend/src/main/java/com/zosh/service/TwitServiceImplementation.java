@@ -209,7 +209,7 @@ public class TwitServiceImplementation implements TwitService {
 	@Override
 	public List<Twit> findAllTwit() {
 		// Sort sortByCreatedAtDesc = org.springframework.data.domain.Sort.Order("DESC")
-		return twitRepository.findAllByIsTwitTrueOrderByCreatedAtDesc();
+		return twitRepository.findAllByIsTwitTrueAndIsComFalseOrderByCreatedAtDesc();
 	}
 
 	@Override
@@ -277,5 +277,11 @@ public class TwitServiceImplementation implements TwitService {
 	public List<Twit> findTwitsByComId(Long comId) throws ComException {
 		// TODO Auto-generated method stub
 		return twitRepository.searchComFollowedTwit(comId);
+	}
+
+	@Override
+	public List<Twit> findTwitsByAllComs(User user) throws UserException {
+		// TODO Auto-generated method stub
+		return twitRepository.searchTwitsByAllComs(user.getId());
 	}
 }
