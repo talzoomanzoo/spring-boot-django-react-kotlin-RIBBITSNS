@@ -18,7 +18,7 @@ public interface TwitRepository extends JpaRepository<Twit, Long> {
 	@Query("SELECT t FROM Twit t WHERE t.isTwit=true ORDER BY t.viewCount DESC LIMIT 3")
 	public List<Twit> findTwitsByTopView();
 	
-	@Query(value = "select distinct * from twit t join list_model_followingsl lmf on t.user_id = lmf.followingsl_id where list_model_id=:#{#listId} and is_twit=1", nativeQuery = true)
+	@Query(value = "select distinct * from twit t join list_model_followingsl lmf on t.user_id = lmf.followingsl_id where list_model_id=:#{#listId} and is_twit=1 ORDER BY t.created_at desc", nativeQuery = true)
 	public List<Twit> searchListFollowedTwit(Long listId);
 
 	List<Twit> findAllByIsTwitTrueOrderByCreatedAtDesc();

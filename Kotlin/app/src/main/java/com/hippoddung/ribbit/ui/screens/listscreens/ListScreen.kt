@@ -1,4 +1,4 @@
-package com.hippoddung.ribbit.ui.screens
+package com.hippoddung.ribbit.ui.screens.listscreens
 
 import android.annotation.SuppressLint
 import android.os.Build
@@ -8,8 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -19,60 +18,50 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.hippoddung.ribbit.network.bodys.RibbitPost
-import com.hippoddung.ribbit.ui.screens.screenitems.HomeTopAppBar
-import com.hippoddung.ribbit.ui.screens.screenitems.PostsGrid
+import com.hippoddung.ribbit.network.bodys.RibbitListItem
+import com.hippoddung.ribbit.ui.RibbitScreen
+import com.hippoddung.ribbit.ui.screens.RibbitTopAppBar
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
-import com.hippoddung.ribbit.ui.viewmodel.HomeUiState
-import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
+import com.hippoddung.ribbit.ui.viewmodel.ListUiState
+import com.hippoddung.ribbit.ui.viewmodel.ListViewModel
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
-
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun HomeScreen(
-//    scrollBehavior: TopAppBarScrollBehavior,
+fun ListScreen(
     navController: NavHostController,
     getCardViewModel: GetCardViewModel,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
-    postingViewModel: PostingViewModel,
-    myId: Int,
-    onNavigateToCreatingPostScreen: () -> Unit,
+    listViewModel: ListViewModel,
     modifier: Modifier = Modifier
 ) {
-    when (getCardViewModel.homeUiState) {
-
-        is HomeUiState.Loading -> {
-            Log.d("HippoLog, HomeScreen", "Loading")
+    when (listViewModel.listUiState) {
+        is ListUiState.Loading -> {
+            Log.d("HippoLog, ListScreen", "Loading")
             LoadingScreen(modifier = modifier)
         }
-
-        is HomeUiState.Success -> {
-            Log.d("HippoLog, HomeScreen", "Success")
-            val ribbitPosts = (getCardViewModel.homeUiState as HomeUiState.Success).posts
-            HomeSuccessScreen(
+        is ListUiState.Success -> {
+            Log.d("HippoLog, ListScreen", "Success")
+            val listItems = (listViewModel.listUiState as ListUiState.Success).listItems
+            ListSuccessScreen(
                 getCardViewModel = getCardViewModel,
                 authViewModel = authViewModel,
                 tokenViewModel = tokenViewModel,
                 userViewModel = userViewModel,
-                postingViewModel = postingViewModel,
-//                scrollBehavior = scrollBehavior,
+                listViewModel = listViewModel,
                 navController = navController,
-                ribbitPosts = ribbitPosts,
-                myId = myId,
-                onNavigateToCreatingPostScreen = onNavigateToCreatingPostScreen,
+                listItems = listItems,
                 modifier = modifier
             )
         }
-
-        is HomeUiState.Error -> {
-            Log.d("HippoLog, HomeScreen", "Error")
+        is ListUiState.Error -> {
+            Log.d("HippoLog, ListScreen", "Error")
             ErrorScreen(modifier = modifier)
         }
     }
@@ -80,33 +69,26 @@ fun HomeScreen(
 
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeSuccessScreen(
+fun ListSuccessScreen(
     getCardViewModel: GetCardViewModel,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
-    postingViewModel: PostingViewModel,
-//    scrollBehavior: TopAppBarScrollBehavior,
+    listViewModel: ListViewModel,
     navController: NavHostController,
-    ribbitPosts: List<RibbitPost>,
-    myId: Int,
-    onNavigateToCreatingPostScreen: () -> Unit,
+    listItems: List<RibbitListItem>,
     modifier: Modifier
 ) {
     Scaffold(
         modifier = modifier,
-//        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        // scrollBehavior에 따라 리컴포지션이 트리거되는 것으로 추측, 해결할 방법을 찾아야 함.
-        // navigation 위(RibbitApp)에 있던 scrollBehavior을 navigation 하위에 있는 HomeScreen으로 옮겨서 해결.
         topBar = {
-            HomeTopAppBar(
+            RibbitTopAppBar(
                 getCardViewModel = getCardViewModel,
                 tokenViewModel = tokenViewModel,
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
-//                scrollBehavior = scrollBehavior,
+                listViewModel = listViewModel,
                 navController = navController,
                 modifier = modifier
             )
@@ -118,32 +100,26 @@ fun HomeSuccessScreen(
                 .padding(it)
         ) {
             Box(modifier = modifier) {
-                PostsGrid(
-                    posts = ribbitPosts,
+                ListGrid(
+                    listItems = listItems,
                     getCardViewModel = getCardViewModel,
-                    userViewModel = userViewModel,
-                    postingViewModel = postingViewModel,
-                    myId = myId,
+                    listViewModel = listViewModel,
                     navController = navController,
                     modifier = modifier
                 )
                 FloatingActionButton(
-                    onClick = onNavigateToCreatingPostScreen,
+                    onClick = { navController.navigate(RibbitScreen.CreatingListScreen.name) },
                     modifier = modifier
                         .align(Alignment.BottomEnd)
                         .padding(14.dp)
                 ) {
                     Icon(
-                        imageVector = Icons.Filled.Edit,
+                        imageVector = Icons.Filled.Add,
                         contentDescription = "Floating action button.",
                         modifier = modifier
                     )
                 }
             }
-//            Box(modifier = modifier) {
-//
-//            }
         }
     }
 }
-

@@ -1,4 +1,4 @@
-package com.hippoddung.ribbit.ui.screens.screenitems
+package com.hippoddung.ribbit.ui.screens.searchitems
 
 import android.os.Build
 import android.util.Log
@@ -7,6 +7,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -28,13 +30,12 @@ import coil.request.ImageRequest
 import com.hippoddung.ribbit.R
 import com.hippoddung.ribbit.network.bodys.User
 import com.hippoddung.ribbit.ui.RibbitScreen
-import com.hippoddung.ribbit.ui.screens.carditems.calculationTime
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun UserCard(
+fun SearchedUserCard(
     user: User,
     getCardViewModel: GetCardViewModel,
     userViewModel: UserViewModel,
@@ -42,7 +43,19 @@ fun UserCard(
     modifier: Modifier = Modifier
 ) {
     Row(
-        verticalAlignment = Alignment.Bottom
+        verticalAlignment = Alignment.Bottom,
+        modifier = modifier
+            .fillMaxWidth()
+            .height(64.dp)
+            .padding(start = 20.dp, top = 12.dp, end = 20.dp, bottom = 12.dp)
+            .clickable {
+                Log.d("HippoLog, UserCard", "UserCardClick")
+                user.id?.let {
+                    getCardViewModel.getUserIdPosts(userId = it)
+                    userViewModel.getProfile(userId = it)
+                }
+                navController.navigate(RibbitScreen.ProfileScreen.name)
+            }
     ) {
         Box(
             contentAlignment = Alignment.Center,
@@ -74,16 +87,17 @@ fun UserCard(
             )
         }
         Row(
-            modifier = modifier.padding(bottom = 4.dp)
+            modifier = modifier.padding(start = 12.dp,bottom = 4.dp)
         ) {
             Text(
-                text = user.email,
+                text = "${user.fullName}",
                 fontSize = 14.sp,
                 modifier = modifier.padding(start = 4.dp, end = 4.dp),
                 style = MaterialTheme.typography.headlineSmall
             )
+            Log.d("HippoLog, UserCard", "$user")
             Text(
-                text = user.fullName?.let { calculationTime(targetDateTimeStr = it) } ?: "",
+                text = user.email,
                 fontSize = 14.sp,
                 modifier = modifier.padding(start = 4.dp, end = 4.dp),
                 style = MaterialTheme.typography.headlineSmall

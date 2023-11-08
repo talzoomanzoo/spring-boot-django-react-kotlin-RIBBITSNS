@@ -1,4 +1,4 @@
-package com.hippoddung.ribbit.ui.screens.screenitems
+package com.hippoddung.ribbit.ui.screens
 
 import android.os.Build
 import android.util.Log
@@ -8,6 +8,7 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,10 +16,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
@@ -51,10 +52,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.R
+import com.hippoddung.ribbit.network.bodys.RibbitPost
 import com.hippoddung.ribbit.network.bodys.User
 import com.hippoddung.ribbit.ui.RibbitScreen
+import com.hippoddung.ribbit.ui.screens.searchitems.SearchedGrid
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
+import com.hippoddung.ribbit.ui.viewmodel.ListViewModel
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 import kotlinx.coroutines.runBlocking
@@ -62,16 +66,17 @@ import kotlinx.coroutines.runBlocking
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeTopAppBar(
+fun RibbitTopAppBar(
     getCardViewModel: GetCardViewModel,
     authViewModel: AuthViewModel,
     tokenViewModel: TokenViewModel,
     userViewModel: UserViewModel,
+    listViewModel: ListViewModel,
 //    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    Log.d("HippoLog, HomeTopAppBar", "HomeTopAppBar")
+    Log.d("HippoLog, RibbitTopAppBar", "RibbitTopAppBar")
     Column(modifier = modifier) {
         CenterAlignedTopAppBar(
 //            scrollBehavior = scrollBehavior,    // scroll에 따라 TopAppBar가 보여지거나 숨겨지게 해주는 기능이나 recompostion을 과도하게 발생시키는 문제가 있어 잠그기로 함.
@@ -108,6 +113,7 @@ fun HomeTopAppBar(
                     navController = navController,
                     userViewModel = userViewModel,
                     getCardViewModel = getCardViewModel,
+                    listViewModel = listViewModel,
                     modifier = modifier
                 )
             },
@@ -224,31 +230,53 @@ fun UserSearchBar(
     navController: NavHostController,
     userViewModel: UserViewModel,
     getCardViewModel: GetCardViewModel,
+    listViewModel: ListViewModel,
     modifier: Modifier
 ) {
     var isExpanded by remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf(TextFieldValue()) }
-    val usersData by userViewModel.usersData.collectAsState()
     var isSearched by remember { mutableStateOf(false) }
+    val usersData by userViewModel.usersData.collectAsState()
+    val postsData by getCardViewModel.postsData.collectAsState()
 
-    IconButton(
-        onClick = {
-            isExpanded = !isExpanded
-        },
-        modifier = modifier.padding(16.dp)
+    Row(
+        horizontalArrangement = Arrangement.End,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
     ) {
-        Icon(
-            imageVector = Icons.Default.Search,
-            contentDescription = "Search",
-            tint = Color(0xFF006400),
-            modifier = modifier
-
-        )
+        IconButton(
+            onClick = {
+                listViewModel.getLists()
+                navController.navigate(RibbitScreen.ListScreen.name)
+            },
+            modifier = modifier.padding(4.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.List,
+                contentDescription = "List",
+                tint = Color(0xFF006400),
+                modifier = modifier
+            )
+        }
+        IconButton(
+            onClick = {
+                isExpanded = !isExpanded
+            },
+            modifier = modifier.padding(4.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = "Search",
+                tint = Color(0xFF006400),
+                modifier = modifier
+            )
+        }
     }
 
     DropdownMenu(
         expanded = isExpanded,
         onDismissRequest = { isExpanded = false },
+//        offset = DpOffset(0.dp, 0.dp),
         modifier = modifier
             .animateContentSize(
                 animationSpec = spring(
@@ -258,9 +286,13 @@ fun UserSearchBar(
             )
             .fillMaxWidth()
     ) {
-        val comparator = compareByDescending<User> { it.id }
-        val sortedUsers = remember(usersData, comparator) {
-            usersData.sortedWith(comparator)
+        val userComparator = compareByDescending<User> { it.id }
+        val sortedUsers = remember(usersData, userComparator) {
+            usersData.sortedWith(userComparator)
+        }   // LazyColumn items에 List를 바로 주는 것이 아니라 Comparator로 정렬하여 remember로 기억시켜서 recomposition을 방지하여 성능을 올린다.
+        val postComparator = compareByDescending<RibbitPost> { it.id }
+        val sortedPosts = remember(postsData, postComparator) {
+            postsData.sortedWith(postComparator)
         }   // LazyColumn items에 List를 바로 주는 것이 아니라 Comparator로 정렬하여 remember로 기억시켜서 recomposition을 방지하여 성능을 올린다.
         TextField(
             value = searchQuery,
@@ -270,12 +302,13 @@ fun UserSearchBar(
                     // 사용자가 검색어를 입력하면 여기에서 작업을 수행할 수 있음
                     // 예: 자동완성 결과 업데이트, 네트워크 요청 등
                     userViewModel.getUsersSearch(it.text)
+                    getCardViewModel.getPostsSearch(it.text)
                     isSearched = true
                 }
             },
             label = {
                 Text(
-                    text = "Search User",
+                    text = "Search User and Ribbit",
                     modifier = modifier
                 )
             },
@@ -289,17 +322,17 @@ fun UserSearchBar(
             },
             trailingIcon = {
                 Row(modifier = modifier) {
-                    OutlinedButton(
-                        onClick = {
-                            isExpanded = !isExpanded
-                        },
-                        modifier = modifier
-                    ) {
-                        Text(
-                            text = "Search",
-                            modifier = modifier
-                        )
-                    }
+//                    OutlinedButton(
+//                        onClick = {
+//                            isExpanded = !isExpanded
+//                        },
+//                        modifier = modifier
+//                    ) {
+//                        Text(
+//                            text = "Search",
+//                            modifier = modifier
+//                        )
+//                    }
                     IconButton(
                         onClick = {
                             isExpanded = !isExpanded
@@ -318,9 +351,6 @@ fun UserSearchBar(
             keyboardOptions = KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Search
             ),
-            keyboardActions = KeyboardActions(
-                onSearch = { }
-            ),
             singleLine = true,
             textStyle = TextStyle(fontSize = 16.sp),
             modifier = modifier
@@ -333,8 +363,9 @@ fun UserSearchBar(
                 modifier = modifier
                     .sizeIn(maxWidth = Dp.Infinity, maxHeight = Dp.Infinity)
             ) {
-                SearchedUsersGrid(
+                SearchedGrid(
                     sortedUsers = sortedUsers,
+                    sortedPosts = sortedPosts,
                     getCardViewModel = getCardViewModel,
                     userViewModel = userViewModel,
                     navController = navController,

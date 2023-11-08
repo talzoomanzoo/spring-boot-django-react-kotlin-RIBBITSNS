@@ -12,9 +12,9 @@ import com.zosh.exception.ComException;
 import com.zosh.exception.ListException;
 import com.zosh.exception.TwitException;
 import com.zosh.exception.UserException;
+import com.zosh.model.Community;
 import com.zosh.model.Twit;
 import com.zosh.model.User;
-import com.zosh.repository.ComRepository;
 import com.zosh.repository.ListRepository;
 import com.zosh.repository.TwitRepository;
 import com.zosh.request.TwitReplyRequest;
@@ -24,12 +24,14 @@ public class TwitServiceImplementation implements TwitService {
 
 	private TwitRepository twitRepository;
 	private ListRepository listRepository;
+	private ComService comService;
 
-	public TwitServiceImplementation(TwitRepository twitRepository, ListRepository listRepository) {
+	public TwitServiceImplementation(TwitRepository twitRepository, ListRepository listRepository, ComService comService) {
 		this.twitRepository = twitRepository;
 		this.listRepository = listRepository;
+		this.comService = comService;
 	}
-
+	
 	@Override
 	public Twit createTwit(Twit req, User user) {
 
@@ -43,6 +45,25 @@ public class TwitServiceImplementation implements TwitService {
 		twit.setTwit(true);
 		twit.setVideo(req.getVideo());
 
+		return twitRepository.save(twit);
+	}
+	
+	@Override
+	public Twit createComTwit(Twit req, Long comId, User user) throws UserException, TwitException, ComException {
+
+		Twit twit = new Twit();
+		twit.setContent(req.getContent());
+		twit.setCreatedAt(LocalDateTime.now());
+		twit.setRetwitAt(LocalDateTime.now());
+		twit.setImage(req.getImage());
+		twit.setUser(user);
+		twit.setReply(false);
+		twit.setTwit(true);
+		twit.setVideo(req.getVideo());
+		Community community = comService.findById(comId);
+		twit.setCom(true);
+		twit.setCommunity(community);
+		
 		return twitRepository.save(twit);
 	}
 	

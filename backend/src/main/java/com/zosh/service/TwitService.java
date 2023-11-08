@@ -15,6 +15,8 @@ public interface TwitService {
 	
 	public Twit createTwit(Twit req,User user)throws UserException, TwitException;
 	
+	public Twit createComTwit(Twit req,Long comId, User user)throws UserException, TwitException, ComException;
+	
 	public Twit inputethic(Long twitId, String ethicrate) throws TwitException;
 	//sns게시물에 윤리수치를 집어넣는 서비스이다.
 	

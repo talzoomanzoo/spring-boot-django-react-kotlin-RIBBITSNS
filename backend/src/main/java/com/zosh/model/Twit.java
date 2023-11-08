@@ -72,7 +72,7 @@ public class Twit {
 
     private String location;
     
-    private boolean isCom = false;
+    private boolean isCom;
     private boolean isReply; 
     private boolean isTwit; 
     private boolean is_liked = false;

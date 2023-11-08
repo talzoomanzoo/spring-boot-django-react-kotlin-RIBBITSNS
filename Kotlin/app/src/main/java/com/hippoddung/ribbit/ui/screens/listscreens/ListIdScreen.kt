@@ -1,4 +1,4 @@
-package com.hippoddung.ribbit.ui.screens.profilescreens
+package com.hippoddung.ribbit.ui.screens.listscreens
 
 import android.annotation.SuppressLint
 import android.os.Build
@@ -22,17 +22,17 @@ import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
+import com.hippoddung.ribbit.ui.viewmodel.GetListIdPostsUiState
 import com.hippoddung.ribbit.ui.viewmodel.GetUserIdPostsUiState
+import com.hippoddung.ribbit.ui.viewmodel.ListIdUiState
 import com.hippoddung.ribbit.ui.viewmodel.ListViewModel
-import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
-import com.hippoddung.ribbit.ui.viewmodel.UserIdClassificationUiState
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(
+fun ListIdScreen(
 //    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
     getCardViewModel: GetCardViewModel,
@@ -43,31 +43,47 @@ fun ProfileScreen(
     myId: Int,
     modifier: Modifier
 ) {
-    when (getCardViewModel.getUserIdPostsUiState) {
 
-        is GetUserIdPostsUiState.Loading -> {
-            Log.d("HippoLog, ProfileScreen", "Loading")
+//    비동기처리를 통해 listViewModel에서 listIdUiState를 업데이트하고 getCardViewModel의 getListIdPosts 함수를 통해 getListIdPostsUiState를 업데이트하도록 설계한다.
+    when (listViewModel.listIdUiState) {
+
+        is ListIdUiState.Loading -> {
+            Log.d("HippoLog, ListIdScreen", "listIdUiState Loading")
             LoadingScreen(modifier = modifier)
         }
 
-        is GetUserIdPostsUiState.Error -> {
-            Log.d("HippoLog, ProfileScreen", "Error")
+        is ListIdUiState.Error -> {
+            Log.d("HippoLog, ListIdScreen", "listIdUiState Error")
             ErrorScreen(modifier = modifier)
         }
 
-        is GetUserIdPostsUiState.Success -> {
-            Log.d("HippoLog, ProfileScreen", "Success")
-            ProfileSuccessScreen(
-                getCardViewModel = getCardViewModel,
-                authViewModel = authViewModel,
-                tokenViewModel = tokenViewModel,
-                userViewModel = userViewModel,
-                listViewModel = listViewModel,
-//                scrollBehavior = scrollBehavior,
-                navController = navController,
-                myId = myId,
-                modifier = modifier
-            )
+        is ListIdUiState.Success -> {
+            Log.d("HippoLog, ListIdScreen", "listIdUiState Success")
+            when(getCardViewModel.getListIdPostsUiState){
+                is GetListIdPostsUiState.Loading -> {
+                    Log.d("HippoLog, ListIdScreen", "getListIdPostsUiState Loading")
+                    LoadingScreen(modifier = modifier)
+                }
+
+                is GetListIdPostsUiState.Error -> {
+                    Log.d("HippoLog, ListIdScreen", "getListIdPostsUiState Error")
+                    ErrorScreen(modifier = modifier)
+                }
+
+                is GetListIdPostsUiState.Success -> {
+                    Log.d("HippoLog, ListIdScreen", "getListIdPostsUiState Success")
+                    ListIdSuccessScreen(
+                        getCardViewModel = getCardViewModel,
+                        authViewModel = authViewModel,
+                        tokenViewModel = tokenViewModel,
+                        userViewModel = userViewModel,
+                        listViewModel = listViewModel,
+                        navController = navController,
+                        myId = myId,
+                        modifier = modifier
+                    )
+                }
+            }
         }
     }
 }
@@ -76,13 +92,12 @@ fun ProfileScreen(
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileSuccessScreen(
+fun ListIdSuccessScreen(
     getCardViewModel: GetCardViewModel,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
     listViewModel: ListViewModel,
-//    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
     myId: Int,
     modifier: Modifier
@@ -92,21 +107,14 @@ fun ProfileSuccessScreen(
     if (getCardViewModel.getUserIdPostsUiState is GetUserIdPostsUiState.Success) {   // 원래 state에 따라 넘어오기 때문에 확인할 필요가 없으나 state에 무관하게 내려오는 문제가 있어 여기서 재확인
         posts = (getCardViewModel.getUserIdPostsUiState as GetUserIdPostsUiState.Success).posts
     }
-    if (getCardViewModel.userIdClassificationUiState is UserIdClassificationUiState.Media) {    // useridClassificationUiState가 Media인 경우 아래의 필터 적용
-        posts = posts.filter { (it.image != null) or (it.video != null) }   // image나 video가 null이 아닌 경우만 뽑아서 리스트로 만든다.
-    }
     Scaffold(
         modifier = modifier,
-//        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        // scrollBehavior에 따라 리컴포지션이 트리거되는 것으로 추측, 해결할 방법을 찾아야 함.
-        // navigation 위(RibbitApp)에 있던 scrollBehavior을 navigation 하위에 있는 HomeScreen으로 옮겨서 해결.
         topBar = {
             RibbitTopAppBar(
                 getCardViewModel = getCardViewModel,
                 tokenViewModel = tokenViewModel,
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
-//                scrollBehavior = scrollBehavior,
                 navController = navController,
                 listViewModel = listViewModel,
                 modifier = modifier
@@ -118,12 +126,10 @@ fun ProfileSuccessScreen(
                 .fillMaxSize()
                 .padding(it)
         ) {
-            ProfilePostsGrid(
+            ListIdPostsGrid(
                 posts = posts,
                 getCardViewModel = getCardViewModel,
                 userViewModel = userViewModel,
-                authViewModel = authViewModel,
-                tokenViewModel = tokenViewModel,
                 myId = myId,
                 navController = navController,
                 modifier = modifier

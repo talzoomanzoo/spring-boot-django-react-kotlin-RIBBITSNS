@@ -1,4 +1,4 @@
-package com.hippoddung.ribbit.ui.screens.screenitems
+package com.hippoddung.ribbit.ui.screens.postidscreen
 
 import android.annotation.SuppressLint
 import android.os.Build
@@ -27,7 +27,6 @@ fun PostIdPostsGrid(
     posts: List<RibbitPost>,
     getCardViewModel: GetCardViewModel,
     userViewModel: UserViewModel,
-    postingViewModel: PostingViewModel,
     myId: Int,
     navController: NavHostController,
     modifier: Modifier = Modifier
@@ -45,7 +44,6 @@ fun PostIdPostsGrid(
                 myId = myId,
                 navController = navController,
                 userViewModel = userViewModel,
-                postingViewModel = postingViewModel,
                 modifier = modifier
             )
         }
@@ -58,7 +56,6 @@ fun PostIdPostsGrid(
                     myId = myId,
                     navController = navController,
                     userViewModel = userViewModel,
-                    postingViewModel = postingViewModel,
                     modifier = modifier
                 )
             }

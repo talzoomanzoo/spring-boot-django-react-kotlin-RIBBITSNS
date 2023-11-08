@@ -1,11 +1,14 @@
 package com.hippoddung.ribbit.ui.viewmodel
 
 import android.graphics.Bitmap
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hippoddung.ribbit.data.network.UploadCloudinaryRepository
 import com.hippoddung.ribbit.data.network.UserRepository
@@ -19,6 +22,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import retrofit2.HttpException
 import java.io.IOException
+import java.time.Duration
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 sealed interface MyProfileUiState {
@@ -75,7 +82,7 @@ sealed interface UploadProfileBackgroundImageCloudinaryUiState {
 class UserViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val uploadCloudinaryRepository: UploadCloudinaryRepository
-) : BaseViewModel() {
+) : ViewModel() {
     var myProfile = MutableLiveData<User?>()
     var myProfileUiState: MyProfileUiState by mutableStateOf(MyProfileUiState.Lack)
         private set
@@ -286,7 +293,6 @@ class UserViewModel @Inject constructor(
 
     fun getUsersSearch(searchQuery: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            Log.d("HippoLog, UserViewModel", "getUserSearch")
             try {
                 Log.d("HippoLog, UserViewModel", "getUserSearch")
                 _usersData.value = (userRepository.getUsersSearch(searchQuery))
