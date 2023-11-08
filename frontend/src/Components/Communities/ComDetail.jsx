@@ -7,9 +7,9 @@ import { useParams, useNavigate } from "react-router";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import { Avatar, Button } from "@mui/material";
 import {
-    TWEET_CREATE_REQUEST,
-    TWEET_CREATE_SUCCESS,
-    TWEET_CREATE_FAILURE,
+    COM_TWEET_CREATE_REQUEST,
+    COM_TWEET_CREATE_SUCCESS,
+    COM_TWEET_CREATE_FAILURE,
 } from "../../Store/Tweet/ActionType";
 import { api } from "../../Config/apiConfig";
 import EmojiPicker from "emoji-picker-react";
@@ -51,17 +51,17 @@ const ComDetail = () => {
     const navigate = useNavigate();
     const handleBack = () => navigate(-1);
 
-    const createTweetRequest = () => ({
-        type: TWEET_CREATE_REQUEST,
+    const createComTweetRequest = (comId) => ({
+        type: COM_TWEET_CREATE_REQUEST,
     });
 
-    const createTweetSuccess = (data) => ({
-        type: TWEET_CREATE_SUCCESS,
+    const createComTweetSuccess = (data) => ({
+        type: COM_TWEET_CREATE_SUCCESS,
         payload: data,
     });
 
-    const createTweetFailure = (error) => ({
-        type: TWEET_CREATE_FAILURE,
+    const createComTweetFailure = (error) => ({
+        type: COM_TWEET_CREATE_FAILURE,
         payload: error,
     });
 
@@ -77,22 +77,22 @@ const ComDetail = () => {
         setLocationFormOpen((prev) => !prev);
     };
 
-    const HomeCreateTweet = (tweetData) => {
+    const ComCreateTweet = (tweetData) => {
         return async (dispatch) => {
             setLoading(true);
-            dispatch(createTweetRequest());
+            dispatch(createComTweetRequest(param.id));
             try {
                 const { data } = await api.post(
-                    "http://localhost:8080/api/twits/create",
+                    `http://localhost:8080/api/twits/${param.id}/create`,
                     tweetData
                 );
 
-                dispatch(createTweetSuccess(data));
+                dispatch(createComTweetSuccess(data));
 
                 const response = await ethicreveal(data.id, data.content);
                 handleSendPushNotification();
             } catch (error) {
-                dispatch(createTweetFailure(error.message));
+                dispatch(createComTweetFailure(error.message));
             } finally {
                 setLoading(false); // 로딩 완료
             }
@@ -100,7 +100,7 @@ const ComDetail = () => {
     };
 
     const handleSubmit = (values, actions) => {
-        dispatch(HomeCreateTweet(values));
+        dispatch(ComCreateTweet(values));
         actions.resetForm();
         setSelectedImage("");
         setSelectedVideo("");

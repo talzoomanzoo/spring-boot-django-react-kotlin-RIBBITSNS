@@ -51,6 +51,9 @@ import {
   VIEW_PLUS_FAILURE,
   VIEW_PLUS_REQUEST,
   VIEW_PLUS_SUCCESS,
+  COM_TWEET_CREATE_REQUEST,
+  COM_TWEET_CREATE_SUCCESS,
+  COM_TWEET_CREATE_FAILURE,
 } from "./ActionType";
 
 const initialState = {
@@ -66,6 +69,7 @@ const initialState = {
 
 const tweetReducer = (state = initialState, action) => {
   switch (action.type) {
+    case COM_TWEET_CREATE_REQUEST:
     case TWEET_CREATE_REQUEST:
     case TWEET_DELETE_REQUEST:
     case USER_LIKE_TWEET_REQUEST:
@@ -111,6 +115,7 @@ const tweetReducer = (state = initialState, action) => {
         twits: []
       };
     case TWEET_CREATE_FAILURE:
+    case COM_TWEET_CREATE_FAILURE:
     case TWEET_DELETE_FAILURE:
     case GET_ALL_TWEETS_FAILURE:
     case FIND_BY_TOP_LIKES_FAILURE:
@@ -126,6 +131,13 @@ const tweetReducer = (state = initialState, action) => {
         ...state,
         loading: false,
         error: action.payload,
+      };
+    case COM_TWEET_CREATE_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        twits: [action.payload, ...state.twits],
+        error: null,
       };
     case TWEET_CREATE_SUCCESS:
       console.log(" action ", action.payload);
