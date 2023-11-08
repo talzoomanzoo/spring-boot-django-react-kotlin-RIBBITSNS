@@ -68,25 +68,25 @@ public class TwitServiceImplementation implements TwitService {
 				maxindex = i;
 			}
 		}
-		twit.setLabel(maxindex);
+		twit.setEthiclabel(maxindex);
 		//수치 중 가장 큰 value의 인덱스를 maxindex에 넣는다.
 		
-		String sentence="";
-		if (maxindex == 0) {
-			sentence="과격한 감정이 느껴지네여.";
-		} else if (maxindex == 1) {
-			sentence="흠, 성적인 감정이 느껴지는것 같네여.";
-		} else if (maxindex == 2) {
-			sentence="진정하세여! 욕은 안되여!!";
-		} else if (maxindex == 3) {
-			sentence="차별이 느껴지네여, 좀 더 평등하게 생각해봐여!";
-		} else if (maxindex == 4) {
-			sentence="오늘 당신의 감정은 평온 하군여.";
-		}
+//		String sentence="";
+//		if (maxindex == 0) {
+//			sentence="과격한 감정이 느껴지네여.";
+//		} else if (maxindex == 1) {
+//			sentence="흠, 성적인 감정이 느껴지는것 같네여.";
+//		} else if (maxindex == 2) {
+//			sentence="진정하세여! 욕은 안되여!!";
+//		} else if (maxindex == 3) {
+//			sentence="차별이 느껴지네여, 좀 더 평등하게 생각해봐여!";
+//		} else if (maxindex == 4) {
+//			sentence="오늘 당신의 감정은 평온 하군여.";
+//		}
 		//maxindex에 해당하는 문장을 선택한다.
 		//0: '폭력',1: '선정',2: '욕설',3: '차별',4: '정상'
 		
-		twit.setSentence(sentence);
+		twit.setEthicrateMAX((int) maxvalue);
 		//해당 문장을 입력한다.
 		
 		return twitRepository.save(twit);

@@ -14,6 +14,7 @@ public class ChatDtoMapper {
 		chatDto.setMessage(chat.getMessage());
 		chatDto.setRoomId(chat.getRoomId());
 		chatDto.setSender(chat.getSender());
+		chatDto.setEmail(chat.getEmail());
 		chatDto.setTime(chat.getTimestamp());
 		chatDto.setType(ChatDto.MessageType.valueOf(chat.getType().name()));
 		

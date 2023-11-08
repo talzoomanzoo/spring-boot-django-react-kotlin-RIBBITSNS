@@ -13,6 +13,8 @@ public class ChatRoomDtoMapper {
 		chatRoomDto.setId(chatRoom.getId());
 		chatRoomDto.setName(chatRoom.getName());
 		chatRoomDto.setRoomId(chatRoom.getRoomId());
+		chatRoomDto.setCreator(chatRoom.getCreator());
+		chatRoomDto.setCreatorEmail(chatRoom.getCreatorEmail());
 		
 		return chatRoomDto;
 	}

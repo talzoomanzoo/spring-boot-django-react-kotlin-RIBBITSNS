@@ -21,13 +21,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.zosh.dto.ChatDto;
 import com.zosh.dto.ChatRoomDto;
+import com.zosh.dto.UserDto;
 import com.zosh.dto.mapper.ChatDtoMapper;
 import com.zosh.dto.mapper.ChatRoomDtoMapper;
+import com.zosh.dto.mapper.UserDtoMapper;
 import com.zosh.model.Chat;
 import com.zosh.model.Chat.MessageType;
 import com.zosh.model.ChatRoom;
+import com.zosh.model.User;
 import com.zosh.service.ChatService;
-
+import com.zosh.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,8 +48,8 @@ public class ChatController {
 	private SimpMessagingTemplate messagingTemplate;
 
     @PostMapping("/createroom")
-    public ResponseEntity<ChatRoomDto> createRoom(@RequestBody String name){
-    	ChatRoom createdroom = service.createRoom(name);
+    public ResponseEntity<ChatRoomDto> createRoom(@RequestBody ChatRoom chatRoom){
+    	ChatRoom createdroom = service.createRoom(chatRoom);
     	ChatRoomDto chatRoomDto = ChatRoomDtoMapper.toChatRoomDto(createdroom);
         return new ResponseEntity<>(chatRoomDto,HttpStatus.CREATED);
     }
@@ -68,6 +71,14 @@ public class ChatController {
         messagingTemplate.convertAndSend("/topic/"+ roomId, chatDto);
         
         return new ResponseEntity<>(chatDto, HttpStatus.CREATED);
+    }
+    
+    
+    public ResponseEntity<User> getprofileimage(@RequestBody String email){
+    	User user = service.findsenderprofile(email);
+    	//UserDto userDto = UserDtoMapper.toUserDto(user);
+    	
+		return new ResponseEntity<>(user,HttpStatus.OK);
     }
 	
     @PostMapping("/getchat")
