@@ -61,7 +61,7 @@ public class ComServiceImplementation implements ComService{
 	}
 
 
-	@Override
+	@Override // 커뮤니티 사용자 추가 (관리자)
 	public Community addUser(Long userId, Long comId) throws ComException, UserException {
 		// TODO Auto-generated method stub
 		Community community = findById(comId);
@@ -75,7 +75,7 @@ public class ComServiceImplementation implements ComService{
 		return community;
 	}
 
-	@Override
+	@Override // 커뮤니티 수정 (관리자)
 	public Community editCom(Community req, User user) throws ComException, UserException {
 		// TODO Auto-generated method stub
 		Community community = findById(req.getId());
@@ -89,13 +89,13 @@ public class ComServiceImplementation implements ComService{
 		return community;
 	}
 
-	@Override
+	@Override // 커뮤니티 가입 신청 및 취소
 	public Community addUserSignUp(Long comId, User user) throws ComException, UserException {
 		// TODO Auto-generated method stub
 		Community community = findById(comId);
 		User followToUser = findUserById(user.getId());
 		if (community.getFollowingscReady().contains(followToUser)) {
-			community.getFollowingsc().remove(followToUser);
+			community.getFollowingscReady().remove(followToUser);
 		} else {
 			community.getFollowingscReady().add(followToUser);
 		}
@@ -103,4 +103,37 @@ public class ComServiceImplementation implements ComService{
 		return community;
 	}
 
+	@Override
+	public Community addUserSignUpOk(Long comId, Long userId, User user) throws ComException, UserException {
+		// TODO Auto-generated method stub
+		Community community = findById(comId);
+		User followToUser = findUserById(userId);
+		if (community.getUser() == user) {
+			if (community.getFollowingscReady().contains(followToUser)) {
+				community.getFollowingscReady().remove(followToUser);
+				community.getFollowingsc().add(followToUser);
+			} else {
+				System.out.println("해당 사용자는 커뮤니티에 가입 신청을 하지 않았습니다."); }
+			}
+		else {
+			System.out.println("해당 사용자는 커뮤니티에 접근할 수 없습니다.");
+		}
+		
+		comRepository.save(community);
+		return community;
+	}
+
+	@Override
+	public Community signoutUser(Long comId, User user) throws ComException, UserException {
+		// TODO Auto-generated method stub
+		Community community = findById(comId);
+		User followToUser = findUserById(user.getId());
+		if (community.getFollowingsc().contains(followToUser)) {
+			community.getFollowingsc().remove(followToUser);
+		} else {
+			System.out.println("해당 사용자는 이미 커뮤니티에 가입되어 있지 않습니다.");
+		}
+		comRepository.save(community);
+		return community;
+	}
 }

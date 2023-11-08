@@ -69,13 +69,19 @@ const ComDetail = () => {
         dispatch(findComById(param.id));
         console.log("log");
         dispatch(findTwitsByComId(param.id))
-    }, [])
-
-    console.log("communities details check", com);
+    }, []);
 
     const handleToggleLocationForm = () => {
         setLocationFormOpen((prev) => !prev);
     };
+
+    // const authCheck = (com) => {
+    //     for (let i=0; i< com.followingsc.length; i++) {
+    //         if(com.followingsc[i].id === auth.user.id) {
+    //             return true;
+    //         }
+    //     }
+    // }
 
     const ComCreateTweet = (tweetData) => {
         return async (dispatch) => {
@@ -216,7 +222,8 @@ const ComDetail = () => {
                 />
             </section>
 
-            <section className="pb-10" style={{ marginTop: 30 }}>
+            {/* {authCheck(com) ? */}
+                <section className="pb-10" style={{ marginTop: 30 }}>
                 <div className="flex space-x-5 ">
                     <Avatar alt="Avatar" src={auth.user?.image ? auth.user.image : "https://cdn.pixabay.com/photo/2023/10/24/01/42/art-8337199_1280.png"} loading="lazy" />
                     <div className="w-full">
@@ -311,6 +318,7 @@ const ComDetail = () => {
                     </div>
                 </div>
             </section>
+            {/* : null} */}
 
             <div style={{ marginTop: 20 }}>
                 {isLocationFormOpen && (

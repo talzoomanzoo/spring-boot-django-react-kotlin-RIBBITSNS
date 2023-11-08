@@ -20,6 +20,12 @@ import {
     FIND_COM_BY_ID_REQUEST,
     FIND_COM_BY_ID_SUCCESS,
     FIND_COM_BY_ID_FAILURE,
+    ADD_USER_SIGNUP_REQUEST,
+    ADD_USER_SIGNUP_SUCCESS,
+    ADD_USER_SIGNUP_FAILURE,
+    REMOVE_FOLLOW_REQUEST,
+    REMOVE_FOLLOW_SUCCESS,
+    REMOVE_FOLLOW_FAILURE,
 } from "./ActionType";
 
 const initialState = {
@@ -47,6 +53,18 @@ const comReducer = (state = initialState, action) => {
                 loading: true,
                 error: null
             };
+        case ADD_USER_SIGNUP_REQUEST:
+            return {
+                ...state,
+                loading: true,
+                error: null,
+            };
+        case REMOVE_FOLLOW_REQUEST:
+            return {
+                ...state,
+                loading: true,
+                error: null,
+            }
         case SIGNUP_REQUEST:
         case FIND_COM_BY_ID_REQUEST:
             return {
@@ -82,6 +100,20 @@ const comReducer = (state = initialState, action) => {
                 com: action.payload,
                 error: null,
             };
+        case ADD_USER_SIGNUP_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                com: action.payload,
+                error: null,
+            };
+        case REMOVE_FOLLOW_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                com: action.payload,
+                error: null,
+            };
         case GET_USER_SUCCESS:
             return {
                 ...state,
@@ -110,6 +142,8 @@ const comReducer = (state = initialState, action) => {
         case UPDATE_COM_FAILURE:
         case SIGNUP_FAILURE:
         case ADD_USER_FAILURE:
+        case ADD_USER_SIGNUP_FAILURE:
+        case REMOVE_FOLLOW_FAILURE:
         default:
             return state;
     }

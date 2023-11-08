@@ -20,4 +20,8 @@ public interface ComService {
 	public Community editCom(Community req, User user) throws ComException, UserException;
 	
 	public Community addUserSignUp(Long comId, User user) throws ComException, UserException;
+	
+	public Community addUserSignUpOk(Long comId, Long userId, User user) throws ComException, UserException;
+	
+	public Community signoutUser(Long comId, User user) throws ComException, UserException;
 }

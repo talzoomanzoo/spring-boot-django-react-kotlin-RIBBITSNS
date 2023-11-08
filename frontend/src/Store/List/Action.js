@@ -116,7 +116,7 @@ export const getUserAction = (listId) => async (dispatch) => {
   dispatch({ type: GET_USER_REQUEST });
   try {
     console.log("listId get", listId);
-    const response = await api.get(`/api/lists/${listId}/get`);
+    const response = await api.get(`/api/lists/${listId}/getUsers`);
     const list = response.data;
     console.log("getUserAction list data", list);
     dispatch({ type: GET_USER_SUCCESS, payload: list });

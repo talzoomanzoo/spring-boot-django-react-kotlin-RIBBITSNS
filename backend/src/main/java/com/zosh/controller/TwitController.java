@@ -234,6 +234,14 @@ public class TwitController {
 		return new ResponseEntity<List<TwitDto>>(twitDtos,HttpStatus.OK);
 	}
 	
+	@GetMapping("/allComs")
+	public ResponseEntity<List<TwitDto>> findTwitsByAllComs(@RequestHeader("Authorization") String jwt) throws UserException, TwitException, ComException {
+		User user = userService.findUserProfileByJwt(jwt);
+		List<Twit> twits = twitService.findTwitsByAllComs(user);
+		List<TwitDto> twitDtos = TwitDtoMapper.toTwitDtos(twits, user);
+		return new ResponseEntity<List<TwitDto>>(twitDtos, HttpStatus.OK);
+	}
+	
 	@GetMapping("/{comId}/comTwit")
 	public ResponseEntity<List<TwitDto>> findTwitsByComId(@RequestHeader("Authorization") String jwt,
 			@PathVariable Long comId) throws ComException, UserException,TwitException{

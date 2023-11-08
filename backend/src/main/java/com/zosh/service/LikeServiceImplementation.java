@@ -41,11 +41,11 @@ public class LikeServiceImplementation implements LikesService {
 		
 		Twit twit=twitService.findById(twitId);
 		Like like=new Like();
+		
 		like.setTwit(twit);
 		like.setUser(user);
 		
 		Like savedLike=likeRepository.save(like);
-		
 		
 		twit.getLikes().add(savedLike);
 		twitRepository.save(twit);

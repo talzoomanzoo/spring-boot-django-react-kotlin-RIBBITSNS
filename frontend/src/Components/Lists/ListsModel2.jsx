@@ -82,7 +82,7 @@ const ListsModel2 = ({ list, handleClose, open }) => {
       backgroundImage: list.backgroundImage || "",
       //privateMode: list.privateMode || "",
     });
-
+    
     if (document.getElementById("element") !== null) {
       const domNode = document.getElementById("element");
       const element1 = createRoot(domNode);
@@ -90,6 +90,8 @@ const ListsModel2 = ({ list, handleClose, open }) => {
     } else {
       console.log("not exists");
     }
+
+    dispatch(getUserAction(list.id));
 //list.followings, list.hasFollowedLists
   }, []);
 

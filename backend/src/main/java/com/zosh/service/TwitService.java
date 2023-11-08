@@ -57,4 +57,6 @@ public interface TwitService {
 	public List<Twit> findTwitsByTopView() throws UserException, TwitException;
 
 	public List<Twit> findTwitsByComId(Long comId) throws ComException;
+	
+	public List<Twit> findTwitsByAllComs(User user) throws UserException;
 }

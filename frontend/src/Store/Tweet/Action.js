@@ -51,6 +51,9 @@ import {
   FIND_TWEET_BY_COM_ID_REQUEST,
   FIND_TWEET_BY_COM_ID_SUCCESS,
   FIND_TWEET_BY_COM_ID_FAILURE,
+  FIND_TWEET_BY_ALL_COMS_REQUEST,
+  FIND_TWEET_BY_ALL_COMS_SUCCESS,
+  FIND_TWEET_BY_ALL_COMS_FAILURE,
 } from "./ActionType";
 
 export const createTweetRequest = () => ({
@@ -215,6 +218,18 @@ export const findTwitsById = (twitId) => {
       dispatch({type:FIND_TWEET_BY_ID_FAILURE,payload:error.message});
     }
   };
+};
+
+export const findTwitsByAllComs = () => {
+  return async (dispatch) => {
+      dispatch({type:FIND_TWEET_BY_ALL_COMS_REQUEST});
+      try{
+        const response = await api.get(`/api/twits/allComs`);
+        dispatch({type: FIND_TWEET_BY_ALL_COMS_SUCCESS, payload: response.data});
+      } catch (error) {
+        dispatch({type: FIND_TWEET_BY_ALL_COMS_FAILURE, payload:error.message});
+      }
+  }
 };
 
 export const findTwitsByListId = (listId) => {
