@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import { makePaymentAction } from "../../Store/Payment/Action";
+import "./Scrollbar.css";
 
 const style = {
   position: "absolute",
@@ -56,7 +57,7 @@ console.log("plan ",plan)
             </div>
           </div>
           <div className="flex justify-center py-10">
-            <div className="w-[80%] space-y-10 hideScrollbar overflow-y-scroll  overflow-x-hidden ">
+            <div className="w-[80%] space-y-10 hideScrollbar overflow-y-scroll css-scroll customeScrollbar  overflow-x-hidden ">
               <div className="p-5  rounded-md flex items-center justify-between bg-black shadow-lg">
                 <h1 className="text-xl pr-5">
                   그린 가입자는 승인이 되면 '그린체크' 표시가 나타납니다.

@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -80,6 +82,6 @@ public class Twit {
     private boolean is_retwit = false;
     
     private String ethicrate; //윤리수치 저장
-    private int label; //수치중 가장 큰것을 라벨값으로 저장
-    private String sentence;//라벨값에 알맞는 문장을 입력
+    private int ethiclabel; //수치중 가장 큰것을 라벨값으로 저장
+    private int ethicrateMAX;// 최고수치 저장
 }

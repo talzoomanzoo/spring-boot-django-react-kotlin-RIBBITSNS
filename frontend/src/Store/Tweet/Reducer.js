@@ -54,6 +54,9 @@ import {
   COM_TWEET_CREATE_REQUEST,
   COM_TWEET_CREATE_SUCCESS,
   COM_TWEET_CREATE_FAILURE,
+  FIND_TWEET_BY_ALL_COMS_REQUEST,
+  FIND_TWEET_BY_ALL_COMS_SUCCESS,
+  FIND_TWEET_BY_ALL_COMS_FAILURE,
 } from "./ActionType";
 
 const initialState = {
@@ -97,6 +100,7 @@ const tweetReducer = (state = initialState, action) => {
         loading: true,
         error: null,
       };
+    case FIND_TWEET_BY_ALL_COMS_REQUEST:
     case GET_ALL_TWEETS_REQUEST:
     case FIND_BY_TOP_LIKES_REQUEST:
     case FIND_BY_TOP_VIEWS_REQUEST:
@@ -118,6 +122,7 @@ const tweetReducer = (state = initialState, action) => {
     case COM_TWEET_CREATE_FAILURE:
     case TWEET_DELETE_FAILURE:
     case GET_ALL_TWEETS_FAILURE:
+    case FIND_TWEET_BY_ALL_COMS_FAILURE:
     case FIND_BY_TOP_LIKES_FAILURE:
     case FIND_BY_TOP_VIEWS_FAILURE:
     case FIND_TWEET_BY_ID_FAILURE:
@@ -154,6 +159,13 @@ const tweetReducer = (state = initialState, action) => {
         error: null,
         twits: action.payload,
       };
+    case FIND_TWEET_BY_ALL_COMS_SUCCESS:
+      return {
+        ...state,
+        loading: true,
+        error: null,
+        twits: action.payload,
+      }
     case FIND_BY_TOP_LIKES_SUCCESS:
       return {
         ...state,
