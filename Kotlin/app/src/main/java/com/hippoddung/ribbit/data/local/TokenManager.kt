@@ -14,7 +14,7 @@ class TokenManager (
         private val TOKEN_KEY = stringPreferencesKey("jwt_token")
     }
 
-    fun getToken(): Flow<String?>{  // DataStore에서 token을 꺼내서 mapping하고 flow로 꺼낸다.
+    fun getToken(): Flow<String?>{  // DataStore 에서 token 을 꺼내서 mapping 하고 flow 로 꺼낸다.
         return context.dataStore.data.map{preferences ->
             preferences[TOKEN_KEY]
         }

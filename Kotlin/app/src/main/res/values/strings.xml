@@ -30,6 +30,7 @@
     <string name="list_screen">ListScreen</string>
     <string name="list_id_screen">ListIdScreen</string>
     <string name="creating_list_screen">CreatingListScreen</string>
+    <string name="editing_list_screen">EditingListScreen</string>
 
     <!--    Auth   -->
     <string name="login">Login</string>
@@ -60,5 +61,7 @@
 
     <!--    List   -->
     <string name="create_list">Create List</string>
+    <string name="edit_list">Edit List</string>
+    <string name="list_background_image">List Background Image</string>
 
 </resources>

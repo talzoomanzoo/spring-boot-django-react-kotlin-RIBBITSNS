@@ -79,7 +79,7 @@ fun RibbitTopAppBar(
     Log.d("HippoLog, RibbitTopAppBar", "RibbitTopAppBar")
     Column(modifier = modifier) {
         CenterAlignedTopAppBar(
-//            scrollBehavior = scrollBehavior,    // scroll에 따라 TopAppBar가 보여지거나 숨겨지게 해주는 기능이나 recompostion을 과도하게 발생시키는 문제가 있어 잠그기로 함.
+//            scrollBehavior = scrollBehavior,    // scroll 에 따라 TopAppBar 가 보여지거나 숨겨지게 해주는 기능이나 recomposition 을 과도하게 발생 시키는 문제가 있어 잠그기로 함.
             title = {
                 Box(modifier = modifier) {
                     TextButton(
@@ -119,7 +119,7 @@ fun RibbitTopAppBar(
             },
             modifier = modifier
         )
-//        AdBanner() // 불러오는 중 TimeOut이 자주 발생
+//        AdBanner() // 불러오는 중 TimeOut 이 자주 발생
         Canvas(
             modifier = modifier,
             onDraw = {
@@ -185,7 +185,7 @@ fun MainDropDownMenu(
                 userViewModel.myProfile.value?.id?.let {
                     getCardViewModel.getUserIdPosts(userId = it)
                     userViewModel.getProfile(userId = it)
-                }   // userViewModel의 user가 없는 경우 접근 자체가 불가능
+                }   // userViewModel 의 user 가 없는 경우 접근 자체가 불가능
                 navController.navigate(RibbitScreen.ProfileScreen.name)
                 isDropDownMenuExpanded = false
             },
@@ -206,7 +206,7 @@ fun MainDropDownMenu(
                     Log.d("HippoLog, HomeTopAppBar", "LogOut")
                     userViewModel.resetMyProfile()   // 유저 정보 리셋
                     authViewModel.deleteLoginInfo() // 로그인 정보 삭제
-                    tokenViewModel.deleteToken()    // 토큰 정보 삭제. token을 먼저 지우면 다시 로그인 됨
+                    tokenViewModel.deleteToken()    // 토큰 정보 삭제. token 을 먼저 지우면 다시 로그인 됨
                 }
                 isDropDownMenuExpanded = false
             },
@@ -289,11 +289,11 @@ fun UserSearchBar(
         val userComparator = compareByDescending<User> { it.id }
         val sortedUsers = remember(usersData, userComparator) {
             usersData.sortedWith(userComparator)
-        }   // LazyColumn items에 List를 바로 주는 것이 아니라 Comparator로 정렬하여 remember로 기억시켜서 recomposition을 방지하여 성능을 올린다.
+        }   // LazyColumn items 에 List 를 바로 주는 것이 아니라 Comparator 로 정렬하여 remember 로 기억시켜서 recomposition 을 방지하여 성능을 올린다.
         val postComparator = compareByDescending<RibbitPost> { it.id }
         val sortedPosts = remember(postsData, postComparator) {
             postsData.sortedWith(postComparator)
-        }   // LazyColumn items에 List를 바로 주는 것이 아니라 Comparator로 정렬하여 remember로 기억시켜서 recomposition을 방지하여 성능을 올린다.
+        }   // LazyColumn items 에 List 를 바로 주는 것이 아니라 Comparator 로 정렬하여 remember 로 기억시켜서 recomposition 을 방지하여 성능을 올린다.
         TextField(
             value = searchQuery,
             onValueChange = {

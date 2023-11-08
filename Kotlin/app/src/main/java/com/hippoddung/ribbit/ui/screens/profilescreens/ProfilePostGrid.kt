@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -49,9 +48,7 @@ import com.hippoddung.ribbit.network.bodys.User
 import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.screens.carditems.RibbitCard
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
-import com.hippoddung.ribbit.ui.viewmodel.ClassificationUiState
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
-import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
 import com.hippoddung.ribbit.ui.viewmodel.ProfileUiState
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserIdClassificationUiState
@@ -74,11 +71,11 @@ fun ProfilePostsGrid(
     val comparator by remember { mutableStateOf(compareByDescending<RibbitPost> { it.id }) }
     val sortedRibbitPost = remember(posts, comparator) {
         posts.sortedWith(comparator)
-    }   // LazyColumn items에 List를 바로 주는 것이 아니라 Comparator로 정렬하여 remember로 기억시켜서 recomposition을 방지하여 성능을 올린다.
+    }   // LazyColumn items 에 List 를 바로 주는 것이 아니라 Comparator 로 정렬하여 remember 로 기억시켜서 recomposition 을 방지하여 성능을 올린다.
     val profileUser by remember {
         if (userViewModel.profileUiState is ProfileUiState.Exist) {
-            // navigation 중 backstack으로 보내면서 재실행, state casting이 정상적으로 되지 않아 fatal error가 발생
-            // state check를 넣음
+            // navigation 중 backstack 으로 보내면서 재실행, state casting 이 정상적으로 되지 않아 fatal error 가 발생
+            // state check 를 넣음
             mutableStateOf((userViewModel.profileUiState as ProfileUiState.Exist).user)
         } else {
             mutableStateOf(User())
@@ -255,7 +252,7 @@ fun ProfilePostsGrid(
                                 getCardViewModel.getUserIdPosts(
                                     userId = it
                                 )
-                            }   // userViewModel의 user가 없는 경우 접근 자체가 불가능
+                            }   // userViewModel 의 user 가 없는 경우 접근 자체가 불가능
                         },
                         colors = ButtonDefaults.textButtonColors(
                             containerColor = if(getCardViewModel.userIdClassificationUiState is UserIdClassificationUiState.Ribbit){
@@ -279,7 +276,7 @@ fun ProfilePostsGrid(
                                 getCardViewModel.getUserIdReplies(
                                     userId = it
                                 )
-                            }   // userViewModel의 user가 없는 경우 접근 자체가 불가능
+                            }   // userViewModel 의 user 가 없는 경우 접근 자체가 불가능
                         },
                         colors = ButtonDefaults.textButtonColors(
                             containerColor = if(getCardViewModel.userIdClassificationUiState is UserIdClassificationUiState.Replies){
@@ -304,9 +301,9 @@ fun ProfilePostsGrid(
                                     userId = it
                                 )
                             }
-                            // Media의 경우 서버에서 해당 컨트롤러가 없어서 안드로이드 자체 구현
-                            // getCardViewModel.getUserIdPosts 함수에 자체적으로 UiState를 업데이트하는 함수가 포함되어 있어서
-                            // state관리가 어려운 점이 있어 같은 통신을 쓰지만 uistate만 다르게 한 getCardViewModel.getUserIdMedias 함수를 만들어서 사용
+                            // Media 의 경우 서버에서 해당 컨트롤러가 없어서 안드로이드 자체 구현
+                            // getCardViewModel.getUserIdPosts 함수에 자체적으로 UiState 를 업데이트하는 함수가 포함되어 있어서
+                            // state 관리가 어려운 점이 있어 같은 통신을 쓰지만 uiState 만 다르게 한 getCardViewModel.getUserIdMedias 함수를 만들어서 사용
                         },
                         colors = ButtonDefaults.textButtonColors(
                             containerColor = if(getCardViewModel.userIdClassificationUiState is UserIdClassificationUiState.Media){
@@ -330,7 +327,7 @@ fun ProfilePostsGrid(
                                 getCardViewModel.getUserIdLikes(
                                     userId = it
                                 )
-                            }   // userViewModel의 user가 없는 경우 접근 자체가 불가능
+                            }   // userViewModel 의 user 가 없는 경우 접근 자체가 불가능
                         },
                         colors = ButtonDefaults.textButtonColors(
                             containerColor = if(getCardViewModel.userIdClassificationUiState is UserIdClassificationUiState.Likes){
@@ -362,7 +359,7 @@ fun ProfilePostsGrid(
                 )
             }
         }
-        items(items = sortedRibbitPost, key = { post -> post.id }) { it ->
+        items(items = sortedRibbitPost, key = { post -> post.id }) {
             RibbitCard(
                 post = it,
                 getCardViewModel = getCardViewModel,
@@ -385,7 +382,7 @@ fun ProfilePostsGrid(
                             userViewModel.postWithdrawal()  // 서버에 탈퇴 요청
                             userViewModel.resetMyProfile()   // 유저 정보 리셋
                             authViewModel.deleteLoginInfo() // 로그인 정보 삭제
-                            tokenViewModel.deleteToken()    // 토큰 정보 삭제. token을 먼저 지우면 다시 로그인 됨
+                            tokenViewModel.deleteToken()    // 토큰 정보 삭제. token 을 먼저 지우면 다시 로그인 됨
                         }
                     },
                     content = {

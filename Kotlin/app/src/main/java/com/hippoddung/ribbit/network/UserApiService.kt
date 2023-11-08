@@ -28,7 +28,7 @@ interface UserApiService {
 
     @GET("api/users/search1")
     suspend fun getUsersSearch(
-        @Query("query") searchQuery : String    // @Query 안의 String값이 서버의 parameter 명과 같아야 함.
+        @Query("query") searchQuery : String    // @Query 안의 String 값이 서버의 parameter 명과 같아야 함.
     ): List<User>
 
     @PUT("api/users/{userId}/follow")
