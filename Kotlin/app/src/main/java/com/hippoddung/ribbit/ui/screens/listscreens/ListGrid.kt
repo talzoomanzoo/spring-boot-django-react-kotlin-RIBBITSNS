@@ -21,16 +21,11 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.network.bodys.RibbitListItem
-import com.hippoddung.ribbit.network.bodys.RibbitPost
-import com.hippoddung.ribbit.ui.screens.carditems.RibbitCard
-import com.hippoddung.ribbit.ui.viewmodel.ClassificationUiState
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.ListClassificationUiState
 import com.hippoddung.ribbit.ui.viewmodel.ListViewModel
-import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("UnrememberedMutableState")
@@ -157,6 +152,7 @@ fun ListGrid(
         items(items = sortedRibbitListItem, key = { listItem -> listItem.id }) {
             ListCard(
                 listItem = it,
+                listViewModel = listViewModel,
                 getCardViewModel = getCardViewModel,
                 navController = navController,
                 modifier = modifier

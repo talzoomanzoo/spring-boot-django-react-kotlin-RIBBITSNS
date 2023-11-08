@@ -28,6 +28,7 @@
     <string name="creating_post_screen">CreatingPostScreen</string>
     <string name="editing_post_screen">EditingPostScreen</string>
     <string name="list_screen">ListScreen</string>
+    <string name="list_id_screen">ListIdScreen</string>
     <string name="creating_list_screen">CreatingListScreen</string>
 
     <!--    Auth   -->

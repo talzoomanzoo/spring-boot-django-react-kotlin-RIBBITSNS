@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Comment
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,11 +22,13 @@ import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.network.bodys.RibbitListItem
 import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
+import com.hippoddung.ribbit.ui.viewmodel.ListViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ListCard(
     listItem: RibbitListItem,
+    listViewModel: ListViewModel,
     getCardViewModel: GetCardViewModel,
     navController: NavHostController,
     modifier: Modifier = Modifier
@@ -39,13 +41,12 @@ fun ListCard(
             .padding(start = 20.dp, top = 0.dp, end = 20.dp, bottom = 0.dp)
             .clickable {
                 Log.d("HippoLog, UserCard", "UserCardClick")
-                listItem.id.let {
-                    getCardViewModel.getPostIdPost(postId = it)
-                }
-                navController.navigate(RibbitScreen.PostIdScreen.name)
+                listViewModel.getListIdList(listId = listItem.id)
+                getCardViewModel.getListIdPosts(listId = listItem.id)
+                navController.navigate(RibbitScreen.ListIdScreen.name)
             }
     ) {
-        Icon(imageVector = Icons.Default.Comment, contentDescription = "RibbitPost")
+        Icon(imageVector = Icons.Default.List, contentDescription = "RibbitList")
         Row(
             modifier = modifier.padding(start = 12.dp,bottom = 4.dp)
         ) {

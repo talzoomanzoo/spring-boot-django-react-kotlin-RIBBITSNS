@@ -32,6 +32,7 @@ import com.hippoddung.ribbit.ui.screens.authscreens.LoginScreen
 import com.hippoddung.ribbit.ui.screens.authscreens.SignUpScreen
 import com.hippoddung.ribbit.ui.screens.homescreens.HomeScreen
 import com.hippoddung.ribbit.ui.screens.listscreens.CreatingListScreen
+import com.hippoddung.ribbit.ui.screens.listscreens.ListIdScreen
 import com.hippoddung.ribbit.ui.screens.postidscreen.PostIdScreen
 import com.hippoddung.ribbit.ui.screens.profilescreens.EditProfileScreen
 import com.hippoddung.ribbit.ui.screens.profilescreens.ProfileScreen
@@ -56,6 +57,7 @@ enum class RibbitScreen(@StringRes val title: Int) {
     CreatingPostScreen(title = R.string.creating_post_screen),
     EditingPostScreen(title = R.string.editing_post_screen),
     ListScreen(title = R.string.list_screen),
+    ListIdScreen(title = R.string.list_id_screen),
     CreatingListScreen(title = R.string.creating_list_screen),
     LoadingScreen(title = R.string.loading_screen),
     ErrorScreen(title = R.string.error_screen)
@@ -199,6 +201,19 @@ fun RibbitScreen(
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
                 listViewModel = listViewModel,
+                modifier = modifier
+            )
+        }
+        composable(route = RibbitScreen.ListIdScreen.name) {
+            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> TwitIdScreen")
+            ListIdScreen(
+                navController = navController,
+                getCardViewModel = getCardViewModel,
+                tokenViewModel = tokenViewModel,
+                authViewModel = authViewModel,
+                userViewModel = userViewModel,
+                listViewModel = listViewModel,
+                myId = myId,   // 유저 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 것으로 가정한다.
                 modifier = modifier
             )
         }
