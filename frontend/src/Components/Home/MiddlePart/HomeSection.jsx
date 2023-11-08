@@ -92,7 +92,7 @@ const HomeSection = () => {
     setSelectedImage("");
     setSelectedVideo("");
     handleCloseEmoji();
-    window.location.reload();
+    //window.location.reload();
   };
 
   const ethicreveal = async (twitid, twitcontent) => {
@@ -111,6 +111,7 @@ const HomeSection = () => {
           }),
         }
       );
+      console.log("response.status: ",response);
       if (response.status === 200) {
         setLoading(false);
         setRefreshTwits((prev) => prev + 1);

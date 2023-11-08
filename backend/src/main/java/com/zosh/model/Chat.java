@@ -23,6 +23,7 @@ public class Chat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String sender;
+    private String email;
     private String roomId; // 방 번호
     private String message;
     private LocalDateTime timestamp;

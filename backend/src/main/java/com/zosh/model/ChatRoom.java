@@ -20,7 +20,9 @@ public class ChatRoom {
     private Long id;
 	
     private String roomId;
-    private String name;
+    private String name;//방이름
+    private String creator;//방 만든 사람
+    private String creatorEmail;//만든사람 이메일
 
 //    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 //    private List<Chat> messages;

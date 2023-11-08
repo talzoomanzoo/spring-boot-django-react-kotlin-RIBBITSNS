@@ -88,6 +88,11 @@ interface RibbitApiService {
     suspend fun getPostsSearch(
         @Query("query") searchQuery : String    // @Query 안의 String값이 서버의 parameter 명과 같아야 함.
     ): List<RibbitPost>
+
+    @GET("/api/twits/{listId}/listTwit")
+    suspend fun getListIdPosts(
+        @Path("listId") listId : Int
+    ): List<RibbitPost>
 }
 
 //    @GET("auth/refresh")

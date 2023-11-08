@@ -20,10 +20,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Image
-import androidx.compose.material.icons.filled.OndemandVideo
-import androidx.compose.material.icons.filled.VideoLibrary
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -40,21 +41,16 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.R
 import com.hippoddung.ribbit.ui.RibbitScreen
-import com.hippoddung.ribbit.ui.screens.textfielditems.InputTextField
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.CreatingListUiState
-import com.hippoddung.ribbit.ui.viewmodel.CreatingPostUiState
-import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.ListViewModel
-import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
-import java.io.File
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
@@ -77,6 +73,7 @@ fun CreatingListScreen(
 
         is CreatingListUiState.Success -> {
             Log.d("HippoLog, CreatingListScreen", "Success")
+            listViewModel.getLists()
             navController.navigate(RibbitScreen.ListScreen.name)
             listViewModel.creatingListUiState = CreatingListUiState.Ready
         }
@@ -102,9 +99,10 @@ fun InputListScreen(
 ) {
     val context = LocalContext.current
     var inputListName by remember { mutableStateOf("") }
-    var inputListInfo by remember { mutableStateOf("") }
+    var inputDescription by remember { mutableStateOf("") }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     val bitmap = remember { mutableStateOf<Bitmap?>(null) }
+    var privateMode by remember { mutableStateOf(false) }
 
     val imageLauncher = rememberLauncherForActivityResult(
         contract =
@@ -128,15 +126,15 @@ fun InputListScreen(
         TextField(
             value = inputListName,
             onValueChange = { inputListName = it },
-            label = {Text(text = "List Name", modifier = modifier)},
+            label = { Text(text = "List Name", modifier = modifier) },
             modifier = modifier
                 .padding(bottom = 32.dp)
                 .fillMaxWidth()
         )
         TextField(
-            value = inputListInfo,
-            onValueChange = { inputListInfo = it },
-            label = {Text(text = "List Information", modifier = modifier)},
+            value = inputDescription,
+            onValueChange = { inputDescription = it },
+            label = { Text(text = "List Description", modifier = modifier) },
             modifier = modifier
                 .padding(bottom = 32.dp)
                 .fillMaxWidth()
@@ -176,6 +174,32 @@ fun InputListScreen(
                     modifier = modifier
                 )
             }
+
+            val image = if (privateMode) Icons.Filled.Lock else Icons.Filled.LockOpen
+            val description = if (privateMode) "Locked" else "Unlocked"
+
+            Button(
+                onClick = { privateMode = !privateMode },
+                modifier = modifier.padding(14.dp)
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = modifier
+                        .width(100.dp)
+                ) {
+                    Icon(
+                        imageVector = image,
+                        contentDescription = description,
+                        modifier = modifier
+                    )
+                    Text(
+                        text = description,
+                        textAlign = TextAlign.Center,
+                        modifier = modifier.fillMaxWidth()
+                    )
+                }
+            }
+
         }
         Row(modifier = modifier) {
             Button(
@@ -190,16 +214,17 @@ fun InputListScreen(
             Button(
                 onClick = {
                     listViewModel.createList(
+                        backgroundImage = bitmap.value,
+                        description = inputDescription,
                         listName = inputListName,
-                        listInfo = inputListInfo,
-                        listBackgroundImage = bitmap.value,
+                        privateMode = privateMode,
                         user = userViewModel.myProfile.value
                     )
                 },
                 modifier = modifier.padding(14.dp)
             ) {
                 Text(
-                    text = stringResource(R.string.create_ribbit),
+                    text = stringResource(R.string.create_list),
                     modifier = modifier
                 )
             }

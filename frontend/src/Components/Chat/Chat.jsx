@@ -3,7 +3,7 @@ import axios from 'axios';
 import Modal from 'react-modal';
 import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
-
+import { useSelector } from "react-redux";
 
 const customStyles = {
   content: {
@@ -27,7 +27,7 @@ const Chat = () => {
 
   const [stompClient, setStompClient] = useState(null); // WebSocket client
 
-  const jwtToken = localStorage.getItem("jwt");
+  const {auth, theme }=useSelector(store=>store);
 
   useEffect(() => {
     // Connect to WebSocket server
@@ -44,6 +44,8 @@ const Chat = () => {
     // Send a request to create a chat room
     axios.post('http://localhost:8080/createroom', {
       name: roomName,
+      creator: auth.user?.fullName,
+      creatorEmail: auth.user?.email.split(" ")[0],
     })
     .then((response) => {
       if (response.status === 201) {
@@ -98,7 +100,8 @@ const Chat = () => {
       const chatMessage = {
         type: "TALK",
         roomId: selectedRoom,
-        sender: sender,
+        sender: auth.user?.fullName,
+        email: auth.user?.email.split(" ")[0],
         message: message,
       };
       console.log("chatmessage: ",chatMessage);
@@ -166,7 +169,17 @@ const Chat = () => {
             chatHistory.map((chat) => (
               <div key={chat.id}>
                 {chat.message && (
-                  <span>{chat.sender}: {chat.message}</span>
+                  <span
+                    style={{
+                      display: 'block',
+                      textAlign: auth.user?.fullName === chat.sender ? 'right' : 'left',
+                    }}
+                  >
+                    
+                    {auth.user?.fullName === chat.sender
+                      ? `${chat.message}: ${chat.sender}`
+                      : `${chat.sender}: ${chat.message}`}
+                  </span>
                 )}
               </div>
             ))

@@ -67,6 +67,12 @@ sealed interface UserIdClassificationUiState{
     object Likes: UserIdClassificationUiState
 }
 
+sealed interface GetListIdPostsUiState {
+    data class Success( val posts: List<RibbitPost> ) : GetListIdPostsUiState
+    data class Error(val errorCode: String) : GetListIdPostsUiState
+    object Loading : GetListIdPostsUiState
+}
+
 sealed interface PostReplyUiState {
     object Ready : PostReplyUiState
     object Loading : PostReplyUiState
@@ -87,8 +93,11 @@ class GetCardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으
     var classificationUiState: ClassificationUiState by mutableStateOf(ClassificationUiState.Recent)
     var deletePostUiState: DeletePostUiState by mutableStateOf(DeletePostUiState.Ready)
     var postIdUiState: PostIdUiState by mutableStateOf(PostIdUiState.Loading)
+
     var getUserIdPostsUiState: GetUserIdPostsUiState by mutableStateOf(GetUserIdPostsUiState.Loading)
     var userIdClassificationUiState: UserIdClassificationUiState by mutableStateOf(UserIdClassificationUiState.Ribbit)
+
+    var getListIdPostsUiState: GetListIdPostsUiState by mutableStateOf(GetListIdPostsUiState.Loading)
 
     var replyPostIdUiState: Int? by mutableStateOf(null)
     var postReplyUiState: PostReplyUiState by mutableStateOf(PostReplyUiState.Ready)
@@ -513,6 +522,33 @@ class GetCardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으
                 Log.d("HippoLog, UserViewModel", "getUserSearch error: ${e.message}")
                 SearchingUserUiState.Error
             }
+        }
+    }
+
+    fun getListIdPosts(listId: Int) {    // PostDetail을 불러오는 함수
+        viewModelScope.launch(Dispatchers.IO) {
+            getListIdPostsUiState = GetListIdPostsUiState.Loading
+            userIdClassificationUiState = UserIdClassificationUiState.Ribbit
+            Log.d("HippoLog, GetCardViewModel", "getListIdPosts, $getListIdPostsUiState")
+            getListIdPostsUiState = try {
+                GetListIdPostsUiState.Success( posts = ribbitRepository.getListIdPosts(listId) )
+            } catch (e: IOException) {
+                Log.d("HippoLog, GetCardViewModel", "getListIdPosts: ${e.stackTrace}, ${e.message}")
+                GetListIdPostsUiState.Error(e.message.toString())
+
+            } catch (e: ExceptionInInitializerError) {
+                Log.d("HippoLog, GetCardViewModel", "getListIdPosts: ${e.stackTrace}, ${e.message}")
+                GetListIdPostsUiState.Error(e.message.toString())
+
+            } catch (e: HttpException) {
+                Log.d("HippoLog, GetCardViewModel", "getListIdPosts: ${e.stackTrace}, ${e.code()}, $e")
+                if (e.code() == 500) {
+                    GetListIdPostsUiState.Error(e.code().toString())
+                } else {
+                    GetListIdPostsUiState.Error(e.message.toString())
+                }
+            }
+            Log.d("HippoLog, GetCardViewModel", "getListIdPosts, $getListIdPostsUiState")
         }
     }
 }
