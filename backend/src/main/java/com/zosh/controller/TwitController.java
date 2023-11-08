@@ -21,11 +21,13 @@ import com.zosh.exception.ComException;
 import com.zosh.exception.ListException;
 import com.zosh.exception.TwitException;
 import com.zosh.exception.UserException;
+import com.zosh.model.Community;
 import com.zosh.model.ListModel;
 import com.zosh.model.Twit;
 import com.zosh.model.User;
 import com.zosh.request.TwitReplyRequest;
 import com.zosh.response.ApiResponse;
+import com.zosh.service.ComService;
 import com.zosh.service.ListService;
 import com.zosh.service.TwitService;
 import com.zosh.service.UserService;
@@ -40,11 +42,13 @@ public class TwitController {
 	private TwitService twitService;
 	private UserService userService;
 	private ListService listService;
+	private ComService comService;
 	
-	public TwitController(TwitService twitService,UserService userService, ListService listService) {
+	public TwitController(TwitService twitService,UserService userService, ListService listService, ComService comService) {
 		this.twitService=twitService;
 		this.userService=userService;
 		this.listService=listService;
+		this.comService=comService;
 	}
 	
 	@PostMapping("/create")
@@ -234,8 +238,22 @@ public class TwitController {
 	public ResponseEntity<List<TwitDto>> findTwitsByComId(@RequestHeader("Authorization") String jwt,
 			@PathVariable Long comId) throws ComException, UserException,TwitException{
 		User user = userService.findUserProfileByJwt(jwt);
+		System.out.println("userid" +user.getId());
 		List<Twit> twits = twitService.findTwitsByComId(comId);
+		System.out.println("twits" +twits);
 		List<TwitDto> twitDtos= TwitDtoMapper.toTwitDtos(twits, user);
+		System.out.println("twitDtos" +twitDtos);
 		return new ResponseEntity<List<TwitDto>>(twitDtos, HttpStatus.OK);
 		}
+	
+	@PostMapping("/{comId}/create") // comId 활용하기
+	public ResponseEntity<TwitDto> createComTwit(@RequestBody Twit req, @PathVariable Long comId,
+			@RequestHeader("Authorization") String jwt) throws UserException, TwitException, ComException{
+		
+		User user=userService.findUserProfileByJwt(jwt);
+		Twit twit=twitService.createComTwit(req, comId, user);
+		TwitDto twitDto=TwitDtoMapper.toTwitDto(twit,user);
+		
+		return new ResponseEntity<>(twitDto,HttpStatus.CREATED);
+	}
 }
