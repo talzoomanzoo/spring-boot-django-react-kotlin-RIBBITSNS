@@ -44,12 +44,14 @@ import { uploadToCloudinary } from "../../../../Utils/UploadToCloudinary";
 import Loading from "../../../Profile/Loading/Loading";
 import Maplocation from "../../../Profile/Maplocation";
 import ReplyModal from "./ReplyModal";
+import ProgressBar from "@ramonak/react-progress-bar";
 
 const validationSchema = Yup.object().shape({
   content: Yup.string().required("내용이 없습니다"),
 });
 
 const TwitCard = ({ twit }) => {
+
   const [selectedImage, setSelectedImage] = useState(twit.image);
   const [selectedVideo, setSelectedVideo] = useState(twit.video);
   // const [uploadingImage, setUploadingImage] = useState(false);
@@ -516,7 +518,10 @@ const TwitCard = ({ twit }) => {
                   </p>
 
                   <p>
-                    {ethiclabel}: {ethicrateMAX}
+                    {ethiclabel===0 && <div className="flex items-center font-bold rounded-md">폭력성<ProgressBar completed={ethicrateMAX} width="450%" margin="2px 0px 4px 4px"/></div>}
+                    {ethiclabel===1 && <div className="flex items-center font-bold rounded-md">선정성<ProgressBar completed={ethicrateMAX} width="450%" margin="2px 0px 4px 4px"/></div>}
+                    {ethiclabel===2 && <div className="flex items-center font-bold rounded-md">욕설<ProgressBar completed={ethicrateMAX} width="450%" margin="2px 0px 4px 4px"/></div>}
+                    {ethiclabel===3 && <div className="flex items-center font-bold rounded-md">차별성<ProgressBar completed={ethicrateMAX} width="450%" margin="2px 0px 4px 4px"/></div>}
                   </p>
                   
                   {twit.image && (
