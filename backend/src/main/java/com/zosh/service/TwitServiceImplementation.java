@@ -44,6 +44,7 @@ public class TwitServiceImplementation implements TwitService {
 		twit.setReply(false);
 		twit.setTwit(true);
 		twit.setVideo(req.getVideo());
+		twit.setLocation(req.getLocation());
 
 		return twitRepository.save(twit);
 	}
@@ -184,6 +185,7 @@ public class TwitServiceImplementation implements TwitService {
 		twit.setContent(req.getContent());
 		twit.setImage(req.getImage());
 		twit.setVideo(req.getVideo());
+		twit.setLocation(req.getLocation());
 		twit.setEdited(req.isEdited());
 		twit.setEditedAt(req.getEditedAt());
 		System.out.println(twit.isEdited());
