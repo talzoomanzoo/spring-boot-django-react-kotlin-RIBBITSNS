@@ -31,6 +31,7 @@ import com.hippoddung.ribbit.ui.viewmodel.ListViewModel
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ListCard(
+    myId: Int,
     listItem: RibbitListItem,
     listViewModel: ListViewModel,
     getCardViewModel: GetCardViewModel,
@@ -75,33 +76,35 @@ fun ListCard(
                 }
             }
         }
-        OutlinedButton(
-            onClick = {
-                listViewModel.editingListUiState = EditingListUiState.Ready(listItem)
-                navController.navigate(RibbitScreen.EditingListScreen.name)
-                      },
-            modifier = modifier
-        ) {
-            Text(
-                text = "Edit",
-                color = Color(0xFF006400),
-                fontSize = 14.sp,
+        if(listItem.user?.id == myId) {
+            OutlinedButton(
+                onClick = {
+                    listViewModel.editingListUiState = EditingListUiState.Ready(listItem)
+                    navController.navigate(RibbitScreen.EditingListScreen.name)
+                },
                 modifier = modifier
-            )
-        }
-        OutlinedButton(
-            onClick = {
-                listViewModel.deleteListIdState = listItem.id
-                listViewModel.deleteListClickedUiState = true
-            },
-            modifier = modifier
-        ) {
-            Text(
-                text = "Delete",
-                color = Color(0xFF006400),
-                fontSize = 14.sp,
+            ) {
+                Text(
+                    text = "Edit",
+                    color = Color(0xFF006400),
+                    fontSize = 14.sp,
+                    modifier = modifier
+                )
+            }
+            OutlinedButton(
+                onClick = {
+                    listViewModel.deleteListIdState = listItem.id
+                    listViewModel.deleteListClickedUiState = true
+                },
                 modifier = modifier
-            )
+            ) {
+                Text(
+                    text = "Delete",
+                    color = Color(0xFF006400),
+                    fontSize = 14.sp,
+                    modifier = modifier
+                )
+            }
         }
     }
 }

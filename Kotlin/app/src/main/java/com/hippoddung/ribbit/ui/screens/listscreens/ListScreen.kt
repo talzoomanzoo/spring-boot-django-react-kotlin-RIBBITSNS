@@ -98,6 +98,7 @@ fun ListSuccessScreen(
         is ListClassificationUiState.PrivateList ->  // listClassificationUiState 가 PrivateList 인 경우
             listItems.filter { it.privateMode == true}  // RibbitListItem.privateMode 가 true 인 경우만 필터
     }
+    val myId by remember { mutableStateOf(userViewModel.myProfile.value?.id!!) }    // 로그인시 저장한 정보기 때문에 반드시 값이 존재함.
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -133,6 +134,7 @@ fun ListSuccessScreen(
         ) {
             Box(modifier = modifier) {
                 ListGrid(
+                    myId = myId,
                     filteredListItems = filteredListItems,
                     getCardViewModel = getCardViewModel,
                     listViewModel = listViewModel,

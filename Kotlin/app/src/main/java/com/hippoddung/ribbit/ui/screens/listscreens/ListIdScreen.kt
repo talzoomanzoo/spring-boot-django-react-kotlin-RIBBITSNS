@@ -127,16 +127,18 @@ fun ListIdSuccessScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { listViewModel.searchingUserClickedUiState = true },
-                modifier = modifier
-                    .padding(14.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Add,
-                    contentDescription = "Add User Button.",
+            if ((listViewModel.listIdUiState as ListIdUiState.Success).listItem.user?.id == myId) {
+                FloatingActionButton(
+                    onClick = { listViewModel.searchingUserClickedUiState = true },
                     modifier = modifier
-                )
+                        .padding(14.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Add,
+                        contentDescription = "Add User Button.",
+                        modifier = modifier
+                    )
+                }
             }
         },
         floatingActionButtonPosition = FabPosition.End
