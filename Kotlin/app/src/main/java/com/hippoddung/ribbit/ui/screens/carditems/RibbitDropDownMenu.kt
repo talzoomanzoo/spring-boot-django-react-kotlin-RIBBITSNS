@@ -25,6 +25,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.network.bodys.RibbitPost
 import com.hippoddung.ribbit.ui.RibbitScreen
@@ -37,11 +38,11 @@ import kotlinx.coroutines.runBlocking
 fun RibbitDropDownMenu(
     post: RibbitPost,
     getCardViewModel: GetCardViewModel,
-    postingViewModel: PostingViewModel,
     myId: Int,
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
+    val postingViewModel: PostingViewModel = hiltViewModel()
     var isDropDownMenuExpanded by remember { mutableStateOf(false) }
 
     Box(
@@ -49,7 +50,8 @@ fun RibbitDropDownMenu(
     ) {
         IconButton(
             onClick = { isDropDownMenuExpanded = true },
-            modifier = modifier.align(Alignment.CenterEnd)
+            modifier = modifier
+                .align(Alignment.CenterEnd)
                 .padding(start = 4.dp, end = 4.dp),
         ) {
             Icon(
@@ -70,8 +72,8 @@ fun RibbitDropDownMenu(
                 if (post.user?.id == myId) {
                     DropdownMenuItem(
                         onClick = {
-                            // 본인 계정이 아닌 경우 서버에서 삭제를 거부함. UI단계에서 타 계정의 접근을 막아야 함.
-                            runBlocking { getCardViewModel.deleteRibbitPost(post.id) }  // 정확한 delete정보를 갱신하기 위해 동기식 처리
+                            // 본인 계정이 아닌 경우 서버에서 삭제를 거부함. UI 단계에서 타 계정의 접근을 막아야 함.
+                            runBlocking { getCardViewModel.deleteRibbitPost(post.id) }  // 정확한 delete 정보를 갱신하기 위해 동기식 처리
                             Log.d("HippoLog, RibbitDropDownMenu", "${post.id}")
                             isDropDownMenuExpanded = false
                             getCardViewModel.getRibbitPosts()
@@ -105,7 +107,7 @@ fun RibbitDropDownMenu(
                 }
                 DropdownMenuItem(
                     onClick = {
-                        getCardViewModel.getPostIdPost(post.id)    // 뷰 카운트 메소드 호출을 getPostIdPost메소드에서 실행하도록 함.
+                        getCardViewModel.getPostIdPost(post.id)    // 뷰 카운트 메소드 호출을 getPostIdPost 메소드에서 실행하도록 함.
                         navController.navigate(RibbitScreen.PostIdScreen.name)
                         isDropDownMenuExpanded = false
                     },

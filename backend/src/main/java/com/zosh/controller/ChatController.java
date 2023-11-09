@@ -1,32 +1,97 @@
-// package com.zosh.controller;
+package com.zosh.controller;
 
-// import java.util.List;
+import java.util.List;
 
-// import org.springframework.web.bind.annotation.GetMapping;
-// import org.springframework.web.bind.annotation.PostMapping;
-// import org.springframework.web.bind.annotation.RequestMapping;
-// import org.springframework.web.bind.annotation.RequestParam;
-// import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-// import com.zosh.dto.ChatRoom;
-// import com.zosh.service.ChatService;
+import com.zosh.dto.ChatDto;
+import com.zosh.dto.ChatRoomDto;
+import com.zosh.dto.UserDto;
+import com.zosh.dto.mapper.ChatDtoMapper;
+import com.zosh.dto.mapper.ChatRoomDtoMapper;
+import com.zosh.dto.mapper.UserDtoMapper;
+import com.zosh.model.Chat;
+import com.zosh.model.Chat.MessageType;
+import com.zosh.model.ChatRoom;
+import com.zosh.model.User;
+import com.zosh.service.ChatService;
+import com.zosh.service.UserService;
 
-// import lombok.RequiredArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
-// @RestController
-// @RequiredArgsConstructor
-// @RequestMapping("/chat")
-// public class ChatController {
+@Controller
+@Slf4j
+@RequiredArgsConstructor
+//@RequestMapping("/chat")
+public class ChatController {
+	
+	@Autowired
+	private ChatService service;
+	
+	@Autowired
+	private SimpMessagingTemplate messagingTemplate;
 
-//     private final ChatService service;
+    @PostMapping("/createroom")
+    public ResponseEntity<ChatRoomDto> createRoom(@RequestBody ChatRoom chatRoom){
+    	ChatRoom createdroom = service.createRoom(chatRoom);
+    	ChatRoomDto chatRoomDto = ChatRoomDtoMapper.toChatRoomDto(createdroom);
+        return new ResponseEntity<>(chatRoomDto,HttpStatus.CREATED);
+    }
 
-//     @PostMapping
-//     public ChatRoom createRoom(@RequestParam String name){
-//         return service.createRoom(name);
-//     }
+    @GetMapping("/allrooms")
+    public ResponseEntity<List<ChatRoomDto>> findAllRooms(){
+    	List<ChatRoom> allrooms = service.findAllRoom();
+    	List<ChatRoomDto> chatRoomDtos = ChatRoomDtoMapper.toChatRoomDtos(allrooms);
+    	return new ResponseEntity<List<ChatRoomDto>>(chatRoomDtos,HttpStatus.OK);
+    }
 
-//     @GetMapping
-//     public List<ChatRoom> findAllRooms(){
-//         return service.findAllRoom();
-//     }
-// }
+    @MessageMapping("/savechat/{roomId}")
+    @SendTo("/topic/{roomId}")
+    public ResponseEntity<ChatDto> savechat(@Payload Chat chat, @DestinationVariable String roomId) {
+        System.out.println("chat: " + chat);
+        Chat chat2 = service.saveChat(chat);
+        ChatDto chatDto = ChatDtoMapper.toChatDto(chat2);
+        
+        messagingTemplate.convertAndSend("/topic/"+ roomId, chatDto);
+        
+        return new ResponseEntity<>(chatDto, HttpStatus.CREATED);
+    }
+    
+    
+    public ResponseEntity<User> getprofileimage(@RequestBody String email){
+    	User user = service.findsenderprofile(email);
+    	//UserDto userDto = UserDtoMapper.toUserDto(user);
+    	
+		return new ResponseEntity<>(user,HttpStatus.OK);
+    }
+	
+    @PostMapping("/getchat")
+    public ResponseEntity<List<ChatDto>> getchathistory(@RequestBody String roomId){
+    	System.out.println(roomId);
+    	
+    	
+    	List<Chat> chatHistory = service.chathistory(roomId);
+    	System.out.println("chathistory: "+chatHistory);
+    	
+    	List<ChatDto> chatDtos = ChatDtoMapper.chatDtos(chatHistory);
+    	System.out.println("chatDtos: "+chatDtos);
+    	
+		return new ResponseEntity<List<ChatDto>>(chatDtos,HttpStatus.OK);
+    }
+}

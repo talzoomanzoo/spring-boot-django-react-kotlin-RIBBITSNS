@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.hippoddung.ribbit.ui
 
 import android.os.Build
@@ -8,12 +6,16 @@ import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -21,23 +23,23 @@ import androidx.navigation.compose.rememberNavController
 import com.hippoddung.ribbit.R
 import com.hippoddung.ribbit.ui.screens.CreatingPostScreen
 import com.hippoddung.ribbit.ui.screens.EditingPostScreen
-import com.hippoddung.ribbit.ui.screens.HomeScreen
-import com.hippoddung.ribbit.ui.screens.PostIdScreen
 import com.hippoddung.ribbit.ui.screens.authscreens.LoginScreen
 import com.hippoddung.ribbit.ui.screens.authscreens.SignUpScreen
+import com.hippoddung.ribbit.ui.screens.homescreens.HomeScreen
+import com.hippoddung.ribbit.ui.screens.listscreens.CreatingListScreen
+import com.hippoddung.ribbit.ui.screens.listscreens.EditingListScreen
+import com.hippoddung.ribbit.ui.screens.listscreens.ListIdScreen
+import com.hippoddung.ribbit.ui.screens.listscreens.ListScreen
+import com.hippoddung.ribbit.ui.screens.postidscreen.PostIdScreen
 import com.hippoddung.ribbit.ui.screens.profilescreens.EditProfileScreen
-import com.hippoddung.ribbit.ui.screens.profilescreens.ProfileLikesScreen
-import com.hippoddung.ribbit.ui.screens.profilescreens.ProfileMediasScreen
-import com.hippoddung.ribbit.ui.screens.profilescreens.ProfileRepliesScreen
 import com.hippoddung.ribbit.ui.screens.profilescreens.ProfileScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthUiState
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
-import com.hippoddung.ribbit.ui.viewmodel.EditingPostUiState
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
+import com.hippoddung.ribbit.ui.viewmodel.ListViewModel
 import com.hippoddung.ribbit.ui.viewmodel.MyProfileUiState
-import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
@@ -47,13 +49,14 @@ enum class RibbitScreen(@StringRes val title: Int) {
     LoginScreen(title = R.string.login_screen),
     LogoutScreen(title = R.string.logout_screen),
     ProfileScreen(title = R.string.profile_screen),
-    ProfileRepliesScreen(title = R.string.profile_replies_screen),
-    ProfileMediasScreen(title = R.string.profile_medias_screen),
-    ProfileLikesScreen(title = R.string.profile_likes_screen),
     EditProfileScreen(title = R.string.edit_profile_screen),
     SignUpScreen(title = R.string.sign_up_screen),
     CreatingPostScreen(title = R.string.creating_post_screen),
     EditingPostScreen(title = R.string.editing_post_screen),
+    ListScreen(title = R.string.list_screen),
+    ListIdScreen(title = R.string.list_id_screen),
+    CreatingListScreen(title = R.string.creating_list_screen),
+    EditingListScreen(title = R.string.editing_list_screen),
     LoadingScreen(title = R.string.loading_screen),
     ErrorScreen(title = R.string.error_screen)
 }
@@ -64,7 +67,6 @@ fun RibbitApp(
     getCardViewModel: GetCardViewModel,
     authViewModel: AuthViewModel,
     tokenViewModel: TokenViewModel,
-    postingViewModel: PostingViewModel,
     userViewModel: UserViewModel,
     modifier: Modifier = Modifier
 ) {
@@ -75,7 +77,6 @@ fun RibbitApp(
                 getCardViewModel = getCardViewModel,
                 authViewModel = authViewModel,
                 tokenViewModel = tokenViewModel,
-                postingViewModel = postingViewModel,
                 userViewModel = userViewModel,
                 modifier = modifier
             )
@@ -102,14 +103,17 @@ fun RibbitScreen(
     getCardViewModel: GetCardViewModel,
     authViewModel: AuthViewModel,
     tokenViewModel: TokenViewModel,
-    postingViewModel: PostingViewModel,
     userViewModel: UserViewModel,
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController()
 ) {
-    val myId: Int = (userViewModel.myProfileUiState as MyProfileUiState.Exist).myProfile.id!!
-        // myProfile 은 다양한 페이지에서 쓰이므로 여기서 composable에 기억시킨다.
-        // myProfile 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 상황이다.
+    val listViewModel: ListViewModel = hiltViewModel()
+    var myId by remember { mutableStateOf(0) }
+    if(userViewModel.myProfileUiState is MyProfileUiState.Exist){   // 앱 시작시 casting 이 문제되는 경우가 있어 state check 를 넣어줌.
+        myId = (userViewModel.myProfileUiState as MyProfileUiState.Exist).myProfile.id!!
+    }
+        // myId 는 다양한 페이지에서 쓰이므로 여기서 composable 에 기억시킨다.
+        // myId 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 상황이다.
 //    val backStackEntry by navController.currentBackStackEntryAsState()
 //    val currentScreen = RibbitScreen.valueOf(backStackEntry?.destination?.route ?: RibbitScreen.HomeScreen.name)
 //    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -120,8 +124,8 @@ fun RibbitScreen(
         modifier = modifier,
     ) {
         composable(route = RibbitScreen.HomeScreen.name) {
-//            homeViewModel.getRibbitPosts() // recompositon시 계속 실행됨. 여기 함수를 두면 안 됨. (수정: 반복 recomposition을 해결하여 상관 없음.) NavHostController 호출시 항상 실행되는 문제
-//                // navigate 메소드 호출시마다 backstack으로 보내면서 다시 실행하므로 여기 함수를 두면 안됨.
+//            homeViewModel.getRibbitPosts() // recomposition 시 계속 실행됨. 여기 함수를 두면 안 됨. (수정: 반복 recomposition 을 해결하여 상관 없음.) NavHostController 호출시 항상 실행되는 문제
+//                // navigate 메소드 호출시마다 backstack 으로 보내면서 다시 실행하므로 여기 함수를 두면 안됨.
             Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> HomeScreen")
             HomeScreen(
 //                scrollBehavior = scrollBehavior,
@@ -130,9 +134,8 @@ fun RibbitScreen(
                 tokenViewModel = tokenViewModel,
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
-                postingViewModel = postingViewModel,
+                listViewModel = listViewModel,
                 myId = myId,   // myProfile 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 것으로 가정한다.
-                onNavigateToCreatingPostScreen = { navController.navigate(RibbitScreen.CreatingPostScreen.name) },
                 modifier = modifier
             )
         }
@@ -144,7 +147,7 @@ fun RibbitScreen(
                 tokenViewModel = tokenViewModel,
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
-                postingViewModel = postingViewModel,
+                listViewModel = listViewModel,
                 myId = myId,   // 유저 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 것으로 가정한다.
                 modifier = modifier
             )
@@ -157,47 +160,8 @@ fun RibbitScreen(
                 tokenViewModel = tokenViewModel,
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
-                postingViewModel = postingViewModel,
+                listViewModel = listViewModel,
                 myId = myId,
-                modifier = modifier
-            )
-        }
-        composable(route = RibbitScreen.ProfileRepliesScreen.name) {
-            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> ProfileRepliesScreen")
-            ProfileRepliesScreen(
-                navController = navController,
-                getCardViewModel = getCardViewModel,
-                tokenViewModel = tokenViewModel,
-                authViewModel = authViewModel,
-                userViewModel = userViewModel,
-                postingViewModel = postingViewModel,
-                myId = myId,   // 유저 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 것으로 가정한다.
-                modifier = modifier
-            )
-        }
-        composable(route = RibbitScreen.ProfileMediasScreen.name) {
-            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> ProfileMediasScreen")
-            ProfileMediasScreen(
-                navController = navController,
-                getCardViewModel = getCardViewModel,
-                tokenViewModel = tokenViewModel,
-                authViewModel = authViewModel,
-                userViewModel = userViewModel,
-                postingViewModel = postingViewModel,
-                myId = myId,   // 유저 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 것으로 가정한다.
-                modifier = modifier
-            )
-        }
-        composable(route = RibbitScreen.ProfileLikesScreen.name) {
-            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> ProfileLikesScreen")
-            ProfileLikesScreen(
-                navController = navController,
-                getCardViewModel = getCardViewModel,
-                tokenViewModel = tokenViewModel,
-                authViewModel = authViewModel,
-                userViewModel = userViewModel,
-                postingViewModel = postingViewModel,
-                myId = myId,   // 유저 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 것으로 가정한다.
                 modifier = modifier
             )
         }
@@ -213,7 +177,6 @@ fun RibbitScreen(
         composable(route = RibbitScreen.CreatingPostScreen.name) {
             Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> CreatingPostScreen")
             CreatingPostScreen(
-                postingViewModel = postingViewModel,
                 getCardViewModel = getCardViewModel,
                 navController = navController,
                 modifier = modifier
@@ -222,9 +185,50 @@ fun RibbitScreen(
         composable(route = RibbitScreen.EditingPostScreen.name) {
             Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> EditingPostScreen")
             EditingPostScreen(
-                postingViewModel = postingViewModel,
                 getCardViewModel = getCardViewModel,
                 navController = navController,
+                modifier = modifier
+            )
+        }
+        composable(route = RibbitScreen.ListScreen.name) {
+            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> ListScreen")
+            ListScreen(
+                navController = navController,
+                getCardViewModel = getCardViewModel,
+                tokenViewModel = tokenViewModel,
+                authViewModel = authViewModel,
+                userViewModel = userViewModel,
+                listViewModel = listViewModel,
+                modifier = modifier
+            )
+        }
+        composable(route = RibbitScreen.ListIdScreen.name) {
+            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> TwitIdScreen")
+            ListIdScreen(
+                navController = navController,
+                getCardViewModel = getCardViewModel,
+                tokenViewModel = tokenViewModel,
+                authViewModel = authViewModel,
+                userViewModel = userViewModel,
+                listViewModel = listViewModel,
+                myId = myId,   // 유저 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 것으로 가정한다.
+                modifier = modifier
+            )
+        }
+        composable(route = RibbitScreen.CreatingListScreen.name) {
+            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> CreatingListScreen")
+            CreatingListScreen(
+                navController = navController,
+                userViewModel = userViewModel,
+                listViewModel = listViewModel,
+                modifier = modifier
+            )
+        }
+        composable(route = RibbitScreen.EditingListScreen.name) {
+            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> EditingListScreen")
+            EditingListScreen(
+                navController = navController,
+                listViewModel = listViewModel,
                 modifier = modifier
             )
         }

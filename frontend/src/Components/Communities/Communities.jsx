@@ -8,11 +8,12 @@ import { getAllLists } from "../../Store/List/Action";
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import ComModel from "./ComModel";
 import ComCard from "./ComCard";
+import ComBottom from "./ComBottom";
 
 const Communities = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { com, list } = useSelector((store) => store);
+    const { com } = useSelector((store) => store);
     const handleBack = () => {
         navigate(-1);
     };
@@ -41,10 +42,10 @@ const Communities = () => {
                     </h1>
                 </div>
                 <div
-                    className="absolute right-0 cursor-pointer" // 오른쪽 정렬, 클릭 커서
+                    className="flex items-center absolute right-0 cursor-pointer" // 오른쪽 정렬, 클릭 커서
                     onClick={handleOpenComModel} //커뮤니티 추가
-                >
-                    <GroupAddIcon />
+                >커뮤니티 추가<GroupAddIcon />
+
                 </div>
             </section>
 
@@ -63,12 +64,12 @@ const Communities = () => {
                         }}
                     />
                 </div>
-                <div className= "flex inline-block justify-content overflow-x-scroll hideScrollbar border-gray-700 h-[35vh] w-full rounded-md">
-                    {com.coms.map((item) => (<ComCard style={{ marginTop: 10 }} com={item} />))} 
+                <div className="flex inline-block justify-content overflow-x-scroll hideScrollbar border-gray-700 h-[35vh] w-full rounded-md">
+                    {com.coms.map((item) => (<ComCard style={{ marginTop: 10 }} com={item} />))}
                     {/* com.privateMode? && auth.user.id == */}
                 </div>
             </div>
-            
+
             <section className="space-y-5" style={{ marginTop: 50 }}>
                 <div
                     className="space-y-3"
@@ -83,6 +84,10 @@ const Communities = () => {
                             height: '1px',
                         }}
                     />
+                </div>
+
+                <div>
+                    <ComBottom />
                 </div>
             </section>
 

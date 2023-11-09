@@ -1,5 +1,7 @@
 package com.hippoddung.ribbit.ui.screens.textfielditems
 
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
@@ -18,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.dp
 import com.hippoddung.ribbit.R
 
 @Composable
@@ -54,6 +57,8 @@ fun InputPWCheckField(
                 )
             }
         },
-        modifier = modifier,
+        modifier = modifier
+            .padding(bottom = 32.dp)
+            .fillMaxWidth(),
     )
 }

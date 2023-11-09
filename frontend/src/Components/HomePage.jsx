@@ -2,17 +2,10 @@ import { Grid } from "@mui/material";
 import React, { Suspense, useState } from "react";
 import { useSelector } from "react-redux";
 import { Route, Routes } from "react-router-dom";
-// import FollowTwit from "./FollowTwit/FollowTwit";
 import HomeSection from "./Home/MiddlePart/HomeSection";
-// import TwitDetail from "./Home/MiddlePart/TwitDetail";
-// import Lists from "./Lists/Lists";
 import Navigation from "./Navigation/Navigation";
-// import Profile from "./Profile/Profile";
 import Loading from "./Profile/Loading/Loading";
 import RightPart from "./RightPart/RightPart";
-// import Chatroom from "./Chat/Chat";
-// import ListsDetail from "./Lists/ListsDetail";
-// import Communities from "./Communities/Communities";
 
 const FollowTwit = React.lazy(() => import("./FollowTwit/FollowTwit"));
 const TwitDetail = React.lazy(() => import("./Home/MiddlePart/TwitDetail"));

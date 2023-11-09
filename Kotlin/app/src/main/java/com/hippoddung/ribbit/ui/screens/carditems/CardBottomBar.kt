@@ -10,7 +10,6 @@ import androidx.compose.material.icons.filled.ChatBubbleOutline
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material.icons.filled.Repeat
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -29,7 +28,6 @@ import com.hippoddung.ribbit.ui.screens.ReplyScreen
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.ReplyClickedUiState
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CardBottomBar(
     myId: Int,
@@ -46,7 +44,7 @@ fun CardBottomBar(
             onClick = {
                 getCardViewModel.replyPostIdUiState = post.id
                 getCardViewModel.replyClickedUiState = ReplyClickedUiState.Clicked
-                Log.d("HippLog, CardBottomBar", "replyButton")
+                Log.d("HippoLog, CardBottomBar", "replyButton")
             },
             content = {
                 Row(
@@ -159,7 +157,7 @@ fun CardBottomBar(
             }
         } else {
             IconButton(
-                onClick = {},   // 본인의 post인 경우 클릭 비활성화
+                onClick = {},   // 본인의 post 인 경우 클릭 비활성화
                 content = {
                     Row(
                         horizontalArrangement = Arrangement.SpaceEvenly,
@@ -314,8 +312,8 @@ fun CardBottomBar(
                 )
             }
         )
-        // Dialog 호출 시에 현재 페이지를 recomposition하면서 현재 카드 정보가 아닌 최근에 composition된 카드의 정보가 넘어가는 문제가 있음.
+        // Dialog 호출 시에 현재 페이지를 recomposition 하면서 현재 카드 정보가 아닌 최근에 composition 된 카드의 정보가 넘어가는 문제가 있음.
         // Dialog 자체의 문제로 추정되므로 가급적 쓰지 않는 것이 좋을 것으로 보이나 우선은 사용하기로 하고
-        // replyClickedUiState에 카드의 정보를 담아서 사용하는 방식을 선택함.
+        // replyClickedUiState 에 카드의 정보를 담아서 사용하는 방식을 선택함.
     }
 }

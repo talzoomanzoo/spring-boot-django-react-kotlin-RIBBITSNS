@@ -44,7 +44,7 @@ const ListsDetail = () => {
                     className="w-[100%] h-[15rem] object-cover"
                     src={
                         list.findUser?.backgroundImage ||
-                        "https://png.pngtree.com/thumb_back/fw800/background/20230304/pngtree-green-base-vector-smooth-background-image_1770922.jpg"
+                        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWTkiI7iurdOiKMCBSGQ2lkBNJWxlGGQM3ZA&usqp=CAU"
                     }
                     alt=""
                     loading="lazy"

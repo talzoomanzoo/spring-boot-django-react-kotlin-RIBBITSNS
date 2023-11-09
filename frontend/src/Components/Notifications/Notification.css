@@ -1,9 +1,9 @@
 .counter {
-    width: 10px;
-    height: 10px;
+    width: 13px;
+    height: 13px;
     background-color: red;
     border-radius: 50%;
-    padding: 5px;
+    padding: 7px;
     font-size: 12px;
     display: flex;
     align-items: center;
@@ -11,6 +11,6 @@
     position: absolute;
     font-weight: bold;
     color: white;
-    margin-top: -25px;
+    margin-top: -26px;
     margin-left: 12px;
 }

@@ -30,8 +30,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.hippoddung.ribbit.network.bodys.RibbitPost
 import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
-import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
 import com.hippoddung.ribbit.ui.viewmodel.ProfileUiState
+import com.hippoddung.ribbit.ui.viewmodel.UserIdClassificationUiState
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,7 +42,6 @@ fun RibbitCard(
     post: RibbitPost,
     getCardViewModel: GetCardViewModel,
     userViewModel: UserViewModel,
-    postingViewModel: PostingViewModel,
     myId: Int,
     navController: NavHostController,
     modifier: Modifier
@@ -54,7 +53,7 @@ fun RibbitCard(
     Card(
         onClick = {
             Log.d("HippoLog, RibbitCard", "Card: ${post.id}")
-            getCardViewModel.getPostIdPost(post.id)    // 뷰 카운트 + 호출을 getPostIdPost메소드에서 실행하도록 함.
+            getCardViewModel.getPostIdPost(post.id)    // 뷰 카운트 + 호출을 getPostIdPost 메소드에서 실행하도록 함.
             navController.navigate(RibbitScreen.PostIdScreen.name)
         },
         shape = MaterialTheme.shapes.extraSmall,
@@ -68,6 +67,7 @@ fun RibbitCard(
     ) {
         Column(modifier = modifier) {
             if (currentScreen == RibbitScreen.ProfileScreen) {
+                if(getCardViewModel.userIdClassificationUiState is UserIdClassificationUiState.Ribbit){
                 if (userViewModel.profileUiState is ProfileUiState.Exist) {
                     if ((userViewModel.profileUiState as ProfileUiState.Exist).user.id != post.user?.id) {
                         Row(
@@ -90,11 +90,11 @@ fun RibbitCard(
                     }
                 }
             }
+            }
             CardTopBar(
                 post = post,
                 getCardViewModel = getCardViewModel,
                 userViewModel = userViewModel,
-                postingViewModel = postingViewModel,
                 myId = myId,
                 navController = navController,
                 modifier = modifier

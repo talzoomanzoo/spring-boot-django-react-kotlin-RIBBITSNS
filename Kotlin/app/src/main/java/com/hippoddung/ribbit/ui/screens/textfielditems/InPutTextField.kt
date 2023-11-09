@@ -1,4 +1,4 @@
-package com.hippoddung.ribbit.ui.screens.screenitems
+package com.hippoddung.ribbit.ui.screens.textfielditems
 
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text

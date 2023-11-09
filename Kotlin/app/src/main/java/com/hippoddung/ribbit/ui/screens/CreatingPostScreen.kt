@@ -40,10 +40,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.R
 import com.hippoddung.ribbit.ui.RibbitScreen
-import com.hippoddung.ribbit.ui.screens.screenitems.InputTextField
+import com.hippoddung.ribbit.ui.screens.textfielditems.InputTextField
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.CreatingPostUiState
@@ -54,11 +55,11 @@ import java.io.File
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun CreatingPostScreen(
-    postingViewModel: PostingViewModel,
     getCardViewModel: GetCardViewModel,
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
+    val postingViewModel: PostingViewModel = hiltViewModel()
     when (postingViewModel.creatingPostUiState) {
         is CreatingPostUiState.Ready -> {
             Log.d("HippoLog, CreatingPostScreen", "Ready")

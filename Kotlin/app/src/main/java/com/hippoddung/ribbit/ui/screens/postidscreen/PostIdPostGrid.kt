@@ -1,4 +1,4 @@
-package com.hippoddung.ribbit.ui.screens.screenitems
+package com.hippoddung.ribbit.ui.screens.postidscreen
 
 import android.annotation.SuppressLint
 import android.os.Build
@@ -16,7 +16,6 @@ import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.network.bodys.RibbitPost
 import com.hippoddung.ribbit.ui.screens.carditems.RibbitCard
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
-import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -27,7 +26,6 @@ fun PostIdPostsGrid(
     posts: List<RibbitPost>,
     getCardViewModel: GetCardViewModel,
     userViewModel: UserViewModel,
-    postingViewModel: PostingViewModel,
     myId: Int,
     navController: NavHostController,
     modifier: Modifier = Modifier
@@ -36,7 +34,7 @@ fun PostIdPostsGrid(
     val comparator = compareByDescending<RibbitPost> { it.id }  // id가 높은 글이 위로
     val sortedRibbitPost = remember(posts, comparator) {
         posts.sortedWith(comparator)
-    }   // LazyColumn items에 List를 바로 주는 것이 아니라 Comparator로 정렬하여 remember로 기억시켜서 recomposition을 방지하여 성능을 올린다.
+    }   // LazyColumn items 에 List 를 바로 주는 것이 아니라 Comparator 로 정렬하여 remember 로 기억시켜서 recomposition 을 방지하여 성능을 올린다.
     LazyColumn(modifier = modifier) {
         item {
             RibbitCard(
@@ -45,11 +43,10 @@ fun PostIdPostsGrid(
                 myId = myId,
                 navController = navController,
                 userViewModel = userViewModel,
-                postingViewModel = postingViewModel,
                 modifier = modifier
             )
         }
-        items(items = sortedRibbitPost, key = { post -> post.id }) { it ->
+        items(items = sortedRibbitPost, key = { post -> post.id }) {
             Row(modifier = modifier) {
                 Spacer(modifier = modifier.width(28.dp))
                 RibbitCard(
@@ -58,7 +55,6 @@ fun PostIdPostsGrid(
                     myId = myId,
                     navController = navController,
                     userViewModel = userViewModel,
-                    postingViewModel = postingViewModel,
                     modifier = modifier
                 )
             }

@@ -23,7 +23,7 @@ open class BaseViewModel : ViewModel() {
             Dispatchers.IO + CoroutineExceptionHandler { _, error ->
                 viewModelScope.launch(Dispatchers.Main) {
                     errorHandler.onError(
-                        error.localizedMessage ?: "Error occured! Please try again."
+                        error.localizedMessage ?: "Error occurred! Please try again."
                     )
                 }
             }
@@ -42,7 +42,7 @@ open class BaseViewModel : ViewModel() {
         mJob?.let {
             if (it.isActive) {
                 it.cancel()
-            }else{}
+            }
         }
     }
 }

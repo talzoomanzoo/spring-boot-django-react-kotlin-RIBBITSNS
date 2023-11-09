@@ -9,6 +9,12 @@ import {
   FIND_BY_TOP_VIEWS_FAILURE,
   FIND_BY_TOP_VIEWS_REQUEST,
   FIND_BY_TOP_VIEWS_SUCCESS,
+  FIND_TWEET_BY_ALL_COMS_FAILURE,
+  FIND_TWEET_BY_ALL_COMS_REQUEST,
+  FIND_TWEET_BY_ALL_COMS_SUCCESS,
+  FIND_TWEET_BY_COM_ID_FAILURE,
+  FIND_TWEET_BY_COM_ID_REQUEST,
+  FIND_TWEET_BY_COM_ID_SUCCESS,
   FIND_TWEET_BY_ID_FAILURE,
   FIND_TWEET_BY_ID_REQUEST,
   FIND_TWEET_BY_ID_SUCCESS,
@@ -214,6 +220,18 @@ export const findTwitsById = (twitId) => {
   };
 };
 
+export const findTwitsByAllComs = () => {
+  return async (dispatch) => {
+      dispatch({type:FIND_TWEET_BY_ALL_COMS_REQUEST});
+      try{
+        const response = await api.get(`/api/twits/allComs`);
+        dispatch({type: FIND_TWEET_BY_ALL_COMS_SUCCESS, payload: response.data});
+      } catch (error) {
+        dispatch({type: FIND_TWEET_BY_ALL_COMS_FAILURE, payload:error.message});
+      }
+  }
+};
+
 export const findTwitsByListId = (listId) => {
   return async (dispatch) => {
     dispatch({ type: FIND_TWEET_BY_LIST_ID_REQUEST });
@@ -223,7 +241,19 @@ export const findTwitsByListId = (listId) => {
     } catch (error) {
       dispatch({ type: FIND_TWEET_BY_LIST_ID_FAILURE, payload: error.message });
     }
-  };
+  }
+};
+
+export const findTwitsByComId = (comId)  => {
+  return async (dispatch) => {
+      dispatch({type: FIND_TWEET_BY_COM_ID_REQUEST})
+      try {
+        const response = await api.get(`/api/twits/${comId}/comTwit`);
+        dispatch({type:FIND_TWEET_BY_COM_ID_SUCCESS,payload:response.data});
+      } catch (error) {
+        dispatch({type:FIND_TWEET_BY_COM_ID_FAILURE,payload:error.message});
+      }
+    };
 };
 
 export const updateTweet = (twit) => {

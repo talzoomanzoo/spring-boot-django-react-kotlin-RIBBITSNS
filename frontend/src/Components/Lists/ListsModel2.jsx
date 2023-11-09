@@ -25,6 +25,7 @@ import {
 } from "../../Store/List/Action";
 import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
 import Loading from "../Profile/Loading/Loading";
+import "../RightPart/Scrollbar.css";
 
 const style = {
   position: "absolute",
@@ -81,7 +82,7 @@ const ListsModel2 = ({ list, handleClose, open }) => {
       backgroundImage: list.backgroundImage || "",
       //privateMode: list.privateMode || "",
     });
-
+    
     if (document.getElementById("element") !== null) {
       const domNode = document.getElementById("element");
       const element1 = createRoot(domNode);
@@ -89,6 +90,8 @@ const ListsModel2 = ({ list, handleClose, open }) => {
     } else {
       console.log("not exists");
     }
+
+    dispatch(getUserAction(list.id));
 //list.followings, list.hasFollowedLists
   }, []);
 
@@ -133,7 +136,7 @@ const ListsModel2 = ({ list, handleClose, open }) => {
 
   const Element = memo(({ listVal }) => {
     return (
-      <div className="overflow-y-scroll hideScrollbar border-gray-700 h-[20vh] w-full rounded-md">
+      <div className="customeScrollbar overflow-y-scroll hideScrollbar css-scroll border-gray-700 h-[20vh] w-full rounded-md">
         <section className="space-y-5">
           <div
             className="flex justify-between"
@@ -208,7 +211,7 @@ const ListsModel2 = ({ list, handleClose, open }) => {
               </div>
             </div>
 
-            <div className="customeScrollbar overflow-y-scroll  overflow-x-hidden h-[80vh]">
+            <div className="customeScrollbar overflow-y-scroll css-scroll hideScrollbar overflow-x-hidden h-[80vh]">
               <div className="">
                 <div className="w-full">
                   <div className="relative">
@@ -271,7 +274,7 @@ const ListsModel2 = ({ list, handleClose, open }) => {
                   onChange={handleSearchUser}
                   type="text"
                   placeholder="사용자를 검색하여 추가하거나 삭제할 수 있습니다."
-                  className={`py-3 rounded-full onutline-none text-gray-500 w-full pl-12 ${
+                  className={`py-3 rounded-full outline-none text-gray-500 w-full pl-12 ${
                     theme.currentTheme === "light"
                       ? "bg-stone-300"
                       : "bg-[#151515]"
@@ -373,12 +376,12 @@ const ListsModel2 = ({ list, handleClose, open }) => {
                   비공개 활성화
                   <Switch
                     style={{
-                      marginTop: 10,
+                      marginTop: 1,
                       marginRight: 20,
                     }}
 
-                    trackColor={{ false: "#767577", true: "#81b0ff" }}
-                    thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
+                    trackColor={{ false: "#767577", true: "#36d916" }}
+                    // thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
                     ios_backgroundColor="#3e3e3e"
                     onValueChange={toggleSwitch}
                     value={isEnabled}

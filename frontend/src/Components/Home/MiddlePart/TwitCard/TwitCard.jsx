@@ -23,6 +23,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 // import { ToastContainer, toast } from "react-toastify";
+import ProgressBar from "@ramonak/react-progress-bar";
 import "react-toastify/dist/ReactToastify.css"; // React Toastify 스타일
 import * as Yup from "yup";
 import { incrementNotificationCount } from "../../../../Store/Notification/Action";
@@ -45,6 +46,7 @@ const validationSchema = Yup.object().shape({
 });
 
 const TwitCard = ({ twit }) => {
+
   const [selectedImage, setSelectedImage] = useState(twit.image);
   const [selectedVideo, setSelectedVideo] = useState(twit.video);
   const [selectedLocation, setSelectedLocation] = useState(twit.location);
@@ -59,7 +61,10 @@ const TwitCard = ({ twit }) => {
   const [likes, setLikes] = useState(twit.totalLikes);
   const [isEditing, setIsEditing] = useState(false); // 편집 상태를 관리하는 상태 변수
   const [editedContent, setEditedContent] = useState(twit.content); // 편집된 내용을 관리하는 상태 변수
-  const [sentence, setSentence] = useState(twit.sentence); //sentence는 윤리수치에 해당하는 문장이 담아진다.
+
+  const [ethiclabel, setEthiclabel] = useState(twit.ethiclabel);
+  const [ethicrateMAX, setEthicrateMAX] = useState(twit.ethicrateMAX); //윤리수치 최대 수치
+  console.log("twit.ethicratemax: ",twit);
   //  const [isLoading, setIsLoading] = useState(false); //로딩창의 띄어짐의 유무를 판단한다. default는 true이다.
   const jwtToken = localStorage.getItem("jwt");
   const [isEdited, setIsEdited] = useState(twit.edited);
@@ -435,9 +440,11 @@ const TwitCard = ({ twit }) => {
           }),
         }
       );
+      console.log("response.statis: ",response);
       if (response.status === 200) {
         const responseData = await response.json();
-        setSentence(responseData.sentence);
+        setEthiclabel(responseData.ethiclabel);
+        setEthicrateMAX(responseData.ethicrateMAX);
         setRefreshTwits((prev) => prev + 1);
       }
     } catch (error) {
@@ -652,8 +659,13 @@ const TwitCard = ({ twit }) => {
                     {isEditing ? editedContent : twit.content}
                   </p>
 
-                  {sentence && <p>{sentence}</p>}
-
+                  <p>
+                    {ethiclabel===0 && <div className="flex items-center font-bold rounded-md">폭력성<ProgressBar completed={ethicrateMAX} width="450%" margin="2px 0px 4px 4px"/></div>}
+                    {ethiclabel===1 && <div className="flex items-center font-bold rounded-md">선정성<ProgressBar completed={ethicrateMAX} width="450%" margin="2px 0px 4px 4px"/></div>}
+                    {ethiclabel===2 && <div className="flex items-center font-bold rounded-md">욕설<ProgressBar completed={ethicrateMAX} width="450%" margin="2px 0px 4px 4px"/></div>}
+                    {ethiclabel===3 && <div className="flex items-center font-bold rounded-md">차별성<ProgressBar completed={ethicrateMAX} width="450%" margin="2px 0px 4px 4px"/></div>}
+                  </p>
+                  
                   {twit.image && (
                     <img
                       className="w-[28rem] border border-gray-400 p-5 rounded-md"

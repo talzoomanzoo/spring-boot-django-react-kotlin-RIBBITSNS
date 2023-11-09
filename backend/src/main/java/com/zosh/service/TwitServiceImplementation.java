@@ -8,9 +8,11 @@ import org.springframework.stereotype.Service;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.zosh.exception.ComException;
 import com.zosh.exception.ListException;
 import com.zosh.exception.TwitException;
 import com.zosh.exception.UserException;
+import com.zosh.model.Community;
 import com.zosh.model.Twit;
 import com.zosh.model.User;
 import com.zosh.repository.ListRepository;
@@ -22,12 +24,14 @@ public class TwitServiceImplementation implements TwitService {
 
 	private TwitRepository twitRepository;
 	private ListRepository listRepository;
+	private ComService comService;
 
-	public TwitServiceImplementation(TwitRepository twitRepository, ListRepository listRepository) {
+	public TwitServiceImplementation(TwitRepository twitRepository, ListRepository listRepository, ComService comService) {
 		this.twitRepository = twitRepository;
 		this.listRepository = listRepository;
+		this.comService = comService;
 	}
-
+	
 	@Override
 	public Twit createTwit(Twit req, User user) {
 
@@ -42,6 +46,25 @@ public class TwitServiceImplementation implements TwitService {
 		twit.setVideo(req.getVideo());
 		twit.setLocation(req.getLocation());
 
+		return twitRepository.save(twit);
+	}
+	
+	@Override
+	public Twit createComTwit(Twit req, Long comId, User user) throws UserException, TwitException, ComException {
+
+		Twit twit = new Twit();
+		twit.setContent(req.getContent());
+		twit.setCreatedAt(LocalDateTime.now());
+		twit.setRetwitAt(LocalDateTime.now());
+		twit.setImage(req.getImage());
+		twit.setUser(user);
+		twit.setReply(false);
+		twit.setTwit(true);
+		twit.setVideo(req.getVideo());
+		Community community = comService.findById(comId);
+		twit.setCom(true);
+		twit.setCommunity(community);
+		
 		return twitRepository.save(twit);
 	}
 	
@@ -67,25 +90,25 @@ public class TwitServiceImplementation implements TwitService {
 				maxindex = i;
 			}
 		}
-		twit.setLabel(maxindex);
+		twit.setEthiclabel(maxindex);
 		//수치 중 가장 큰 value의 인덱스를 maxindex에 넣는다.
 		
-		String sentence="";
-		if (maxindex == 0) {
-			sentence="과격한 감정이 느껴지네여.";
-		} else if (maxindex == 1) {
-			sentence="흠, 성적인 감정이 느껴지는것 같네여.";
-		} else if (maxindex == 2) {
-			sentence="진정하세여! 욕은 안되여!!";
-		} else if (maxindex == 3) {
-			sentence="차별이 느껴지네여, 좀 더 평등하게 생각해봐여!";
-		} else if (maxindex == 4) {
-			sentence="오늘 당신의 감정은 평온 하군여.";
-		}
+//		String sentence="";
+//		if (maxindex == 0) {
+//			sentence="과격한 감정이 느껴지네여.";
+//		} else if (maxindex == 1) {
+//			sentence="흠, 성적인 감정이 느껴지는것 같네여.";
+//		} else if (maxindex == 2) {
+//			sentence="진정하세여! 욕은 안되여!!";
+//		} else if (maxindex == 3) {
+//			sentence="차별이 느껴지네여, 좀 더 평등하게 생각해봐여!";
+//		} else if (maxindex == 4) {
+//			sentence="오늘 당신의 감정은 평온 하군여.";
+//		}
 		//maxindex에 해당하는 문장을 선택한다.
 		//0: '폭력',1: '선정',2: '욕설',3: '차별',4: '정상'
 		
-		twit.setSentence(sentence);
+		twit.setEthicrateMAX((int) maxvalue);
 		//해당 문장을 입력한다.
 		
 		return twitRepository.save(twit);
@@ -188,7 +211,7 @@ public class TwitServiceImplementation implements TwitService {
 	@Override
 	public List<Twit> findAllTwit() {
 		// Sort sortByCreatedAtDesc = org.springframework.data.domain.Sort.Order("DESC")
-		return twitRepository.findAllByIsTwitTrueOrderByCreatedAtDesc();
+		return twitRepository.findAllByIsTwitTrueAndIsComFalseOrderByCreatedAtDesc();
 	}
 
 	@Override
@@ -250,5 +273,17 @@ public class TwitServiceImplementation implements TwitService {
 	public List<Twit> findTwitsByListId(Long listId) throws ListException, UserException, TwitException {
 		// TODO Auto-generated method stub
 		return twitRepository.searchListFollowedTwit(listId);
+	}
+
+	@Override
+	public List<Twit> findTwitsByComId(Long comId) throws ComException {
+		// TODO Auto-generated method stub
+		return twitRepository.searchComFollowedTwit(comId);
+	}
+
+	@Override
+	public List<Twit> findTwitsByAllComs(User user) throws UserException {
+		// TODO Auto-generated method stub
+		return twitRepository.searchTwitsByAllComs(user.getId());
 	}
 }

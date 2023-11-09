@@ -40,7 +40,7 @@ fun SignUpScreen(
     var pWCheck by remember { mutableStateOf("") }
     var fullName by remember { mutableStateOf("") }
     var birthDate by remember { mutableStateOf("") }
-    var user = SignUpRequest(
+    val user = SignUpRequest(
         email = email,
         password = pW,
         fullName = fullName,
@@ -76,15 +76,11 @@ fun SignUpScreen(
             value = pW,
             onValueChange = { pW = it },
             modifier = Modifier
-                .padding(bottom = 32.dp)
-                .fillMaxWidth()
         )
         InputPWCheckField(
             value = pWCheck,
             onValueChange = { pWCheck = it },
             modifier = Modifier
-                .padding(bottom = 32.dp)
-                .fillMaxWidth()
         )
         InputFullNameField(
             value = fullName,

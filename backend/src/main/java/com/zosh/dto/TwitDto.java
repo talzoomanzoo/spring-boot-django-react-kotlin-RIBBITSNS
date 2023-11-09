@@ -42,6 +42,8 @@ public class TwitDto {
     
     private boolean isRetwit;
     
+    private boolean isCom;
+    
     private boolean isReply;
 
 	private String location;
@@ -51,6 +53,6 @@ public class TwitDto {
     private List<TwitDto> replyTwits;
 	
     private String ethicrate; //윤리수치 저장
-    private int label; //수치중 가장 큰것을 라벨값으로 저장
-    private String sentence;//라벨값에 알맞는 문장을 입력
+    private int ethiclabel; //수치중 가장 큰것을 라벨값으로 저장
+    private int ethicrateMAX;// 최고수치 저장
 }

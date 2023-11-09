@@ -1,20 +1,40 @@
-// package com.zosh.model;
+package com.zosh.model;
 
-// import lombok.AllArgsConstructor;
-// import lombok.Getter;
-// import lombok.NoArgsConstructor;
-// import lombok.Setter;
-// import lombok.ToString;
+import java.time.LocalDateTime;
 
-// @NoArgsConstructor
-// @AllArgsConstructor
-// @Getter
-// @Setter
-// @ToString
-// public class Chat {
-//     private String id;
-//     private String recipientId;
-//     private String message;
+import com.zosh.dto.ChatDto.MessageType;
 
-//     // getters and setters
-// }
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.Data;
+
+@Entity
+@Data
+public class Chat {
+	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String sender;
+    private String email;
+    private String roomId; // 방 번호
+    private String message;
+    private LocalDateTime timestamp;
+    
+    @Enumerated(EnumType.STRING)
+    private MessageType type;
+    public enum MessageType{
+        ENTER, TALK
+    }
+    
+//    @ManyToOne
+//    @JoinColumn(name = "chat_room_id")
+//    private ChatRoom chatRoom;
+}

@@ -3,11 +3,14 @@ package com.hippoddung.ribbit.ui.viewmodel
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hippoddung.ribbit.data.network.RibbitRepository
 import com.hippoddung.ribbit.data.network.UploadCloudinaryRepository
@@ -19,6 +22,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.io.IOException
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 sealed interface CreatingPostUiState {
@@ -53,7 +57,7 @@ sealed interface UploadVideoCloudinaryUiState {
 class PostingViewModel @Inject constructor(
     private val ribbitRepository: RibbitRepository,
     private val uploadCloudinaryRepository: UploadCloudinaryRepository
-) : BaseViewModel() {
+) : ViewModel() {
     var creatingPostUiState: CreatingPostUiState by mutableStateOf(CreatingPostUiState.Ready)
     var editingPostUiState: EditingPostUiState by mutableStateOf(
         EditingPostUiState.Loading(
@@ -63,11 +67,9 @@ class PostingViewModel @Inject constructor(
     private var uploadImageCloudinaryUiState: UploadImageCloudinaryUiState by mutableStateOf(
         UploadImageCloudinaryUiState.None
     )
-        private set
     private var uploadVideoCloudinaryUiState: UploadVideoCloudinaryUiState by mutableStateOf(
         UploadVideoCloudinaryUiState.None
     )
-        private set
 
     fun createPost(
         image: Bitmap?,
@@ -124,7 +126,7 @@ class PostingViewModel @Inject constructor(
                         video = videoUrl
                     )
                 )
-            } else {    // uploadImageCloudinaryUiState와 uploadVideoCloudinaryUiState 가 다른 상태일 때 처리를 위함 미구현
+            } else {    // uploadImageCloudinaryUiState 와 uploadVideoCloudinaryUiState 가 다른 상태일 때 처리를 위함 미구현
             }
         }
     }
@@ -142,10 +144,12 @@ class PostingViewModel @Inject constructor(
         creatingPostUiState = CreatingPostUiState.Success
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun editPost(
         image: Bitmap?,
         videoFile: File?,
-        inputText: String
+        inputText: String,
+        edited: Boolean
     ) {
         var imageUrl: String? = null
         var videoUrl: String? = null
@@ -153,6 +157,7 @@ class PostingViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             editingPostUiState =
                 EditingPostUiState.Loading((editingPostUiState as EditingPostUiState.Ready).post)
+            val post = (editingPostUiState as EditingPostUiState.Loading).post
             uploadImageCloudinaryUiState = UploadImageCloudinaryUiState.None
             uploadVideoCloudinaryUiState = UploadVideoCloudinaryUiState.None
             runBlocking {
@@ -170,8 +175,8 @@ class PostingViewModel @Inject constructor(
                             else -> {}  // 다른 경우 처리를 위함, 아직 미구현
                         }
                     } else {
-                        // 서버에서 null을 받으면 null 그대로 처리하는 문제 발견.
-                        // 수정 전 이미지가 있으면서 이미지를 수정하지 않은 경우 이전 imageUrl을 다시 넣어주는 작업을 진행
+                        // 서버에서 null 을 받으면 null 그대로 처리하는 문제 발견.
+                        // 수정 전 이미지가 있으면서 이미지를 수정하지 않은 경우 이전 imageUrl 을 다시 넣어주는 작업을 진행
                         if ((editingPostUiState as EditingPostUiState.Loading).post.image != null) {
                             imageUrl = (editingPostUiState as EditingPostUiState.Loading).post.image
                         }
@@ -201,13 +206,15 @@ class PostingViewModel @Inject constructor(
             if (((uploadImageCloudinaryUiState is UploadImageCloudinaryUiState.Success) or (uploadImageCloudinaryUiState is (UploadImageCloudinaryUiState.None))
                         and (uploadVideoCloudinaryUiState is UploadVideoCloudinaryUiState.Success) or (uploadVideoCloudinaryUiState is UploadVideoCloudinaryUiState.None))
             ) {
-                (editingPostUiState as EditingPostUiState.Loading).post.content = inputText
-                (editingPostUiState as EditingPostUiState.Loading).post.image = imageUrl
-                (editingPostUiState as EditingPostUiState.Loading).post.video = videoUrl
+                post.content = inputText
+                post.image = imageUrl
+                post.video = videoUrl
+                post.edited = edited
+                post.editedAt = LocalDateTime.now().toString()  // 수정 여부 및 수정 시각은 프론트에서 직접 값을 넣어서 보냄.
                 postEditPost(
-                    (editingPostUiState as EditingPostUiState.Loading).post
+                    post
                 )
-            } else {    // uploadImageCloudinaryUiState와 uploadVideoCloudinaryUiState 가 다른 상태일 때 처리를 위함 미구현
+            } else {    // uploadImageCloudinaryUiState 와 uploadVideoCloudinaryUiState 가 다른 상태일 때 처리를 위함 미구현
             }
         }
     }
@@ -240,7 +247,7 @@ class PostingViewModel @Inject constructor(
     }
 
     private suspend fun uploadImageCloudinary(image: Bitmap?) {
-//        viewModelScope.launch(Dispatchers.IO) {   // 호출함수에서 coroutin으로 접근하기 때문에 여기서는 그냥 지연함수로 둠
+//        viewModelScope.launch(Dispatchers.IO) {   // 호출함수에서 coroutin 으로 접근하기 때문에 여기서는 그냥 지연함수로 둠
         UploadImageCloudinaryUiState.None
         if (image != null) {
             UploadImageCloudinaryUiState.Loading

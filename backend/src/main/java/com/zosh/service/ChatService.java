@@ -1,61 +1,85 @@
-// package com.zosh.service;
+package com.zosh.service;
 
-// import java.io.IOException;
-// import java.util.ArrayList;
-// import java.util.LinkedHashMap;
-// import java.util.List;
-// import java.util.Map;
-// import java.util.UUID;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-// import org.springframework.stereotype.Service;
-// import org.springframework.web.socket.TextMessage;
-// import org.springframework.web.socket.WebSocketSession;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
 
-// import com.fasterxml.jackson.databind.ObjectMapper;
-// import com.zosh.dto.ChatRoom;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zosh.dto.ChatDto;
+import com.zosh.dto.ChatRoomDto;
+import com.zosh.exception.UserException;
+import com.zosh.model.Chat;
+import com.zosh.model.ChatRoom;
+import com.zosh.model.User;
+import com.zosh.repository.ChatRepository;
+import com.zosh.repository.ChatRoomRepository;
+import com.zosh.repository.UserRepository;
 
-// import jakarta.annotation.PostConstruct;
-// import lombok.Data;
-// import lombok.extern.slf4j.Slf4j;
+import jakarta.annotation.PostConstruct;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
-// @Slf4j
-// @Data
-// @Service
-// public class ChatService {
-//     private final ObjectMapper mapper;
-//     private Map<String, ChatRoom> chatRooms;
+@Slf4j
+@Data
+@Service
+public class ChatService {
+	private final ObjectMapper mapper;
+    private Map<String, ChatRoomDto> chatRooms;
+    
+    private final ChatRepository chatRepository;
+    private final ChatRoomRepository chatRoomRepository;
+    private final UserRepository userRepository;
+    
+    @Autowired
+	private UserService userService;
+    
+    public Chat saveChat(Chat chat) {
+    	Chat chat1 = new Chat();
+    	
+    	chat1.setSender(chat.getSender());
+    	chat1.setEmail(chat.getEmail());
+    	chat1.setRoomId(chat.getRoomId());
+    	chat1.setMessage(chat.getMessage());
+    	chat1.setTimestamp(LocalDateTime.now());
+    	chat1.setType(chat.getType());
+    	
+		return chatRepository.save(chat1);
+    }
 
-//     @PostConstruct
-//     private void init() {
-//         chatRooms = new LinkedHashMap<>();
-//     }
+    public List<ChatRoom> findAllRoom(){
+        return chatRoomRepository.findAll();
+    }
 
-//     public List<ChatRoom> findAllRoom(){
-//         return new ArrayList<>(chatRooms.values());
-//     }
+    public ChatRoom findRoomById(String roomId){
+        return chatRoomRepository.findByRoomId(roomId);
+    }
 
-//     public ChatRoom findRoomById(String roomId){
-//         return chatRooms.get(roomId);
-//     }
-
-//     public ChatRoom createRoom(String name) {
-//         String roomId = UUID.randomUUID().toString(); // 랜덤한 방 아이디 생성
-
-//         // Builder 를 이용해서 ChatRoom 을 Building
-//         ChatRoom room = ChatRoom.builder()
-//                 .roomId(roomId)
-//                 .name(name)
-//                 .build();
-
-//         chatRooms.put(roomId, room); // 랜덤 아이디와 room 정보를 Map 에 저장
-//         return room;
-//     }
-
-//     public <T> void sendMessage(WebSocketSession session, T message) {
-//         try{
-//             session.sendMessage(new TextMessage(mapper.writeValueAsString(message)));
-//         } catch (IOException e) {
-//             log.error(e.getMessage(), e);
-//         }
-//     }
-// }
+    public ChatRoom createRoom(ChatRoom room) {
+        String roomId = UUID.randomUUID().toString(); // 랜덤한 방 아이디 생성
+        
+        ChatRoom room1 = new ChatRoom();
+        room1.setRoomId(roomId);
+        room1.setName(room.getName());
+        room1.setCreator(room.getCreator());
+        room1.setCreatorEmail(room.getCreatorEmail());
+        
+        return chatRoomRepository.save(room1);
+    }
+    
+    public List<Chat> chathistory(String roomId){
+    	return chatRepository.findByRoomId(roomId);
+    }
+    
+    public User findsenderprofile(String email) {
+    	return userRepository.findByEmail(email);
+    }
+}

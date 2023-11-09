@@ -10,13 +10,21 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 const val BASE_URL =
     "http://54.180.96.205:8080/"
 
 interface RibbitApiService {
     @GET("api/twits/")
-    suspend fun getPosts(): List<RibbitPost>
+    suspend fun getRibbitPosts(): List<RibbitPost>
+    @GET("api/twits/followTwit")
+    suspend fun getFollowingPosts(): List<RibbitPost>
+
+    @GET("api/twits/topviews")
+    suspend fun getTopViewsRibbitPosts(): List<RibbitPost>
+    @GET("api/twits/toplikes")
+    suspend fun getTopLikesRibbitPosts(): List<RibbitPost>
 
     @POST("api/twits/create")
     suspend fun postCreatePost(
@@ -32,6 +40,7 @@ interface RibbitApiService {
     suspend fun deletePost(
         @Path("twitId") postId : Int
     ): DeleteResponse
+
     @GET("api/twits/{twitId}")
     suspend fun getPostIdPost(
         @Path("twitId") postId : Int
@@ -60,10 +69,10 @@ interface RibbitApiService {
         @Path("postId") postId : Int
     ): RibbitPost
 
-    @DELETE("api/{postId}/unlike")
-    suspend fun deletePostIdLike(
-        @Path("postId") postId : Int
-    ): RibbitPost
+//    @DELETE("api/{postId}/unlike")
+//    suspend fun deletePostIdLike(
+//        @Path("postId") postId : Int
+//    ): RibbitPost
 
     @PUT("api/twits/{postId}/retwit")
     suspend fun putPostIdRepost(
@@ -74,6 +83,16 @@ interface RibbitApiService {
     suspend fun postPostIdCount(
         @Path("postId") postId : Int
     ): RibbitPost
+
+    @GET("api/twits/search2")
+    suspend fun getPostsSearch(
+        @Query("query") searchQuery : String    // @Query 안의 String 값이 서버의 parameter 명과 같아야 함.
+    ): List<RibbitPost>
+
+    @GET("/api/twits/{listId}/listTwit")
+    suspend fun getListIdPosts(
+        @Path("listId") listId : Int
+    ): List<RibbitPost>
 }
 
 //    @GET("auth/refresh")

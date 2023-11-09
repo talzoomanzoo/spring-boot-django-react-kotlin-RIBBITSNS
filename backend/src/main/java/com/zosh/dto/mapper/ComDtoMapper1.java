@@ -41,6 +41,7 @@ public class ComDtoMapper1 {
 			comDto.setFollowingscReady(community.getFollowingscReady());
 			comDto.setPrivateMode(community.isPrivateMode());
 			comDtos.add(comDto);
+			
 		}
 		
 		return comDtos;

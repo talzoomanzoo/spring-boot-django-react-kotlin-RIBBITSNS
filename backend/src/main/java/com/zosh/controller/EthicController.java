@@ -38,6 +38,7 @@ public class EthicController {
 			@RequestHeader("Authorization") String jwt) throws UserException, TwitException{
 		
 		User user=userService.findUserProfileByJwt(jwt);
+		System.out.println("UserL: "+user.getFullName());
 		
 		String url = "http://localhost:8000/ethic/";
 		RestTemplate restTemplate = new RestTemplate();
@@ -67,7 +68,7 @@ public class EthicController {
 		
 		System.out.println("게시물 id: "+req.getId());
 		System.out.println("ethicdto: "+ethicdto.getEthicrate());
-		System.out.println("ethicdto sentence: "+ethicdto.getSentence());
+		System.out.println("ethicdto MAX: "+ethicdto.getEthicrateMAX());
 		return new ResponseEntity<>(ethicdto,HttpStatus.OK);
 
 	}

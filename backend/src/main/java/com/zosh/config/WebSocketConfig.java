@@ -1,25 +1,38 @@
-// package com.zosh.config;
+package com.zosh.config;
 
-// import org.springframework.context.annotation.Configuration;
-// import org.springframework.web.socket.WebSocketHandler;
-// import org.springframework.web.socket.config.annotation.EnableWebSocket;
-// import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
-// import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
+import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
+import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
+import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
+import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
-// import lombok.RequiredArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
-// @Configuration
-// @EnableWebSocket
-// @RequiredArgsConstructor
-// public class WebSocketConfig implements WebSocketConfigurer {
+@Configuration
+@EnableWebSocketMessageBroker
+public class WebSocketConfig implements WebSocketMessageBrokerConfigurer{
 
-//     private final WebSocketHandler webSocketHandler;
+	@Override
+	public void registerStompEndpoints(StompEndpointRegistry registry) {
+		// TODO Auto-generated method stub
+		registry.addEndpoint("/ws").setAllowedOriginPatterns("*").withSockJS();
+	}
 
-//     @Override
-//     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-//         // endpoint 설정 : /api/v1/chat/{postId}
-//         // 이를 통해서 ws://localhost:9090/ws/chat 으로 요청이 들어오면 websocket 통신을 진행한다.
-//         // setAllowedOrigins("*")는 모든 ip에서 접속 가능하도록 해줌
-//         registry.addHandler(webSocketHandler, "/ws/chat").setAllowedOrigins("*");
-//     }
-// }
+	@Override
+	public void configureMessageBroker(MessageBrokerRegistry registry) {
+		// TODO Auto-generated method stub
+		registry.enableSimpleBroker("/topic");//메시지를 받을때
+		registry.setApplicationDestinationPrefixes("/app");//메시지를 보낼때
+	}
+	
+	
+	
+	
+}
+
+
+

@@ -42,8 +42,9 @@ public class TwitDtoMapper {
 		twitDto.setVideo(twit.getVideo());
 		twitDto.setLocation(twit.getLocation());
 		twitDto.setEthicrate(twit.getEthicrate());
-		twitDto.setLabel(twit.getLabel());
-		twitDto.setSentence(twit.getSentence());
+		twitDto.setEthiclabel(twit.getEthiclabel());
+		twitDto.setEthicrateMAX(twit.getEthicrateMAX());
+		
 		return twitDto;
 	}
 	
@@ -87,8 +88,8 @@ public class TwitDtoMapper {
 		twitDto.setVideo(twit.getVideo());
 		twitDto.setLocation(twit.getLocation());
 		twitDto.setEthicrate(twit.getEthicrate());
-		twitDto.setLabel(twit.getLabel());
-		twitDto.setSentence(twit.getSentence());
+		twitDto.setEthiclabel(twit.getEthiclabel());
+		twitDto.setEthicrateMAX(twit.getEthicrateMAX());
 		
 		return twitDto;
 	}

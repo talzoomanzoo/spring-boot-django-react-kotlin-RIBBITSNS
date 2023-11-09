@@ -1,25 +1,198 @@
-import { memo, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import TwitCard from "../Home/MiddlePart/TwitCard/TwitCard";
 import { findComById } from "../../Store/Community/Action";
-import { findTwitsByComId } from "../../Store/Community/Action";
+import { findTwitsByComId } from "../../Store/Tweet/Action";
 import { useParams, useNavigate } from "react-router";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
+import { Avatar, Button } from "@mui/material";
+import {
+    COM_TWEET_CREATE_REQUEST,
+    COM_TWEET_CREATE_SUCCESS,
+    COM_TWEET_CREATE_FAILURE,
+} from "../../Store/Tweet/ActionType";
+import { api } from "../../Config/apiConfig";
+import EmojiPicker from "emoji-picker-react";
+import { useFormik } from "formik";
+import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
+import * as Yup from "yup";
+import FmdGoodIcon from "@mui/icons-material/FmdGood";
+import ImageIcon from "@mui/icons-material/Image";
+import SlideshowIcon from "@mui/icons-material/Slideshow";
+import TagFacesIcon from "@mui/icons-material/TagFaces";
+import React from "react";
+
+const Maplocation = React.lazy(() => import("../Profile/Maplocation"));
+const Loading = React.lazy(() => import("../Profile/Loading/Loading"));
+
 
 const ComDetail = () => {
-    const param = useParams();
+
+    const [loading, setLoading] = useState(false);
+    const [uploadingImage, setUploadingImage] = useState(false);
+    const [selectedImage, setSelectedImage] = useState("");
+    const [selectedVideo, setSelectedVideo] = useState("");
+    const [isLocationFormOpen, setLocationFormOpen] = useState(false);
+    const [openEmoji, setOpenEmoji] = useState(false);
+    const [refreshTwits, setRefreshTwits] = useState(0); // Define setRefreshTwits
     const dispatch = useDispatch();
-    const { com, twit, theme } = useSelector(store => store);
+    const { com, twit, auth, theme } = useSelector((store) => store);
+    const [notificationSent, setNotificationSent] = useState(false); // 푸시 알림을 이미 보냈는지 확인하는 상태 추가
+    const jwtToken = localStorage.getItem("jwt");
+    const [address, setAddress] = useState("");
+    const handleOpenEmoji = () => setOpenEmoji(true);
+    const handleCloseEmoji = () => setOpenEmoji(false);
+
+    const validationSchema = Yup.object().shape({
+        content: Yup.string().required("내용이 없습니다"),
+    });
+
+    const param = useParams();
     const navigate = useNavigate();
-    const handleBack = () => navigate(-1)
+    const handleBack = () => navigate(-1);
+
+    const createComTweetRequest = (comId) => ({
+        type: COM_TWEET_CREATE_REQUEST,
+    });
+
+    const createComTweetSuccess = (data) => ({
+        type: COM_TWEET_CREATE_SUCCESS,
+        payload: data,
+    });
+
+    const createComTweetFailure = (error) => ({
+        type: COM_TWEET_CREATE_FAILURE,
+        payload: error,
+    });
 
     useEffect(() => {
         dispatch(findComById(param.id));
         console.log("log");
-        //dispatch(findTwitsByComId(param.id))
-    }, [])
+        dispatch(findTwitsByComId(param.id))
+    }, []);
 
-    console.log("communities details check", com);
+    const handleToggleLocationForm = () => {
+        setLocationFormOpen((prev) => !prev);
+    };
+
+    // const authCheck = (com) => {
+    //     for (let i=0; i< com.followingsc.length; i++) {
+    //         if(com.followingsc[i].id === auth.user.id) {
+    //             return true;
+    //         }
+    //     }
+    // }
+
+    const ComCreateTweet = (tweetData) => {
+        return async (dispatch) => {
+            setLoading(true);
+            dispatch(createComTweetRequest(param.id));
+            try {
+                const { data } = await api.post(
+                    `http://localhost:8080/api/twits/${param.id}/create`,
+                    tweetData
+                );
+
+                dispatch(createComTweetSuccess(data));
+
+                const response = await ethicreveal(data.id, data.content);
+                handleSendPushNotification();
+            } catch (error) {
+                dispatch(createComTweetFailure(error.message));
+            } finally {
+                setLoading(false); // 로딩 완료
+            }
+        };
+    };
+
+    const handleSubmit = (values, actions) => {
+        dispatch(ComCreateTweet(values));
+        actions.resetForm();
+        setSelectedImage("");
+        setSelectedVideo("");
+        handleCloseEmoji();
+        window.location.reload();
+    };
+
+    const ethicreveal = async (twitid, twitcontent) => {
+        try {
+            const response = await fetch(
+                "http://localhost:8080/api/ethic/reqsentence",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${jwtToken}`,
+                    },
+                    body: JSON.stringify({
+                        id: twitid,
+                        content: twitcontent,
+                    }),
+                }
+            );
+            if (response.status === 200) {
+                setLoading(false);
+                setRefreshTwits((prev) => prev + 1);
+            }
+        } catch (error) {
+            console.error("Error fetching ethic data:", error);
+        }
+    };
+
+    const formik = useFormik({
+        initialValues: {
+            content: "",
+            image: "",
+            video: "",
+            location: "",
+        },
+        validationSchema,
+        onSubmit: handleSubmit,
+    });
+
+    const handleSelectImage = async (event) => {
+        setUploadingImage(true);
+        const imgUrl = await uploadToCloudinary(event.target.files[0], "image");
+        formik.setFieldValue("image", imgUrl);
+        setSelectedImage(imgUrl);
+        setUploadingImage(false);
+    };
+
+    const handleSelectVideo = async (event) => {
+        setUploadingImage(true);
+        const videoUrl = await uploadToCloudinary(event.target.files[0], "video");
+        formik.setFieldValue("video", videoUrl);
+        setSelectedVideo(videoUrl);
+        setUploadingImage(false);
+    };
+
+    const handleMapLocation = async (newAddress) => {
+        setAddress(newAddress);
+        formik.setFieldValue("location", newAddress);
+    };
+
+    const handleEmojiClick = (value) => {
+        const { emoji } = value;
+        formik.setFieldValue("content", formik.values.content + emoji);
+    };
+
+    const handleSendPushNotification = () => {
+        if (!notificationSent && Notification.permission === "granted") {
+            const options = {
+                body: "리빗이 성공적으로 게시되었습니다.",
+                icon: "URL_TO_ICON",
+                badge: "URL_TO_BADGE",
+            };
+            new Notification("게시 완료", options);
+            setNotificationSent(true); // 알림을 보냈음을 표시
+        } else if (Notification.permission !== "denied") {
+            Notification.requestPermission().then((permission) => {
+                if (permission === "granted") {
+                    handleSendPushNotification();
+                }
+            });
+        }
+    };
 
     return (
         <div>
@@ -49,14 +222,114 @@ const ComDetail = () => {
                 />
             </section>
 
+            {/* {authCheck(com) ? */}
+                <section className="pb-10" style={{ marginTop: 30 }}>
+                <div className="flex space-x-5 ">
+                    <Avatar alt="Avatar" src={auth.user?.image ? auth.user.image : "https://cdn.pixabay.com/photo/2023/10/24/01/42/art-8337199_1280.png"} loading="lazy" />
+                    <div className="w-full">
+                        <form onSubmit={formik.handleSubmit}>
+                            <div>
+                                <input
+                                    type="text"
+                                    name="content"
+                                    placeholder="커뮤니티에 일상을 공유해 보세요!"
+                                    className={`border-none outline-none text-xl bg-transparent`}
+                                    size="50"
+                                    {...formik.getFieldProps("content")}
+                                />
+                                {formik.errors.content && formik.touched.content && (
+                                    <div className="text-red-500">{formik.errors.content}</div>
+                                )}
+                            </div>
+
+                            {!uploadingImage && (
+                                <div>
+                                    {selectedImage && (
+                                        <img className="w-[28rem]" src={selectedImage} alt="" loading="lazy" />
+                                    )}
+
+                                    {selectedVideo && <video controls src={selectedVideo} />}
+                                </div>
+                            )}
+
+                            <div className="flex justify-between items-center mt-5">
+                                <div className="flex space-x-5 items-center">
+                                    <label className="flex items-center space-x-2 rounded-md cursor-pointer">
+                                        <ImageIcon className="text-[#42c924]" />
+                                        <input
+                                            type="file"
+                                            name="imageFile"
+                                            className="hidden"
+                                            onChange={handleSelectImage}
+                                        />
+                                    </label>
+
+                                    <label className="flex items-center space-x-2  rounded-md cursor-pointer">
+                                        <SlideshowIcon className="text-[#42c924]" />
+                                        <input
+                                            type="file"
+                                            name="videoFile"
+                                            className="hidden"
+                                            onChange={handleSelectVideo}
+                                        />
+                                    </label>
+
+                                    <label className="flex items-center space-x-2 rounded-md cursor-pointer">
+                                        <FmdGoodIcon
+                                            className="text-[#42c924]"
+                                            onClick={handleToggleLocationForm}
+                                        />
+                                    </label>
+
+                                    <div className="relative">
+                                        <TagFacesIcon
+                                            onClick={handleOpenEmoji}
+                                            className="text-[#42c924] cursor-pointer"
+                                        />
+                                        {openEmoji && (
+                                            <div className="absolute top-10 z-50">
+                                                <EmojiPicker
+                                                    theme={theme.currentTheme}
+                                                    onEmojiClick={handleEmojiClick}
+                                                    lazyLoadEmojis={true}
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <Button
+                                        type="submit"
+                                        variant="contained"
+                                        sx={{
+                                            bgcolor: "#42c924",
+                                            borderRadius: "20px",
+                                            paddingY: "8px",
+                                            paddingX: "20px",
+                                            color: "white",
+                                        }}
+                                    >
+                                        Ribbit
+                                    </Button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+            {/* : null} */}
+
             <div style={{ marginTop: 20 }}>
-                {twit.twits && twit.twits.length > 0 ?
-                    (
-                        twit.twits.map((item) => <TwitCard twit={item} key={item.id} />)
-                    ) :
-                    (
-                        <div>게시된 리빗이 없습니다.</div>
-                    )}
+                {isLocationFormOpen && (
+                    <Maplocation onLocationChange={handleMapLocation} />
+                )}
+                {loading ? <Loading /> : null}
+                {twit.twits && twit.twits.length > 0 ? (
+                    twit.twits.map((item) => <TwitCard twit={item} key={item.id} />)
+                ) : (
+                    <div>게시된 리빗이 없습니다.</div>
+                )}
             </div>
 
         </div>

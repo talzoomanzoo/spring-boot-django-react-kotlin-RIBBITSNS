@@ -12,6 +12,7 @@ import { useSelector, useDispatch } from "react-redux";
 import {
     updateCom,
     addReady,
+    removeFollow,
 } from "../../Store/Community/Action";
 import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
 import BackdropComponent from "../Backdrop/Backdrop";
@@ -33,7 +34,7 @@ const style = {
 const ComModel3 = ({ com, handleClose, open }) => {
     const [uploading, setUploading] = useState(false);
     const dispatch = useDispatch();
-    const {auth} = useSelector((store) => store);
+    const { auth } = useSelector((store) => store);
 
     const handleSubmit = (values) => {
         dispatch(updateCom(values));
@@ -46,6 +47,12 @@ const ComModel3 = ({ com, handleClose, open }) => {
         handleClose();
         window.location.reload();
     };
+
+    const handleSignout = (comId) => {
+        dispatch(removeFollow(comId));
+        handleClose();
+        window.location.reload();
+    }
 
     const formik = useFormik({
         initialValues: {
@@ -83,6 +90,14 @@ const ComModel3 = ({ com, handleClose, open }) => {
         }
     }
 
+    const signupCheck = () => {
+        for (let i = 0; i < com.followingsc.length; i++) {
+            if (com.followingsc[i].id === auth.user.id) {
+                return true;
+            }
+        }
+    }
+
     return (
         <div>
             <Modal
@@ -102,7 +117,7 @@ const ComModel3 = ({ com, handleClose, open }) => {
                             </div>
                         </div>
                         <div className="customeScrollbar overflow-y-scroll  overflow-x-hidden h-[50vh]">
-                        <div className="">
+                            <div className="">
                                 <div className="w-full">
                                     <div className="relative">
                                         <img
@@ -123,7 +138,7 @@ const ComModel3 = ({ com, handleClose, open }) => {
                                     </div>
                                 </div>
                             </div>
-                        <div className="w-full transform -translate-y-10 translate-x-4 h-[1rem]"></div>
+                            <div className="w-full transform -translate-y-10 translate-x-4 h-[1rem]"></div>
                             <div className="space-y-3">
                                 <TextField
                                     fullWidth
@@ -155,13 +170,14 @@ const ComModel3 = ({ com, handleClose, open }) => {
                                 />
                                 <div className="space-y-3" style={{ marginTop: 5 }}>
 
-                                <div className="flex items-center justify-between font-xl">
-                                    {com.privateMode? "비공개 커뮤니티입니다." : "공개 커뮤니티입니다."}
-                                    <></>
-                                    {itemsCheck() ? <span className="flex items-center">  가입승인 대기중입니다. <Button onClick={() => handleSignup(com.id)}> 가입신청 취소</Button> </span>: 
-                                    <Button onClick={() => handleSignup(com.id)}> 가입신청 </Button>}
+                                    <div className="flex items-center justify-between font-xl">
+                                        {com.privateMode ? "비공개 커뮤니티입니다." : "공개 커뮤니티입니다."}
+                                        <></>
+                                        {itemsCheck() ? <span className="flex items-center">  가입승인 대기중입니다. <Button onClick={() => handleSignup(com.id)}> 가입신청 취소</Button> </span> :
+                                            signupCheck() ? <span className="flex items-center">  해당 커뮤니티 회원입니다. <Button onClick={() => handleSignout(com.id)}> 커뮤니티 탈퇴 </Button> </span> :
+                                                <Button onClick={() => handleSignup(com.id)}> 가입신청 </Button>}
+                                    </div>
                                 </div>
-                            </div>
                             </div>
                         </div>
                         <BackdropComponent open={uploading} />
