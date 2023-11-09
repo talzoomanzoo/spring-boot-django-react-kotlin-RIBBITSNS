@@ -41,26 +41,18 @@ public class TwitDtoMapper {
 		twitDto.setReplyTwits(toTwitDtos(twit.getReplyTwits(), reqUser));
 		twitDto.setVideo(twit.getVideo());
 		twitDto.setLocation(twit.getLocation());
-		
 		twitDto.setEthicrate(twit.getEthicrate());
 		twitDto.setLabel(twit.getLabel());
 		twitDto.setSentence(twit.getSentence());
-		
 		return twitDto;
 	}
 	
 	public static List<TwitDto> toTwitDtos(List<Twit> twits, User reqUser) {
-		
 		List<TwitDto> twitDtos=new ArrayList<>();
-		
 		for(Twit twit : twits) {
-		
 			TwitDto twitDto=toReplyTwitDto(twit, reqUser);
-		
 			twitDtos.add(twitDto);
 		}
-		
-		
 		return twitDtos;
 	}
 	
@@ -94,15 +86,10 @@ public class TwitDtoMapper {
 		twitDto.setRetwitUsersId(retwitUserId);
 		twitDto.setVideo(twit.getVideo());
 		twitDto.setLocation(twit.getLocation());
-		
 		twitDto.setEthicrate(twit.getEthicrate());
 		twitDto.setLabel(twit.getLabel());
 		twitDto.setSentence(twit.getSentence());
 		
 		return twitDto;
 	}
-	
-	
-
-
 }

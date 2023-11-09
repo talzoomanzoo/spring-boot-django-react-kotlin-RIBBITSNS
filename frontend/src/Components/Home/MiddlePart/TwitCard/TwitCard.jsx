@@ -5,6 +5,7 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import FmdGoodIcon from "@mui/icons-material/FmdGood";
 import ImageIcon from "@mui/icons-material/Image";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import RepeatIcon from "@mui/icons-material/Repeat";
 import SlideshowIcon from "@mui/icons-material/Slideshow";
@@ -18,14 +19,12 @@ import {
 } from "@mui/material";
 import EmojiPicker from "emoji-picker-react";
 import { useFormik } from "formik";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 // import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // React Toastify 스타일
 import * as Yup from "yup";
-import { api } from "../../../../Config/apiConfig";
-// import { incrementNotificationCount } from "../../../../Store/Notification/Action";
 import { incrementNotificationCount } from "../../../../Store/Notification/Action";
 import {
   createRetweet,
@@ -33,16 +32,12 @@ import {
   deleteTweet,
   getTime,
   likeTweet,
-  viewPlus
+  updateTweet,
+  viewPlus,
 } from "../../../../Store/Tweet/Action";
-import {
-  UPDATE_TWEET_FAILURE,
-  UPDATE_TWEET_REQUEST,
-  UPDATE_TWEET_SUCCESS,
-} from "../../../../Store/Tweet/ActionType";
 import { uploadToCloudinary } from "../../../../Utils/UploadToCloudinary";
 import Loading from "../../../Profile/Loading/Loading";
-import Maplocation from "../../../Profile/Maplocation";
+import "../TwitMap.css";
 import ReplyModal from "./ReplyModal";
 
 const validationSchema = Yup.object().shape({
@@ -52,33 +47,24 @@ const validationSchema = Yup.object().shape({
 const TwitCard = ({ twit }) => {
   const [selectedImage, setSelectedImage] = useState(twit.image);
   const [selectedVideo, setSelectedVideo] = useState(twit.video);
-  // const [uploadingImage, setUploadingImage] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState(twit.location);
   const [loading, setLoading] = useState(false);
   const [openEmoji, setOpenEmoji] = useState(false);
   const handleOpenEmoji = () => setOpenEmoji(!openEmoji);
   const handleCloseEmoji = () => setOpenEmoji(false);
-
   const [twits, setTwits] = useState([]);
-
   const dispatch = useDispatch();
   const { theme, auth } = useSelector((store) => store);
   const [isLiked, setIsLiked] = useState(twit.liked);
   const [likes, setLikes] = useState(twit.totalLikes);
-
   const [isEditing, setIsEditing] = useState(false); // 편집 상태를 관리하는 상태 변수
   const [editedContent, setEditedContent] = useState(twit.content); // 편집된 내용을 관리하는 상태 변수
-
   const [sentence, setSentence] = useState(twit.sentence); //sentence는 윤리수치에 해당하는 문장이 담아진다.
   //  const [isLoading, setIsLoading] = useState(false); //로딩창의 띄어짐의 유무를 판단한다. default는 true이다.
-
   const jwtToken = localStorage.getItem("jwt");
-
   const [isEdited, setIsEdited] = useState(twit.edited);
   const [datetime, setDatetimes] = useState(twit.createdAt);
   const [edittime, setEdittimes] = useState(twit.editedAt);
-  const [isRetwit, setIsRetwit] = useState(
-    twit.retwitUsersId.includes(auth.user.id)
-  );
   const [retwit, setRetwit] = useState(twit.totalRetweets);
   const [openReplyModel, setOpenReplyModel] = useState();
   const location = useLocation();
@@ -88,10 +74,249 @@ const TwitCard = ({ twit }) => {
   const [isLocationFormOpen, setLocationFormOpen] = useState(false);
   const [address, setAddress] = useState("");
   const [refreshTwits, setRefreshTwits] = useState(0);
+  const { kakao } = window;
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [map, setMap] = useState(null);
+  const [searchResults, setSearchResults] = useState([]);
+  const [markers, setMarkers] = useState([]);
+  const infowindow = new kakao.maps.InfoWindow({ zIndex: 1 });
+  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
+  const itemsPerPage = 5;
+  const [currentMarkers, setCurrentMarkers] = useState([]);
+  const [hoveredMarkerIndex, setHoveredMarkerIndex] = useState(null);
+  const [showLocation, setShowLocation] = useState(true);
+  const [isLocationSaved, setIsLocationSaved] = useState(false);
 
-  const handleMapLocation = (newAddress) => {
-    setAddress(newAddress);
+  useEffect(() => {
+    if (isLocationFormOpen && showLocation) {
+      const container = document.getElementById("map");
+
+      if (container) {
+        const options = {
+          center: new kakao.maps.LatLng(37.5662952, 126.9757567),
+          level: 3,
+        };
+
+        if ("geolocation" in navigator) {
+          navigator.geolocation.getCurrentPosition((position) => {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            options.center = new kakao.maps.LatLng(latitude, longitude);
+
+            const map = new kakao.maps.Map(container, options);
+            setMap(map);
+          });
+        }
+      }
+    }
+  }, [isLocationFormOpen, showLocation]);
+
+  const toggleMap = (values) => {
+    console.log("values", values);
+    if (isLocationSaved) {
+      dispatch(updateTweet(values));
+    }
+    setLocationFormOpen(false);
+    setShowLocation(!isLocationSaved);
+    setIsLocationSaved(!isLocationSaved);
   };
+
+  const formikLocation = useFormik({
+    initialValues: {
+      location: address,
+    },
+    onSubmit: toggleMap,
+  });
+
+  useEffect(() => {
+    console.log("Address Updated:", address); // 주소 확인
+    formikLocation.setValues({
+      location: address,
+    });
+  }, [address]);
+
+  useEffect(() => {
+    const container = document.getElementById("map");
+
+    if (container) {
+      const options = {
+        center: new kakao.maps.LatLng(37.5662952, 126.9757567),
+        level: 3,
+      };
+
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          const latitude = position.coords.latitude;
+          const longitude = position.coords.longitude;
+          options.center = new kakao.maps.LatLng(latitude, longitude);
+
+          const map = new kakao.maps.Map(container, options);
+          setMap(map);
+        });
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (map) {
+      const mapTypeControl = new kakao.maps.MapTypeControl();
+      map.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);
+      const zoomControl = new kakao.maps.ZoomControl();
+      map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+    }
+  }, [map]);
+
+  function getListItem(index, places) {
+    return (
+      <div className="item" key={index}>
+        <span className={"markerbg marker_" + (index + 1)}></span>
+        <div className="info">
+          <h5 className={`text-black`}>{places.place_name}</h5>
+          {places.road_address_name ? (
+            <div>
+              <span className={`text-black`}>{places.road_address_name}</span>
+              <span className="jibun gray">{places.address_name}</span>
+            </div>
+          ) : (
+            <span className={`text-black`}>{places.address_name}</span>
+          )}
+          <span className="tel">{places.phone}</span>
+        </div>
+      </div>
+    );
+  }
+
+  const handleSearch = () => {
+    if (!searchKeyword.trim()) {
+      alert("키워드를 입력해주세요!");
+      return;
+    }
+    infowindow.close();
+
+    currentMarkers.forEach((marker) => {
+      marker.setMap(null);
+    });
+
+    const places = new kakao.maps.services.Places();
+    places.keywordSearch(searchKeyword, function (data, status) {
+      if (status === kakao.maps.services.Status.OK) {
+        const bounds = new kakao.maps.LatLngBounds();
+        const newMarkers = data.map((place) => {
+          return displayMarker(place);
+        });
+
+        newMarkers.forEach((marker) => {
+          bounds.extend(marker.getPosition());
+        });
+
+        setSearchResults(data);
+        setCurrentMarkers(newMarkers);
+        setCurrentPage(1);
+        map.setBounds(bounds);
+      }
+    });
+  };
+
+  const createSearchResultItem = (result, index) => {
+    let infowindow = null;
+
+    const handleMouseEnter = () => {
+      const marker = currentMarkers[index];
+      if (marker) {
+        if (infowindow) {
+          infowindow.close();
+        }
+        infowindow = new kakao.maps.InfoWindow({
+          content:
+            '<div style="padding:5px;font-size:12px;color:black;">' +
+            result.place_name +
+            "</div>",
+          position: marker.getPosition(),
+        });
+        infowindow.open(map, marker);
+      }
+    };
+
+    const handleMouseLeave = () => {
+      if (infowindow) {
+        infowindow.close();
+      }
+    };
+
+    const handleItemClick = (place) => {
+      const marker = currentMarkers[index];
+      if (marker) {
+        const markerPosition = marker.getPosition();
+        map.setLevel(3); // 레벨을 3으로 설정
+        map.setCenter(markerPosition); // 클릭한 마커를 중심으로 지도 재설정
+        setAddress(place.place_name); // 주소 업데이트
+        infowindow.close(); // 마커 클릭 시 인포윈도우 닫기
+      }
+    };
+
+    return (
+      <li
+        className={getMarkerItemClassName(index)}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onClick={handleItemClick}
+      >
+        {getListItem(indexOfFirstItem + index, result)}
+      </li>
+    );
+  };
+
+  const displayMarker = (place) => {
+    const marker = new kakao.maps.Marker({
+      map: map,
+      position: new kakao.maps.LatLng(place.y, place.x),
+    });
+
+    setMarkers((prevMarkers) => [...prevMarkers, marker]);
+    kakao.maps.event.addListener(marker, "mouseover", function () {
+      infowindow.close();
+      infowindow.setContent(
+        '<div style="padding:5px;font-size:12px;color:black;">' +
+          place.place_name +
+          "</div>"
+      );
+      infowindow.open(map, marker);
+    });
+
+    kakao.maps.event.addListener(marker, "click", function () {
+      const markerPosition = marker.getPosition();
+      map.setLevel(3); // 레벨을 3으로 설정
+      map.setCenter(markerPosition); // 클릭한 마커를 중심으로 지도 재설정
+      setAddress(place.place_name); // 주소 업데이트
+      infowindow.close(); // 마커 클릭 시 인포윈도우 닫기
+    });
+
+    kakao.maps.event.addListener(marker, "mouseout", function () {
+      infowindow.close(); // infowindow를 닫음
+    });
+    return marker; // 마커를 반환
+  };
+
+  const getMarkerItemClassName = (index) => {
+    return `item ${index === hoveredMarkerIndex ? "hovered" : ""}`;
+  };
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = searchResults.slice(indexOfFirstItem, indexOfLastItem);
+
+  const handlePageClick = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const totalPageCount = Math.ceil(searchResults.length / itemsPerPage);
+  const pageNumbers = [];
+  for (let i = 1; i <= totalPageCount; i++) {
+    pageNumbers.push(i);
+  }
+
+  const [isRetwit, setIsRetwit] = useState(
+    twit.retwitUsersId.includes(auth.user.id)
+  );
 
   const handleToggleLocationForm = () => {
     setLocationFormOpen((prev) => !prev);
@@ -106,13 +331,8 @@ const TwitCard = ({ twit }) => {
 
   const handleLikeTweet = (num) => {
     if (!isLiked) {
-      // FavoriteIcon이 눌리지 않은 상태일 때만 카운트를 증가시킴
       const TuserId = twit.user.id;
-      // const likingUserId = auth.user.id; // 좋아요를 누른 계정의 아이디를 가져옵니다.
-  
       dispatch(incrementNotificationCount(TuserId)); // 알림 카운트 증가
-      // handleLikeNotification(likingUserId); // 좋아요를 누른 계정의 아이디를 전달합니다.
-      // dispatch(notificationPlus(twit.id));
     }
     dispatch(likeTweet(twit.id));
     setIsLiked(!isLiked);
@@ -122,25 +342,19 @@ const TwitCard = ({ twit }) => {
 
   const handleCreateRetweet = () => {
     if (auth.user.id !== twit.user.id) {
-      const TuserId = twit.user.id
-      dispatch(incrementNotificationCount(TuserId)); 
-      // dispatch(notificationPlus(twit.id));
+      const TuserId = twit.user.id;
+      dispatch(incrementNotificationCount(TuserId));
       dispatch(createRetweet(twit.id));
       setRetwit(isRetwit ? retwit - 1 : retwit + 1);
       setIsRetwit(!retwit);
     } else {
-      console.log("unable to create reribbit")
+      console.log("unable to create reribbit");
     }
     window.location.reload();
   };
 
   const handleCloseReplyModel = () => setOpenReplyModel(false);
   const handleOpenReplyModel = () => setOpenReplyModel(true);
-  //const handleNavigateToTwitDetial = () => navigate(`/twit/${twit.id}`);
-
-  // useEffect(() => {
-  //   dispatch(getAllTweets());
-  // }, [refreshTwits]);
 
   const handleNavigateToTwitDetial = () => {
     if (!isEditing) {
@@ -155,12 +369,10 @@ const TwitCard = ({ twit }) => {
       dispatch(deleteTweet(twit.id));
       handleCloseDeleteMenu();
       window.location.reload();
-      //setRefreshTwits((prev) => prev + 1);
 
       const currentId = window.location.pathname.replace(/^\/twit\//, "");
       if (location.pathname === `/twit/${currentId}`) {
         window.location.reload();
-        //setRefreshTwits((prev) => prev + 1);
       } else {
         navigate(".", { replace: true });
       }
@@ -174,62 +386,37 @@ const TwitCard = ({ twit }) => {
   };
 
   const handleCloseEditClick = () => {
+    setLocationFormOpen(false);
     setIsEditing(false);
-  };
-
-  //const [isEditing, setIsEditing] = useState(false); // 편집 상태를 관리하는 상태 변수
-  //const [editedContent, setEditedContent] = useState(twit.content); // 편집된 내용을 관리하는 상태 변수
-
-  //const [isEdited, setIsEdited] = useState(twit.isEdited);
-  //const [edittimes, setEdittimes] = useState(twit.editedAt);
-
-  const updateTweet = (twit) => {
-    return async (dispatch) => {
-      dispatch({ type: UPDATE_TWEET_REQUEST });
-      try {
-        const { data } = await api.post(`/api/twits/edit`, twit);
-
-        //const response = await ethicreveal(data.id,data.content);
-        dispatch({ type: UPDATE_TWEET_SUCCESS, payload: data });
-      } catch (error) {
-        dispatch({ type: UPDATE_TWEET_FAILURE, payload: error.message });
-      }
-    };
   };
 
   const handleSaveClick = async () => {
     setLoading(true);
+    setLocationFormOpen(false);
+
     try {
       const currentTime = new Date();
       setEditedContent(editedContent);
       setSelectedImage(selectedImage);
       setSelectedVideo(selectedVideo);
+      setSelectedLocation(address);
       setIsEdited(true);
       setEdittimes(currentTime);
-      //setSentence(sentence);
 
       twit.content = editedContent;
+      twit.location = address;
       twit.image = selectedImage;
       twit.video = selectedVideo;
       twit.edited = true;
       twit.editedAt = currentTime;
-      //twit.sentence = sentence;
-      //console.log("currTime", currentTime);
 
       await ethicreveal(twit.id, twit.content);
       await dispatch(updateTweet(twit));
 
-      //setEditedContent("");
-      //setSelectedImage("");
-      //setSelectedVideo("");
       setIsEditing(false);
-      //window.location.reload();
-      //setRefreshTwits((prev) => prev + 1);
       setLoading(false);
       handleCloseEditClick();
-    } catch (error) {
-      //console.error("Error updating twit:", error);
-    }
+    } catch (error) {}
   };
 
   const ethicreveal = async (twitid, twitcontent) => {
@@ -259,7 +446,6 @@ const TwitCard = ({ twit }) => {
   };
 
   const handleCancelClick = () => {
-    // 편집 모드를 종료하고 편집 상태를 초기화합니다.
     setIsEditing(false);
     setEditedContent(twit.content); // 수정된 내용 초기화
     handleCloseEditClick();
@@ -270,15 +456,16 @@ const TwitCard = ({ twit }) => {
     actions.resetForm();
     setSelectedImage("");
     setSelectedVideo("");
+    setSelectedLocation("");
     handleCloseEmoji();
   };
 
-  const formik = useFormik({
+  const formikTweet = useFormik({
     initialValues: {
       content: "",
       image: "",
       video: "",
-
+      location: address,
     },
     validationSchema,
     onSubmit: handleSubmit,
@@ -286,7 +473,7 @@ const TwitCard = ({ twit }) => {
 
   const handleEmojiClick = (value) => {
     const { emoji } = value;
-    formik.setFieldValue("content", formik.values.content + emoji);
+    formikTweet.setFieldValue("content", formikTweet.values.content + emoji);
     const newContent = editedContent + emoji;
     setEditedContent(newContent);
   };
@@ -295,7 +482,7 @@ const TwitCard = ({ twit }) => {
     setLoading(true);
     const imgUrl = await uploadToCloudinary(event.target.files[0], "image");
     //console.log("e.tar.val.I", event.target.value);
-    formik.setFieldValue("image", imgUrl);
+    formikTweet.setFieldValue("image", imgUrl);
     setSelectedImage(imgUrl);
     setLoading(false);
   };
@@ -304,7 +491,7 @@ const TwitCard = ({ twit }) => {
     setLoading(true);
     const videoUrl = await uploadToCloudinary(event.target.files[0], "video");
     //console.log("e.tar.val.V", event.target.value);
-    formik.setFieldValue("video", videoUrl);
+    formikTweet.setFieldValue("video", videoUrl);
     setSelectedVideo(videoUrl);
     setLoading(false);
   };
@@ -316,66 +503,26 @@ const TwitCard = ({ twit }) => {
   const dateedit = new Date(edittime).getTime();
   const timeEdit = getTime(dateedit, currTimestamp);
 
-  //  // 상태 변수를 사용하여 알림 메시지를 저장합니다.
-  //  const [notifications, setNotifications] = useState([]);
-
-  //  const eventSource = new EventSource(
-  //    "http://localhost:8080/notifications/subscribe/1"
-  //  );
- 
-  //  console.log("eventSource", eventSource.onmessage);
- 
-  //  eventSource.onmessage = (event) => {
-  //    const data = JSON.parse(event.data);
-  //    console.log("data", data);
-  //    console.log("event", event);
- 
-  //    if (data.eventType === "like") {
-  //      // "like" 이벤트를 처리하고 알림을 표시합니다.
-  //      handleLikeNotification(data.message);
-  //    }
-  //  };
- 
-  //  eventSource.onopen = () => {
-  //    console.log("SSE connection opened.");
-  //  };
- 
-  //  eventSource.onerror = (error) => {
-  //    console.error("SSE connection error:", error);
-  //  };
- 
-  //  const handleLikeNotification = (message) => {
-  //    // 사용자에게 알림을 표시합니다.
-  //    console.log("message", message);
- 
-  //    toast.success(message, {
-  //      position: "top-right",
-  //      autoClose: 3000, // 알림이 자동으로 사라지는 시간 (밀리초 단위)
-  //    });
- 
-  //    // 알림 메시지를 상태 변수에 추가합니다.
-  //    setNotifications((prevNotifications) => [...prevNotifications, message]);
-  //  };
-
   return (
     <div className="">
       {loading ? <Loading /> : null}
       {auth.findUser?.id !== twit.user.id &&
-        location.pathname === `/profile/${auth.findUser?.id}` &&
-        twit.retwitUsersId.length > 0 ?
-        (
-          <div className="flex items-center font-semibold text-yellow-500 py-2">
-            <RepeatIcon />
-            <p className="ml-3">Reribbit</p>
-          </div>
-        ) :
-        null
-      }
+      location.pathname === `/profile/${auth.findUser?.id}` &&
+      twit.retwitUsersId.length > 0 ? (
+        <div className="flex items-center font-semibold text-yellow-500 py-2">
+          <RepeatIcon />
+          <p className="ml-3">Reribbit</p>
+        </div>
+      ) : null}
       <div className="flex space-x-5 ">
         <Avatar
           onClick={() => navigate(`/profile/${twit.user.id}`)}
           alt="Avatar"
-          src={twit.user.image ? twit.user.image : "https://cdn.pixabay.com/photo/2023/10/24/01/42/art-8337199_1280.png"}
+          src={
+            twit.user.image
+              ? twit.user.image
+              : "https://cdn.pixabay.com/photo/2023/10/24/01/42/art-8337199_1280.png"
+          }
           className="cursor-pointer"
           loading="lazy"
         />
@@ -399,19 +546,12 @@ const TwitCard = ({ twit }) => {
                   </p>
                 )}
               </span>
-              {/* <span className="flex items-center text-gray-500">
+              <span className="flex items-center text-gray-500">
                 <LocationOnIcon />
-                <p className="text-gray-500">
-                  {auth.findUser?.location || address}
-                </p>
-              </span> */}
+                <p className="text-gray-500">{twit.location || address}</p>
+              </span>
               {twit.user.verified && (
-                <img
-                  className="ml-2 w-5 h-5"
-                  src=""
-                  alt=""
-                  loading="lazy"
-                />
+                <img className="ml-2 w-5 h-5" src="" alt="" loading="lazy" />
               )}
             </div>
             <div>
@@ -463,10 +603,11 @@ const TwitCard = ({ twit }) => {
               {isEditing ? (
                 <div>
                   <TextareaAutosize
-                    className={`${theme.currentTheme === "light"
-                      ? "bg-white"
-                      : "bg-[#151515]"
-                      }`}
+                    className={`${
+                      theme.currentTheme === "light"
+                        ? "bg-white"
+                        : "bg-[#151515]"
+                    }`}
                     minRows={0}
                     maxRows={0}
                     value={editedContent}
@@ -566,7 +707,6 @@ const TwitCard = ({ twit }) => {
                         onClick={handleToggleLocationForm}
                       />
                     </label>
-
                     <div className="relative">
                       <TagFacesIcon
                         onClick={handleOpenEmoji}
@@ -586,8 +726,77 @@ const TwitCard = ({ twit }) => {
                 )}
               </div>
             </div>
-            {isLocationFormOpen && (
-              <Maplocation onLocationChange={handleMapLocation} />
+            {isEditing && isLocationFormOpen && showLocation && (
+              <div>
+                <div className="mt-2 mb-2 space-y-3">
+                  <div className="flex items-center text-gray-500">
+                    <form onSubmit={formikLocation.handleSubmit}>
+                      <Button
+                        type="submit"
+                        onClick={toggleMap}
+                        className="save-location-button"
+                      >
+                        저장
+                      </Button>
+                    </form>
+                    <p className="text-gray-500 ml-3">{address}</p>
+                  </div>
+                </div>
+
+                <div className="map_wrap">
+                  <div
+                    id="map"
+                    style={{
+                      width: "70%",
+                      height: "100%",
+                      position: "relative",
+                      overflow: "hidden",
+                    }}
+                  ></div>
+                  <div id="list_wrap" className="bg_white">
+                    <div className="option" style={{ textAlign: "right" }}>
+                      <div>
+                        <form
+                          onSubmit={(e) => {
+                            e.preventDefault();
+                            handleSearch();
+                          }}
+                        >
+                          <input
+                            type="text"
+                            value={searchKeyword}
+                            placeholder="장소·주소 검색"
+                            onChange={(e) => setSearchKeyword(e.target.value)}
+                            id="keyword"
+                            size="15"
+                          />
+                          <Button type="submit">검색하기</Button>
+                        </form>
+                      </div>
+                    </div>
+                    <hr />
+
+                    <ul id="placesList">
+                      {currentItems.map((result, index) =>
+                        createSearchResultItem(result, index)
+                      )}
+                    </ul>
+
+                    <div id="pagination">
+                      <ul className={`page-numbers text-black`}>
+                        {pageNumbers.map((number) => (
+                          <li
+                            key={number}
+                            onClick={() => handlePageClick(number)}
+                          >
+                            {number}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
             )}
             <div className="py-5 flex flex-wrap justify-between items-center">
               {!isEditing && (
@@ -601,8 +810,9 @@ const TwitCard = ({ twit }) => {
                     {/* twit 객체의 totalReplies 속성 값이 0보다 큰 경우에만 해당 값을 포함하는 <p> 태그로 래핑 시도*/}
                   </div>
                   <div
-                    className={`${isRetwit ? "text-yellow-500" : "text-gray-600"
-                      } space-x-3 flex items-center`}
+                    className={`${
+                      isRetwit ? "text-yellow-500" : "text-gray-600"
+                    } space-x-3 flex items-center`}
                   >
                     <RepeatIcon
                       className={` cursor-pointer`}
@@ -611,8 +821,9 @@ const TwitCard = ({ twit }) => {
                     {retwit > 0 && <p>{retwit}</p>}
                   </div>
                   <div
-                    className={`${isLiked ? "text-yellow-500" : "text-gray-600"
-                      } space-x-3 flex items-center `}
+                    className={`${
+                      isLiked ? "text-yellow-500" : "text-gray-600"
+                    } space-x-3 flex items-center `}
                   >
                     {isLiked ? (
                       <FavoriteIcon onClick={() => handleLikeTweet(-1)} />
@@ -636,10 +847,10 @@ const TwitCard = ({ twit }) => {
             style={{
               marginTop: 3,
               marginBottom: 10,
-              background: 'grey',
-              color: 'grey',
-              borderColor: 'grey',
-              height: '1px',
+              background: "grey",
+              color: "grey",
+              borderColor: "grey",
+              height: "1px",
             }}
           />
         </div>
@@ -651,9 +862,7 @@ const TwitCard = ({ twit }) => {
         handleClose={handleCloseReplyModel}
       />
 
-      <section>
-      {loading ? <Loading/> : null}
-      </section>
+      <section>{loading ? <Loading /> : null}</section>
     </div>
   );
 };
