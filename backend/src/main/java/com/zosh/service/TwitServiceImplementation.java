@@ -61,6 +61,7 @@ public class TwitServiceImplementation implements TwitService {
 		twit.setReply(false);
 		twit.setTwit(true);
 		twit.setVideo(req.getVideo());
+		twit.setLocation(req.getLocation());
 		Community community = comService.findById(comId);
 		twit.setCom(true);
 		twit.setCommunity(community);

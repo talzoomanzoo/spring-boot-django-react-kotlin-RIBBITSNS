@@ -66,7 +66,6 @@ const HomeSection = () => {
   const [currentMarkers, setCurrentMarkers] = useState([]);
   const [hoveredMarkerIndex, setHoveredMarkerIndex] = useState(null);
   const [showLocation, setShowLocation] = useState(true);
-  const [isLocationSaved, setIsLocationSaved] = useState(false);
 
   useEffect(() => {
     if (isLocationFormOpen && showLocation) {
