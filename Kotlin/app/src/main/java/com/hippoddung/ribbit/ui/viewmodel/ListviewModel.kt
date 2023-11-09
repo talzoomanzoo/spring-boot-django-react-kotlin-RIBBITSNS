@@ -79,6 +79,8 @@ class ListViewModel @Inject constructor(
         UploadImageCloudinaryUiState.None
     )
 
+    var searchingUserClickedUiState: Boolean by mutableStateOf(false)
+
     fun getLists() {  // 모든 Post 를 불러오는 메소드
         viewModelScope.launch(Dispatchers.IO) {
             listUiState = ListUiState.Loading
@@ -287,5 +289,19 @@ class ListViewModel @Inject constructor(
             }
         }
         Log.d("HippoLog, GetCardViewModel", "deleteListUiState")
+    }
+
+    fun postAddUser(userId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val listId = (listIdUiState as ListIdUiState.Success).listItem.id
+            try {
+                Log.d("HippoLog, ListViewModel", "postAddUser")
+                listRepository.postAddUser(listId, userId)
+            } catch (e: IOException) {
+                Log.d("HippoLog, ListViewModel", "postAddUser error: ${e.message}")
+            } catch (e: ExceptionInInitializerError) {
+                Log.d("HippoLog, ListViewModel", "postAddUser error: ${e.message}")
+            }
+        }
     }
 }

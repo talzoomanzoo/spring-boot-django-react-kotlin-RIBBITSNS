@@ -12,4 +12,6 @@ class ListRepository @Inject constructor(
     suspend fun getListIdPost(listId: Int) = listApiService.getListIdPost(listId)
     suspend fun deleteListIdList(listId: Int) = listApiService.deleteListIdList(listId)
     suspend fun postEditList(listItem: RibbitListItem) = listApiService.postEditList(listItem)
+    suspend fun postAddUser(listId: Int, userId: Int) = listApiService.postAddUser(listId, userId)
+
 }

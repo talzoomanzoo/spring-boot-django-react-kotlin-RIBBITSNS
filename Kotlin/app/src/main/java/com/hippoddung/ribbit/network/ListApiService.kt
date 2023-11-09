@@ -32,4 +32,10 @@ interface ListApiService {
     suspend fun postEditList(
         @Body listItem: RibbitListItem
     ): RibbitListItem
+
+    @POST("api/lists/{listId}/add1/{userId}")
+    suspend fun postAddUser(
+        @Path("listId") listId : Int,
+        @Path("userId") userId : Int
+    ): RibbitListItem
 }

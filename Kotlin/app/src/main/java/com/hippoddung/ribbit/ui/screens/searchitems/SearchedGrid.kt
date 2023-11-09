@@ -26,6 +26,7 @@ fun SearchedGrid(
     Column(
         modifier = modifier
 //            .verticalScroll(rememberScrollState())    // dropdown menu 에서 스크롤을 하는 것은 layout 구조상 불가능하다는 것 같음.
+            // 자동으로 스크롤이 됨
     ) {
         Column(modifier = modifier) {
             sortedUsers.forEach { user ->

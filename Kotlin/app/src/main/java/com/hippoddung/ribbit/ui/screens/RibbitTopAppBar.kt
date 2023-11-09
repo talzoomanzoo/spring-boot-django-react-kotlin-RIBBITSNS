@@ -109,7 +109,7 @@ fun RibbitTopAppBar(
                 )
             },
             actions = {
-                UserSearchBar(
+                RibbitSearchBar(
                     navController = navController,
                     userViewModel = userViewModel,
                     getCardViewModel = getCardViewModel,
@@ -226,7 +226,7 @@ fun MainDropDownMenu(
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun UserSearchBar(
+fun RibbitSearchBar(
     navController: NavHostController,
     userViewModel: UserViewModel,
     getCardViewModel: GetCardViewModel,
