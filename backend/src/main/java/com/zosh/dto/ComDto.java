@@ -3,7 +3,6 @@ package com.zosh.dto;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.zosh.model.Twit;
 import com.zosh.model.User;
 
