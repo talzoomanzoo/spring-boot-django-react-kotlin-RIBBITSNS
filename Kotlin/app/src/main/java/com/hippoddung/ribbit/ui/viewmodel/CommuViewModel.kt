@@ -304,4 +304,17 @@ class CommuViewModel @Inject constructor(
             }
         }
     }
+
+    fun signupCommu(commuId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                Log.d("HippoLog, CommuViewModel", "signupCommu")
+                commuRepository.signupCommu(commuId)
+            } catch (e: IOException) {
+                Log.d("HippoLog, CommuViewModel", "signupCommu error: ${e.message}")
+            } catch (e: ExceptionInInitializerError) {
+                Log.d("HippoLog, CommuViewModel", "signupCommu error: ${e.message}")
+            }
+        }
+    }
 }
