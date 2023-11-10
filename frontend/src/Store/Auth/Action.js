@@ -181,6 +181,21 @@ export const searchUser = (query) => async (dispatch) => {
   }
 };
 
+export const searchChatUser = (query) => async (dispatch) => {
+  dispatch({type:SEARCH_USER_REQUEST})
+  try {
+    const response = await api.get(`/api/users/search1?query=${query}`);
+    const users = response.data;
+    console.log("search result -: ", users);
+   
+    dispatch({type:SEARCH_USER_SUCCESS,payload:users});
+  } catch (error) {
+    dispatch(
+      {type:SEARCH_USER_FAILURE,error:error.message}
+    );
+  }
+};
+
 export const searchAll = (query) => async (dispatch) => {
   dispatch({type:SEARCH_USER_REQUEST})
   dispatch({type:SEARCH_TWIT_REQUEST})

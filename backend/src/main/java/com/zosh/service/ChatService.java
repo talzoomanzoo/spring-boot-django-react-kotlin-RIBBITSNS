@@ -42,7 +42,7 @@ public class ChatService {
     @Autowired
 	private UserService userService;
     
-    public Chat saveChat(Chat chat) {
+    public Chat saveChat(Chat chat) {//채팅저장
     	Chat chat1 = new Chat();
     	
     	chat1.setSender(chat.getSender());
@@ -55,15 +55,25 @@ public class ChatService {
 		return chatRepository.save(chat1);
     }
 
-    public List<ChatRoom> findAllRoom(){
+    public List<ChatRoom> findAllRoom(){//전체 채팅방 출력
         return chatRoomRepository.findAll();
     }
 
-    public ChatRoom findRoomById(String roomId){
+    public ChatRoom findRoomById(String roomId){//roomId로 채팅방 찾기
         return chatRoomRepository.findByRoomId(roomId);
     }
+    
+    public ChatRoom editRoom(ChatRoom room) {//채팅방 이름 수정
+    	
+    	ChatRoom chatRoom = chatRoomRepository.findByRoomId(room.getRoomId());
+    	chatRoom.setName(room.getName());
+    	
+    	chatRoomRepository.save(chatRoom);
+    	
+    	return chatRoom;
+    }
 
-    public ChatRoom createRoom(ChatRoom room) {
+    public ChatRoom createRoom(ChatRoom room) {//채팅방 만들기
         String roomId = UUID.randomUUID().toString(); // 랜덤한 방 아이디 생성
         
         ChatRoom room1 = new ChatRoom();
@@ -75,11 +85,7 @@ public class ChatService {
         return chatRoomRepository.save(room1);
     }
     
-    public List<Chat> chathistory(String roomId){
+    public List<Chat> chathistory(String roomId){//기존 채팅 내역 출력
     	return chatRepository.findByRoomId(roomId);
-    }
-    
-    public User findsenderprofile(String email) {
-    	return userRepository.findByEmail(email);
     }
 }
