@@ -20,6 +20,7 @@ import com.hippoddung.ribbit.ui.screens.RibbitTopAppBar
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
+import com.hippoddung.ribbit.ui.viewmodel.CommuViewModel
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.GetUserIdPostsUiState
 import com.hippoddung.ribbit.ui.viewmodel.ListViewModel
@@ -37,6 +38,7 @@ fun ProfileScreen(
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
     listViewModel: ListViewModel,
+    commuViewModel: CommuViewModel,
     myId: Int,
     modifier: Modifier
 ) {
@@ -60,6 +62,7 @@ fun ProfileScreen(
                 tokenViewModel = tokenViewModel,
                 userViewModel = userViewModel,
                 listViewModel = listViewModel,
+                commuViewModel = commuViewModel,
 //                scrollBehavior = scrollBehavior,
                 navController = navController,
                 myId = myId,
@@ -78,6 +81,7 @@ fun ProfileSuccessScreen(
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
     listViewModel: ListViewModel,
+    commuViewModel: CommuViewModel,
 //    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
     myId: Int,
@@ -102,9 +106,10 @@ fun ProfileSuccessScreen(
                 tokenViewModel = tokenViewModel,
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
+                listViewModel = listViewModel,
+                commuViewModel = commuViewModel,
 //                scrollBehavior = scrollBehavior,
                 navController = navController,
-                listViewModel = listViewModel,
                 modifier = modifier
             )
         }

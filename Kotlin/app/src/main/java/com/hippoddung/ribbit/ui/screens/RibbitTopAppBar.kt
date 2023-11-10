@@ -21,6 +21,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.SupervisorAccount
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -57,6 +58,7 @@ import com.hippoddung.ribbit.network.bodys.User
 import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.screens.searchitems.SearchedGrid
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
+import com.hippoddung.ribbit.ui.viewmodel.CommuViewModel
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.ListViewModel
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
@@ -72,6 +74,7 @@ fun RibbitTopAppBar(
     tokenViewModel: TokenViewModel,
     userViewModel: UserViewModel,
     listViewModel: ListViewModel,
+    commuViewModel: CommuViewModel,
 //    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
     modifier: Modifier = Modifier
@@ -105,6 +108,7 @@ fun RibbitTopAppBar(
                     authViewModel = authViewModel,
                     getCardViewModel = getCardViewModel,
                     userViewModel = userViewModel,
+                    commuViewModel = commuViewModel,
                     modifier = modifier
                 )
             },
@@ -142,19 +146,40 @@ fun MainDropDownMenu(
     authViewModel: AuthViewModel,
     getCardViewModel: GetCardViewModel,
     userViewModel: UserViewModel,
+    commuViewModel: CommuViewModel,
     modifier: Modifier
 ) {
     var isDropDownMenuExpanded by remember { mutableStateOf(false) }
 
-    OutlinedButton(
-        onClick = { isDropDownMenuExpanded = true },
+    Row(
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
     ) {
-        Text(
-            text = "Menu",
-            color = Color(0xFF006400),
+        OutlinedButton(
+            onClick = { isDropDownMenuExpanded = true },
             modifier = modifier
-        )
+        ) {
+            Text(
+                text = "Menu",
+                color = Color(0xFF006400),
+                modifier = modifier
+            )
+        }
+        IconButton(
+            onClick = {
+                commuViewModel.getCommus()
+                navController.navigate(RibbitScreen.CommuScreen.name)
+            },
+            modifier = modifier.padding(4.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.SupervisorAccount,
+                contentDescription = "Commu",
+                tint = Color(0xFF006400),
+                modifier = modifier
+            )
+        }
     }
 
     DropdownMenu(

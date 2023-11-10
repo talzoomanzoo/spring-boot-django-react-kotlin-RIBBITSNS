@@ -1,4 +1,4 @@
-package com.hippoddung.ribbit.ui.screens.listscreens
+package com.hippoddung.ribbit.ui.screens.commuscreens
 
 import android.annotation.SuppressLint
 import android.os.Build
@@ -28,18 +28,17 @@ import com.hippoddung.ribbit.ui.screens.RibbitTopAppBar
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
-import com.hippoddung.ribbit.ui.viewmodel.CommuViewModel
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
-import com.hippoddung.ribbit.ui.viewmodel.GetListIdPostsUiState
-import com.hippoddung.ribbit.ui.viewmodel.GetUserIdPostsUiState
-import com.hippoddung.ribbit.ui.viewmodel.ListIdUiState
+import com.hippoddung.ribbit.ui.viewmodel.GetCommuIdPostsUiState
+import com.hippoddung.ribbit.ui.viewmodel.CommuIdUiState
+import com.hippoddung.ribbit.ui.viewmodel.CommuViewModel
 import com.hippoddung.ribbit.ui.viewmodel.ListViewModel
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ListIdScreen(
+fun CommuIdScreen(
 //    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
     getCardViewModel: GetCardViewModel,
@@ -52,35 +51,35 @@ fun ListIdScreen(
     modifier: Modifier
 ) {
 
-//    비동기처리를 통해 listViewModel 에서 listIdUiState 를 업데이트하고 getCardViewModel 의 getListIdPosts 함수를 통해 getListIdPostsUiState 를 업데이트하도록 설계한다.
-    when (listViewModel.listIdUiState) {
+//    비동기처리를 통해 commuViewModel 에서 commuIdUiState 를 업데이트하고 getCardViewModel 의 getCommuIdPosts 함수를 통해 getCommuIdPostsUiState 를 업데이트하도록 설계한다.
+    when (commuViewModel.commuIdUiState) {
 
-        is ListIdUiState.Loading -> {
-            Log.d("HippoLog, ListIdScreen", "listIdUiState Loading")
+        is CommuIdUiState.Loading -> {
+            Log.d("HippoLog, CommuIdScreen", "commuIdUiState Loading")
             LoadingScreen(modifier = modifier)
         }
 
-        is ListIdUiState.Error -> {
-            Log.d("HippoLog, ListIdScreen", "listIdUiState Error")
+        is CommuIdUiState.Error -> {
+            Log.d("HippoLog, CommuIdScreen", "commuIdUiState Error")
             ErrorScreen(modifier = modifier)
         }
 
-        is ListIdUiState.Success -> {
-            Log.d("HippoLog, ListIdScreen", "listIdUiState Success")
-            when(getCardViewModel.getListIdPostsUiState){
-                is GetListIdPostsUiState.Loading -> {
-                    Log.d("HippoLog, ListIdScreen", "getListIdPostsUiState Loading")
+        is CommuIdUiState.Success -> {
+            Log.d("HippoLog, CommuIdScreen", "commuIdUiState Success")
+            when(getCardViewModel.getCommuIdPostsUiState){
+                is GetCommuIdPostsUiState.Loading -> {
+                    Log.d("HippoLog, CommuIdScreen", "getCommuIdPostsUiState Loading")
                     LoadingScreen(modifier = modifier)
                 }
 
-                is GetListIdPostsUiState.Error -> {
-                    Log.d("HippoLog, ListIdScreen", "getListIdPostsUiState Error")
+                is GetCommuIdPostsUiState.Error -> {
+                    Log.d("HippoLog, CommuIdScreen", "getCommuIdPostsUiState Error")
                     ErrorScreen(modifier = modifier)
                 }
 
-                is GetListIdPostsUiState.Success -> {
-                    Log.d("HippoLog, ListIdScreen", "getListIdPostsUiState Success")
-                    ListIdSuccessScreen(
+                is GetCommuIdPostsUiState.Success -> {
+                    Log.d("HippoLog, CommuIdScreen", "getCommuIdPostsUiState Success")
+                    CommuIdSuccessScreen(
                         getCardViewModel = getCardViewModel,
                         authViewModel = authViewModel,
                         tokenViewModel = tokenViewModel,
@@ -100,7 +99,7 @@ fun ListIdScreen(
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun ListIdSuccessScreen(
+fun CommuIdSuccessScreen(
     getCardViewModel: GetCardViewModel,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
@@ -113,8 +112,8 @@ fun ListIdSuccessScreen(
 ) {
     Log.d("HippoLog, ProfileScreen", "ProfileSuccessScreen")
     var posts by remember { mutableStateOf(listOf<RibbitPost>()) }
-    if (getCardViewModel.getListIdPostsUiState is GetListIdPostsUiState.Success) {   // 원래 state 에 따라 넘어오기 때문에 확인할 필요가 없으나 state 에 무관하게 내려오는 문제가 있어 여기서 재확인
-        posts = (getCardViewModel.getListIdPostsUiState as GetListIdPostsUiState.Success).posts
+    if (getCardViewModel.getCommuIdPostsUiState is GetCommuIdPostsUiState.Success) {   // 원래 state 에 따라 넘어오기 때문에 확인할 필요가 없으나 state 에 무관하게 내려오는 문제가 있어 여기서 재확인
+        posts = (getCardViewModel.getCommuIdPostsUiState as GetCommuIdPostsUiState.Success).posts
     }
 
     Scaffold(
@@ -125,16 +124,16 @@ fun ListIdSuccessScreen(
                 tokenViewModel = tokenViewModel,
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
-                navController = navController,
                 listViewModel = listViewModel,
                 commuViewModel = commuViewModel,
+                navController = navController,
                 modifier = modifier
             )
         },
         floatingActionButton = {
-            if ((listViewModel.listIdUiState as ListIdUiState.Success).listItem.user?.id == myId) {
+            if ((commuViewModel.commuIdUiState as CommuIdUiState.Success).commuItem.user?.id == myId) {
                 FloatingActionButton(
-                    onClick = { listViewModel.searchingUserClickedUiState = true },
+                    onClick = { commuViewModel.searchingUserClickedUiState = true },
                     modifier = modifier
                         .padding(14.dp)
                 ) {
@@ -153,31 +152,32 @@ fun ListIdSuccessScreen(
                 .fillMaxSize()
                 .padding(it)
         ) {
-            if((listViewModel.listIdUiState as ListIdUiState.Success).listItem.followingsl.isNullOrEmpty()){
-                Text(
-                    text ="There is no following user at this list",
-                    modifier = modifier
-                )
-            }else {
-                ListIdPostsGrid(
-                    posts = posts,
-                    getCardViewModel = getCardViewModel,
-                    userViewModel = userViewModel,
-                    myId = myId,
-                    navController = navController,
-                    modifier = modifier
-                )
-            }
+            // 231110 1120 이따가 처리해야 함
+//            if((commuViewModel.commuIdUiState as CommuIdUiState.Success).commuItem.followingsl.isNullOrEmpty()){
+//                Text(
+//                    text ="There is no following user at this commu",
+//                    modifier = modifier
+//                )
+//            }else {
+//                CommuIdPostsGrid(
+//                    posts = posts,
+//                    getCardViewModel = getCardViewModel,
+//                    userViewModel = userViewModel,
+//                    myId = myId,
+//                    navController = navController,
+//                    modifier = modifier
+//                )
+//            }
         }
-        if (listViewModel.searchingUserClickedUiState) {
+        if (commuViewModel.searchingUserClickedUiState) {
             Dialog(
                 onDismissRequest = {
-                    listViewModel.searchingUserClickedUiState = false
+                    commuViewModel.searchingUserClickedUiState = false
                 },
                 content = {
                     SearchingUserDialog(
                         userViewModel = userViewModel,
-                        listViewModel = listViewModel,
+                        commuViewModel = commuViewModel,
                         modifier = modifier
                     )
                 }
