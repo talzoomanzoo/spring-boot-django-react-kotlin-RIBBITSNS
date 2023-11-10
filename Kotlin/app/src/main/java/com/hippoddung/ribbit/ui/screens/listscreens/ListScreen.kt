@@ -33,6 +33,7 @@ import com.hippoddung.ribbit.ui.screens.RibbitTopAppBar
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
+import com.hippoddung.ribbit.ui.viewmodel.CommuViewModel
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.ListClassificationUiState
 import com.hippoddung.ribbit.ui.viewmodel.ListUiState
@@ -50,6 +51,7 @@ fun ListScreen(
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
     listViewModel: ListViewModel,
+    commuViewModel: CommuViewModel,
     modifier: Modifier = Modifier
 ) {
     when (listViewModel.listUiState) {
@@ -66,6 +68,7 @@ fun ListScreen(
                 tokenViewModel = tokenViewModel,
                 userViewModel = userViewModel,
                 listViewModel = listViewModel,
+                commuViewModel = commuViewModel,
                 navController = navController,
                 listItems = listItems,
                 modifier = modifier
@@ -87,6 +90,7 @@ fun ListSuccessScreen(
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
     listViewModel: ListViewModel,
+    commuViewModel: CommuViewModel,
     navController: NavHostController,
     listItems: List<RibbitListItem>,
     modifier: Modifier
@@ -98,6 +102,7 @@ fun ListSuccessScreen(
         is ListClassificationUiState.PrivateList ->  // listClassificationUiState 가 PrivateList 인 경우
             listItems.filter { it.privateMode == true}  // RibbitListItem.privateMode 가 true 인 경우만 필터
     }
+    val myId by remember { mutableStateOf(userViewModel.myProfile.value?.id!!) }    // 로그인시 저장한 정보기 때문에 반드시 값이 존재함.
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -107,6 +112,7 @@ fun ListSuccessScreen(
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
                 listViewModel = listViewModel,
+                commuViewModel = commuViewModel,
                 navController = navController,
                 modifier = modifier
             )
@@ -133,6 +139,7 @@ fun ListSuccessScreen(
         ) {
             Box(modifier = modifier) {
                 ListGrid(
+                    myId = myId,
                     filteredListItems = filteredListItems,
                     getCardViewModel = getCardViewModel,
                     listViewModel = listViewModel,

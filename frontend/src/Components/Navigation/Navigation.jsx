@@ -26,10 +26,6 @@ const Navigation = () => {
     dispatch(logout())
     handleClose()
   }
-  const handleFollowTwit=()=> {
-    navigate(`/followTwit`)
-    dispatch(followTwit())
-  }
 
   const [openwithdrawl, setopenwithdrawl] = useState(false);
   const handleopenwithdrawl = () => {
@@ -90,7 +86,7 @@ const Navigation = () => {
             }}
             variant="contained"
             size="large"
-            onClick={()=>handleFollowTwit()}
+            onClick={()=>navigate(`/followtwit`)}
           >
             Followed Ribbits
           </Button>

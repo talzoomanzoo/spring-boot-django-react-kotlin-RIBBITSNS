@@ -31,6 +31,7 @@ import com.hippoddung.ribbit.ui.viewmodel.ListViewModel
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun ListGrid(
+    myId: Int,
     filteredListItems: List<RibbitListItem>,
     getCardViewModel: GetCardViewModel,
     listViewModel: ListViewModel,
@@ -146,6 +147,7 @@ fun ListGrid(
         }
         items(items = sortedRibbitListItem, key = { listItem -> listItem.id }) {
             ListCard(
+                myId = myId,
                 listItem = it,
                 listViewModel = listViewModel,
                 getCardViewModel = getCardViewModel,

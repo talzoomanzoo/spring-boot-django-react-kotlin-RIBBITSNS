@@ -20,7 +20,7 @@ public class TwitReplyRequest {
 
 	    private LocalDateTime createdAt;
 
-	    private String image; 
+	    private String image;
 
 
 }

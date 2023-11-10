@@ -28,6 +28,7 @@ import com.hippoddung.ribbit.ui.screens.RibbitTopAppBar
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
+import com.hippoddung.ribbit.ui.viewmodel.CommuViewModel
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.GetListIdPostsUiState
 import com.hippoddung.ribbit.ui.viewmodel.GetUserIdPostsUiState
@@ -46,6 +47,7 @@ fun ListIdScreen(
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
     listViewModel: ListViewModel,
+    commuViewModel: CommuViewModel,
     myId: Int,
     modifier: Modifier
 ) {
@@ -84,6 +86,7 @@ fun ListIdScreen(
                         tokenViewModel = tokenViewModel,
                         userViewModel = userViewModel,
                         listViewModel = listViewModel,
+                        commuViewModel = commuViewModel,
                         navController = navController,
                         myId = myId,
                         modifier = modifier
@@ -103,6 +106,7 @@ fun ListIdSuccessScreen(
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
     listViewModel: ListViewModel,
+    commuViewModel: CommuViewModel,
     navController: NavHostController,
     myId: Int,
     modifier: Modifier
@@ -123,20 +127,23 @@ fun ListIdSuccessScreen(
                 userViewModel = userViewModel,
                 navController = navController,
                 listViewModel = listViewModel,
+                commuViewModel = commuViewModel,
                 modifier = modifier
             )
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { listViewModel.searchingUserClickedUiState = true },
-                modifier = modifier
-                    .padding(14.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Add,
-                    contentDescription = "Add User Button.",
+            if ((listViewModel.listIdUiState as ListIdUiState.Success).listItem.user?.id == myId) {
+                FloatingActionButton(
+                    onClick = { listViewModel.searchingUserClickedUiState = true },
                     modifier = modifier
-                )
+                        .padding(14.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Add,
+                        contentDescription = "Add User Button.",
+                        modifier = modifier
+                    )
+                }
             }
         },
         floatingActionButtonPosition = FabPosition.End

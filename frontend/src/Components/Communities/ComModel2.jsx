@@ -24,6 +24,7 @@ import {
 } from "../../Store/Community/Action";
 import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
 import BackdropComponent from "../Backdrop/Backdrop";
+import "../RightPart/Scrollbar.css";
 import { Switch } from 'react-native'; // 여기서만 import 할것, switch 건들 ㄴㄴ
 
 const style = {
@@ -129,7 +130,7 @@ const ComModel2 = ({ com, handleClose, open }) => {
 
     const Element = memo(({ comVal }) => {
         return (
-            <div className="overflow-y-scroll hideScrollbar border-gray-700 h-[20vh] w-full rounded-md">
+            <div className="overflow-y-scroll hideScrollbar css-scroll border-gray-700 h-[20vh] w-full rounded-md">
                 <section className="space-y-5">
                     <div className="flex justify-between" style={{ flexDirection: "column" }}>
                         {comVal.followingsc?.map((item) => (
@@ -201,14 +202,14 @@ const ComModel2 = ({ com, handleClose, open }) => {
                             </div>
                         </div>
 
-                        <div className="customeScrollbar overflow-y-scroll  overflow-x-hidden h-[80vh]">
+                        <div className="customeScrollbar overflow-y-scroll css-scroll overflow-x-hidden h-[80vh]">
                             <div className="">
                                 <div className="w-full">
                                     <div className="relative">
                                         <img
                                             src={
                                                 formik.values?.backgroundImage ||
-                                                "https://png.pngtree.com/thumb_back/fw800/background/20230304/pngtree-green-base-vector-smooth-background-image_1770922.jpg"
+                                                "https://t1.daumcdn.net/cfile/tistory/174FF7354E6ACC7606"
                                             }
                                             alt="Img"
                                             className="w-full h-[12rem] object-cover object-center"
@@ -277,7 +278,7 @@ const ComModel2 = ({ com, handleClose, open }) => {
                                 </span>
                                 {search && (
                                     <div
-                                        className={`overflow-y-scroll hideScrollbar absolute z-50 top-14  border-gray-700 h-[40vh] w-full rounded-md ${theme.currentTheme === "light" ? "bg-white" : "bg-[#151515] border"
+                                        className={`css-scroll overflow-y-scroll hideScrollbar absolute z-50 top-14  border-gray-700 h-[40vh] w-full rounded-md ${theme.currentTheme === "light" ? "bg-white" : "bg-[#151515] border"
                                             }`}
                                     >
                                         {auth.userSearchResult &&
@@ -350,7 +351,7 @@ const ComModel2 = ({ com, handleClose, open }) => {
                                 가입 신청 승인 대기 목록
                             </div>
 
-                            <div className="overflow-y-scroll hideScrollbar border-gray-700 h-[20vh] w-full rounded-md">
+                            <div className="overflow-y-scroll css-scroll hideScrollbar border-gray-700 h-[20vh] w-full rounded-md">
                                 <section className="space-y-5">
                                     <div className="flex justify-between" style={{ flexDirection: "column" }}>
                                         {com.followingscReady?.map((item) => (

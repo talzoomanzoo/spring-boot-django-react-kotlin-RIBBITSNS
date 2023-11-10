@@ -22,6 +22,14 @@ public interface TwitRepository extends JpaRepository<Twit, Long> {
 	public List<Twit> searchListFollowedTwit(Long listId);
 
 	List<Twit> findAllByIsTwitTrueAndIsComFalseOrderByCreatedAtDesc();
+	
+	@Query(value = "select t.* from twit t where user_id in (select ftf.follow_twit_id from follow_twit_followingssub ftf where ftf.followingssub_id = :#{#userId})", nativeQuery=true)
+	public List<Twit> findFollowTwitByreqUserId(Long userId);
+	
+	@Query(value = "select t.* from twit t where user_id in (select ftf.followingssub_id from follow_twit_followingssub ftf where ftf.follow_twit_id = :#{#followTwitId})", nativeQuery= true)
+	public List<Twit> findFollowTwitByFollowTwitId(Long followTwitId);
+	
+	public List<Twit> findByUser_IdAndIsTwitTrueAndIsComFalseOrderByCreatedAtDesc(Long userId);
 
 	List<Twit> findByRetwitUserContainsOrUser_IdAndIsTwitTrueOrderByCreatedAtDesc(User user, Long userId);
 
@@ -42,7 +50,7 @@ public interface TwitRepository extends JpaRepository<Twit, Long> {
 	@Query(value="select distinct t.* from twit t where t.is_com= false and t.content like  CONCAT('%',:query,'%')", nativeQuery=true)
 	public List<Twit> searchTwit(@Param("query") String query);
 
-	@Query(value="select distinct t.* from twit t join user u where t.is_com= false and user_id in (select followings_id from user_followings where user_id=:#{#userId} and is_twit=1)", nativeQuery=true)
+	@Query(value="select distinct t.* from twit t where t.is_com= false and t.is_twit=true and t.user_id in (select followings_id from user_followings uf where uf.user_id=:#{#userId})", nativeQuery=true)
 	public List<Twit> searchFollowedTwit(Long userId);
 
 	List<Twit> findByRetwitUser(User user);

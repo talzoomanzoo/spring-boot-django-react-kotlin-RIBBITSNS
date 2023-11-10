@@ -3,6 +3,8 @@ package com.zosh.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -49,7 +51,7 @@ public class TwitDto {
 	private String location;
     
     private List<Long> retwitUsersId;
-    
+
     private List<TwitDto> replyTwits;
 	
     private String ethicrate; //윤리수치 저장

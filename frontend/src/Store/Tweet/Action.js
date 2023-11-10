@@ -375,7 +375,7 @@ export const deleteTweet = (tweetId) => {
 export const followTwit = () => async (dispatch) => {
   dispatch({ type: FOLLOW_TWIT_REQUEST });
   try {
-    const response = await api.get(`/api/twits/followTwit`);
+    const response = await api.get(`/api/followtwit/`);
     const user = response.data;
     dispatch({ type: FOLLOW_TWIT_SUCCESS, payload: user });
     console.log("find by twit user -: ", user);

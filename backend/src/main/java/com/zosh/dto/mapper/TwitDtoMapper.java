@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.zosh.dto.TwitDto;
 import com.zosh.dto.UserDto;
+import com.zosh.model.Like;
 import com.zosh.model.Twit;
 import com.zosh.model.User;
 import com.zosh.util.TweetUtil;
@@ -56,7 +57,6 @@ public class TwitDtoMapper {
 		}
 		return twitDtos;
 	}
-	
 	
 	public static TwitDto toReplyTwitDto(Twit twit, User reqUser) {
 		UserDto user=UserDtoMapper.toUserDto(twit.getUser());

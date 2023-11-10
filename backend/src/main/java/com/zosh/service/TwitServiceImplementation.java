@@ -171,6 +171,7 @@ public class TwitServiceImplementation implements TwitService {
 		reply.setReplyFor(twit);
 		reply.setReply(true);
 		reply.setTwit(false);
+		reply.setCom(twit.isCom());
 
 		Twit savedReply = twitRepository.save(reply);
 
@@ -252,10 +253,9 @@ public class TwitServiceImplementation implements TwitService {
 	}
 
 	@Override
-	public List<Twit> findTwitFollowedByReqUser(User user) {
+	public List<Twit> findTwitFollowedByReqUser(Long userId) throws UserException, TwitException{
 		// TODO Auto-generated method stub
-		System.out.println(user.getId());
-		return twitRepository.searchFollowedTwit(user.getId());
+		return twitRepository.searchFollowedTwit(userId);
 	}
 
 	@Override
