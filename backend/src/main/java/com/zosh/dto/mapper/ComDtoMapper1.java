@@ -14,12 +14,12 @@ public class ComDtoMapper1 {
 		ComDto comDto= new ComDto();
 		comDto.setId(community.getId());
 		comDto.setUser(UserDtoMapper.toUserDto(community.getUser()));
-		comDto.setComTwits(community.getComTwits());
+		comDto.setComTwits(TwitDtoMapper.toTwitDtos(community.getComTwits(), reqUser));
 		comDto.setComName(community.getComName());
 		comDto.setDescription(community.getDescription());
 		comDto.setBackgroundImage(community.getBackgroundImage());
-		comDto.setFollowingsc(community.getFollowingsc());
-		comDto.setFollowingscReady(community.getFollowingscReady());
+		comDto.setFollowingsc(UserDtoMapper.toUserDtos(community.getFollowingsc()));
+		comDto.setFollowingscReady(UserDtoMapper.toUserDtos(community.getFollowingscReady()));
 		comDto.setPrivateMode(community.isPrivateMode());
 		
 		return comDto;
@@ -33,12 +33,12 @@ public class ComDtoMapper1 {
 			ComDto comDto= new ComDto();
 			comDto.setId(community.getId());
 			comDto.setUser(UserDtoMapper.toUserDto(community.getUser()));
-			comDto.setComTwits(community.getComTwits());
+			comDto.setComTwits(TwitDtoMapper.toTwitDtos(community.getComTwits(), reqUser));
 			comDto.setComName(community.getComName());
 			comDto.setDescription(community.getDescription());
 			comDto.setBackgroundImage(community.getBackgroundImage());
-			comDto.setFollowingsc(community.getFollowingsc());
-			comDto.setFollowingscReady(community.getFollowingscReady());
+			comDto.setFollowingsc(UserDtoMapper.toUserDtos(community.getFollowingsc()));
+			comDto.setFollowingscReady(UserDtoMapper.toUserDtos(community.getFollowingscReady()));
 			comDto.setPrivateMode(community.isPrivateMode());
 			comDtos.add(comDto);
 			

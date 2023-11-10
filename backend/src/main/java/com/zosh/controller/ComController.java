@@ -39,6 +39,7 @@ private UserService userService;
 	@PostMapping("/create")
 	public ResponseEntity<ComDto> createCom(@RequestBody Community req,
 			@RequestHeader("Authorization") String jwt) throws ComException, UserException {
+		System.out.println("================");
 		User user= userService.findUserProfileByJwt(jwt);
 		Community community=comService.createCom(req, user);
 		ComDto comDto=ComDtoMapper1.toComDto(community, user);
