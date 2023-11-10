@@ -28,10 +28,10 @@ import com.hippoddung.ribbit.ui.screens.carditems.RibbitCard
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
+import com.hippoddung.ribbit.ui.viewmodel.CommuViewModel
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.ListViewModel
 import com.hippoddung.ribbit.ui.viewmodel.PostIdUiState
-import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
@@ -45,6 +45,7 @@ fun PostIdScreen(
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
     listViewModel: ListViewModel,
+    commuViewModel: CommuViewModel,
     myId: Int,
     modifier: Modifier = Modifier
 ) {
@@ -64,6 +65,7 @@ fun PostIdScreen(
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
                 listViewModel = listViewModel,
+                commuViewModel = commuViewModel,
 //                scrollBehavior = scrollBehavior,
                 navController = navController,
                 post = post,
@@ -88,6 +90,7 @@ fun PostIdSuccessScreen(
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
     listViewModel: ListViewModel,
+    commuViewModel: CommuViewModel,
 //    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
     post: RibbitPost,
@@ -100,8 +103,8 @@ fun PostIdSuccessScreen(
     Scaffold(
         modifier = modifier,
 //        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        // scrollBehavior에 따라 리컴포지션이 트리거되는 것으로 추측, 해결할 방법을 찾아야 함.
-        // navigation 위(RibbitApp)에 있던 scrollBehavior을 navigation 하위에 있는 HomeScreen으로 옮겨서 해결.
+        // scrollBehavior 에 따라 리컴포지션이 트리거되는 것으로 추측, 해결할 방법을 찾아야 함.
+        // navigation 위(RibbitApp)에 있던 scrollBehavior 을 navigation 하위에 있는 HomeScreen 으로 옮겨서 해결.
         topBar = {
             RibbitTopAppBar(
                 getCardViewModel = getCardViewModel,
@@ -109,6 +112,7 @@ fun PostIdSuccessScreen(
                 userViewModel = userViewModel,
                 authViewModel = authViewModel,
                 listViewModel = listViewModel,
+                commuViewModel = commuViewModel,
 //                scrollBehavior = scrollBehavior,
                 navController = navController,
                 modifier = modifier
@@ -121,17 +125,17 @@ fun PostIdSuccessScreen(
                 .padding(it)
         ) {
             Column(modifier = modifier) {
-                if (!post.replyTwits.isNullOrEmpty()) { // 본문 post가 너무 큰 경우 댓글 lazyColumn이 너무 작아지는 문제가 있어 댓글이 있는 경우 본문을 lazyColumn 내로 같이 보내는 방식 채택
+                if (!post.replyTwits.isNullOrEmpty()) { // 본문 post 가 너무 큰 경우 댓글 lazyColumn 이 너무 작아지는 문제가 있어 댓글이 있는 경우 본문을 lazyColumn 내로 같이 보내는 방식 채택
                     PostIdPostsGrid(
                         post = post,
-                        posts = post.replyTwits as List<RibbitPost>,    // Null or Empty check를 하였음에도 컴파일오류가 계속되어 강제 캐스팅함.
+                        posts = post.replyTwits as List<RibbitPost>,    // Null or Empty check 를 하였음에도 컴파일오류가 계속되어 강제 캐스팅함.
                         getCardViewModel = getCardViewModel,
                         userViewModel = userViewModel,
                         myId = myId,
                         navController = navController,
                         modifier = modifier
                     )
-                } else {    // lazyColumn이 차지하는 리소스를 줄이기위해 댓글이 없는 경우 바로 보여주는 방식 채택
+                } else {    // lazyColumn 이 차지하는 리소스를 줄이기 위해 댓글이 없는 경우 바로 보여주는 방식 채택
                     RibbitCard(
                         post = post,
                         getCardViewModel = getCardViewModel,

@@ -44,6 +44,7 @@ public class TwitServiceImplementation implements TwitService {
 		twit.setReply(false);
 		twit.setTwit(true);
 		twit.setVideo(req.getVideo());
+		twit.setLocation(req.getLocation());
 
 		return twitRepository.save(twit);
 	}
@@ -60,6 +61,7 @@ public class TwitServiceImplementation implements TwitService {
 		twit.setReply(false);
 		twit.setTwit(true);
 		twit.setVideo(req.getVideo());
+		twit.setLocation(req.getLocation());
 		Community community = comService.findById(comId);
 		twit.setCom(true);
 		twit.setCommunity(community);
@@ -169,6 +171,7 @@ public class TwitServiceImplementation implements TwitService {
 		reply.setReplyFor(twit);
 		reply.setReply(true);
 		reply.setTwit(false);
+		reply.setCom(twit.isCom());
 
 		Twit savedReply = twitRepository.save(reply);
 
@@ -184,6 +187,7 @@ public class TwitServiceImplementation implements TwitService {
 		twit.setContent(req.getContent());
 		twit.setImage(req.getImage());
 		twit.setVideo(req.getVideo());
+		twit.setLocation(req.getLocation());
 		twit.setEdited(req.isEdited());
 		twit.setEditedAt(req.getEditedAt());
 		System.out.println(twit.isEdited());
@@ -249,10 +253,9 @@ public class TwitServiceImplementation implements TwitService {
 	}
 
 	@Override
-	public List<Twit> findTwitFollowedByReqUser(User user) {
+	public List<Twit> findTwitFollowedByReqUser(Long userId) throws UserException, TwitException{
 		// TODO Auto-generated method stub
-		System.out.println(user.getId());
-		return twitRepository.searchFollowedTwit(user.getId());
+		return twitRepository.searchFollowedTwit(userId);
 	}
 
 	@Override

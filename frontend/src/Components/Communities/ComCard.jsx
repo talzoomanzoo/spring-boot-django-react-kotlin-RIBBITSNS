@@ -1,18 +1,17 @@
-import { memo, useState, useRef } from "react";
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux/es/hooks/useSelector";
-import { useNavigate } from "react-router-dom";
-import { deleteList } from "../../Store/List/Action";
-import ComModel2 from "./ComModel2";
 import GroupsIcon from '@mui/icons-material/Groups';
 import {
     Avatar,
     Box,
     Button,
-    Divider,
-    Modal,
+    Modal
 } from "@mui/material";
+import { useRef, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux/es/hooks/useSelector";
+import { useNavigate } from "react-router-dom";
+import { deleteList } from "../../Store/List/Action";
 import "./ComCard.css";
+import ComModel2 from "./ComModel2";
 import ComModel3 from "./ComModel3";
 
 const ComCard = ({ com }) => {

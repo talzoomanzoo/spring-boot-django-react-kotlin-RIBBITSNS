@@ -27,8 +27,10 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.zosh.config.JwtProvider;
 import com.zosh.exception.UserException;
+import com.zosh.model.FollowTwit;
 import com.zosh.model.User;
 import com.zosh.model.Varification;
+import com.zosh.repository.FollowTwitRepository;
 import com.zosh.repository.UserRepository;
 import com.zosh.request.LoginRequest;
 import com.zosh.request.LoginWithGooleRequest;
@@ -44,6 +46,7 @@ import jakarta.validation.Valid;
 public class AuthController {
 
 	private UserRepository userRepository;
+	private FollowTwitRepository followTwitRepository;
 	private PasswordEncoder passwordEncoder;
 	private JwtProvider jwtProvider;
 	private CustomeUserDetailsServiceImplementation customUserDetails;
@@ -55,6 +58,7 @@ public class AuthController {
 	public AuthController(
 			UserRepository userRepository,
 			PasswordEncoder passwordEncoder,
+			FollowTwitRepository followTwitRepository,
 			JwtProvider jwtProvider,
 			CustomeUserDetailsServiceImplementation customUserDetails
 			) {
@@ -62,6 +66,7 @@ public class AuthController {
 		this.passwordEncoder=passwordEncoder;
 		this.jwtProvider=jwtProvider;
 		this.customUserDetails=customUserDetails;
+		this.followTwitRepository=followTwitRepository;
 		
 	}
 	
@@ -84,6 +89,9 @@ public class AuthController {
 	            newUser.setVerification(new Varification());
 	            
 	            userRepository.save(newUser);
+	            
+	            FollowTwit followTwit = new FollowTwit();
+		        followTwitRepository.save(followTwit);
 	        }
 
 //	        System.out.println("email ---- "+ existingUser.getEmail()+" jwt - ");
@@ -174,6 +182,9 @@ public class AuthController {
 	        createdUser.setJoinedAt(LocalDateTime.now());
 	        
 	        User savedUser= userRepository.save(createdUser);
+	        
+	        FollowTwit followTwit = new FollowTwit();
+	        followTwitRepository.save(followTwit);
 	        
 	        Authentication authentication = new UsernamePasswordAuthenticationToken(email, password);
 	        SecurityContextHolder.getContext().setAuthentication(authentication);

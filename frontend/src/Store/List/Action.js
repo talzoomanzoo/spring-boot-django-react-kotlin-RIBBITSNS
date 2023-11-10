@@ -84,7 +84,7 @@ export const createListModel = (reqData) => {
 export const updateListModel = (reqData) => async (dispatch) => {
   dispatch({ type: UPDATE_LIST_REQUEST });
   try {
-    const response = await api.post(`/api/lists/update`, reqData);
+    const response = await api.put(`/api/lists/update`, reqData);
     const list = response.data;
     dispatch({ type: UPDATE_LIST_SUCCESS, payload: list });
   } catch (error) {

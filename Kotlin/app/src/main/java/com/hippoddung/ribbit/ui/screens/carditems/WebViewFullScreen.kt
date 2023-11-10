@@ -50,8 +50,8 @@ fun WebViewFullScreen(
                     webViewClient = WebViewClient()
                     webChromeClient = object : WebChromeClient() {
                         var customView: View? = null
-                        @RequiresApi(Build.VERSION_CODES.R)
-                        val controller = windowInsetsController
+//                        @RequiresApi(Build.VERSION_CODES.R)
+//                        val controller = windowInsetsController
                         @RequiresApi(Build.VERSION_CODES.R)
                         override fun onShowCustomView(view: View?, callback: CustomViewCallback?) {
                             super.onShowCustomView(view, callback)
@@ -59,7 +59,7 @@ fun WebViewFullScreen(
                             if (this.customView != null) {
                                 onHideCustomView()
                                 return
-                            }else{}
+                            }
                             this.customView = view
                             (activity.window.decorView as FrameLayout).addView(
                                 this.customView

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -25,10 +24,10 @@ import com.hippoddung.ribbit.ui.screens.RibbitTopAppBar
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
+import com.hippoddung.ribbit.ui.viewmodel.CommuViewModel
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.HomeUiState
 import com.hippoddung.ribbit.ui.viewmodel.ListViewModel
-import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
@@ -43,6 +42,7 @@ fun HomeScreen(
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
     listViewModel: ListViewModel,
+    commuViewModel: CommuViewModel,
     myId: Int,
     modifier: Modifier = Modifier
 ) {
@@ -62,6 +62,7 @@ fun HomeScreen(
                 tokenViewModel = tokenViewModel,
                 userViewModel = userViewModel,
                 listViewModel = listViewModel,
+                commuViewModel = commuViewModel,
 //                scrollBehavior = scrollBehavior,
                 navController = navController,
                 ribbitPosts = ribbitPosts,
@@ -79,7 +80,6 @@ fun HomeScreen(
 
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeSuccessScreen(
     getCardViewModel: GetCardViewModel,
@@ -87,6 +87,7 @@ fun HomeSuccessScreen(
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
     listViewModel: ListViewModel,
+    commuViewModel: CommuViewModel,
 //    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
     ribbitPosts: List<RibbitPost>,
@@ -96,8 +97,8 @@ fun HomeSuccessScreen(
     Scaffold(
         modifier = modifier,
 //        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        // scrollBehavior에 따라 리컴포지션이 트리거되는 것으로 추측, 해결할 방법을 찾아야 함.
-        // navigation 위(RibbitApp)에 있던 scrollBehavior을 navigation 하위에 있는 HomeScreen으로 옮겨서 해결.
+        // scrollBehavior 에 따라 리컴포지션이 트리거되는 것으로 추측, 해결할 방법을 찾아야 함.
+        // navigation 위(RibbitApp)에 있던 scrollBehavior 을 navigation 하위에 있는 HomeScreen 으로 옮겨서 해결.
         topBar = {
             RibbitTopAppBar(
                 getCardViewModel = getCardViewModel,
@@ -105,6 +106,7 @@ fun HomeSuccessScreen(
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
                 listViewModel = listViewModel,
+                commuViewModel = commuViewModel,
 //                scrollBehavior = scrollBehavior,
                 navController = navController,
                 modifier = modifier

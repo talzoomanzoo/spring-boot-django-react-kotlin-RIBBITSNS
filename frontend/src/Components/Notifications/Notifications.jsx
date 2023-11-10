@@ -9,9 +9,6 @@ const Notifications = () => {
   const notificationCount = useSelector(
     (state) => state.notification.notifications[userId] || 0
   );
-  // const [notificationCount] = useState(twit.notificationCount)
-  // console.log("notificationCount", notificationCount)
-  // console.log("twit.notificationCount", twit.notificationCount)
 
   return (
     <div>

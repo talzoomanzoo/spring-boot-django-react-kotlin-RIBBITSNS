@@ -10,15 +10,12 @@ import androidx.lifecycle.viewModelScope
 import com.hippoddung.ribbit.data.network.ListRepository
 import com.hippoddung.ribbit.data.network.UploadCloudinaryRepository
 import com.hippoddung.ribbit.network.bodys.RibbitListItem
-import com.hippoddung.ribbit.network.bodys.RibbitPost
 import com.hippoddung.ribbit.network.bodys.User
-import com.hippoddung.ribbit.network.bodys.requestbody.TwitCreateRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import retrofit2.HttpException
-import java.io.File
 import java.io.IOException
 import javax.inject.Inject
 
@@ -29,14 +26,12 @@ sealed interface ListUiState {
 }
 
 sealed interface ListClassificationUiState {
-    object ListHome : ListClassificationUiState
-    object Following : ListClassificationUiState
-    object TopViews : ListClassificationUiState
-    object TopLikes : ListClassificationUiState
+    object PublicList : ListClassificationUiState
+    object PrivateList : ListClassificationUiState
 }
 
 sealed interface ListIdUiState {
-    data class Success(val list: RibbitListItem) : ListIdUiState
+    data class Success(val listItem: RibbitListItem) : ListIdUiState
     data class Error(val errorCode: String) : ListIdUiState
     object Loading : ListIdUiState
 }
@@ -48,6 +43,20 @@ sealed interface CreatingListUiState {
     object Error : CreatingListUiState
 }
 
+sealed interface EditingListUiState {
+    data class Ready(val listItem: RibbitListItem) : EditingListUiState
+    data class Loading(val listItem: RibbitListItem) : EditingListUiState
+    object Success : EditingListUiState
+    object Error : EditingListUiState
+}
+
+sealed interface DeleteListUiState {
+    object Ready : DeleteListUiState
+    object Success : DeleteListUiState
+    data class Error(val errorCode: String) : DeleteListUiState
+    object Loading : DeleteListUiState
+}
+
 @HiltViewModel
 class ListViewModel @Inject constructor(
     private val listRepository: ListRepository,
@@ -55,20 +64,27 @@ class ListViewModel @Inject constructor(
 ) : ViewModel() {
     var listUiState: ListUiState by mutableStateOf(ListUiState.Loading)
     var listClassificationUiState: ListClassificationUiState by mutableStateOf(
-        ListClassificationUiState.ListHome
+        ListClassificationUiState.PublicList
     )
     var listIdUiState: ListIdUiState by mutableStateOf(ListIdUiState.Loading)
     var creatingListUiState: CreatingListUiState by mutableStateOf(CreatingListUiState.Ready)
+    var editingListUiState: EditingListUiState by mutableStateOf(EditingListUiState.Loading(
+        RibbitListItem()
+    ))
 
+    var deleteListIdState: Int? by mutableStateOf(null)
+    var deleteListUiState: DeleteListUiState by mutableStateOf(DeleteListUiState.Ready)
+    var deleteListClickedUiState: Boolean by mutableStateOf(false)
     private var uploadImageCloudinaryUiState: UploadImageCloudinaryUiState by mutableStateOf(
         UploadImageCloudinaryUiState.None
     )
-        private set
 
-    fun getLists() {  // 모든 Post를 불러오는 메소드
+    var searchingUserClickedUiState: Boolean by mutableStateOf(false)
+
+    fun getLists() {  // 모든 Post 를 불러오는 메소드
         viewModelScope.launch(Dispatchers.IO) {
             listUiState = ListUiState.Loading
-            listClassificationUiState = ListClassificationUiState.ListHome
+            listClassificationUiState = ListClassificationUiState.PublicList
             Log.d("HippoLog, ListViewModel", "getLists1, $listUiState")
             listUiState = try {
                 ListUiState.Success(listRepository.getLists())
@@ -132,12 +148,81 @@ class ListViewModel @Inject constructor(
                         user = user
                     )
                 )
-            } else {    // uploadImageCloudinaryUiState와 uploadVideoCloudinaryUiState 가 다른 상태일 때 처리를 위함 미구현
+            } else {    // uploadImageCloudinaryUiState 와 uploadVideoCloudinaryUiState 가 다른 상태일 때 처리를 위함 미구현
             }
         }
     }
 
-    fun getListIdList(listId: Int) {    // PostDetail을 불러오는 함수
+    private suspend fun postCreateList(ribbitListItem: RibbitListItem) {
+        try {
+            listRepository.postCreateList(ribbitListItem)
+        } catch (e: IOException) {
+            creatingListUiState = CreatingListUiState.Error
+            println(e.stackTrace)
+        } catch (e: ExceptionInInitializerError) {
+            creatingListUiState = CreatingListUiState.Error
+            println(e.stackTrace)
+        }
+        creatingListUiState = CreatingListUiState.Success
+    }
+
+    fun editList(
+        backgroundImage: Bitmap?,
+        description: String?,
+        listName: String?,
+        privateMode: Boolean?
+    ) {
+        var imageUrl: String? = null
+
+        viewModelScope.launch(Dispatchers.IO) {
+            editingListUiState = (editingListUiState as EditingListUiState.Ready).listItem.let { EditingListUiState.Loading(it) }
+            val listItem = (editingListUiState as EditingListUiState.Loading).listItem
+            uploadImageCloudinaryUiState = UploadImageCloudinaryUiState.None
+            runBlocking {
+                launch(Dispatchers.IO) {
+                    if (backgroundImage != null) {
+                        uploadImageCloudinaryUiState = UploadImageCloudinaryUiState.Loading
+                        uploadImageCloudinary(image = backgroundImage)
+                        // 성공하면 uploadImageCloudinary 함수에서 UploadImageCloudinaryUiState.Success 로 업데이트함
+                        when (uploadImageCloudinaryUiState) {
+                            is UploadImageCloudinaryUiState.Success -> {
+                                imageUrl =
+                                    (uploadImageCloudinaryUiState as UploadImageCloudinaryUiState.Success).imageUrl
+                            }
+
+                            else -> {}  // 다른 경우 처리를 위함, 아직 미구현
+                        }
+                    }
+                }
+            }
+
+            if (
+                (uploadImageCloudinaryUiState is UploadImageCloudinaryUiState.Success) or (uploadImageCloudinaryUiState is UploadImageCloudinaryUiState.None)
+            ) {
+                listItem.backgroundImage = imageUrl
+                listItem.description = description
+                listItem.listName = listName
+                listItem.privateMode = privateMode
+                postEditList(listItem)
+            } else {    // uploadImageCloudinaryUiState 와 uploadVideoCloudinaryUiState 가 다른 상태일 때 처리를 위함 미구현
+            }
+        }
+    }
+
+    private suspend fun postEditList(ribbitListItem: RibbitListItem) {
+        try {
+            listRepository.postEditList(ribbitListItem)
+        } catch (e: IOException) {
+            editingListUiState = EditingListUiState.Error
+            println(e.stackTrace)
+        } catch (e: ExceptionInInitializerError) {
+            editingListUiState = EditingListUiState.Error
+            println(e.stackTrace)
+        }
+        editingListUiState = EditingListUiState.Success
+    }
+
+    fun getListIdList(listId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             listIdUiState = ListIdUiState.Loading
             Log.d("HippoLog, ListViewModel", "getListIdList, $listIdUiState")
@@ -163,21 +248,8 @@ class ListViewModel @Inject constructor(
         }
     }
 
-    private suspend fun postCreateList(ribbitListItem: RibbitListItem) {
-        try {
-            listRepository.postCreateList(ribbitListItem)
-        } catch (e: IOException) {
-            creatingListUiState = CreatingListUiState.Error
-            println(e.stackTrace)
-        } catch (e: ExceptionInInitializerError) {
-            creatingListUiState = CreatingListUiState.Error
-            println(e.stackTrace)
-        }
-        creatingListUiState = CreatingListUiState.Success
-    }
-
     private suspend fun uploadImageCloudinary(image: Bitmap?) {
-//        viewModelScope.launch(Dispatchers.IO) {   // 호출함수에서 coroutin으로 접근하기 때문에 여기서는 그냥 지연함수로 둠
+//        viewModelScope.launch(Dispatchers.IO) {   // 호출함수에서 coroutine 으로 접근하기 때문에 여기서는 그냥 지연함수로 둠
         UploadImageCloudinaryUiState.None
         if (image != null) {
             UploadImageCloudinaryUiState.Loading
@@ -195,4 +267,41 @@ class ListViewModel @Inject constructor(
 //        }
     }
 
+    suspend fun deleteListIdList(listId: Int) { // Post 를 삭제하는 메소드, 정상적인 페이지 노출을 위해 동기함수로 구성
+        Log.d("HippoLog, GetCardViewModel", "deleteRibbitPost, $listId")
+        try {
+            deleteListUiState = DeleteListUiState.Loading
+            listRepository.deleteListIdList(listId)
+        } catch (e: IOException) {
+            Log.d("HippoLog, GetCardViewModel", "${e.stackTrace}, ${e.message}")
+            DeleteListUiState.Error(e.message.toString())
+
+        } catch (e: ExceptionInInitializerError) {
+            Log.d("HippoLog, GetCardViewModel", "${e.stackTrace}, ${e.message}")
+            DeleteListUiState.Error(e.message.toString())
+
+        } catch (e: HttpException) {
+            Log.d("HippoLog, GetCardViewModel", "${e.stackTrace}, ${e.code()}, $e")
+            if (e.code() == 500) {
+                DeleteListUiState.Error(e.code().toString())
+            } else {
+                DeleteListUiState.Error(e.message.toString())
+            }
+        }
+        Log.d("HippoLog, GetCardViewModel", "deleteListUiState")
+    }
+
+    fun postAddUser(userId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val listId = (listIdUiState as ListIdUiState.Success).listItem.id
+            try {
+                Log.d("HippoLog, ListViewModel", "postAddUser")
+                listRepository.postAddUser(listId, userId)
+            } catch (e: IOException) {
+                Log.d("HippoLog, ListViewModel", "postAddUser error: ${e.message}")
+            } catch (e: ExceptionInInitializerError) {
+                Log.d("HippoLog, ListViewModel", "postAddUser error: ${e.message}")
+            }
+        }
+    }
 }

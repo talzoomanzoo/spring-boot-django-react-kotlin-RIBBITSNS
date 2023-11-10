@@ -21,7 +21,6 @@ import com.zosh.exception.ComException;
 import com.zosh.exception.ListException;
 import com.zosh.exception.TwitException;
 import com.zosh.exception.UserException;
-import com.zosh.model.Community;
 import com.zosh.model.ListModel;
 import com.zosh.model.Twit;
 import com.zosh.model.User;
@@ -59,19 +58,6 @@ public class TwitController {
 		User user=userService.findUserProfileByJwt(jwt);
 		Twit twit=twitService.createTwit(req, user);
 		//System.out.println("edit + "+req.isEdited()+req.getEditedAt());
-		TwitDto twitDto=TwitDtoMapper.toTwitDto(twit,user);
-		
-		return new ResponseEntity<>(twitDto,HttpStatus.CREATED);
-	}
-	
-	
-	@PostMapping("/reply")
-	public ResponseEntity<TwitDto> replyTwit(@RequestBody TwitReplyRequest req, 
-			@RequestHeader("Authorization") String jwt) throws UserException, TwitException{
-		
-		
-		User user=userService.findUserProfileByJwt(jwt);
-		Twit twit=twitService.createReply(req, user);
 		TwitDto twitDto=TwitDtoMapper.toTwitDto(twit,user);
 		
 		return new ResponseEntity<>(twitDto,HttpStatus.CREATED);
@@ -130,24 +116,6 @@ public class TwitController {
 		return new ResponseEntity<>(twitDto,HttpStatus.ACCEPTED);
 	}
 	
-	@GetMapping("/{listId}/listTwit") // ambiguous handler
-	public ResponseEntity<List<TwitDto>> findTwitByListId (@PathVariable Long listId,
-			@RequestHeader("Authorization") String jwt) throws TwitException, ListException, UserException {
-		User user= userService.findUserProfileByJwt(jwt);
-		ListModel listModel=listService.findById(listId);
-		List<Twit> twits = twitService.findTwitsByListId(listModel.getId());
-		List<TwitDto> twitDtos=TwitDtoMapper.toTwitDtos(twits,user);
-		return new ResponseEntity<List<TwitDto>>(twitDtos,HttpStatus.OK);
-	}
-	
-	@GetMapping("/")
-	public ResponseEntity<List<TwitDto>> findAllTwits(@RequestHeader("Authorization") String jwt) throws UserException{
-		User user=userService.findUserProfileByJwt(jwt);
-		List<Twit> twits=twitService.findAllTwit();
-		List<TwitDto> twitDtos=TwitDtoMapper.toTwitDtos(twits,user);
-		return new ResponseEntity<List<TwitDto>>(twitDtos,HttpStatus.OK);
-	}
-	
 	@GetMapping("/user/{userId}")
 	public ResponseEntity<List<TwitDto>> getUsersTwits(@PathVariable Long userId,
 			@RequestHeader("Authorization") String jwt) 
@@ -170,6 +138,16 @@ public class TwitController {
 		return new ResponseEntity<List<TwitDto>>(twitDtos,HttpStatus.OK);
 	}
 	
+	@PostMapping("/{twitId}/count")
+	public ResponseEntity<TwitDto> count(@PathVariable Long twitId, @RequestHeader("Authorization") String jwt) throws Exception {
+		User user = userService.findUserProfileByJwt(jwt);
+		Twit twit = twitService.findById(twitId);
+		twit.setViewCount(twit.getViewCount()+1);
+		twitService.updateView(twit);
+		TwitDto twitDto = TwitDtoMapper.toTwitDto(twit, user);
+		return new ResponseEntity<>(twitDto, HttpStatus.ACCEPTED);
+	}
+	
 	@GetMapping("/user/{userId}/likes")
 	public ResponseEntity<List<TwitDto>> findTwitByLikesContainsUser(@PathVariable Long userId,
 			@RequestHeader("Authorization") String jwt) 
@@ -181,27 +159,44 @@ public class TwitController {
 		return new ResponseEntity<List<TwitDto>>(twitDtos,HttpStatus.OK);
 	}
 
-	@PostMapping("/{twitId}/count")
-	public ResponseEntity<TwitDto> count(@PathVariable Long twitId, @RequestHeader("Authorization") String jwt) throws Exception {
-		User user = userService.findUserProfileByJwt(jwt);
-		Twit twit = twitService.findById(twitId);
-		twit.setViewCount(twit.getViewCount()+1);
-		twitService.updateView(twit);
-		TwitDto twitDto = TwitDtoMapper.toTwitDto(twit, user);
-		return new ResponseEntity<>(twitDto, HttpStatus.ACCEPTED);
+	@GetMapping("/{listId}/listTwit") // ambiguous handler
+	public ResponseEntity<List<TwitDto>> findTwitByListId (@PathVariable Long listId,
+			@RequestHeader("Authorization") String jwt) throws TwitException, ListException, UserException {
+		User user= userService.findUserProfileByJwt(jwt);
+		System.out.println("listuser + " + user);
+		ListModel listModel=listService.findById(listId);
+		System.out.println("listModel + " + listModel);
+		List<Twit> twits = twitService.findTwitsByListId(listModel.getId());
+		System.out.println("listtwits + " + twits);
+		List<TwitDto> twitDtos=TwitDtoMapper.toTwitDtos(twits,user);
+		for (int i = 0; i < twitDtos.size(); i++) {
+			System.out.println(" twitDtos + " + twitDtos.get(i).getReplyTwits());
+		}
+		return new ResponseEntity<List<TwitDto>>(twitDtos,HttpStatus.OK);
 	}
 	
-	@GetMapping("/followTwit")
-	public ResponseEntity<List<TwitDto>> getUserFollowTwit(@RequestHeader("Authorization") String jwt) throws UserException{
-		User reqUser=userService.findUserProfileByJwt(jwt);
-		System.out.println("reqUser + " + reqUser);
-		List<Twit> twits=twitService.findTwitFollowedByReqUser(reqUser);
-		System.out.println("twits + " + twits);
+	@GetMapping("/")
+	public ResponseEntity<List<TwitDto>> findAllTwits(@RequestHeader("Authorization") String jwt) throws UserException{
+		User user=userService.findUserProfileByJwt(jwt);
+		System.out.println("user + " + user);
+		List<Twit> twits=twitService.findAllTwit();
+		System.out.println("findAllTwit + " + user);
+		List<TwitDto> twitDtos=TwitDtoMapper.toTwitDtos(twits,user);
+		for (int i = 0; i < twitDtos.size(); i++) {
+			System.out.println("findAllTwit twitDtos + " + twitDtos.get(i).getReplyTwits());
+		}
+		return new ResponseEntity<List<TwitDto>>(twitDtos,HttpStatus.OK);
+	}
+	
+	@PostMapping("/reply")
+	public ResponseEntity<TwitDto> replyTwit(@RequestBody TwitReplyRequest req, 
+			@RequestHeader("Authorization") String jwt) throws UserException, TwitException{
+		User user=userService.findUserProfileByJwt(jwt);
+		Twit twit=twitService.createReply(req, user);
+		TwitDto twitDto=TwitDtoMapper.toTwitDto(twit,user);
 		
-		List<TwitDto> twitDtos=TwitDtoMapper.toTwitDtos(twits, reqUser);
-		return new ResponseEntity<>(twitDtos, HttpStatus.ACCEPTED);
-		
-	} 
+		return new ResponseEntity<>(twitDto,HttpStatus.CREATED);
+	}
 	
 	@GetMapping("/search2")
 	public ResponseEntity<List<TwitDto>> searchTwitHandler(@RequestParam String query, 
@@ -263,5 +258,20 @@ public class TwitController {
 		TwitDto twitDto=TwitDtoMapper.toTwitDto(twit,user);
 		
 		return new ResponseEntity<>(twitDto,HttpStatus.CREATED);
+	}
+	
+	
+	@GetMapping("/followtwit/{userId}")
+	public ResponseEntity<List<TwitDto>> getUserFollowTwit(@PathVariable Long userId) throws UserException, TwitException{
+		User reqUser=userService.findUserById(userId);
+		System.out.println("reqUser + " + reqUser);
+		List<Twit> twits=twitService.findTwitFollowedByReqUser(reqUser.getId());
+		System.out.println("twits + " + twits);
+		List<TwitDto> twitDtos=TwitDtoMapper.toTwitDtos(twits, reqUser);
+		for (int i = 0; i < twitDtos.size(); i++) {
+			System.out.println("twitDtos + " + twitDtos.get(i).getReplyTwits());
+		}
+		return new ResponseEntity<List<TwitDto>>(twitDtos, HttpStatus.OK);
+		
 	}
 }

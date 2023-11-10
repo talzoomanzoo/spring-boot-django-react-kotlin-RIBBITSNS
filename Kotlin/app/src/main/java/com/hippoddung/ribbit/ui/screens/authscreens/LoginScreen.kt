@@ -36,7 +36,7 @@ fun LoginScreen(
 ) {
     var email by remember { mutableStateOf("") }
     var pW by remember { mutableStateOf("") }
-    var authRequest = AuthRequest(email = email, password = pW)
+    val authRequest = AuthRequest(email = email, password = pW)
 
     Column(
         modifier = modifier

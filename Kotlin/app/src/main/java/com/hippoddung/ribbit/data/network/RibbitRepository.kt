@@ -2,7 +2,6 @@ package com.hippoddung.ribbit.data.network
 
 import com.hippoddung.ribbit.network.RibbitApiService
 import com.hippoddung.ribbit.network.bodys.RibbitPost
-import com.hippoddung.ribbit.network.bodys.User
 import com.hippoddung.ribbit.network.bodys.requestbody.ReplyRequest
 import com.hippoddung.ribbit.network.bodys.requestbody.TwitCreateRequest
 import javax.inject.Inject
@@ -23,7 +22,7 @@ class RibbitRepository @Inject constructor(
 
     // Post Bottom Bar
     suspend fun postPostIdLike(postId: Int) = ribbitApiService.postPostIdLike(postId)
-    suspend fun deletePostIdLike(postId: Int) = ribbitApiService.deletePostIdLike(postId)   // 안 씀
+//    suspend fun deletePostIdLike(postId: Int) = ribbitApiService.deletePostIdLike(postId)   // 안 씀
     suspend fun putPostIdRepost(postId: Int) = ribbitApiService.putPostIdRepost(postId)
     suspend fun postPostIdCount(postId: Int) = ribbitApiService.postPostIdCount(postId)
 
@@ -41,5 +40,8 @@ class RibbitRepository @Inject constructor(
 
     // List Posts
     suspend fun getListIdPosts(listId: Int) = ribbitApiService.getListIdPosts(listId)
+
+    // Commu Posts
+    suspend fun getCommuIdPosts(commuId: Int) = ribbitApiService.getCommuIdPosts(commuId)
 
 }
