@@ -320,7 +320,7 @@ const TwitCard = ({ twit }) => {
   }
 
   const [isRetwit, setIsRetwit] = useState(
-    twit.retwitUsersId.includes(auth.user.id)
+    twit.retwitUsersId?.includes(auth.user.id)
   );
 
   const handleToggleLocationForm = () => {
@@ -513,9 +513,9 @@ const TwitCard = ({ twit }) => {
   return (
     <div className="">
       {loading ? <Loading /> : null}
-      {auth.findUser?.id !== twit.user.id &&
+      {auth.findUser?.id !== twit.user?.id &&
       location.pathname === `/profile/${auth.findUser?.id}` &&
-      twit.retwitUsersId.length > 0 ? (
+      twit.retwitUsersId?.length > 0 ? (
         <div className="flex items-center font-semibold text-yellow-500 py-2">
           <RepeatIcon />
           <p className="ml-3">Reribbit</p>
@@ -523,7 +523,7 @@ const TwitCard = ({ twit }) => {
       ) : null}
       <div className="flex space-x-5 ">
         <Avatar
-          onClick={() => navigate(`/profile/${twit.user.id}`)}
+          onClick={() => navigate(`/profile/${twit.user?.id}`)}
           alt="Avatar"
           src={
             twit.user.image

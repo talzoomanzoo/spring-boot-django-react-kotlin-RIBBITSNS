@@ -76,6 +76,7 @@ public class User {
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)//, fetch = FetchType.LAZY)
     private List<Like> likes  = new ArrayList<>();
     
+    @JsonIgnore
     @Embedded
     private Varification verification;
     

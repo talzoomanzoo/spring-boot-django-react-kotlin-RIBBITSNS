@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -39,6 +42,7 @@ public class Twit {
     private String content;
  
     @OneToMany(mappedBy = "twit", cascade = CascadeType.DETACH)
+    @JsonIgnoreProperties("twit")
     private List<Like> likes = new ArrayList<>();
 
 //    @OneToMany(mappedBy = "twit", cascade = CascadeType.ALL) // 붙는 엔티티가 List 1, 상대가 M
@@ -46,12 +50,15 @@ public class Twit {
 
     @OneToMany(cascade = {CascadeType.ALL, CascadeType.REMOVE})
     @JoinColumn(name = "twit_id")
+    @JsonIgnore
     private List<Twit> replyTwits = new ArrayList<>();
 
+    @JsonIgnore
     @ManyToMany(cascade = CascadeType.DETACH)
     private List<User> retwitUser = new ArrayList<>();
 
     @ManyToOne // 붙는 엔티티가 M, 상대가 1
+    @JsonIgnore
     private Twit replyFor; // 하나의 트윗에 대해 M개의 댓글, Twit의 내용을 넣기 위해 사용
 
     @Column(nullable = false)

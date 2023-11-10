@@ -1,5 +1,8 @@
 package com.zosh.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -22,9 +25,8 @@ public class Like {
   	@ManyToOne(fetch = FetchType.LAZY)
   	private User user;
   	
-  	
+  	@JsonIgnore
   	@ManyToOne(fetch = FetchType.LAZY)
-  	//@JsonIgnoreProperties("likes") // Twit 엔티티의 likes 속성을 무시
   	private Twit twit;
 
   	

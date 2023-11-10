@@ -123,7 +123,7 @@ const ComModel3 = ({ com, handleClose, open }) => {
                                         <img
                                             src={
                                                 formik.values?.backgroundImage ||
-                                                "https://png.pngtree.com/thumb_back/fw800/background/20230304/pngtree-green-base-vector-smooth-background-image_1770922.jpg"
+                                                "https://t1.daumcdn.net/cfile/tistory/174FF7354E6ACC7606"
                                             }
                                             alt="Img"
                                             className="w-full h-[10rem] object-cover object-center"
