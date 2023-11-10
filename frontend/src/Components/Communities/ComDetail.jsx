@@ -498,6 +498,17 @@ const ComDetail = () => {
                 )}
               </div>
 
+            <section>
+                <img
+                    className="w-[100%] h-[15rem] object-cover"
+                    src={
+                        com.com?.backgroundImage ||
+                        "https://t1.daumcdn.net/cfile/tistory/174FF7354E6ACC7606"
+                    }
+                    alt=""
+                    loading="lazy"
+                />
+            </section>
               {!uploadingImage && (
                 <div>
                   {selectedImage && (
