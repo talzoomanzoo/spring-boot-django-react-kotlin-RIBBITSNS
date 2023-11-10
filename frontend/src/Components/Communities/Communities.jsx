@@ -9,6 +9,10 @@ import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import ComModel from "./ComModel";
 import ComCard from "./ComCard";
 import ComBottom from "./ComBottom";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { EffectCoverflow, Pagination } from "swiper";
+import "swiper/css";
+import "swiper/css/effect-coverflow";
 
 const Communities = () => {
     const dispatch = useDispatch();
@@ -42,9 +46,10 @@ const Communities = () => {
                     </h1>
                 </div>
                 <div
-                    className="flex items-center absolute right-0 cursor-pointer" // 오른쪽 정렬, 클릭 커서
+                    className="absolute right-0 cursor-pointer" // 오른쪽 정렬, 클릭 커서
                     onClick={handleOpenComModel} //커뮤니티 추가
-                >커뮤니티 추가<GroupAddIcon />
+                >
+                    <GroupAddIcon /> 커뮤니티 추가
 
                 </div>
             </section>
@@ -64,9 +69,27 @@ const Communities = () => {
                         }}
                     />
                 </div>
-                <div className="flex inline-block justify-content overflow-x-scroll hideScrollbar border-gray-700 h-[35vh] w-full rounded-md">
-                    {com.coms.map((item) => (<ComCard style={{ marginTop: 10 }} com={item} />))}
-                    {/* com.privateMode? && auth.user.id == */}
+
+                <div className="flex inline-block justify-content border-gray-700 h-[35vh] w-full rounded-md">
+                <Swiper
+        effect={"coverflow"}
+        grabCursor={true}
+        centeredSlides={true}
+        slidesPerView={2}
+        coverflowEffect={{
+          rotate: 50,
+          stretch: 0,
+          depth: 100,
+          modifier: 1,
+          slideShadows: true,
+        }}
+        modules={[EffectCoverflow, Pagination]}
+        className="swiper"
+      >
+                
+                            {com.coms.map((item) => (<SwiperSlide><ComCard style={{ marginTop: 10 }} com={item} /></SwiperSlide>))}
+                            {/* com.privateMode? && auth.user.id == */}
+                            </Swiper>
                 </div>
             </div>
 

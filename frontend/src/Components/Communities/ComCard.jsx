@@ -94,7 +94,7 @@ console.log("comcard com", com);
 return (
     <section className="space-x-5 py-3 rounded-full items-center justify-content">
         <section className="my-5 space-x-5 items-center justify-content mt-5" style={{ marginTop: 3 }}>
-
+            <div className="card">
             <GroupsIcon className="cursor-pointer" onClick={openMembersModal} />
 
             <Modal
@@ -205,6 +205,7 @@ return (
                 onClick={handleNavigateToComDetail}>
                 <div className="text-xl items-center justify-content" >{com.comName}</div>
             </section>
+            </div>
         </section>
     </section >
 
