@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { getAllLists } from "../../Store/List/Action";
 import ListCard from "./ListCard/ListCard";
 import ListsModel from "./ListsModel";
+import "../RightPart/Scrollbar.css";
 
 const Lists = () => {
     const dispatch = useDispatch();
@@ -68,7 +69,7 @@ const Lists = () => {
                     }}
                 />
                 <section
-                    className="space-y-5 overflow-y-scroll hideScrollbar border-gray-700 h-[40vh] w-full rounded-md">
+                    className="space-y-5 customeScrollbar overflow-y-scroll css-scroll hideScrollbar border-gray-700 h-[40vh] w-full rounded-md">
                     {list.lists.map((item) => ( !item.privateMode ? (<ListCard style={{ marginTop: 10 }} list={item} />) : null)) }
                 </section>
             </div>
@@ -90,7 +91,7 @@ const Lists = () => {
                     }}
                 />
                 <section
-                    className="space-y-5 overflow-y-scroll hideScrollbar border-gray-700 h-[40vh] w-full rounded-md">
+                    className="space-y-5 customeScrollbar overflow-y-scroll css-scroll hideScrollbar border-gray-700 h-[40vh] w-full rounded-md">
                     {/* {list.lists && list.lists.length > 0 ?
                         ( */}
                         {list.lists.map((item) => ( item.privateMode ? (<ListCard style={{ marginTop: 10 }} list={item} />) : null)) }

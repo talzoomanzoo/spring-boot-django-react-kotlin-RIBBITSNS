@@ -1,7 +1,6 @@
 package com.hippoddung.ribbit.network
 
 import com.hippoddung.ribbit.network.bodys.RibbitPost
-import com.hippoddung.ribbit.network.bodys.User
 import com.hippoddung.ribbit.network.bodys.requestbody.ReplyRequest
 import com.hippoddung.ribbit.network.bodys.requestbody.TwitCreateRequest
 import com.hippoddung.ribbit.network.bodys.responsebody.DeleteResponse
@@ -41,6 +40,7 @@ interface RibbitApiService {
     suspend fun deletePost(
         @Path("twitId") postId : Int
     ): DeleteResponse
+
     @GET("api/twits/{twitId}")
     suspend fun getPostIdPost(
         @Path("twitId") postId : Int
@@ -69,10 +69,10 @@ interface RibbitApiService {
         @Path("postId") postId : Int
     ): RibbitPost
 
-    @DELETE("api/{postId}/unlike")
-    suspend fun deletePostIdLike(
-        @Path("postId") postId : Int
-    ): RibbitPost
+//    @DELETE("api/{postId}/unlike")
+//    suspend fun deletePostIdLike(
+//        @Path("postId") postId : Int
+//    ): RibbitPost
 
     @PUT("api/twits/{postId}/retwit")
     suspend fun putPostIdRepost(
@@ -86,12 +86,17 @@ interface RibbitApiService {
 
     @GET("api/twits/search2")
     suspend fun getPostsSearch(
-        @Query("query") searchQuery : String    // @Query 안의 String값이 서버의 parameter 명과 같아야 함.
+        @Query("query") searchQuery : String    // @Query 안의 String 값이 서버의 parameter 명과 같아야 함.
     ): List<RibbitPost>
 
     @GET("/api/twits/{listId}/listTwit")
     suspend fun getListIdPosts(
         @Path("listId") listId : Int
+    ): List<RibbitPost>
+
+    @GET("/api/twits/{comId}/comTwit")
+    suspend fun getCommuIdPosts(
+        @Path("comId") commuId : Int
     ): List<RibbitPost>
 }
 

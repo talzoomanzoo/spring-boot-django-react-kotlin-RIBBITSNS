@@ -105,7 +105,7 @@ fun EditProfileReadyScreen(
 ) {
     val context = LocalContext.current
     var myProfile by remember { mutableStateOf(User(email = "")) }// state check 실행을 위해 initializing
-    if (userViewModel.profileUiState is ProfileUiState.Exist) {   // navigation으로 이동시 현재 스크린을 backStack으로 보내면서 재실행, state casting 오류가 발생, state check 삽입
+    if (userViewModel.profileUiState is ProfileUiState.Exist) {   // navigation 으로 이동시 현재 스크린을 backStack 으로 보내면서 재실행, state casting 오류가 발생, state check 삽입
         myProfile = (userViewModel.profileUiState as ProfileUiState.Exist).user
     }
     var inputFullName by remember { mutableStateOf(myProfile.fullName ?: "") }
@@ -232,7 +232,7 @@ fun EditProfileReadyScreen(
                                 .clickable { backgroundImageLauncher.launch("image/*") },
                             placeholder = painterResource(R.drawable.loading_img),
                             error = painterResource(R.drawable.ic_broken_image),
-                            alignment = Alignment.TopStart,
+                            alignment = Alignment.Center,
                             contentScale = ContentScale.Crop,
                         )
                     }

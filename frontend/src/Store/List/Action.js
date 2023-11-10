@@ -84,7 +84,7 @@ export const createListModel = (reqData) => {
 export const updateListModel = (reqData) => async (dispatch) => {
   dispatch({ type: UPDATE_LIST_REQUEST });
   try {
-    const response = await api.post(`/api/lists/update`, reqData);
+    const response = await api.put(`/api/lists/update`, reqData);
     const list = response.data;
     dispatch({ type: UPDATE_LIST_SUCCESS, payload: list });
   } catch (error) {
@@ -116,7 +116,7 @@ export const getUserAction = (listId) => async (dispatch) => {
   dispatch({ type: GET_USER_REQUEST });
   try {
     console.log("listId get", listId);
-    const response = await api.get(`/api/lists/${listId}/get`);
+    const response = await api.get(`/api/lists/${listId}/getUsers`);
     const list = response.data;
     console.log("getUserAction list data", list);
     dispatch({ type: GET_USER_SUCCESS, payload: list });

@@ -31,22 +31,18 @@ import com.hippoddung.ribbit.ui.viewmodel.ListViewModel
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun ListGrid(
-    listItems: List<RibbitListItem>,
+    myId: Int,
+    filteredListItems: List<RibbitListItem>,
     getCardViewModel: GetCardViewModel,
     listViewModel: ListViewModel,
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    val comparator =
-        when(listViewModel.listClassificationUiState){
-            is ListClassificationUiState.ListHome -> compareByDescending<RibbitListItem> { it.id }
-            is ListClassificationUiState.Following -> compareByDescending { it.id }
-            is ListClassificationUiState.TopViews -> compareByDescending { it.id }
-            is ListClassificationUiState.TopLikes -> compareByDescending { it.id }
-        }
-    val sortedRibbitListItem = remember(listItems, comparator) {
-        listItems.sortedWith(comparator)
-    }   // LazyColumn items에 List를 바로 주는 것이 아니라 Comparator로 정렬하여 remember로 기억시켜서 recomposition을 방지하여 성능을 올린다.
+    val comparator = compareByDescending<RibbitListItem> { it.id }
+
+    val sortedRibbitListItem = remember(filteredListItems, comparator) {
+        filteredListItems.sortedWith(comparator)
+    }   // LazyColumn items 에 List 를 바로 주는 것이 아니라 Comparator 로 정렬하여 remember 로 기억시켜서 recomposition 을 방지하여 성능을 올린다.
     LazyColumn(modifier = modifier) {
         item {
             Column(modifier = modifier) {
@@ -57,44 +53,44 @@ fun ListGrid(
                 ) {
                     TextButton(
                         onClick = {
-                            listViewModel.getLists()
+                            listViewModel.listClassificationUiState = ListClassificationUiState.PublicList
                         },
                         colors = ButtonDefaults.textButtonColors(
-                            containerColor = if(listViewModel.listClassificationUiState is ListClassificationUiState.ListHome){
+                            containerColor = if(listViewModel.listClassificationUiState is ListClassificationUiState.PublicList){
                                 Color(0xFF006400)
                             } else Color.White,
-                            contentColor = if(listViewModel.listClassificationUiState is ListClassificationUiState.ListHome){
+                            contentColor = if(listViewModel.listClassificationUiState is ListClassificationUiState.PublicList){
                                 Color.White
                             } else Color(0xFF006400),
                         ),
                         modifier = modifier
                     ) {
                         Text(
-                            text = "List Home",
+                            text = "Public List",
                             fontSize = 16.sp,
                             modifier = modifier
                         )
                     }
-//                    TextButton(
-//                        onClick = {
-//                            listViewModel.getFollowingPosts()
-//                        },
-//                        colors = ButtonDefaults.textButtonColors(
-//                            containerColor = if(listViewModel.listClassificationUiState is ClassificationUiState.Following){
-//                                Color(0xFF006400)
-//                            } else Color.White,
-//                            contentColor = if(listViewModel.listClassificationUiState is ClassificationUiState.Following){
-//                                Color.White
-//                            } else Color(0xFF006400),
-//                        ),
-//                        modifier = modifier
-//                    ) {
-//                        Text(
-//                            text = "Following",
-//                            fontSize = 16.sp,
-//                            modifier = modifier
-//                        )
-//                    }
+                    TextButton(
+                        onClick = {
+                            listViewModel.listClassificationUiState = ListClassificationUiState.PrivateList
+                        },
+                        colors = ButtonDefaults.textButtonColors(
+                            containerColor = if(listViewModel.listClassificationUiState is ListClassificationUiState.PrivateList){
+                                Color(0xFF006400)
+                            } else Color.White,
+                            contentColor = if(listViewModel.listClassificationUiState is ListClassificationUiState.PrivateList){
+                                Color.White
+                            } else Color(0xFF006400),
+                        ),
+                        modifier = modifier
+                    ) {
+                        Text(
+                            text = "Private List",
+                            fontSize = 16.sp,
+                            modifier = modifier
+                        )
+                    }
 //                    TextButton(
 //                        onClick = {
 //                            listViewModel.getTopViewsRibbitPosts()
@@ -151,6 +147,7 @@ fun ListGrid(
         }
         items(items = sortedRibbitListItem, key = { listItem -> listItem.id }) {
             ListCard(
+                myId = myId,
                 listItem = it,
                 listViewModel = listViewModel,
                 getCardViewModel = getCardViewModel,

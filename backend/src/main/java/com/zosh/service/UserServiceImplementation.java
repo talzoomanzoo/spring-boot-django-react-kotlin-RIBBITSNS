@@ -7,23 +7,29 @@ import org.springframework.stereotype.Service;
 
 import com.zosh.config.JwtProvider;
 import com.zosh.exception.ComException;
+import com.zosh.exception.FollowTwitException;
 import com.zosh.exception.ListException;
 import com.zosh.exception.UserException;
 import com.zosh.model.Community;
+import com.zosh.model.FollowTwit;
 import com.zosh.model.ListModel;
 import com.zosh.model.Twit;
 import com.zosh.model.User;
 import com.zosh.repository.ComRepository;
+import com.zosh.repository.FollowTwitRepository;
 import com.zosh.repository.ListRepository;
 import com.zosh.repository.TwitRepository;
 import com.zosh.repository.UserRepository;
 
 @Service
 public class UserServiceImplementation implements UserService {
+	@Autowired
+	private FollowTwitService followTwitService;
 	private final UserRepository userRepository;
 	private final ListRepository listRepository;
 	private final TwitRepository twitRepository;
 	private final ComRepository comRepository;
+	private final FollowTwitRepository followTwitRepository;
 	private final JwtProvider jwtProvider;
 
 	public UserServiceImplementation(
@@ -31,12 +37,14 @@ public class UserServiceImplementation implements UserService {
 			ListRepository listRepository,
 			TwitRepository twitRepository,
 			ComRepository comRepository,
+			FollowTwitRepository followTwitRepository,
 			JwtProvider jwtProvider) {
 		
 		this.userRepository=userRepository;
 		this.listRepository=listRepository;
 		this.twitRepository = twitRepository;
 		this.comRepository = comRepository;
+		this.followTwitRepository = followTwitRepository;
 		this.jwtProvider=jwtProvider;
 		
 	}
@@ -98,20 +106,29 @@ public class UserServiceImplementation implements UserService {
 	}
 
 	@Override
-	public User followUser(Long userId, User user) throws UserException {
+	public User followUser(Long userId, User user) throws UserException, FollowTwitException {
 		User followToUser=findUserById(userId);
-		
+		FollowTwit followTwit = followTwitService.findFollowTwitByUserId(user.getId());
 		if(user.getFollowings().contains(followToUser) && followToUser.getFollowers().contains(user)) {
 			user.getFollowings().remove(followToUser);
 			followToUser.getFollowers().remove(user);
+			followTwit.getFollowingssub().remove(followToUser);
+			List<Twit> twits = twitRepository.findByUser_IdAndIsTwitTrueAndIsComFalseOrderByCreatedAtDesc(followToUser.getId());
+			System.out.println("followUser twits check" + twits);
+			//followTwit.getFollowingstwit().removeAll(twits);
 		}
 		else {
 					followToUser.getFollowers().add(user);
 					user.getFollowings().add(followToUser);
+					followTwit.getFollowingssub().add(followToUser);
+					List<Twit> twits = twitRepository.findByUser_IdAndIsTwitTrueAndIsComFalseOrderByCreatedAtDesc(followToUser.getId());
+					System.out.println("followUser twits check else" + twits);
+					//followTwit.getFollowingstwit().addAll(twits);
 		}
 		
 		userRepository.save(user);
 		userRepository.save(followToUser);
+		followTwitRepository.save(followTwit);
 		return followToUser;
 	}
 

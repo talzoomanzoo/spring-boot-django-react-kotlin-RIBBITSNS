@@ -28,6 +28,7 @@ import TwitCard from "../Home/MiddlePart/TwitCard/TwitCard";
 //import ProfileModel from "./ProfileModel";
 import "./Profile.css";
 import Loading from "./Loading/Loading";
+import "../RightPart/Scrollbar.css";
 
 const Maplocation = React.lazy(() => import("./Maplocation"));
 const ProfileModel = React.lazy(() => import("./ProfileModel"));
@@ -214,6 +215,7 @@ const Profile = () => {
               variant="outlined"
               className="rounded-full profile--chage--btn"
             >
+              <a></a>
             </button>
           ) : (
             <Button
@@ -301,7 +303,7 @@ const Profile = () => {
                     <Button sx={{ fontSize: "75%", color: "darkgray"}}onClick={openFollowersCloseFollowings}>followers</Button>
                   <div 
                   ref={followersListRef}
-                  className={`overflow-y-scroll hideScrollbar h-[40vh]`}>
+                  className={`customeScrollbar overflow-y-scroll css-scroll hideScrollbar h-[40vh]`}>
                     {auth.findUser?.followings &&
                       auth.findUser?.followings.map((item) => (
                         <div
@@ -343,7 +345,7 @@ const Profile = () => {
                 <Button sx={{ fontSize: "105%", textDecoration: "underline" }}>followers</Button>
                   <div
                 ref={followersListRef}
-                className={`overflow-y-scroll hideScrollbar h-[40vh] `}>
+                className={`customeScrollbar overflow-y-scroll css-scroll hideScrollbar h-[40vh] `}>
                    {auth.findUser?.followers &&
                       auth.findUser?.followers.map((item) => (
                         <div

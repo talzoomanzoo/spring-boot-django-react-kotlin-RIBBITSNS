@@ -20,6 +20,7 @@ import {
     addUserActionCom,
     getUserActionCom,
     updateCom,
+    addUserActionSignup,
 } from "../../Store/Community/Action";
 import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
 import BackdropComponent from "../Backdrop/Backdrop";
@@ -115,6 +116,12 @@ const ComModel2 = ({ com, handleClose, open }) => {
         setSearch("");
         dispatch(getUserActionCom(comId));
     };
+
+    const handleAddUserSignup = (comId, userId) => {
+        
+        dispatch(addUserActionSignup(comId, userId));
+        dispatch(getUserActionCom(comId));
+    }
 
     const handleFollowingscClick = () => {
         setFollowingscClicked(!followingscClicked);
@@ -248,10 +255,10 @@ const ComModel2 = ({ com, handleClose, open }) => {
                                 />
                             </div>
 
-                            <div 
-                            className="font-bold"
-                            style={{ marginTop: 20, marginLeft: 10, marginBottom: 10 }}>
-                            커뮤니티 사용자 검색
+                            <div
+                                className="font-bold"
+                                style={{ marginTop: 20, marginLeft: 10, marginBottom: 10 }}>
+                                커뮤니티 사용자 검색
                             </div>
 
                             <div
@@ -335,6 +342,53 @@ const ComModel2 = ({ com, handleClose, open }) => {
                                 <div>
                                     <Element comVal={com} />
                                 </div>
+                            </div>
+
+                            <div
+                                className="font-bold"
+                                style={{ marginTop: 20, marginLeft: 10, marginBottom: 10 }}>
+                                가입 신청 승인 대기 목록
+                            </div>
+
+                            <div className="overflow-y-scroll hideScrollbar border-gray-700 h-[20vh] w-full rounded-md">
+                                <section className="space-y-5">
+                                    <div className="flex justify-between" style={{ flexDirection: "column" }}>
+                                        {com.followingscReady?.map((item) => (
+                                            <div className="flex justify-between items-center" key={item.id}>
+                                                <div
+                                                    style={{ paddingRight: 300, marginTop: 10, }}
+                                                    onClick={() => {
+                                                        if (Array.isArray(item)) {
+                                                            item.forEach((i) => navigateToProfile(i));
+                                                        } else {
+                                                            navigateToProfile(item.id);
+                                                        }
+                                                        handleFollowingscClick();
+                                                    }}
+                                                    className="flex items-center absolute left-2 justify-between hover:bg-green-700 relative right-5 cursor-pointer"
+                                                >
+                                                    <Avatar alt={item.fullName} src={item.image} loading="lazy" />
+                                                    <div className="ml-2">
+                                                        <p>{item.fullName}</p>
+                                                        <p className="text-sm text-gray-400">
+                                                            {item.email.split(" ").join("_").toLowerCase()}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                {itemsCheck(item) ? (
+                                                    null
+                                                ) : (
+                                                    <AddIcon
+                                                        className="flex hover:bg-green-700 relative right-5 cursor-pointer"
+                                                        onClick={() => {
+                                                            handleAddUserSignup(com.id, item.id);
+                                                        }}
+                                                    ></AddIcon>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </section>
                             </div>
 
                             <div

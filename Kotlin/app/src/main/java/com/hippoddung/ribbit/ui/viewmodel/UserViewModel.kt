@@ -1,9 +1,7 @@
 package com.hippoddung.ribbit.ui.viewmodel
 
 import android.graphics.Bitmap
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -22,10 +20,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import retrofit2.HttpException
 import java.io.IOException
-import java.time.Duration
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 sealed interface MyProfileUiState {
@@ -94,15 +88,12 @@ class UserViewModel @Inject constructor(
 
     var withdrawingUserUiState: WithdrawingUserUiState by mutableStateOf(WithdrawingUserUiState.Ready)
 
-    var searchingUserUiState: SearchingUserUiState by mutableStateOf(SearchingUserUiState.Ready)
     private var uploadProfileImageCloudinaryUiState: UploadProfileImageCloudinaryUiState by mutableStateOf(
         UploadProfileImageCloudinaryUiState.None
     )
-        private set
     private var uploadProfileBackgroundImageCloudinaryUiState: UploadProfileBackgroundImageCloudinaryUiState by mutableStateOf(
         UploadProfileBackgroundImageCloudinaryUiState.None
     )
-        private set
 
     private var _usersData = MutableStateFlow<List<User>>(listOf())
     val usersData: StateFlow<List<User>> = _usersData.asStateFlow()
@@ -114,7 +105,7 @@ class UserViewModel @Inject constructor(
             try {
                 val responseUser = userRepository.getMyProfile()
                 myProfileUiState = MyProfileUiState.Exist(responseUser)
-                myProfile.postValue(responseUser)    // user Livedata 에 user값을 넣는다.
+                myProfile.postValue(responseUser)    // user Livedata 에 user 값을 넣는다.
             } catch (e: IOException) {
                 Log.d("HippoLog, UserViewModel", "${e.stackTrace}, ${e.message}")
                 myProfileUiState = MyProfileUiState.Error(e.message.toString())
@@ -152,7 +143,7 @@ class UserViewModel @Inject constructor(
         Log.d("HippoLog, UserViewModel", "유저정보 리셋")
     }
 
-    fun getProfile(userId: Int) {   // 원하는 유저의 profile을 가져오는 메소드
+    fun getProfile(userId: Int) {   // 원하는 유저의 profile 을 가져오는 메소드
         viewModelScope.launch(Dispatchers.IO) {
             profileUiState = ProfileUiState.Loading
             Log.d("HippoLog, UserViewModel", "getUserProfile, $profileUiState")
@@ -169,10 +160,10 @@ class UserViewModel @Inject constructor(
 
             } catch (e: HttpException) {
                 Log.d("HippoLog, UserViewModel", "${e.stackTrace}, ${e.code()}, $e")
-                if (e.code() == 500) {
-                    profileUiState = ProfileUiState.Error(e.code().toString())
+                profileUiState = if (e.code() == 500) {
+                    ProfileUiState.Error(e.code().toString())
                 } else {
-                    profileUiState = ProfileUiState.Error(e.message.toString())
+                    ProfileUiState.Error(e.message.toString())
                 }
             }
             Log.d("HippoLog, UserViewModel", "getProfile, $profileUiState")
@@ -256,7 +247,7 @@ class UserViewModel @Inject constructor(
                         website = inputWebsite
                     )
                 )
-            } else {    // uploadImageCloudinaryUiState와 uploadVideoCloudinaryUiState 가 다른 상태일 때 처리를 위함 미구현
+            } else {    // uploadImageCloudinaryUiState 와 uploadVideoCloudinaryUiState 가 다른 상태일 때 처리를 위함 미구현
             }
         }
     }
@@ -306,7 +297,7 @@ class UserViewModel @Inject constructor(
         }
     }
 
-    private suspend fun uploadProfileImageCloudinary(profileImage: Bitmap?) { // CreatingPostViewModel에 있던 함수, 어떻게 불러와서 쓸지 결정을 못해서 우선 복붙함.
+    private suspend fun uploadProfileImageCloudinary(profileImage: Bitmap?) { // CreatingPostViewModel 에 있던 함수, 어떻게 불러와서 쓸지 결정을 못해서 우선 복붙함.
         if (profileImage != null) {
             try {
                 val result = uploadCloudinaryRepository.uploadImageCloudinary(profileImage)
@@ -322,7 +313,7 @@ class UserViewModel @Inject constructor(
         }
     }
 
-    private suspend fun uploadProfileBackgroundImageCloudinary(profileBackgroundImage: Bitmap?) { // CreatingPostViewModel에 있던 함수, 어떻게 불러와서 쓸지 결정을 못해서 우선 복붙함.
+    private suspend fun uploadProfileBackgroundImageCloudinary(profileBackgroundImage: Bitmap?) { // CreatingPostViewModel 에 있던 함수, 어떻게 불러와서 쓸지 결정을 못해서 우선 복붙함.
         if (profileBackgroundImage != null) {
             try {
                 val result =

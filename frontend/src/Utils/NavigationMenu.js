@@ -100,6 +100,19 @@ export const navigationMenu = [
     },
   },
   {
+    id: 8,
+    title: "팔로우 한 리빗",
+    icon: <AccountBoxIcon />,
+    path: "/followtwit",
+    pattern: {
+      y: 16,
+      squares: [
+        [0, 1],
+        [1, 3],
+      ],
+    },
+  },
+  {
     id: 9,
     title: "더보기",
     icon: <MoreHorizIcon />,

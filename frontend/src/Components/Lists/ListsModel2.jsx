@@ -25,6 +25,7 @@ import {
 } from "../../Store/List/Action";
 import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
 import Loading from "../Profile/Loading/Loading";
+import "../RightPart/Scrollbar.css";
 
 const style = {
   position: "absolute",
@@ -81,7 +82,7 @@ const ListsModel2 = ({ list, handleClose, open }) => {
       backgroundImage: list.backgroundImage || "",
       //privateMode: list.privateMode || "",
     });
-
+    
     if (document.getElementById("element") !== null) {
       const domNode = document.getElementById("element");
       const element1 = createRoot(domNode);
@@ -89,6 +90,8 @@ const ListsModel2 = ({ list, handleClose, open }) => {
     } else {
       console.log("not exists");
     }
+
+    dispatch(getUserAction(list.id));
 //list.followings, list.hasFollowedLists
   }, []);
 
@@ -133,7 +136,7 @@ const ListsModel2 = ({ list, handleClose, open }) => {
 
   const Element = memo(({ listVal }) => {
     return (
-      <div className="overflow-y-scroll hideScrollbar border-gray-700 h-[20vh] w-full rounded-md">
+      <div className="customeScrollbar overflow-y-scroll hideScrollbar css-scroll border-gray-700 h-[20vh] w-full rounded-md">
         <section className="space-y-5">
           <div
             className="flex justify-between"
@@ -208,7 +211,7 @@ const ListsModel2 = ({ list, handleClose, open }) => {
               </div>
             </div>
 
-            <div className="customeScrollbar overflow-y-scroll hideScrollbar overflow-x-hidden h-[80vh]">
+            <div className="customeScrollbar overflow-y-scroll css-scroll hideScrollbar overflow-x-hidden h-[80vh]">
               <div className="">
                 <div className="w-full">
                   <div className="relative">

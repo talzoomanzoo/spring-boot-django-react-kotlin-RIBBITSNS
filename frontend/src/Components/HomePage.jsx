@@ -7,7 +7,7 @@ import Navigation from "./Navigation/Navigation";
 import Loading from "./Profile/Loading/Loading";
 import RightPart from "./RightPart/RightPart";
 
-const FollowTwit = React.lazy(() => import("./FollowTwit/FollowTwit"));
+const FollowTwitEnc = React.lazy(() => import("./FollowTwit/FollowTwitEnc"));
 const TwitDetail = React.lazy(() => import("./Home/MiddlePart/TwitDetail"));
 const Lists = React.lazy(() => import("./Lists/Lists"));
 const Profile = React.lazy(() => import("./Profile/Profile"));
@@ -40,9 +40,9 @@ const HomePage = () => {
             <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
               <Profile />
             </Suspense>}></Route>
-          <Route path="/followTwit" element={
+          <Route path="/followtwit" element={
             <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
-              <FollowTwit />
+              <FollowTwitEnc />
             </Suspense>}></Route>
           <Route path="/messages" element={
             <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>

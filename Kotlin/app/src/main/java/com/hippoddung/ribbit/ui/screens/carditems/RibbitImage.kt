@@ -1,6 +1,5 @@
 package com.hippoddung.ribbit.ui.screens.carditems
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,7 +24,7 @@ fun RibbitImage(
 ) {
     Box(
         contentAlignment = Alignment.Center,
-        modifier = modifier // fillMaxSize() 사용시 PostIdScreen에서 화면을 꽉 채우는 문제가 발생하여 .wrapContentHeight()으로 변경
+        modifier = modifier // fillMaxSize() 사용시 PostIdScreen 에서 화면을 꽉 채우는 문제가 발생하여 .wrapContentHeight()으로 변경
             .fillMaxWidth()
             .wrapContentHeight()
     ) {

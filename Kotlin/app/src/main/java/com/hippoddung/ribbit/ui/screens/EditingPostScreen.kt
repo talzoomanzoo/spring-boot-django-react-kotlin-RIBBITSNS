@@ -108,7 +108,7 @@ fun EditPostScreen(
 ) {
     val context = LocalContext.current
     var post by remember { mutableStateOf(RibbitPost()) }// state check 실행을 위해 initializing
-    if (postingViewModel.editingPostUiState is EditingPostUiState.Ready) {   // navigation으로 이동시 현재 스크린을 backStack으로 보내면서 재실행, state casting 오류가 발생, state check 삽입
+    if (postingViewModel.editingPostUiState is EditingPostUiState.Ready) {   // navigation 으로 이동시 현재 스크린을 backStack 으로 보내면서 재실행, state casting 오류가 발생, state check 삽입
         post = (postingViewModel.editingPostUiState as EditingPostUiState.Ready).post
     }
     var inputText by remember { mutableStateOf(post.content) }

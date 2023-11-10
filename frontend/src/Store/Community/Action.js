@@ -21,6 +21,12 @@ import {
     FIND_COM_BY_ID_REQUEST,
     FIND_COM_BY_ID_SUCCESS,
     FIND_COM_BY_ID_FAILURE,
+    ADD_USER_SIGNUP_REQUEST,
+    ADD_USER_SIGNUP_SUCCESS,
+    ADD_USER_SIGNUP_FAILURE,
+    REMOVE_FOLLOW_REQUEST,
+    REMOVE_FOLLOW_SUCCESS,
+    REMOVE_FOLLOW_FAILURE,
 } from "./ActionType";
 
 export const createComRequest = () => ({
@@ -64,7 +70,6 @@ export const createCom = (reqData) => {
     };
 };
 
-
 export const getAllComs = () => {
     return async (dispatch) => {
         dispatch(getAllComsRequest());
@@ -101,6 +106,18 @@ export const addUserActionCom = (comId, userId) => async (dispatch) => {
     }
 };
 
+export const addUserActionSignup = (comId, userId) => async (dispatch) => {
+    dispatch({ type: ADD_USER_SIGNUP_REQUEST });
+    //dispatch({type: ADD_USER_USERDTO_REQUEST})
+    try {
+        const response = await api.post(`/api/communities/${comId}/signupok/${userId}`);
+        const com = response.data;
+        dispatch({ type: ADD_USER_SIGNUP_SUCCESS, payload: com });
+    } catch (error) {
+        dispatch({ type: ADD_USER_SIGNUP_FAILURE, payload: error.message });
+    }
+};
+
 export const getUserActionCom = (comId) => async (dispatch) => {
     dispatch({ type: GET_USER_REQUEST });
     try {
@@ -124,6 +141,17 @@ export const addReady = (comId) => async (dispatch) => {
         dispatch({ type: SIGNUP_FAILURE, payload: error.message });
     }
 };
+
+export const removeFollow = (comId) => async(dispatch) => {
+    dispatch({type: REMOVE_FOLLOW_REQUEST});
+    try{
+        const response = await api.post(`/api/communities/${comId}/signout`, comId);
+        const signout = response.data;
+        dispatch({type: REMOVE_FOLLOW_SUCCESS, payload: signout});
+    } catch (error) {
+        dispatch({type: REMOVE_FOLLOW_FAILURE, payload: error.message});
+    }
+}
 
 export const findComById = (comId) =>  async(dispatch) => {
         dispatch({ type: FIND_COM_BY_ID_REQUEST });

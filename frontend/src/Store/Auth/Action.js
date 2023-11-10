@@ -219,7 +219,7 @@ export const searchAll = (query) => async (dispatch) => {
 };
     
 export const updateUserProfile = (reqData) => async (dispatch) => {
-  console.log("updatte profile reqData",reqData)
+  console.log("update profile reqData",reqData)
   dispatch({type:UPDATE_USER_REQUEST})
   try {
     const response = await api.put(`/api/users/update`,reqData);

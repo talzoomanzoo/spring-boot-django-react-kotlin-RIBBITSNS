@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 @Entity
 @Data
 @RequiredArgsConstructor
+
 public class Twit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,17 +36,17 @@ public class Twit {
     private Community community;
 
     @Column(nullable = false)
-    private String content; 
-
-    @OneToMany(mappedBy = "twit", cascade = CascadeType.ALL) // 붙는 엔티티가 List 1, 상대가 M
-    private List<Like> likes = new ArrayList<>(); // 여러개의 twit에 하나의 like 리스트
+    private String content;
+ 
+    @OneToMany(mappedBy = "twit", cascade = CascadeType.DETACH)
+    private List<Like> likes = new ArrayList<>();
 
 //    @OneToMany(mappedBy = "twit", cascade = CascadeType.ALL) // 붙는 엔티티가 List 1, 상대가 M
 //    private List<Notification> notifications = new ArrayList<>(); // 여러개의 twit에 하나의 like 리스트
 
-    @OneToMany(cascade = {CascadeType.ALL, CascadeType.REMOVE}) // 붙는 엔티티가 List 1, 상대가 M
+    @OneToMany(cascade = {CascadeType.ALL, CascadeType.REMOVE})
     @JoinColumn(name = "twit_id")
-    private List<Twit> replyTwits = new ArrayList<>(); //여러개의 twit에 하나의 reply 리스트
+    private List<Twit> replyTwits = new ArrayList<>();
 
     @ManyToMany(cascade = CascadeType.DETACH)
     private List<User> retwitUser = new ArrayList<>();
@@ -55,21 +56,17 @@ public class Twit {
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
-
     private LocalDateTime retwitAt;
-
     private String editedAt; 
     
     @Column(nullable = false)
     private int viewCount;
-
     private String image; 
     private String video;
     private String thumbnail;
     
     @Column(nullable = false)
     private boolean isEdited = false; 
-
     private String location;
     
     private boolean isCom;
@@ -78,7 +75,6 @@ public class Twit {
     private boolean is_liked = false;
     private boolean is_notification = false; 
     private boolean is_retwit = false;
-    
     private String ethicrate; //윤리수치 저장
     private int ethiclabel; //수치중 가장 큰것을 라벨값으로 저장
     private int ethicrateMAX;// 최고수치 저장

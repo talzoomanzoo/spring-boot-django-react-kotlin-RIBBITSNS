@@ -41,7 +41,7 @@ class AuthAuthenticator @Inject constructor(
 
             if (!newToken.isSuccessful || newToken.body() == null) { //Couldn't refresh the token, so restart the login process
                 tokenManager.deleteToken()
-            }else{}
+            }
 
             newToken.body()?.let {
                 tokenManager.saveToken(it.jwt)

@@ -5,6 +5,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -25,21 +26,28 @@ fun ListIdPostsGrid(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    val comparator = compareByDescending<RibbitPost> { it.id }
+    if (posts.isEmpty()) {
+        Text(
+            text = "There is no Ribbit from following users of this list",
+            modifier = modifier
+        )
+    } else {
+        val comparator = compareByDescending<RibbitPost> { it.id }
 
-    val sortedRibbitPost = remember(posts, comparator) {
-        posts.sortedWith(comparator)
-    }   // LazyColumn items에 List를 바로 주는 것이 아니라 Comparator로 정렬하여 remember로 기억시켜서 recomposition을 방지하여 성능을 올린다.
-    LazyColumn(modifier = modifier) {
-        items(items = sortedRibbitPost, key = { post -> post.id }) {
-            RibbitCard(
-                post = it,
-                getCardViewModel = getCardViewModel,
-                myId = myId,
-                navController = navController,
-                userViewModel = userViewModel,
-                modifier = modifier
-            )
+        val sortedRibbitPost = remember(posts, comparator) {
+            posts.sortedWith(comparator)
+        }   // LazyColumn items 에 List 를 바로 주는 것이 아니라 Comparator 로 정렬하여 remember 로 기억시켜서 recomposition 을 방지하여 성능을 올린다.
+        LazyColumn(modifier = modifier) {
+            items(items = sortedRibbitPost, key = { post -> post.id }) {
+                RibbitCard(
+                    post = it,
+                    getCardViewModel = getCardViewModel,
+                    myId = myId,
+                    navController = navController,
+                    userViewModel = userViewModel,
+                    modifier = modifier
+                )
+            }
         }
     }
 }
