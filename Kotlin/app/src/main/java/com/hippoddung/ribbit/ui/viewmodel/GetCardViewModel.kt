@@ -71,6 +71,12 @@ sealed interface GetListIdPostsUiState {
     object Loading : GetListIdPostsUiState
 }
 
+sealed interface GetCommuIdPostsUiState {
+    data class Success( val posts: List<RibbitPost> ) : GetCommuIdPostsUiState
+    data class Error(val errorCode: String) : GetCommuIdPostsUiState
+    object Loading : GetCommuIdPostsUiState
+}
+
 sealed interface PostReplyUiState {
     object Ready : PostReplyUiState
     object Loading : PostReplyUiState
@@ -96,6 +102,8 @@ class GetCardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으
     var userIdClassificationUiState: UserIdClassificationUiState by mutableStateOf(UserIdClassificationUiState.Ribbit)
 
     var getListIdPostsUiState: GetListIdPostsUiState by mutableStateOf(GetListIdPostsUiState.Loading)
+
+    var getCommuIdPostsUiState: GetCommuIdPostsUiState by mutableStateOf(GetCommuIdPostsUiState.Loading)
 
     var replyPostIdUiState: Int? by mutableStateOf(null)
     var postReplyUiState: PostReplyUiState by mutableStateOf(PostReplyUiState.Ready)
@@ -547,6 +555,33 @@ class GetCardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으
                 }
             }
             Log.d("HippoLog, GetCardViewModel", "getListIdPosts, $getListIdPostsUiState")
+        }
+    }
+
+    fun getCommuIdPosts(commuId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            getCommuIdPostsUiState = GetCommuIdPostsUiState.Loading
+            userIdClassificationUiState = UserIdClassificationUiState.Ribbit
+            Log.d("HippoLog, GetCardViewModel", "getCommuIdPosts, $getCommuIdPostsUiState")
+            getCommuIdPostsUiState = try {
+                GetCommuIdPostsUiState.Success( posts = ribbitRepository.getCommuIdPosts(commuId) )
+            } catch (e: IOException) {
+                Log.d("HippoLog, GetCardViewModel", "getCommuIdPosts: ${e.stackTrace}, ${e.message}")
+                GetCommuIdPostsUiState.Error(e.message.toString())
+
+            } catch (e: ExceptionInInitializerError) {
+                Log.d("HippoLog, GetCardViewModel", "getCommuIdPosts: ${e.stackTrace}, ${e.message}")
+                GetCommuIdPostsUiState.Error(e.message.toString())
+
+            } catch (e: HttpException) {
+                Log.d("HippoLog, GetCardViewModel", "getCommuIdPosts: ${e.stackTrace}, ${e.code()}, $e")
+                if (e.code() == 500) {
+                    GetCommuIdPostsUiState.Error(e.code().toString())
+                } else {
+                    GetCommuIdPostsUiState.Error(e.message.toString())
+                }
+            }
+            Log.d("HippoLog, GetCardViewModel", "getCommuIdPosts, $getCommuIdPostsUiState")
         }
     }
 }

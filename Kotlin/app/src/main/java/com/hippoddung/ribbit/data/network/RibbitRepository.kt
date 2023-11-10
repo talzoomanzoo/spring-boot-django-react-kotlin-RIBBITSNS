@@ -41,4 +41,7 @@ class RibbitRepository @Inject constructor(
     // List Posts
     suspend fun getListIdPosts(listId: Int) = ribbitApiService.getListIdPosts(listId)
 
+    // Commu Posts
+    suspend fun getCommuIdPosts(commuId: Int) = ribbitApiService.getCommuIdPosts(commuId)
+
 }

@@ -28,6 +28,7 @@ import com.hippoddung.ribbit.ui.screens.carditems.RibbitCard
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
+import com.hippoddung.ribbit.ui.viewmodel.CommuViewModel
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.ListViewModel
 import com.hippoddung.ribbit.ui.viewmodel.PostIdUiState
@@ -44,6 +45,7 @@ fun PostIdScreen(
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
     listViewModel: ListViewModel,
+    commuViewModel: CommuViewModel,
     myId: Int,
     modifier: Modifier = Modifier
 ) {
@@ -63,6 +65,7 @@ fun PostIdScreen(
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
                 listViewModel = listViewModel,
+                commuViewModel = commuViewModel,
 //                scrollBehavior = scrollBehavior,
                 navController = navController,
                 post = post,
@@ -87,6 +90,7 @@ fun PostIdSuccessScreen(
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
     listViewModel: ListViewModel,
+    commuViewModel: CommuViewModel,
 //    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
     post: RibbitPost,
@@ -108,6 +112,7 @@ fun PostIdSuccessScreen(
                 userViewModel = userViewModel,
                 authViewModel = authViewModel,
                 listViewModel = listViewModel,
+                commuViewModel = commuViewModel,
 //                scrollBehavior = scrollBehavior,
                 navController = navController,
                 modifier = modifier

@@ -93,6 +93,11 @@ interface RibbitApiService {
     suspend fun getListIdPosts(
         @Path("listId") listId : Int
     ): List<RibbitPost>
+
+    @GET("/api/twits/{comId}/comTwit")
+    suspend fun getCommuIdPosts(
+        @Path("comId") commuId : Int
+    ): List<RibbitPost>
 }
 
 //    @GET("auth/refresh")

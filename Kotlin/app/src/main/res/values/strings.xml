@@ -31,6 +31,10 @@
     <string name="list_id_screen">ListIdScreen</string>
     <string name="creating_list_screen">CreatingListScreen</string>
     <string name="editing_list_screen">EditingListScreen</string>
+    <string name="commu_screen">CommuScreen</string>
+    <string name="commu_id_screen">CommuIdScreen</string>
+    <string name="creating_commu_screen">CreatingCommuScreen</string>
+    <string name="editing_commu_screen">EditingCommuScreen</string>
 
     <!--    Auth   -->
     <string name="login">Login</string>
@@ -59,9 +63,14 @@
     <string name="pW">PW</string>
     <string name="website">Website</string>
 
-    <!--    List   -->
+    <!--    List Screen   -->
     <string name="create_list">Create List</string>
     <string name="edit_list">Edit List</string>
     <string name="list_background_image">List Background Image</string>
+
+    <!--    Commu Screen   -->
+    <string name="create_commu">Create Commu</string>
+    <string name="edit_commu">Edit Commu</string>
+    <string name="commu_background_image">Commu Background Image</string>
 
 </resources>

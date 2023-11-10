@@ -1,4 +1,4 @@
-package com.hippoddung.ribbit.ui.screens.listscreens
+package com.hippoddung.ribbit.ui.screens.commuscreens
 
 import android.annotation.SuppressLint
 import android.os.Build
@@ -27,16 +27,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.hippoddung.ribbit.network.bodys.RibbitListItem
+import com.hippoddung.ribbit.network.bodys.RibbitCommuItem
 import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.screens.RibbitTopAppBar
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
-import com.hippoddung.ribbit.ui.viewmodel.CommuViewModel
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
-import com.hippoddung.ribbit.ui.viewmodel.ListClassificationUiState
-import com.hippoddung.ribbit.ui.viewmodel.ListUiState
+import com.hippoddung.ribbit.ui.viewmodel.CommuClassificationUiState
+import com.hippoddung.ribbit.ui.viewmodel.CommuUiState
+import com.hippoddung.ribbit.ui.viewmodel.CommuViewModel
 import com.hippoddung.ribbit.ui.viewmodel.ListViewModel
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
@@ -44,7 +44,7 @@ import kotlinx.coroutines.runBlocking
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ListScreen(
+fun CommuScreen(
     navController: NavHostController,
     getCardViewModel: GetCardViewModel,
     tokenViewModel: TokenViewModel,
@@ -54,15 +54,15 @@ fun ListScreen(
     commuViewModel: CommuViewModel,
     modifier: Modifier = Modifier
 ) {
-    when (listViewModel.listUiState) {
-        is ListUiState.Loading -> {
-            Log.d("HippoLog, ListScreen", "Loading")
+    when (commuViewModel.commuUiState) {
+        is CommuUiState.Loading -> {
+            Log.d("HippoLog, CommuScreen", "Loading")
             LoadingScreen(modifier = modifier)
         }
-        is ListUiState.Success -> {
-            Log.d("HippoLog, ListScreen", "Success")
-            val listItems = (listViewModel.listUiState as ListUiState.Success).listItems
-            ListSuccessScreen(
+        is CommuUiState.Success -> {
+            Log.d("HippoLog, CommuScreen", "Success")
+            val commuItems = (commuViewModel.commuUiState as CommuUiState.Success).commuItems
+            CommuSuccessScreen(
                 getCardViewModel = getCardViewModel,
                 authViewModel = authViewModel,
                 tokenViewModel = tokenViewModel,
@@ -70,12 +70,12 @@ fun ListScreen(
                 listViewModel = listViewModel,
                 commuViewModel = commuViewModel,
                 navController = navController,
-                listItems = listItems,
+                commuItems = commuItems,
                 modifier = modifier
             )
         }
-        is ListUiState.Error -> {
-            Log.d("HippoLog, ListScreen", "Error")
+        is CommuUiState.Error -> {
+            Log.d("HippoLog, CommuScreen", "Error")
             ErrorScreen(modifier = modifier)
         }
     }
@@ -84,7 +84,7 @@ fun ListScreen(
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun ListSuccessScreen(
+fun CommuSuccessScreen(
     getCardViewModel: GetCardViewModel,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
@@ -92,15 +92,15 @@ fun ListSuccessScreen(
     listViewModel: ListViewModel,
     commuViewModel: CommuViewModel,
     navController: NavHostController,
-    listItems: List<RibbitListItem>,
+    commuItems: List<RibbitCommuItem>,
     modifier: Modifier
 ) {
-    var filteredListItems by remember { mutableStateOf(listOf<RibbitListItem>()) }
-    filteredListItems = when(listViewModel.listClassificationUiState){
-        is ListClassificationUiState.PublicList ->  // listClassificationUiState 가 PublicList 인 경우
-            listItems.filter { it.privateMode == false}   // RibbitListItem.privateMode 가 false 인 경우만 필터
-        is ListClassificationUiState.PrivateList ->  // listClassificationUiState 가 PrivateList 인 경우
-            listItems.filter { it.privateMode == true}  // RibbitListItem.privateMode 가 true 인 경우만 필터
+    var filteredCommuItems by remember { mutableStateOf(listOf<RibbitCommuItem>()) }
+    filteredCommuItems = when(commuViewModel.commuClassificationUiState){
+        is CommuClassificationUiState.PublicCommu ->  // commuClassificationUiState 가 PublicCommu 인 경우
+            commuItems.filter { it.privateMode == false}   // RibbitCommuItem.privateMode 가 false 인 경우만 필터
+        is CommuClassificationUiState.PrivateCommu ->  // commuClassificationUiState 가 PrivateCommu 인 경우
+            commuItems.filter { it.privateMode == true}  // RibbitCommuItem.privateMode 가 true 인 경우만 필터
     }
     val myId by remember { mutableStateOf(userViewModel.myProfile.value?.id!!) }    // 로그인시 저장한 정보기 때문에 반드시 값이 존재함.
     Scaffold(
@@ -119,7 +119,7 @@ fun ListSuccessScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { navController.navigate(RibbitScreen.CreatingListScreen.name) },
+                onClick = { navController.navigate(RibbitScreen.CreatingCommuScreen.name) },
                 modifier = modifier
                     .padding(14.dp)
             ) {
@@ -138,33 +138,33 @@ fun ListSuccessScreen(
                 .padding(it)
         ) {
             Box(modifier = modifier) {
-                ListGrid(
+                CommuGrid(
                     myId = myId,
-                    filteredListItems = filteredListItems,
+                    filteredCommuItems = filteredCommuItems,
                     getCardViewModel = getCardViewModel,
-                    listViewModel = listViewModel,
+                    commuViewModel = commuViewModel,
                     navController = navController,
                     modifier = modifier
                 )
             }
         }
     }
-    if (listViewModel.deleteListClickedUiState) {
+    if (commuViewModel.deleteCommuClickedUiState) {
         AlertDialog(
-            onDismissRequest = { listViewModel.deleteListClickedUiState = false },
+            onDismissRequest = { commuViewModel.deleteCommuClickedUiState = false },
             confirmButton = {
                 OutlinedButton(
                     onClick = {
-                        listViewModel.deleteListClickedUiState = false
+                        commuViewModel.deleteCommuClickedUiState = false
                         runBlocking {   // 정확한 삭제정보 표시를 위해 동기로 실행
-                            Log.d("HippoLog, ListScreen", "Delete List")
-                            listViewModel.deleteListIdState?.let { listViewModel.deleteListIdList(it) }
+                            Log.d("HippoLog, CommuScreen", "Delete Commu")
+                            commuViewModel.deleteCommuIdState?.let { commuViewModel.deleteCommuIdCommu(it) }
                         }
-                        listViewModel.getLists()
+                        commuViewModel.getCommus()
                     },
                     content = {
                         Text(
-                            text = "Delete List",
+                            text = "Delete Commu",
                             color = Color(0xFF006400),
                             fontSize = 14.sp,
                             modifier = modifier
@@ -175,7 +175,7 @@ fun ListSuccessScreen(
             },
             dismissButton = {
                 OutlinedButton(
-                    onClick = { listViewModel.deleteListClickedUiState = false },
+                    onClick = { commuViewModel.deleteCommuClickedUiState = false },
                     content = {
                         Text(
                             text = "Cancel",
@@ -189,7 +189,7 @@ fun ListSuccessScreen(
             },
             text = {
                 Text(
-                    text = "Are you really going to delete this list?",
+                    text = "Are you really going to delete this commu?",
                     modifier = modifier
                 )
             },

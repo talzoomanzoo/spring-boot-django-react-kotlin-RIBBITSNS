@@ -58,3 +58,25 @@
     -webkit-transform: translateY(0) scale(1,1);
             transform: translateY(0) scale(1,1);
   } */
+
+.card {
+  border: 2px solid #6A1B94;
+  background-color: rgb(106, 27, 154, 0.1);
+  min-height: 250px;
+  max-height: 250px;
+  width: 200px;
+  margin: 20px 25px 15px 25px;
+  padding: 10px;
+}
+
+.swiper {
+  width: 100%;
+  height: 100%;
+}
+.swiper-slide {
+
+  /* Center slide text vertically */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

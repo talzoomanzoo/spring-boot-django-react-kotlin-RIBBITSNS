@@ -25,6 +25,10 @@ import com.hippoddung.ribbit.ui.screens.CreatingPostScreen
 import com.hippoddung.ribbit.ui.screens.EditingPostScreen
 import com.hippoddung.ribbit.ui.screens.authscreens.LoginScreen
 import com.hippoddung.ribbit.ui.screens.authscreens.SignUpScreen
+import com.hippoddung.ribbit.ui.screens.commuscreens.CommuIdScreen
+import com.hippoddung.ribbit.ui.screens.commuscreens.CommuScreen
+import com.hippoddung.ribbit.ui.screens.commuscreens.CreatingCommuScreen
+import com.hippoddung.ribbit.ui.screens.commuscreens.EditingCommuScreen
 import com.hippoddung.ribbit.ui.screens.homescreens.HomeScreen
 import com.hippoddung.ribbit.ui.screens.listscreens.CreatingListScreen
 import com.hippoddung.ribbit.ui.screens.listscreens.EditingListScreen
@@ -37,6 +41,7 @@ import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthUiState
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
+import com.hippoddung.ribbit.ui.viewmodel.CommuViewModel
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.ListViewModel
 import com.hippoddung.ribbit.ui.viewmodel.MyProfileUiState
@@ -57,6 +62,10 @@ enum class RibbitScreen(@StringRes val title: Int) {
     ListIdScreen(title = R.string.list_id_screen),
     CreatingListScreen(title = R.string.creating_list_screen),
     EditingListScreen(title = R.string.editing_list_screen),
+    CommuScreen(title = R.string.commu_screen),
+    CommuIdScreen(title = R.string.commu_id_screen),
+    CreatingCommuScreen(title = R.string.creating_commu_screen),
+    EditingCommuScreen(title = R.string.editing_commu_screen),
     LoadingScreen(title = R.string.loading_screen),
     ErrorScreen(title = R.string.error_screen)
 }
@@ -108,6 +117,7 @@ fun RibbitScreen(
     navController: NavHostController = rememberNavController()
 ) {
     val listViewModel: ListViewModel = hiltViewModel()
+    val commuViewModel: CommuViewModel = hiltViewModel()
     var myId by remember { mutableStateOf(0) }
     if(userViewModel.myProfileUiState is MyProfileUiState.Exist){   // 앱 시작시 casting 이 문제되는 경우가 있어 state check 를 넣어줌.
         myId = (userViewModel.myProfileUiState as MyProfileUiState.Exist).myProfile.id!!
@@ -135,12 +145,14 @@ fun RibbitScreen(
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
                 listViewModel = listViewModel,
+                commuViewModel = commuViewModel,
                 myId = myId,   // myProfile 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 것으로 가정한다.
                 modifier = modifier
             )
         }
+
         composable(route = RibbitScreen.PostIdScreen.name) {
-            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> TwitIdScreen")
+            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> PostIdScreen")
             PostIdScreen(
                 navController = navController,
                 getCardViewModel = getCardViewModel,
@@ -148,10 +160,12 @@ fun RibbitScreen(
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
                 listViewModel = listViewModel,
+                commuViewModel = commuViewModel,
                 myId = myId,   // 유저 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 것으로 가정한다.
                 modifier = modifier
             )
         }
+
         composable(route = RibbitScreen.ProfileScreen.name) {
             Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> ProfileScreen")
             ProfileScreen(
@@ -161,6 +175,7 @@ fun RibbitScreen(
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
                 listViewModel = listViewModel,
+                commuViewModel = commuViewModel,
                 myId = myId,
                 modifier = modifier
             )
@@ -174,6 +189,7 @@ fun RibbitScreen(
                 modifier = modifier
             )
         }
+
         composable(route = RibbitScreen.CreatingPostScreen.name) {
             Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> CreatingPostScreen")
             CreatingPostScreen(
@@ -190,6 +206,7 @@ fun RibbitScreen(
                 modifier = modifier
             )
         }
+
         composable(route = RibbitScreen.ListScreen.name) {
             Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> ListScreen")
             ListScreen(
@@ -199,11 +216,12 @@ fun RibbitScreen(
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
                 listViewModel = listViewModel,
+                commuViewModel = commuViewModel,
                 modifier = modifier
             )
         }
         composable(route = RibbitScreen.ListIdScreen.name) {
-            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> TwitIdScreen")
+            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> ListIdScreen")
             ListIdScreen(
                 navController = navController,
                 getCardViewModel = getCardViewModel,
@@ -211,6 +229,7 @@ fun RibbitScreen(
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
                 listViewModel = listViewModel,
+                commuViewModel = commuViewModel,
                 myId = myId,   // 유저 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 것으로 가정한다.
                 modifier = modifier
             )
@@ -232,6 +251,52 @@ fun RibbitScreen(
                 modifier = modifier
             )
         }
+
+        composable(route = RibbitScreen.CommuScreen.name) {
+            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> CommuScreen")
+            CommuScreen(
+                navController = navController,
+                getCardViewModel = getCardViewModel,
+                tokenViewModel = tokenViewModel,
+                authViewModel = authViewModel,
+                userViewModel = userViewModel,
+                listViewModel = listViewModel,
+                commuViewModel = commuViewModel,
+                modifier = modifier
+            )
+        }
+        composable(route = RibbitScreen.CommuIdScreen.name) {
+            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> CommuIdScreen")
+            CommuIdScreen(
+                navController = navController,
+                getCardViewModel = getCardViewModel,
+                tokenViewModel = tokenViewModel,
+                authViewModel = authViewModel,
+                userViewModel = userViewModel,
+                listViewModel = listViewModel,
+                commuViewModel = commuViewModel,
+                myId = myId,   // 유저 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 것으로 가정한다.
+                modifier = modifier
+            )
+        }
+        composable(route = RibbitScreen.CreatingCommuScreen.name) {
+            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> CreatingCommuScreen")
+            CreatingCommuScreen(
+                navController = navController,
+                userViewModel = userViewModel,
+                commuViewModel = commuViewModel,
+                modifier = modifier
+            )
+        }
+        composable(route = RibbitScreen.EditingCommuScreen.name) {
+            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> EditingCommuScreen")
+            EditingCommuScreen(
+                navController = navController,
+                commuViewModel = commuViewModel,
+                modifier = modifier
+            )
+        }
+
         composable(route = RibbitScreen.LoadingScreen.name) {
             Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> LoadingScreen")
             LoadingScreen(
