@@ -9,7 +9,6 @@ import androidx.lifecycle.viewModelScope
 import com.hippoddung.ribbit.data.local.AuthManager
 import com.hippoddung.ribbit.data.network.AuthRepository
 import com.hippoddung.ribbit.network.ApiResponse
-import com.hippoddung.ribbit.network.bodys.User
 import com.hippoddung.ribbit.network.bodys.requestbody.AuthRequest
 import com.hippoddung.ribbit.network.bodys.requestbody.SignUpRequest
 import com.hippoddung.ribbit.network.bodys.responsebody.AuthResponse
@@ -17,8 +16,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import retrofit2.HttpException
-import java.io.IOException
 import javax.inject.Inject
 
 
@@ -43,10 +40,10 @@ class AuthViewModel @Inject constructor(
     private val authManager: AuthManager,
     private val authRepository: AuthRepository
 ) : BaseViewModel() {
-    var authUiState: AuthUiState by mutableStateOf(AuthUiState.Logout)  // authUiState의 경우 <ApiResponse<AuthResponse>>를 관찰하는 observer에게 관리를 위임한다.
+    var authUiState: AuthUiState by mutableStateOf(AuthUiState.Logout)  // authUiState 의 경우 <ApiResponse<AuthResponse>>를 관찰하는 observer 에게 관리를 위임한다.
 
-    // 현재 TokenUiState가 AthUiState와 동일하게 기능하기 때문에 AthUiState 를 사용하는 것을 중지하고 tokenUiState 를 사용하기로 한다.
-    // LoginLoading(JWT를 받아오는 것에 시간이 걸림.)을 위해 다시 사용하기로 함.
+    // 현재 TokenUiState 가 AthUiState 와 동일하게 기능하기 때문에 AthUiState 를 사용하는 것을 중지하고 tokenUiState 를 사용하기로 한다.
+    // LoginLoading(JWT 를 받아오는 것에 시간이 걸림.)을 위해 다시 사용하기로 함.
     val authResponse: MutableLiveData<ApiResponse<AuthResponse>> by lazy {
         MutableLiveData<ApiResponse<AuthResponse>>()
     }
@@ -57,10 +54,10 @@ class AuthViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            authManager.getEmail().collect { // DataStore 에서 mapping 해서 return 한 flow 를 잡아온다.
+            authManager.getEmail().collect { // DataStore 에서 mapping 해서 return 한 flow 를 가져온다.
                 withContext(Dispatchers.Main) {
                     if (it != null) {    // email 정보가 있는 경우
-                        emailUiState = EmailUiState.Exist(it)   // emailUiState를 업데이트한다.
+                        emailUiState = EmailUiState.Exist(it)   // emailUiState 를 업데이트한다.
                         Log.d(
                             "HippoLog, AuthViewModel",
                             "init DataStore 에서 emailUiState 업데이트 $emailUiState"
@@ -78,7 +75,7 @@ class AuthViewModel @Inject constructor(
             authManager.getPW().collect {    // DataStore 에서 mapping 해서 return 한 flow 를 잡아온다.
                 withContext(Dispatchers.Main) {
                     if (it != null) {    // pW 정보가 있는 경우
-                        pWUiState = PWUiState.Exist(it) // pWUiState를 업데이트한다.
+                        pWUiState = PWUiState.Exist(it) // pWUiState 를 업데이트한다.
                         Log.d(
                             "HippoLog, AuthViewModel",
                             "init DataStore 에서 pWUiState 업데이트 $pWUiState"
@@ -91,7 +88,7 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun saveLoginInfo(email: String, pW: String) {   // Login 시 DataStore에 email 과 pW를 저장.
+    fun saveLoginInfo(email: String, pW: String) {   // Login 시 DataStore 에 email 과 pW를 저장.
         viewModelScope.launch(Dispatchers.IO) {
             authManager.saveEmail(email)
             authManager.savePW(pW)
@@ -118,7 +115,7 @@ class AuthViewModel @Inject constructor(
     fun login(authRequest: AuthRequest) {
         Log.d("HippoLog, AuthViewModel", "로그인 시도")
         authUiState = AuthUiState.LoginLoading
-        loginRequest(authRequest)   // loginRequest를 보내고 응답이 오면 authResponse를 관찰하는 observer에서 authUiState를 업데이트하도록 함.
+        loginRequest(authRequest)   // loginRequest 를 보내고 응답이 오면 authResponse 를 관찰하는 observer 에서 authUiState 를 업데이트하도록 함.
     }
 
     private fun loginRequest(

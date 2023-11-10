@@ -16,15 +16,15 @@ interface UploadCloudinaryApiService {
     @POST("image/upload")
     suspend fun uploadImageCloudinary(
         @Part file: MultipartBody.Part,
-        @Part("upload_preset") upload_preset: RequestBody,
-        @Part("cloud_name") cloud_name: RequestBody
+        @Part("upload_preset") uploadPreset: RequestBody,
+        @Part("cloud_name") cloudName: RequestBody
     ): UploadCloudinaryResponse
 
     @Multipart
     @POST("video/upload")
     suspend fun uploadVideoCloudinary(
         @Part file: MultipartBody.Part,
-        @Part("upload_preset") upload_preset: RequestBody,
-        @Part("cloud_name") cloud_name: RequestBody
+        @Part("upload_preset") uploadPreset: RequestBody,
+        @Part("cloud_name") cloudName: RequestBody
     ): UploadCloudinaryResponse
 }

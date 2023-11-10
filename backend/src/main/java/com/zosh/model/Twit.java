@@ -4,8 +4,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -58,21 +56,17 @@ public class Twit {
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
-
     private LocalDateTime retwitAt;
-
     private String editedAt; 
     
     @Column(nullable = false)
     private int viewCount;
-
     private String image; 
     private String video;
     private String thumbnail;
     
     @Column(nullable = false)
     private boolean isEdited = false; 
-
     private String location;
     
     private boolean isCom;
@@ -81,7 +75,6 @@ public class Twit {
     private boolean is_liked = false;
     private boolean is_notification = false; 
     private boolean is_retwit = false;
-    
     private String ethicrate; //윤리수치 저장
     private int ethiclabel; //수치중 가장 큰것을 라벨값으로 저장
     private int ethicrateMAX;// 최고수치 저장

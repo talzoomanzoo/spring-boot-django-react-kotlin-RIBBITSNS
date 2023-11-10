@@ -30,8 +30,6 @@ function App() {
   useEffect(()=>{
 setCurrentTheme(localStorage.getItem("theme"))
   },[theme.currentTheme])
-
-  console.log("them ",theme.currentTheme)
   
   return (
     <ThemeProvider theme={currentTheme==="dark"? darkTheme:lightTheme} className="">

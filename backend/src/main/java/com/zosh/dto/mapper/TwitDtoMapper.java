@@ -42,7 +42,6 @@ public class TwitDtoMapper {
 		twitDto.setReplyTwits(toTwitDtos(twit.getReplyTwits(), reqUser));
 		twitDto.setVideo(twit.getVideo());
 		twitDto.setLocation(twit.getLocation());
-		
 		twitDto.setEthicrate(twit.getEthicrate());
 		twitDto.setEthiclabel(twit.getEthiclabel());
 		twitDto.setEthicrateMAX(twit.getEthicrateMAX());
@@ -51,9 +50,7 @@ public class TwitDtoMapper {
 	}
 	
 	public static List<TwitDto> toTwitDtos(List<Twit> twits, User reqUser) {
-		
 		List<TwitDto> twitDtos=new ArrayList<>();
-		
 		for(Twit twit : twits) {
 			TwitDto twitDto=toReplyTwitDto(twit, reqUser);
 			twitDtos.add(twitDto);
@@ -90,15 +87,10 @@ public class TwitDtoMapper {
 		twitDto.setRetwitUsersId(retwitUserId);
 		twitDto.setVideo(twit.getVideo());
 		twitDto.setLocation(twit.getLocation());
-		
 		twitDto.setEthicrate(twit.getEthicrate());
 		twitDto.setEthiclabel(twit.getEthiclabel());
 		twitDto.setEthicrateMAX(twit.getEthicrateMAX());
 		
 		return twitDto;
 	}
-	
-	
-
-
 }

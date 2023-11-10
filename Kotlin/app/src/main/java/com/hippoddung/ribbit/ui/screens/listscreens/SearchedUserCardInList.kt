@@ -1,9 +1,11 @@
-package com.hippoddung.ribbit.ui.screens.searchitems
+package com.hippoddung.ribbit.ui.screens.listscreens
 
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,12 +14,19 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -31,31 +40,23 @@ import com.hippoddung.ribbit.R
 import com.hippoddung.ribbit.network.bodys.User
 import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
+import com.hippoddung.ribbit.ui.viewmodel.ListViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun SearchedUserCard(
+fun SearchedUserCardInList(
     user: User,
-    getCardViewModel: GetCardViewModel,
-    userViewModel: UserViewModel,
-    navController: NavHostController,
+    listViewModel: ListViewModel,
     modifier: Modifier = Modifier
 ) {
+    Log.d("HippoLog, SearchedUserCardInList", "$user")
     Row(
         verticalAlignment = Alignment.Bottom,
         modifier = modifier
             .fillMaxWidth()
-            .height(64.dp)
+            .height(80.dp)
             .padding(start = 20.dp, top = 12.dp, end = 20.dp, bottom = 12.dp)
-            .clickable {
-                Log.d("HippoLog, UserCard", "UserCardClick")
-                user.id?.let {
-                    getCardViewModel.getUserIdPosts(userId = it)
-                    userViewModel.getProfile(userId = it)
-                }
-                navController.navigate(RibbitScreen.ProfileScreen.name)
-            }
     ) {
         Box(
             contentAlignment = Alignment.Center,
@@ -79,20 +80,34 @@ fun SearchedUserCard(
             )
         }
         Row(
-            modifier = modifier.padding(start = 12.dp,bottom = 4.dp)
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(start = 12.dp, bottom = 4.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                text = "${user.fullName}",
-                fontSize = 14.sp,
-                modifier = modifier.padding(start = 4.dp, end = 4.dp),
-                style = MaterialTheme.typography.headlineSmall
-            )
-            Log.d("HippoLog, UserCard", "$user")
-            Text(
-                text = user.email,
-                fontSize = 14.sp,
-                modifier = modifier.padding(start = 4.dp, end = 4.dp),
-                style = MaterialTheme.typography.headlineSmall
+            Row(modifier = modifier) {
+                Text(
+                    text = "${user.fullName}",
+                    fontSize = 14.sp,
+                    modifier = modifier.padding(start = 4.dp, end = 4.dp),
+                    style = MaterialTheme.typography.headlineSmall
+                )
+                Text(
+                    text = user.email,
+                    fontSize = 14.sp,
+                    modifier = modifier.padding(start = 4.dp, end = 4.dp),
+                    style = MaterialTheme.typography.headlineSmall
+                )
+            }
+            IconButton(
+                onClick = {
+                    Log.d("HippoLog, SearchedUserCardInList", "UserCardInListClick")
+                    user.id?.let {
+                        listViewModel.postAddUser(it)
+                    }
+                },
+                content = {Icon(imageVector = Icons.Default.Add, contentDescription = "Add user to list button")},
+                modifier = modifier
             )
         }
     }

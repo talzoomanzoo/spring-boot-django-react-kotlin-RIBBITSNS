@@ -43,7 +43,7 @@ fun RibbitVideo(
     var videoThumbnail: Bitmap? by remember { mutableStateOf(null) }
     var isCodeExecuted by remember { mutableStateOf(false) }
     if (!isCodeExecuted) {
-        // videoThumbnail을 불러오는 과정에서 recomposition이 발생하고 이에 따라 다시 videoThumbnail을 실행하는 무한루프 발견
+        // videoThumbnail 을 불러오는 과정에서 recomposition 이 발생하고 이에 따라 다시 videoThumbnail 을 실행하는 무한루프 발견
         // 해결을 위한 1회 실행 코드 삽입
         rememberCoroutineScope().launch(Dispatchers.IO) {
             try {
@@ -58,7 +58,7 @@ fun RibbitVideo(
         }
     }
 
-    if (isVideoPlayed) {    // video가 플레이된 경우
+    if (isVideoPlayed) {    // video 가 플레이된 경우
         Box(
             contentAlignment = Alignment.Center,
             modifier = modifier
@@ -77,7 +77,7 @@ fun RibbitVideo(
                 .fillMaxWidth()
                 .wrapContentHeight()
         ) {
-            if (videoThumbnail == null) {   // thumbnail을 불러오지 못한 경우
+            if (videoThumbnail == null) {   // thumbnail 을 불러오지 못한 경우
                 Image(
                     painter = painterResource(R.drawable.loading_img),
                     contentDescription = "Loading",
@@ -87,7 +87,7 @@ fun RibbitVideo(
                 )
             } else {
                 Image(
-                    bitmap = videoThumbnail!!.asImageBitmap(),  // thumbnail을 불러온 경우
+                    bitmap = videoThumbnail!!.asImageBitmap(),  // thumbnail 을 불러온 경우
                     contentDescription = "Success",
                     contentScale = ContentScale.Fit,
                     modifier = modifier

@@ -3,7 +3,6 @@ package com.hippoddung.ribbit.ui.viewmodel
 import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
 import android.util.Log
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -11,7 +10,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hippoddung.ribbit.data.network.RibbitRepository
 import com.hippoddung.ribbit.network.bodys.RibbitPost
-import com.hippoddung.ribbit.network.bodys.User
 import com.hippoddung.ribbit.network.bodys.requestbody.ReplyRequest
 import com.hippoddung.ribbit.ui.RibbitScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -86,7 +84,7 @@ sealed interface ReplyClickedUiState {
 }
 
 @HiltViewModel
-class GetCardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으나 ViewModel의 기능을 적절히 설명하기 위해 이름을 변경
+class GetCardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으나 ViewModel 의 기능을 적절히 설명하기 위해 이름을 변경
     private val ribbitRepository: RibbitRepository
 ) : ViewModel() {
     var homeUiState: HomeUiState by mutableStateOf(HomeUiState.Loading)
@@ -106,13 +104,13 @@ class GetCardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으
     private var _postsData = MutableStateFlow<List<RibbitPost>>(listOf())
     val postsData: StateFlow<List<RibbitPost>> = _postsData.asStateFlow()
 
-//    var whereReplyClickedUiState: WhereReplyClickedUiState by mutableStateOf( // 현재 viewModel에 접근하는 스크린의 정보상태를 저장하려고 했으나 아래의 currentScreenState로 대체
+//    var whereReplyClickedUiState: WhereReplyClickedUiState by mutableStateOf( // 현재 viewModel 에 접근하는 스크린의 정보상태를 저장하려고 했으나 아래의 currentScreenState 로 대체
 //        WhereReplyClickedUiState.HomeScreen
 //    )
-    private val currentScreenState = mutableStateOf(RibbitScreen.HomeScreen)    // 현재 viewModel에 접근하는 스크린의 정보를 가져온다.
-    fun getCurrentScreen(): State<RibbitScreen> {
-        return currentScreenState
-    }
+    private val currentScreenState = mutableStateOf(RibbitScreen.HomeScreen)    // 현재 viewModel 에 접근하는 스크린의 정보를 가져온다.
+//    fun getCurrentScreen(): State<RibbitScreen> {
+//        return currentScreenState
+//    }
     fun setCurrentScreen(screen: RibbitScreen) {
         currentScreenState.value = screen
     }
@@ -137,7 +135,7 @@ class GetCardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으
 //        Log.d("HippoLog, HomeViewModel", "getRibbitPosts")
 //        ribbitRepository.getPosts()
 //    }
-    fun getRibbitPosts() {  // 모든 Post를 불러오는 메소드
+    fun getRibbitPosts() {  // 모든 Post 를 불러오는 메소드
         viewModelScope.launch(Dispatchers.IO) {
             homeUiState = HomeUiState.Loading
             classificationUiState = ClassificationUiState.Recent
@@ -162,7 +160,7 @@ class GetCardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으
         }
     }
 
-    fun getFollowingPosts() {  // 모든 Post를 불러오는 메소드
+    fun getFollowingPosts() {  // 모든 Post 를 불러오는 메소드
         viewModelScope.launch(Dispatchers.IO) {
             homeUiState = HomeUiState.Loading
             classificationUiState = ClassificationUiState.Following
@@ -187,7 +185,7 @@ class GetCardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으
         }
     }
 
-    fun getTopViewsRibbitPosts() {  // 모든 Post를 불러오는 메소드
+    fun getTopViewsRibbitPosts() {  // 모든 Post 를 불러오는 메소드
         viewModelScope.launch(Dispatchers.IO) {
             homeUiState = HomeUiState.Loading
             classificationUiState = ClassificationUiState.TopViews
@@ -212,7 +210,7 @@ class GetCardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으
         }
     }
 
-    fun getTopLikesRibbitPosts() {  // 모든 Post를 불러오는 메소드
+    fun getTopLikesRibbitPosts() {  // 모든 Post 를 불러오는 메소드
         viewModelScope.launch(Dispatchers.IO) {
             homeUiState = HomeUiState.Loading
             classificationUiState = ClassificationUiState.TopLikes
@@ -237,7 +235,7 @@ class GetCardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으
         }
     }
 
-    suspend fun deleteRibbitPost(postId: Int) { // Post를 삭제하는 메소드, 정상적인 페이지 노출을 위해 동기함수로 구성
+    suspend fun deleteRibbitPost(postId: Int) { // Post 를 삭제하는 메소드, 정상적인 페이지 노출을 위해 동기함수로 구성
         Log.d("HippoLog, GetCardViewModel", "deleteRibbitPost, $postId")
         try {
             deletePostUiState = DeletePostUiState.Loading
@@ -261,7 +259,7 @@ class GetCardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으
         Log.d("HippoLog, GetCardViewModel", "deleteRibbitPost")
     }
 
-    fun getPostIdPost(postId: Int) {    // PostDetail을 불러오는 함수
+    fun getPostIdPost(postId: Int) {    // PostDetail 을 불러오는 함수
         viewModelScope.launch(Dispatchers.IO) {
             postIdUiState = PostIdUiState.Loading
             Log.d("HippoLog, GetCardViewModel", "getPostIdPost, $postIdUiState")
@@ -288,7 +286,7 @@ class GetCardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으
         }
     }
 
-    fun getUserIdPosts(userId: Int) {    // PostDetail을 불러오는 함수
+    fun getUserIdPosts(userId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             getUserIdPostsUiState = GetUserIdPostsUiState.Loading
             userIdClassificationUiState = UserIdClassificationUiState.Ribbit
@@ -315,7 +313,7 @@ class GetCardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으
         }
     }
 
-    fun getUserIdReplies(userId: Int) {    // PostDetail을 불러오는 함수
+    fun getUserIdReplies(userId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             getUserIdPostsUiState = GetUserIdPostsUiState.Loading
             userIdClassificationUiState = UserIdClassificationUiState.Replies
@@ -342,7 +340,7 @@ class GetCardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으
         }
     }
 
-    fun getUserIdMedias(userId: Int) {    // PostDetail을 불러오는 함수
+    fun getUserIdMedias(userId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             getUserIdPostsUiState = GetUserIdPostsUiState.Loading
             userIdClassificationUiState = UserIdClassificationUiState.Media
@@ -369,7 +367,7 @@ class GetCardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으
         }
     }
 
-    fun getUserIdLikes(userId: Int) {    // PostDetail을 불러오는 함수
+    fun getUserIdLikes(userId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             getUserIdPostsUiState = GetUserIdPostsUiState.Loading
             userIdClassificationUiState = UserIdClassificationUiState.Likes
@@ -396,7 +394,7 @@ class GetCardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으
         }
     }
 
-    suspend fun postPostIdCount(postId: Int) {  // Detail을 불러올 때 ViewCount가 정확하지 않은 문제를 해결하기 위해 동기작업으로 실행
+    private suspend fun postPostIdCount(postId: Int) {  // Detail 을 불러올 때 ViewCount 가 정확하지 않은 문제를 해결하기 위해 동기작업으로 실행
         try {
             ribbitRepository.postPostIdCount(postId)
         } catch (e: IOException) {
@@ -418,7 +416,7 @@ class GetCardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으
         val future: Future<Bitmap> = executor.submit(
             Callable<Bitmap> {
                 var bitmap: Bitmap? = null
-                var mediaMetadataRetriever: MediaMetadataRetriever?
+                val mediaMetadataRetriever: MediaMetadataRetriever?
                 mediaMetadataRetriever = MediaMetadataRetriever()
                 mediaMetadataRetriever.setDataSource(videoUrl, HashMap())
 
@@ -474,7 +472,7 @@ class GetCardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으
         }
     }
 
-    fun postPostIdLike(postId: Int) {    // 이 통신으로 like, deleteLike를 다 함.
+    fun postPostIdLike(postId: Int) {    // 이 통신으로 like, deleteLike 를 다 함.
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 ribbitRepository.postPostIdLike(postId)
@@ -486,17 +484,17 @@ class GetCardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으
         }
     }
 
-    fun deletePostIdLike(postId: Int) {  // 서버 컨트롤러에 있지만 서버에서 구현되지 않은 기능.
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                ribbitRepository.deletePostIdLike(postId)
-            } catch (e: IOException) {
-                println(e.stackTrace)
-            } catch (e: ExceptionInInitializerError) {
-                println(e.stackTrace)
-            }
-        }
-    }
+//    fun deletePostIdLike(postId: Int) {  // 서버 컨트롤러에 있지만 서버에서 구현되지 않은 기능.
+//        viewModelScope.launch(Dispatchers.IO) {
+//            try {
+//                ribbitRepository.deletePostIdLike(postId)
+//            } catch (e: IOException) {
+//                println(e.stackTrace)
+//            } catch (e: ExceptionInInitializerError) {
+//                println(e.stackTrace)
+//            }
+//        }
+//    }
 
     fun putPostIdRepost(postId: Int) {   // 얘도 이것 만으로 repost 와 deleteRepost 를 다 함.
         viewModelScope.launch(Dispatchers.IO) {
@@ -525,7 +523,7 @@ class GetCardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으
         }
     }
 
-    fun getListIdPosts(listId: Int) {    // PostDetail을 불러오는 함수
+    fun getListIdPosts(listId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             getListIdPostsUiState = GetListIdPostsUiState.Loading
             userIdClassificationUiState = UserIdClassificationUiState.Ribbit
