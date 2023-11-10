@@ -5,15 +5,9 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
-import {
-  Avatar,
-  Box,
-  Button,
-  Divider,
-  Modal,
-} from "@mui/material";
+import { Avatar, Box, Button, Divider, Modal } from "@mui/material";
 import Tab from "@mui/material/Tab";
-import React, { useEffect, useRef, useState, Suspense } from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { FollowUserAction, findUserById } from "../../Store/Auth/Action";
@@ -26,15 +20,14 @@ import {
 import TwitCard from "../Home/MiddlePart/TwitCard/TwitCard";
 //import Maplocation from "./Maplocation";
 //import ProfileModel from "./ProfileModel";
-import "./Profile.css";
-import Loading from "./Loading/Loading";
 import "../RightPart/Scrollbar.css";
+import Loading from "./Loading/Loading";
+import "./Profile.css";
 
 const Maplocation = React.lazy(() => import("./Maplocation"));
 const ProfileModel = React.lazy(() => import("./ProfileModel"));
 
 const Profile = () => {
-
   const style = {
     position: "absolute",
     top: "50%",
@@ -48,7 +41,7 @@ const Profile = () => {
     borderRadius: 3,
     outline: "none",
     overflow: "scroll-y",
-  }
+  };
 
   const [address, setAddress] = useState("");
   const [tabValue, setTabValue] = useState("1");
@@ -155,30 +148,31 @@ const Profile = () => {
   const closeFollowingsModal = () => {
     setOpenFollowings(false);
   };
-  
+
   const openFollowersModal = () => {
     setOpenFollowers(true);
   };
 
   const closeFollowersModal = () => {
     setOpenFollowers(false);
-  }
+  };
 
   const openFollowingsCloseFollowers = () => {
     openFollowingsModal();
     closeFollowersModal();
-  }
+  };
 
   const openFollowersCloseFollowings = () => {
     openFollowersModal();
     closeFollowingsModal();
-  }
+  };
 
   return (
     <div>
       <section
-        className={`z-50 flex items-center sticky top-0 ${theme.currentTheme === "light" ? "light" : "dark"
-          } bg-opacity-95`}
+        className={`z-50 flex items-center sticky top-0 ${
+          theme.currentTheme === "light" ? "light" : "dark"
+        } bg-opacity-95`}
       >
         <KeyboardBackspaceIcon
           className="cursor-pointer"
@@ -203,7 +197,11 @@ const Profile = () => {
         <div className="flex justify-between items-start mt-5 h-[5rem]">
           <Avatar
             alt="Avatar"
-            src={auth.findUser?.image ? auth.findUser.image : "https://cdn.pixabay.com/photo/2023/10/24/01/42/art-8337199_1280.png"}
+            src={
+              auth.findUser?.image
+                ? auth.findUser.image
+                : "https://cdn.pixabay.com/photo/2023/10/24/01/42/art-8337199_1280.png"
+            }
             className="transform -translate-y-24"
             sx={{ width: "10rem", height: "10rem", border: "4px solid white" }}
             loading="lazy"
@@ -245,16 +243,16 @@ const Profile = () => {
               {auth.findUser?.email?.toLowerCase()}
             </h1>
             <h1 className="text-gray-500">
-                {auth.findUser?.website?.toLowerCase()}
+              {auth.findUser?.website?.toLowerCase()}
             </h1>
           </div>
           <div className="mt-2 space-y-3">
             {auth.findUser?.bio && <p>{auth.findUser?.bio}</p>}
-            <div style={{flexDirection: 'column'}}className="py-1 flex">
+            <div style={{ flexDirection: "column" }} className="py-1 flex">
               {auth.findUser?.education ? (
                 <div className="flex text-gray-500">
                   <>
-                    <BusinessCenterSharp  />
+                    <BusinessCenterSharp />
                     <p className="ml-2">{auth.findUser.education}</p>
                   </>
                 </div>
@@ -264,123 +262,171 @@ const Profile = () => {
                   <>
                     <CalendarMonthIcon />
                     <p className="ml-2">
-                      {`${auth.findUser.joinedAt?.substr(0, 4) || ""}년 ${auth.findUser.joinedAt?.substring(5, 7) || ""
-                        }월 ${auth.findUser.joinedAt?.substring(8, 10) || ""
-                        }일에 가입함`}
+                      {`${auth.findUser.joinedAt?.substr(0, 4) || ""}년 ${
+                        auth.findUser.joinedAt?.substring(5, 7) || ""
+                      }월 ${
+                        auth.findUser.joinedAt?.substring(8, 10) || ""
+                      }일에 가입함`}
                     </p>
                   </>
                 </div>
               ) : null}
 
               <section>
-                <button
-                  style={{color: "#008000"}}
-                  className="flex text-gray-500"
-                  onClick={handleToggleLocationForm}
-                >
-                  <LocationOnIcon />
-                  <p className="text-gray-500">
-                    {auth.findUser?.location || address}
-                  </p>
-                </button>
+                {auth.findUser?.req_user ? (
+                  <button
+                    style={{ color: "#008000" }}
+                    className="flex text-gray-500"
+                    onClick={handleToggleLocationForm}
+                  >
+                    <LocationOnIcon />
+                    <p className="text-gray-500">
+                      {auth.findUser?.location || address}
+                    </p>
+                  </button>
+                ) : (
+                  <>
+                    <LocationOnIcon
+                      style={{ color: "#008000" }}
+                      className="flex text-gray-500"
+                    />
+                    <p className="text-gray-500">
+                      {auth.findUser?.location || address}
+                    </p>
+                  </>
+                )}
               </section>
-
-
             </div>
             <div className="flex items-center space-x-5">
               <div className="flex items-center space-x-1 font-semibold">
                 <span onClick={openFollowingsModal} className="text-gray-500">
                   {auth.findUser?.followings?.length} followings
                 </span>
-                <Modal
-                  open={openFollowings}
-                  onClose={closeFollowingsModal}
-                >                
-                <Box
-                  sx={style}
-                  >
-                    <Button sx={{ fontSize: "105%", marginRight: "16%", marginLeft: "16%", textDecoration: "underline" }}>followings</Button>
-                    <Button sx={{ fontSize: "75%", color: "darkgray"}}onClick={openFollowersCloseFollowings}>followers</Button>
-                  <div 
-                  ref={followersListRef}
-                  className={`customeScrollbar overflow-y-scroll css-scroll hideScrollbar h-[40vh]`}>
-                    {auth.findUser?.followings &&
-                      auth.findUser?.followings.map((item) => (
-                        <div
-                          onClick={() => {
-                            if (Array.isArray(item)) {
-                              item.forEach((i) => handleNavigateToTwit(i));
-                            } else {
-                              navigateToProfile(item.id);
-                            }
-                            closeFollowingsModal();
-                          }}
-                          className="flex items-center hover:bg-green-700 p-3 cursor-pointer"
-                          key={item.id}
-                        >
-                          <Avatar alt={item.fullName} src={item.image} loading="lazy" />
-                          <div className="ml-2">
-                            <p>{item.fullName}</p>
-                            <p className="text-sm text-gray-400">
-                              @
-                              {item.fullName.split(" ").join("_").toLowerCase()}
-                            </p>
+                <Modal open={openFollowings} onClose={closeFollowingsModal}>
+                  <Box sx={style}>
+                    <Button
+                      sx={{
+                        fontSize: "105%",
+                        marginRight: "16%",
+                        marginLeft: "16%",
+                        textDecoration: "underline",
+                      }}
+                    >
+                      followings
+                    </Button>
+                    <Button
+                      sx={{ fontSize: "75%", color: "darkgray" }}
+                      onClick={openFollowersCloseFollowings}
+                    >
+                      followers
+                    </Button>
+                    <div
+                      ref={followersListRef}
+                      className={`customeScrollbar overflow-y-scroll css-scroll hideScrollbar h-[40vh]`}
+                    >
+                      {auth.findUser?.followings &&
+                        auth.findUser?.followings.map((item) => (
+                          <div
+                            onClick={() => {
+                              if (Array.isArray(item)) {
+                                item.forEach((i) => handleNavigateToTwit(i));
+                              } else {
+                                navigateToProfile(item.id);
+                              }
+                              closeFollowingsModal();
+                            }}
+                            className="flex items-center hover:bg-green-700 p-3 cursor-pointer"
+                            key={item.id}
+                          >
+                            <Avatar
+                              alt={item.fullName}
+                              src={item.image}
+                              loading="lazy"
+                            />
+                            <div className="ml-2">
+                              <p>{item.fullName}</p>
+                              <p className="text-sm text-gray-400">
+                                @
+                                {item.fullName
+                                  .split(" ")
+                                  .join("_")
+                                  .toLowerCase()}
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                      ))}
-                  </div>
+                        ))}
+                    </div>
                   </Box>
-                  </Modal>
+                </Modal>
               </div>
               <div className="flex items-center space-x-1 font-semibold">
                 <span onClick={openFollowersModal} className="text-gray-500">
                   {auth.findUser?.followers?.length} followers
                 </span>
-                <Modal
-                  open={openFollowers}
-                  onClose={closeFollowersModal}
-                >                
-                <Box sx={style}>
-                <Button sx={{ marginRight: "17%", marginLeft: "18%", fontSize: "75%", color: "darkgray" }} onClick={openFollowingsCloseFollowers}>followings</Button>
-                <Button sx={{ fontSize: "105%", textDecoration: "underline" }}>followers</Button>
-                  <div
-                ref={followersListRef}
-                className={`customeScrollbar overflow-y-scroll css-scroll hideScrollbar h-[40vh] `}>
-                   {auth.findUser?.followers &&
-                      auth.findUser?.followers.map((item) => (
-                        <div
-                          onClick={() => {
-                            if (Array.isArray(item)) {
-                              item.forEach((i) => handleNavigateToTwit(i));
-                            } else {
-                              navigateToProfile(item.id);
-                            }
-                            closeFollowersModal();
-                          }}
-                          className="flex items-center hover:bg-green-700 p-3 cursor-pointer"
-                          key={item.id}
-                        >
-                          <Avatar alt={item.fullName} src={item.image} loading="lazy" />
-                          <div className="ml-2">
-                            <p>{item.fullName}</p>
-                            <p className="text-sm text-gray-400">
-                              @
-                              {item.fullName.split(" ").join("_").toLowerCase()}
-                            </p>
+                <Modal open={openFollowers} onClose={closeFollowersModal}>
+                  <Box sx={style}>
+                    <Button
+                      sx={{
+                        marginRight: "17%",
+                        marginLeft: "18%",
+                        fontSize: "75%",
+                        color: "darkgray",
+                      }}
+                      onClick={openFollowingsCloseFollowers}
+                    >
+                      followings
+                    </Button>
+                    <Button
+                      sx={{ fontSize: "105%", textDecoration: "underline" }}
+                    >
+                      followers
+                    </Button>
+                    <div
+                      ref={followersListRef}
+                      className={`customeScrollbar overflow-y-scroll css-scroll hideScrollbar h-[40vh] `}
+                    >
+                      {auth.findUser?.followers &&
+                        auth.findUser?.followers.map((item) => (
+                          <div
+                            onClick={() => {
+                              if (Array.isArray(item)) {
+                                item.forEach((i) => handleNavigateToTwit(i));
+                              } else {
+                                navigateToProfile(item.id);
+                              }
+                              closeFollowersModal();
+                            }}
+                            className="flex items-center hover:bg-green-700 p-3 cursor-pointer"
+                            key={item.id}
+                          >
+                            <Avatar
+                              alt={item.fullName}
+                              src={item.image}
+                              loading="lazy"
+                            />
+                            <div className="ml-2">
+                              <p>{item.fullName}</p>
+                              <p className="text-sm text-gray-400">
+                                @
+                                {item.fullName
+                                  .split(" ")
+                                  .join("_")
+                                  .toLowerCase()}
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                      ))}
-                  </div>
+                        ))}
+                    </div>
                   </Box>
-                  </Modal>
+                </Modal>
               </div>
             </div>
           </div>
         </div>
       </section>
       {isLocationFormOpen && (
-        <Suspense fallback = {<div> {uploading ? <Loading/> : null} </div>}>
-        <Maplocation onLocationChange={handleMapLocation} />
+        <Suspense fallback={<div> {uploading ? <Loading /> : null} </div>}>
+          <Maplocation onLocationChange={handleMapLocation} />
         </Suspense>
       )}
       <section>
@@ -432,12 +478,12 @@ const Profile = () => {
         </Box>
       </section>
       <section>
-      <Suspense fallback = {<div> Loading... </div>}>
-        <ProfileModel
-          open={openProfileModel}
-          handleClose={handleCloseProfileModel}
-        />
-      </Suspense>
+        <Suspense fallback={<div> Loading... </div>}>
+          <ProfileModel
+            open={openProfileModel}
+            handleClose={handleCloseProfileModel}
+          />
+        </Suspense>
       </section>
       <section>
         {/* <Backdrop
