@@ -4,14 +4,16 @@ import { followTwit } from "../../Store/Tweet/Action";
 import { useNavigate } from "react-router";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import TwitCard from "../Home/MiddlePart/TwitCard/TwitCard";
+import { useParams } from "react-router";
 const FollowTwit = () => {
   const dispatch = useDispatch();
-  const { twit, theme } = useSelector((store) => store);
+  const { auth, twit, theme } = useSelector((store) => store);
   const navigate = useNavigate();
-  const handleBack = () => navigate(-1)
+  const param = useParams();
+  const handleBack = () => navigate(-1);
   useEffect(() => {
-    dispatch(followTwit());
-  }, []); // [검사하고자 하는 특정 값]
+    dispatch(followTwit(param.id));
+  }, []); 
   console.log("followTwittwit", twit);
   return (
     <div>

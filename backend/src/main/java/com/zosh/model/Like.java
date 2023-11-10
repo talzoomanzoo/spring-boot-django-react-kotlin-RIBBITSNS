@@ -12,6 +12,7 @@ import lombok.Data;
 @Entity
 @Data
 @Table(name="likes")
+
 public class Like {
 	
   	@Id
@@ -19,15 +20,14 @@ public class Like {
     private Long id;
 	  
   	@ManyToOne(fetch = FetchType.LAZY)
-  	//@JoinColumn(name = "user_id")
   	private User user;
   	
-  	//@JsonBackReference
-  	@ManyToOne(fetch = FetchType.LAZY)
-  	//@JoinColumn(name = "twit_id")
-  	private Twit twit;
   	
   	@ManyToOne(fetch = FetchType.LAZY)
-  	//@JoinColumn(name = "com_id")
-  	private Community community;
+  	//@JsonIgnoreProperties("likes") // Twit 엔티티의 likes 속성을 무시
+  	private Twit twit;
+
+  	
+  	//@ManyToOne(fetch = FetchType.LAZY)
+  	//private Community community;
 }

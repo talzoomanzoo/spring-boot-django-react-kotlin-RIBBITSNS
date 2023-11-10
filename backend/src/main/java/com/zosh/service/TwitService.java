@@ -44,7 +44,7 @@ public interface TwitService {
 	
 	public List<Twit> findByLikesContainsUser(User user);
 
-	public List<Twit> findTwitFollowedByReqUser(User user);
+	public List<Twit> findTwitFollowedByReqUser(Long userId) throws UserException, TwitException;
 
 	public Twit updateView(Twit twit) throws TwitException;
 	

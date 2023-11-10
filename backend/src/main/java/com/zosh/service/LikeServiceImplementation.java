@@ -2,6 +2,7 @@ package com.zosh.service;
 
 import java.util.List;
 
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 
 import com.zosh.exception.LikeException;
@@ -40,6 +41,7 @@ public class LikeServiceImplementation implements LikesService {
 		}
 		
 		Twit twit=twitService.findById(twitId);
+		Hibernate.initialize(twit.getLikes());
 		Like like=new Like();
 		
 		like.setTwit(twit);
@@ -47,8 +49,8 @@ public class LikeServiceImplementation implements LikesService {
 		
 		Like savedLike=likeRepository.save(like);
 		
-		twit.getLikes().add(savedLike);
-		twitRepository.save(twit);
+		//twit.getLikes().add(savedLike);
+		//twitRepository.save(twit);
 		
 		return savedLike;
 	}

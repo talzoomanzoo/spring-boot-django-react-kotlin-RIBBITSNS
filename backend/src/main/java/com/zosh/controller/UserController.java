@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.zosh.dto.UserDto;
 import com.zosh.dto.mapper.UserDtoMapper;
+import com.zosh.exception.FollowTwitException;
 import com.zosh.exception.ListException;
 import com.zosh.exception.UserException;
 import com.zosh.model.ListModel;
@@ -110,7 +111,7 @@ public class UserController {
 	
 	@PutMapping("/{userId}/follow")
 	public ResponseEntity<UserDto> followUserHandler(@PathVariable Long userId, @RequestHeader("Authorization") String jwt) 
-			throws UserException{
+			throws UserException, FollowTwitException{
 		
 		User user=userService.findUserProfileByJwt(jwt);
 		
