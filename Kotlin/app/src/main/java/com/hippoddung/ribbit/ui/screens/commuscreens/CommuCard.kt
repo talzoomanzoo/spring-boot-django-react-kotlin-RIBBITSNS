@@ -19,9 +19,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.hippoddung.ribbit.R
 import com.hippoddung.ribbit.network.bodys.RibbitCommuItem
 import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.viewmodel.EditingCommuUiState
@@ -53,7 +55,11 @@ fun CommuCard(
             }
     ) {
         Row(modifier = modifier) {
-            Icon(imageVector = Icons.Default.List, contentDescription = "RibbitCommu")
+            Icon(
+                imageVector = Icons.Default.List,
+                contentDescription = "RibbitCommu",
+                modifier = modifier
+            )
             Row(
                 modifier = modifier.padding(start = 12.dp, bottom = 4.dp)
             ) {
@@ -76,7 +82,7 @@ fun CommuCard(
                 }
             }
         }
-        if(commuItem.user?.id == myId) {
+        if (commuItem.user?.id == myId) {    // 관리자 계정일 경우
             OutlinedButton(
                 onClick = {
                     commuViewModel.editingCommuUiState = EditingCommuUiState.Ready(commuItem)
@@ -85,21 +91,22 @@ fun CommuCard(
                 modifier = modifier
             ) {
                 Text(
-                    text = "Edit",
+                    text = stringResource(R.string.manage),
                     color = Color(0xFF006400),
                     fontSize = 14.sp,
                     modifier = modifier
                 )
             }
+        } else {  // 관리자 계정 아닐 경우
             OutlinedButton(
                 onClick = {
-                    commuViewModel.deleteCommuIdState = commuItem.id
-                    commuViewModel.deleteCommuClickedUiState = true
+                    commuViewModel.signupCommu(commuItem.id!!)  // 반드시 있음.
+                    navController.navigate(RibbitScreen.EditingCommuScreen.name)
                 },
                 modifier = modifier
             ) {
                 Text(
-                    text = "Delete",
+                    text = "SignUp",
                     color = Color(0xFF006400),
                     fontSize = 14.sp,
                     modifier = modifier
