@@ -9,7 +9,7 @@ import { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux/es/hooks/useSelector";
 import { useNavigate } from "react-router-dom";
-import { deleteList } from "../../Store/List/Action";
+import { deleteCom } from "../../Store/Community/Action";
 import "./ComCard.css";
 import ComModel2 from "./ComModel2";
 import ComModel3 from "./ComModel3";
@@ -46,6 +46,16 @@ const ComCard = ({ com }) => {
 
     const [openMembers, setOpenMembers] = useState(false);
 
+    const handleDelete = async () => {
+        try {
+            dispatch(deleteCom(com.id));
+            //   handleClose();
+            window.location.reload();
+        } catch (error) {
+            console.error("커뮤니티 삭제 중 오류 발생: ", error);
+        }
+    };
+
     const openMembersModal = () => {
         setOpenMembers(true);
     };
@@ -57,9 +67,11 @@ const ComCard = ({ com }) => {
     const navigateToProfile = (id) => {
         navigate(`/profile/${id}`);
     };
+    const { auth } = useSelector((store) => store);
+
     console.log("comCard comCheck", com);
 
-    const handleNavigateToComDetail = async () => {
+    const handleNavigateToComDetail = (com) => {
         if (com.privateMode === true) {
             for (let i = 0; i < com.followingsc.length; i++) {
                 if (com.followingsc[i].id === auth.user.id) {
@@ -73,24 +85,9 @@ const ComCard = ({ com }) => {
         }
     }
 
+    const showDeleteButton = com.user.id === auth.user.id;
 
-const { auth } = useSelector((store) => store);
-
-const showDeleteButton = com.user.id === auth.user.id;
-
-const handleDelete = async () => {
-    try {
-        dispatch(deleteList(com.id));
-        //   handleClose();
-        window.location.reload();
-    } catch (error) {
-        console.error("com del error:", error);
-    }
-};
-
-console.log("comcard com", com);
-
-return (
+    return (
     <section className="space-x-5 py-3 rounded-full items-center justify-content">
         <section className="my-5 space-x-5 items-center justify-content mt-5" style={{ marginTop: 3 }}>
             <div className="card">
@@ -130,6 +127,7 @@ return (
             </Modal>
 
             {showDeleteButton ? (
+                <div>
                 <Button
                     onClick={handleOpenComModel}
                     //handleClose={handleCloseListsModel}
@@ -139,6 +137,17 @@ return (
                 >
                     관리
                 </Button>
+
+                <Button
+                    onClick={handleDelete}
+                    //handleClose={handleCloseListsModel}
+                    sx={{ borderRadius: "20px" }}
+                    variant="outlined"
+                    className="rounded-full"
+                >
+                    삭제
+                </Button>
+                </div>
             ) :
                 (
                     <Button
@@ -169,7 +178,8 @@ return (
                 />
             </section>
 
-            <section>
+            <section> 
+                {/* 모달 창 수정 필요, 라이트모드 다크모드 다름 */}
                 <Modal
                     open={openAlertModal}
                     handleClose={handleCloseAlertModal}
@@ -181,7 +191,7 @@ return (
                 >
                     <div className="withdrawal-modal" style={{ background: "white", padding: "20px", borderRadius: "8px" }}>
                         <p id="description">
-                            해당 커뮤니티는 비공개입니다.
+                            해당 커뮤니티는 비공개입니다. 
                         </p>
                         <Button onClick={handleCloseAlertModal}>확인</Button>
                     </div>
@@ -201,14 +211,14 @@ return (
             />
             <section
                 className="mt-5 items-center justify-content cursor-pointer"
-                onClick={handleNavigateToComDetail}>
+                onClick={() => handleNavigateToComDetail(com)}>
                 <div className="text-xl items-center justify-content" >{com.comName}</div>
             </section>
             </div>
         </section>
     </section >
 
-);
+    );
 };
 
 export default ComCard;

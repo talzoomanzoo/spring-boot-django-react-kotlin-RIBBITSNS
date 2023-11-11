@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.zosh.dto.TwitDto;
 import com.zosh.dto.UserDto;
-import com.zosh.model.Like;
 import com.zosh.model.Twit;
 import com.zosh.model.User;
 import com.zosh.util.TweetUtil;
@@ -31,7 +30,7 @@ public class TwitDtoMapper {
 		twitDto.setViewCount(twit.getViewCount());
 		twitDto.setImage(twit.getImage());
 		twitDto.setTotalLikes(twit.getLikes().size());
-		//twitDto.setTotalReplies(twit.getReplyTwits().size());
+		twitDto.setTotalReplies(twit.getReplyTwits().size());
 		twitDto.setTotalRetweets(twit.getRetwitUser().size());
 		twitDto.setUser(user);
 		twitDto.setLiked(isLiked);
@@ -39,7 +38,7 @@ public class TwitDtoMapper {
 		twitDto.setEditedAt(twit.getEditedAt());
 		twitDto.setRetwit(isRetwited);
 		twitDto.setRetwitUsersId(retwitUserId);
-		//twitDto.setReplyTwits(toTwitDtos(twit.getReplyTwits(), reqUser));
+		twitDto.setReplyTwits(toTwitDtos(twit.getReplyTwits(), reqUser));
 		twitDto.setVideo(twit.getVideo());
 		twitDto.setLocation(twit.getLocation());
 		twitDto.setEthicrate(twit.getEthicrate());
@@ -62,6 +61,8 @@ public class TwitDtoMapper {
 	
 	public static TwitDto toReplyTwitDto(Twit twit, User reqUser) {
 		UserDto user=UserDtoMapper.toUserDto(twit.getUser());
+		user.setFollowers(null);
+		user.setFollowings(null);
 		
 		boolean isLiked=TweetUtil.isLikedByReqUser(reqUser, twit);
 		boolean isRetwited=TweetUtil.isLikedByReqUser(reqUser, twit);

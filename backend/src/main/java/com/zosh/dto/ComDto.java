@@ -21,7 +21,7 @@ public class ComDto {
 	
 	private UserDto user;
 	
-	private List<TwitDto> comTwits = new ArrayList<>();
+	private List<TwitDto> comTwits;
 	
 	private String comName;
 	

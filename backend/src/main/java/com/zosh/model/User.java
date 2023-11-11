@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -69,11 +71,15 @@ public class User {
 //    private List<Twit> retwits = new ArrayList<>();
     
     @JsonIgnore // 특정 필드 위에 사용하면 해당 필드는 JSON 직렬화 과정에서 무시되어 출력되지 않음
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)//, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    @OneToMany(cascade = CascadeType.ALL) //mappedBy = "user",
+    @JsonIgnoreProperties(value = {"twit", "likes", "user"})
     private List<Twit> twit = new ArrayList<>();
     
     @JsonIgnore
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)//, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    @OneToMany(cascade = CascadeType.ALL) //mappedBy = "user",
+    @JsonIgnoreProperties(value = {"twit", "likes", "user"})
     private List<Like> likes  = new ArrayList<>();
     
     @JsonIgnore
@@ -82,24 +88,29 @@ public class User {
     
     @JsonIgnore
     @ManyToMany(cascade = CascadeType.DETACH)
+    @JsonIgnoreProperties(value = {"twit", "likes", "user"})
     private List<User> followers=new ArrayList<>();
     
     @JsonIgnore
     //@ManyToMany(mappedBy = "followers")
     //@ManyToMany(cascade = CascadeType.ALL) // followers와 followings 테이블 분리를 통해 null칸 폐기
     @ManyToMany(cascade = CascadeType.DETACH)
+    @JsonIgnoreProperties(value = {"twit", "likes", "user"})
     private List<User> followings=new ArrayList<>();
     
     @JsonIgnore
     @ManyToMany(cascade = CascadeType.DETACH)
+    @JsonIgnoreProperties(value = {"twit", "likes", "user"})
     private List<ListModel> followedLists=new ArrayList<>();
     
     @JsonIgnore
     @ManyToMany(cascade = CascadeType.DETACH)
+    @JsonIgnoreProperties(value = {"twit", "likes", "user"})
     private List<FollowTwit> followTwit= new ArrayList<>();
     
     @JsonIgnore
     @ManyToMany(cascade = CascadeType.DETACH)
+    @JsonIgnoreProperties(value = {"twit", "likes", "user"})
     private List<Community> followedComs=new ArrayList<>();
     
 }

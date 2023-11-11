@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +22,7 @@ import com.zosh.exception.ListException;
 import com.zosh.exception.UserException;
 import com.zosh.model.Community;
 import com.zosh.model.User;
+import com.zosh.response.ApiResponse;
 import com.zosh.service.ComService;
 import com.zosh.service.UserService;
 
@@ -112,6 +114,18 @@ private UserService userService;
 		Community community = comService.findById(comId);
 		ComDto comDto = ComDtoMapper1.toComDto(community, user);
 		return new ResponseEntity<>(comDto, HttpStatus.ACCEPTED);
+	}
+	
+	@DeleteMapping("/{comId}")
+	public ResponseEntity<ApiResponse> deleteComById(@PathVariable Long comId,
+			@RequestHeader("Authorization") String jwt) throws ComException, UserException {
+		User user = userService.findUserProfileByJwt(jwt);
+		comService.deleteComById(comId, user.getId());
+		
+		ApiResponse res = new ApiResponse();
+		res.setMessage("list deleted successfully");
+		res.setStatus(true);
+		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
 	
 }

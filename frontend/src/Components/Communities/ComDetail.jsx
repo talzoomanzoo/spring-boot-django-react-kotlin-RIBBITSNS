@@ -53,7 +53,43 @@ const ComDetail = () => {
   const [showLocation, setShowLocation] = useState(true);
 
   useEffect(() => {
+    const container = document.getElementById("map");
+    dispatch(findComById(param.id));
+    console.log("log");
+    dispatch(findTwitsByComId(param.id));
+
+    if (container) {
+      const options = {
+        center: new kakao.maps.LatLng(37.5662952, 126.9757567),
+        level: 3,
+      };
+
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          const latitude = position.coords.latitude;
+          const longitude = position.coords.longitude;
+          options.center = new kakao.maps.LatLng(latitude, longitude);
+
+          const map = new kakao.maps.Map(container, options);
+          setMap(map);
+        });
+      }
+    }
+
     if (isLocationFormOpen && showLocation) {
+
+      console.log("Address Updated:", address); // 주소 확인
+      formikLocation.setValues({
+        location: address,
+      });
+
+      if (map) {
+        const mapTypeControl = new kakao.maps.MapTypeControl();
+        map.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);
+        const zoomControl = new kakao.maps.ZoomControl();
+        map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+      }
+
       const container = document.getElementById("map");
 
       if (container) {
@@ -74,7 +110,8 @@ const ComDetail = () => {
         }
       }
     }
-  }, [isLocationFormOpen, showLocation]);
+  }, [isLocationFormOpen, showLocation, address, map]);
+
 
   const toggleMap = () => {
     // 주소값만 저장하고 상태 업데이트
@@ -92,44 +129,6 @@ const ComDetail = () => {
       formikLocation.resetForm();
     },
   });
-
-  useEffect(() => {
-    console.log("Address Updated:", address); // 주소 확인
-    formikLocation.setValues({
-      location: address,
-    });
-  }, [address]);
-
-  useEffect(() => {
-    const container = document.getElementById("map");
-
-    if (container) {
-      const options = {
-        center: new kakao.maps.LatLng(37.5662952, 126.9757567),
-        level: 3,
-      };
-
-      if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition((position) => {
-          const latitude = position.coords.latitude;
-          const longitude = position.coords.longitude;
-          options.center = new kakao.maps.LatLng(latitude, longitude);
-
-          const map = new kakao.maps.Map(container, options);
-          setMap(map);
-        });
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    if (map) {
-      const mapTypeControl = new kakao.maps.MapTypeControl();
-      map.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);
-      const zoomControl = new kakao.maps.ZoomControl();
-      map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
-    }
-  }, [map]);
 
   function getListItem(index, places) {
     return (
@@ -242,8 +241,8 @@ const ComDetail = () => {
       infowindow.close();
       infowindow.setContent(
         '<div style="padding:5px;font-size:12px;color:black;">' +
-          place.place_name +
-          "</div>"
+        place.place_name +
+        "</div>"
       );
       infowindow.open(map, marker);
     });
@@ -301,23 +300,23 @@ const ComDetail = () => {
     payload: error,
   });
 
-  useEffect(() => {
-    dispatch(findComById(param.id));
-    console.log("log");
-    dispatch(findTwitsByComId(param.id));
-  }, []);
+
 
   const handleToggleLocationForm = () => {
     setLocationFormOpen((prev) => !prev);
   };
 
-  // const authCheck = (com) => {
-  //     for (let i=0; i< com.followingsc.length; i++) {
-  //         if(com.followingsc[i].id === auth.user.id) {
-  //             return true;
-  //         }
-  //     }
-  // }
+  console.log("comDetail auth", auth);
+  console.log("comDetail com", com);
+
+
+  const authCheck = (com) => {
+      for (let i=0; i< com.com?.followingsc.length; i++) {
+          if(com.com?.followingsc[i].id === auth.user.id) {
+              return true;
+          }
+      }
+  }
 
   const ComCreateTweet = (tweetData) => {
     return async (dispatch) => {
@@ -445,9 +444,8 @@ const ComDetail = () => {
   return (
     <div>
       <section
-        className={`z-50 flex items-center sticky top-0 ${
-          theme.currentTheme === "light" ? "light" : "dark"
-        } bg-opacity-95`}
+        className={`z-50 flex items-center sticky top-0 ${theme.currentTheme === "light" ? "light" : "dark"
+          } bg-opacity-95`}
       >
         <KeyboardBackspaceIcon
           className="cursor-pointer"
@@ -470,196 +468,200 @@ const ComDetail = () => {
         />
       </section>
 
-      {/* {authCheck(com) ? */}
-      <section className="pb-10" style={{ marginTop: 30 }}>
-        <div className="flex space-x-5 ">
-          <Avatar
-            alt="Avatar"
-            src={
-              auth.user?.image
-                ? auth.user.image
-                : "https://cdn.pixabay.com/photo/2023/10/24/01/42/art-8337199_1280.png"
-            }
-            loading="lazy"
-          />
-          <div className="w-full">
-            <form onSubmit={formik.handleSubmit}>
-              <div>
-                <input
-                  type="text"
-                  name="content"
-                  placeholder="커뮤니티에 일상을 공유해 보세요!"
-                  className={`border-none outline-none text-xl bg-transparent`}
-                  size="50"
-                  {...formik.getFieldProps("content")}
-                />
-                {formik.errors.content && formik.touched.content && (
-                  <div className="text-red-500">{formik.errors.content}</div>
-                )}
-              </div>
+      {authCheck(com) ? (
+        <section className="pb-10" style={{ marginTop: 30 }}>
+          <div className="flex space-x-5 ">
+            <Avatar
+              alt="Avatar"
+              src={
+                auth.user?.image
+                  ? auth.user.image
+                  : "https://cdn.pixabay.com/photo/2023/10/24/01/42/art-8337199_1280.png"
+              }
+              loading="lazy"
+            />
+            <div className="w-full">
+              <form onSubmit={formik.handleSubmit}>
+                <div>
+                  <input
+                    type="text"
+                    name="content"
+                    placeholder="커뮤니티에 일상을 공유해 보세요!"
+                    className={`border-none outline-none text-xl bg-transparent`}
+                    size="50"
+                    {...formik.getFieldProps("content")}
+                  />
+                  {formik.errors.content && formik.touched.content && (
+                    <div className="text-red-500">{formik.errors.content}</div>
+                  )}
+                </div>
 
-            <section>
-                <img
+                <section>
+                  <img
                     className="w-[100%] h-[15rem] object-cover"
                     src={
-                        com.com?.backgroundImage ||
-                        "https://t1.daumcdn.net/cfile/tistory/174FF7354E6ACC7606"
+                      com.com?.backgroundImage ||
+                      "https://t1.daumcdn.net/cfile/tistory/174FF7354E6ACC7606"
                     }
                     alt=""
                     loading="lazy"
-                />
-            </section>
-              {!uploadingImage && (
-                <div>
-                  {selectedImage && (
-                    <img
-                      className="w-[28rem]"
-                      src={selectedImage}
-                      alt=""
-                      loading="lazy"
-                    />
-                  )}
-
-                  {selectedVideo && <video controls src={selectedVideo} />}
-                </div>
-              )}
-
-              <div className="flex justify-between items-center mt-5">
-                <div className="flex space-x-5 items-center">
-                  <label className="flex items-center space-x-2 rounded-md cursor-pointer">
-                    <ImageIcon className="text-[#42c924]" />
-                    <input
-                      type="file"
-                      name="imageFile"
-                      className="hidden"
-                      onChange={handleSelectImage}
-                    />
-                  </label>
-
-                  <label className="flex items-center space-x-2  rounded-md cursor-pointer">
-                    <SlideshowIcon className="text-[#42c924]" />
-                    <input
-                      type="file"
-                      name="videoFile"
-                      className="hidden"
-                      onChange={handleSelectVideo}
-                    />
-                  </label>
-
-                  <label className="flex items-center space-x-2 rounded-md cursor-pointer">
-                    <FmdGoodIcon
-                      className="text-[#42c924]"
-                      onClick={handleToggleLocationForm}
-                    />
-                    {address}
-                  </label>
-
-                  <div className="relative">
-                    <TagFacesIcon
-                      onClick={handleOpenEmoji}
-                      className="text-[#42c924] cursor-pointer"
-                    />
-                    {openEmoji && (
-                      <div className="absolute top-10 z-50">
-                        <EmojiPicker
-                          theme={theme.currentTheme}
-                          onEmojiClick={handleEmojiClick}
-                          lazyLoadEmojis={true}
-                        />
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    sx={{
-                      bgcolor: "#42c924",
-                      borderRadius: "20px",
-                      paddingY: "8px",
-                      paddingX: "20px",
-                      color: "white",
-                    }}
-                  >
-                    Ribbit
-                  </Button>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-        {isLocationFormOpen && showLocation && (
-          <div>
-            <div className="mt-2 mb-2 space-y-3">
-              <div className="flex items-center text-gray-500">
-                <form onSubmit={formikLocation.handleSubmit}>
-                  <Button
-                    type="submit"
-                    onClick={toggleMap}
-                    className="save-location-button"
-                  >
-                    저장
-                  </Button>
-                </form>
-                <p className="text-gray-500 ml-3">{address}</p>
-              </div>
-            </div>
-
-            <div className="map_wrap">
-              <div
-                id="map"
-                style={{
-                  width: "70%",
-                  height: "100%",
-                  position: "relative",
-                  overflow: "hidden",
-                }}
-              ></div>
-              <div id="list_wrap" className="bg_white">
-                <div className="option" style={{ textAlign: "right" }}>
+                  />
+                </section>
+                {!uploadingImage && (
                   <div>
-                    <form
-                      onSubmit={(e) => {
-                        e.preventDefault();
-                        handleSearch();
+                    {selectedImage && (
+                      <img
+                        className="w-[28rem]"
+                        src={selectedImage}
+                        alt=""
+                        loading="lazy"
+                      />
+                    )}
+
+                    {selectedVideo && <video controls src={selectedVideo} />}
+                  </div>
+                )}
+
+                <div className="flex justify-between items-center mt-5">
+                  <div className="flex space-x-5 items-center">
+                    <label className="flex items-center space-x-2 rounded-md cursor-pointer">
+                      <ImageIcon className="text-[#42c924]" />
+                      <input
+                        type="file"
+                        name="imageFile"
+                        className="hidden"
+                        onChange={handleSelectImage}
+                      />
+                    </label>
+
+                    <label className="flex items-center space-x-2  rounded-md cursor-pointer">
+                      <SlideshowIcon className="text-[#42c924]" />
+                      <input
+                        type="file"
+                        name="videoFile"
+                        className="hidden"
+                        onChange={handleSelectVideo}
+                      />
+                    </label>
+
+                    <label className="flex items-center space-x-2 rounded-md cursor-pointer">
+                      <FmdGoodIcon
+                        className="text-[#42c924]"
+                        onClick={handleToggleLocationForm}
+                      />
+                      {address}
+                    </label>
+
+                    <div className="relative">
+                      <TagFacesIcon
+                        onClick={handleOpenEmoji}
+                        className="text-[#42c924] cursor-pointer"
+                      />
+                      {openEmoji && (
+                        <div className="absolute top-10 z-50">
+                          <EmojiPicker
+                            theme={theme.currentTheme}
+                            onEmojiClick={handleEmojiClick}
+                            lazyLoadEmojis={true}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div>
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      sx={{
+                        bgcolor: "#42c924",
+                        borderRadius: "20px",
+                        paddingY: "8px",
+                        paddingX: "20px",
+                        color: "white",
                       }}
                     >
-                      <input
-                        type="text"
-                        value={searchKeyword}
-                        placeholder="장소·주소 검색"
-                        onChange={(e) => setSearchKeyword(e.target.value)}
-                        id="keyword"
-                        size="15"
-                      />
-                      <Button type="submit">검색하기</Button>
-                    </form>
+                      Ribbit
+                    </Button>
                   </div>
                 </div>
-                <hr />
+              </form>
+            </div>
+          </div>
+          {isLocationFormOpen && showLocation && (
+            <div>
+              <div className="mt-2 mb-2 space-y-3">
+                <div className="flex items-center text-gray-500">
+                  <form onSubmit={formikLocation.handleSubmit}>
+                    <Button
+                      type="submit"
+                      onClick={toggleMap}
+                      className="save-location-button"
+                    >
+                      저장
+                    </Button>
+                  </form>
+                  <p className="text-gray-500 ml-3">{address}</p>
+                </div>
+              </div>
 
-                <ul id="placesList">
-                  {currentItems.map((result, index) =>
-                    createSearchResultItem(result, index)
-                  )}
-                </ul>
+              <div className="map_wrap">
+                <div
+                  id="map"
+                  style={{
+                    width: "70%",
+                    height: "100%",
+                    position: "relative",
+                    overflow: "hidden",
+                  }}
+                ></div>
+                <div id="list_wrap" className="bg_white">
+                  <div className="option" style={{ textAlign: "right" }}>
+                    <div>
+                      <form
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          handleSearch();
+                        }}
+                      >
+                        <input
+                          type="text"
+                          value={searchKeyword}
+                          placeholder="장소·주소 검색"
+                          onChange={(e) => setSearchKeyword(e.target.value)}
+                          id="keyword"
+                          size="15"
+                        />
+                        <Button type="submit">검색하기</Button>
+                      </form>
+                    </div>
+                  </div>
+                  <hr />
 
-                <div id="pagination">
-                  <ul className={`page-numbers text-black`}>
-                    {pageNumbers.map((number) => (
-                      <li key={number} onClick={() => handlePageClick(number)}>
-                        {number}
-                      </li>
-                    ))}
+                  <ul id="placesList">
+                    {currentItems.map((result, index) =>
+                      createSearchResultItem(result, index)
+                    )}
                   </ul>
+
+                  <div id="pagination">
+                    <ul className={`page-numbers text-black`}>
+                      {pageNumbers.map((number) => (
+                        <li key={number} onClick={() => handlePageClick(number)}>
+                          {number}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
-      </section>
+          )}
+        </section>
+      ) : null}
+
+
+
       <div style={{ marginTop: 20 }}>
         {loading ? <Loading /> : null}
         {twit.twits && twit.twits.length > 0 ? (

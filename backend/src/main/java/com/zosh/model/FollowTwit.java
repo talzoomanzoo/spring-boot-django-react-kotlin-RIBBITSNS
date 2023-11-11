@@ -3,7 +3,9 @@ package com.zosh.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -26,12 +28,18 @@ public class FollowTwit {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
+	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonBackReference
 	@JoinColumn(name = "user_id")
+	@JsonIgnoreProperties(value = {"twit", "likes", "user"})
 	private User user;
+	
+	//private Long userId;
 	
 	@JsonIgnore
 	@ManyToMany(cascade= CascadeType.DETACH)
+	@JsonIgnoreProperties(value = {"twit", "likes", "user"})
 	private List<User> followingssub = new ArrayList<>();
 	
 //	@JsonIgnore

@@ -3,13 +3,20 @@ package com.zosh.dto.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.zosh.dto.ComDto;
+import com.zosh.exception.UserException;
 import com.zosh.model.Community;
 import com.zosh.model.User;
+import com.zosh.service.UserService;
 
 public class ComDtoMapper1 {
 
+	
+	
 	public static ComDto toComDto(Community community, User reqUser) {
+		
 		
 		ComDto comDto= new ComDto();
 		comDto.setId(community.getId());
