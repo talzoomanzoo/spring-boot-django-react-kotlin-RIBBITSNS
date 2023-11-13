@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import SockJS from 'sockjs-client';
-import Stomp from 'stompjs';
-import { searchChatUser } from "../../Store/Auth/Action";
-import { useDispatch, useSelector } from "react-redux";
-import SearchIcon from "@mui/icons-material/Search";
-import { Avatar, Box, Modal, Button } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import AddCommentIcon from '@mui/icons-material/AddComment';
 import ChatIcon from '@mui/icons-material/Chat';
 import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox';
+import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
+import { Avatar, Box, Modal } from "@mui/material";
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import SockJS from 'sockjs-client';
+import Stomp from 'stompjs';
+import { searchChatUser } from "../../Store/Auth/Action";
 
 const Chat = () => {
 
@@ -175,24 +176,53 @@ const Chat = () => {
             });
     };
 
-    const sendMessage = () => {//대화할때 이용되는 함수(보낼때)
+    useEffect(() => {
+        const socket = new SockJS('http://localhost:8080/ws');
+        const stompClient = Stomp.over(socket);
+      
+        const onMessageReceived = (message) => {
+          const chatMessage = JSON.parse(message.body);
+      
+          if (chatMessage.roomId === selectedRoomId) {
+      
+            if (auth.user?.email.split(" ")[0] !== chatMessage.email) {
+                // 토스트 알림 표시 (받는 사람일 경우에만)
+                toast.info(`${chatMessage.sender}: ${chatMessage.message}`);
+              }
+          
+          }
+        };
+      
+        const connectCallback = () => {
+          setStompClient(stompClient);
+      
+          const subscription = stompClient.subscribe(`/topic/${selectedRoom}`, onMessageReceived);
+      
+          return () => {
+            subscription.unsubscribe();
+          };
+        };
+      
+        stompClient.connect({}, connectCallback);
+      }, [selectedRoomId]);
+    
+      const sendMessage = () => {
         if (stompClient) {
-            const chatMessage = {//채팅 전송시 같이 전송되는 내역들
-                type: "TALK",
-                roomId: selectedRoomId,
-                sender: auth.user?.fullName,
-                email: auth.user?.email.split(" ")[0],
-                message: message,
-            };
-            console.log("sendMessage", sendMessage);
-
-            stompClient.send(`/app/savechat/${selectedRoom}`, {}, JSON.stringify(chatMessage));//채팅 내역 보내는 경로
-
-            setMessage(''); // 채팅 입력창 초기화
+          const chatMessage = {
+            type: "TALK",
+            roomId: selectedRoomId,
+            sender: auth.user?.fullName,
+            email: auth.user?.email.split(" ")[0],
+            message: message,
+          };
+      
+          stompClient.send(`/app/savechat/${selectedRoom}`, {}, JSON.stringify(chatMessage));
+          setMessage('');
+      
         } else {
-            console.error("WebSocket connection is not established.");
+          console.error("WebSocket 연결이 설정되지 않았습니다.");
         }
-    }
+      };
 
     const UserAddList = (roomid, useremail, sendername) => {//해당 채팅방에 유저 추가할때 쓰는 함수
         const adduser = {//추가하려는 유저의 정보와 초대할 방의 id전송
@@ -474,6 +504,7 @@ const Chat = () => {
                             className={`outline-none text-gray-500 rounded-md border-gray-400 ${theme.currentTheme === "light" ? "bg-stone-300" : "bg-[#151515]"}`}
                         />
                         <ForwardToInboxIcon fontSize='large' onClick={sendMessage} />
+                        <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
                     </div>
                 </Box>
             </Modal>

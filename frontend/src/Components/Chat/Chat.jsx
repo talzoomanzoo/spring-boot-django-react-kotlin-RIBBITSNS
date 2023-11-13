@@ -1,16 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import AddCommentIcon from '@mui/icons-material/AddComment';
+import ChatIcon from '@mui/icons-material/Chat';
+import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
+import { Avatar, Box } from "@mui/material";
 import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import SockJS from 'sockjs-client';
 import Stomp from 'stompjs';
 import { searchChatUser } from "../../Store/Auth/Action";
-import { useDispatch, useSelector } from "react-redux";
-import SearchIcon from "@mui/icons-material/Search";
-import { Avatar, Box } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
-import AddCommentIcon from '@mui/icons-material/AddComment';
-import ChatIcon from '@mui/icons-material/Chat';
 
 const customStyles = {
   content: {
