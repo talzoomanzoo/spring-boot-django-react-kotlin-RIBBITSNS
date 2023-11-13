@@ -53,14 +53,13 @@ public class NotificationController {
 		return new ResponseEntity<>(notificationDto,HttpStatus.CREATED);
 	}
 	
-	@DeleteMapping("/{twitId}") // 삭제
+	@DeleteMapping("/{noteId}") // 삭제
 	public ResponseEntity<NotificationDto>unnotificationTwit(
-			@PathVariable Long twitId, 
+			@PathVariable Long noteId, 
 			@RequestHeader("Authorization") String jwt) throws UserException, TwitException, NotificationException{
 		
 		User user=userService.findUserProfileByJwt(jwt); // (좋아요 취소한 사람)
-		Notification notification =notificationService.notificationTwit(twitId, user);
-		
+		Notification notification =notificationService.unnotificationTwit(noteId, user);
 		
 		NotificationDto notificationDto=NotificationDtoMapper.toNotificationDto(notification,user);
 		return new ResponseEntity<>(notificationDto,HttpStatus.CREATED);

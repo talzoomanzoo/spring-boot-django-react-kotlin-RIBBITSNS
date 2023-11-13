@@ -40,11 +40,11 @@ export const incrementNotificationCount = (twitId) => {
   };
 };
 
-export const decreaseNotificationCount = (twitId) => {
+export const decreaseNotificationCount = (noteId) => {
   return async (dispatch) => {
     dispatch({ type: NOTIFICATION_MINUS_REQUEST});
     try {
-      const { data } = await api.delete(`/api/notification/${twitId}`);
+      const { data } = await api.delete(`/api/notification/${noteId}`);
       dispatch({ type: NOTIFICATION_MINUS_SUCCESS, payload: data});
     } catch (error) {
       dispatch({ type: NOTIFICATION_MINUS_FAILURE, payload: error.message });

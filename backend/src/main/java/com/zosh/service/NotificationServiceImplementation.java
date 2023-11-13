@@ -56,12 +56,12 @@ public class NotificationServiceImplementation implements NotificationsService {
 	}
 
 	@Override
-	public Notification unnotificationTwit(Long twitId, User user) throws UserException, TwitException, NotificationException {
-		Notification notification=notificationRepository.findById(twitId).orElseThrow(()->new NotificationException("Notification Not Found"));
+	public Notification unnotificationTwit(Long noteId, User user) throws UserException, TwitException, NotificationException {
+		Notification notification=notificationRepository.findById(noteId).orElseThrow(()->new NotificationException("Notification Not Found"));
 		
-		if(notification.getUser().getId().equals(user.getId())) {
-			throw new UserException("somthing went wrong...");
-		}
+//		if(notification.getUser().getId().equals(user.getId())) {
+//			throw new UserException("somthing went wrong...");
+//		}
 		
 		notificationRepository.deleteById(notification.getId());
 		return notification;
