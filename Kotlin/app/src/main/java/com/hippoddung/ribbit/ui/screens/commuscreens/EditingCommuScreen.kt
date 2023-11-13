@@ -56,8 +56,9 @@ import com.hippoddung.ribbit.network.bodys.RibbitCommuItem
 import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
-import com.hippoddung.ribbit.ui.viewmodel.EditingCommuUiState
+import com.hippoddung.ribbit.ui.viewmodel.CommuUiState
 import com.hippoddung.ribbit.ui.viewmodel.CommuViewModel
+import com.hippoddung.ribbit.ui.viewmodel.ManageCommuUiState
 import kotlinx.coroutines.runBlocking
 
 @SuppressLint("CoroutineCreationDuringComposition")
@@ -67,9 +68,15 @@ fun EditingCommuScreen(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    when (commuViewModel.editingCommuUiState) {
-        is EditingCommuUiState.Ready -> {
-            Log.d("HippoLog, EditingCommuScreen", "Ready")
+    when (commuViewModel.manageCommuUiState) {
+        is ManageCommuUiState.ReadyManage -> {
+            Log.d("HippoLog, EditingCommuScreen", "ReadyManage")
+            commuViewModel.manageCommuUiState = ManageCommuUiState.ReadyEdit(   // 혹시 UiState가 변경되지 않고 넘어온 경우 UiState를 업데이트
+                (commuViewModel.manageCommuUiState as ManageCommuUiState.ReadyManage).commuItem
+            )
+        }
+        is ManageCommuUiState.ReadyEdit -> {
+            Log.d("HippoLog, EditingCommuScreen", "ReadyEdit")
             EditCommuScreen(
                 navController = navController,
                 commuViewModel = commuViewModel,
@@ -77,19 +84,19 @@ fun EditingCommuScreen(
             )
         }
 
-        is EditingCommuUiState.Success -> {
+        is ManageCommuUiState.Success -> {
             Log.d("HippoLog, EditingCommuScreen", "Success")
             commuViewModel.getCommus()
             navController.navigate(RibbitScreen.CommuScreen.name)
-            commuViewModel.editingCommuUiState = EditingCommuUiState.Ready(RibbitCommuItem())
+            commuViewModel.manageCommuUiState = ManageCommuUiState.ReadyEdit(RibbitCommuItem())
         }
 
-        is EditingCommuUiState.Loading -> {
+        is ManageCommuUiState.Loading -> {
             Log.d("HippoLog, EditingCommuScreen", "Loading")
             LoadingScreen(modifier = modifier)
         }
 
-        is EditingCommuUiState.Error -> {
+        is ManageCommuUiState.Error -> {
             Log.d("HippoLog, EditingCommuScreen", "Error")
             ErrorScreen(modifier = modifier)
         }
@@ -104,8 +111,8 @@ fun EditCommuScreen(
 ) {
     val context = LocalContext.current
     var ribbitCommuItem by remember { mutableStateOf(RibbitCommuItem()) }// state check 실행을 위해 initializing
-    if (commuViewModel.editingCommuUiState is EditingCommuUiState.Ready) {   // navigation 으로 이동시 현재 스크린 을 backStack 으로 보내면서 재실행, state casting 오류가 발생, state check 삽입
-        ribbitCommuItem = (commuViewModel.editingCommuUiState as EditingCommuUiState.Ready).commuItem
+    if (commuViewModel.manageCommuUiState is ManageCommuUiState.ReadyEdit) {   // navigation 으로 이동시 현재 스크린 을 backStack 으로 보내면서 재실행, state casting 오류가 발생, state check 삽입
+        ribbitCommuItem = (commuViewModel.manageCommuUiState as ManageCommuUiState.ReadyEdit).commuItem
     }
     var inputCommuName by remember { mutableStateOf(ribbitCommuItem.comName ?: "") }
     var inputDescription by remember { mutableStateOf(ribbitCommuItem.description ?: "") }
@@ -283,11 +290,13 @@ fun EditCommuScreen(
                 OutlinedButton(
                     onClick = {
                         commuViewModel.deleteCommuClickedUiState = false
+                        commuViewModel.commuUiState = CommuUiState.Loading
                         runBlocking {   // 정확한 삭제정보 표시를 위해 동기로 실행
                             Log.d("HippoLog, CommuScreen", "Delete Commu")
                             commuViewModel.deleteCommuIdState?.let { commuViewModel.deleteCommuIdCommu(it) }
                         }
                         commuViewModel.getCommus()
+                        navController.navigate(RibbitScreen.CommuScreen.name)
                     },
                     content = {
                         Text(

@@ -21,9 +21,11 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 @Entity
 @Data
+@RequiredArgsConstructor
 public class Community {
 
 	@Id
@@ -33,6 +35,7 @@ public class Community {
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JsonBackReference
+	@JoinColumn(name = "user_id")
 	@JsonIgnoreProperties(value = {"twit", "likes", "user"})
 	//@JoinColumn(name = "user_id")
 	private User user;

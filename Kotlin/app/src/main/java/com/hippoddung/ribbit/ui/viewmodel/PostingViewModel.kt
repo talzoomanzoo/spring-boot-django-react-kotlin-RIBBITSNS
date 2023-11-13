@@ -15,7 +15,7 @@ import androidx.lifecycle.viewModelScope
 import com.hippoddung.ribbit.data.network.RibbitRepository
 import com.hippoddung.ribbit.data.network.UploadCloudinaryRepository
 import com.hippoddung.ribbit.network.bodys.RibbitPost
-import com.hippoddung.ribbit.network.bodys.requestbody.TwitCreateRequest
+import com.hippoddung.ribbit.ui.RibbitScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -58,24 +58,27 @@ class PostingViewModel @Inject constructor(
     private val ribbitRepository: RibbitRepository,
     private val uploadCloudinaryRepository: UploadCloudinaryRepository
 ) : ViewModel() {
-    var creatingPostUiState: CreatingPostUiState by mutableStateOf(CreatingPostUiState.Ready)
-    var editingPostUiState: EditingPostUiState by mutableStateOf(
-        EditingPostUiState.Loading(
-            RibbitPost()
-        )
+    var creatingPostUiState: CreatingPostUiState by mutableStateOf( CreatingPostUiState.Ready )
+    var editingPostUiState: EditingPostUiState by mutableStateOf( EditingPostUiState.Loading( RibbitPost() )
     )
-    private var uploadImageCloudinaryUiState: UploadImageCloudinaryUiState by mutableStateOf(
-        UploadImageCloudinaryUiState.None
-    )
-    private var uploadVideoCloudinaryUiState: UploadVideoCloudinaryUiState by mutableStateOf(
-        UploadVideoCloudinaryUiState.None
-    )
+    private var uploadImageCloudinaryUiState: UploadImageCloudinaryUiState by mutableStateOf( UploadImageCloudinaryUiState.None )
+    private var uploadVideoCloudinaryUiState: UploadVideoCloudinaryUiState by mutableStateOf( UploadVideoCloudinaryUiState.None )
+
+    var currentScreenState = mutableStateOf(RibbitScreen.HomeScreen)
+    fun setCurrentScreen(screen: RibbitScreen) {
+        currentScreenState.value = screen
+    }
+
+    val currentCommuIdState: Int? by mutableStateOf(null)
 
     fun createPost(
         image: Bitmap?,
         videoFile: File?,
-        inputText: String
+        inputText: String,
+        commuId: Int?
     ) {
+        Log.d("HippoLog, PostingViewModel", "currentScreenState: $currentScreenState")
+
         var imageUrl: String? = null
         var videoUrl: String? = null
 
@@ -120,28 +123,42 @@ class PostingViewModel @Inject constructor(
                         and (uploadVideoCloudinaryUiState is UploadVideoCloudinaryUiState.Success) or (uploadVideoCloudinaryUiState is UploadVideoCloudinaryUiState.None))
             ) {
                 postCreatePost(
-                    TwitCreateRequest(
+                    RibbitPost(
                         content = inputText,
                         image = imageUrl,
                         video = videoUrl
-                    )
+                    ),
+                    commuId
                 )
             } else {    // uploadImageCloudinaryUiState 와 uploadVideoCloudinaryUiState 가 다른 상태일 때 처리를 위함 미구현
             }
         }
     }
 
-    private suspend fun postCreatePost(twitCreateRequest: TwitCreateRequest) {
-        try {
-            ribbitRepository.postCreatePost(twitCreateRequest)
-        } catch (e: IOException) {
-            creatingPostUiState = CreatingPostUiState.Error
-            println(e.stackTrace)
-        } catch (e: ExceptionInInitializerError) {
-            creatingPostUiState = CreatingPostUiState.Error
-            println(e.stackTrace)
+    private suspend fun postCreatePost(ribbitPost: RibbitPost, commuId: Int?) {
+        if(commuId == null) { // commuId를 받지 않은 경우, 일반 post
+            try {
+                ribbitRepository.postCreatePost(ribbitPost)
+            } catch (e: IOException) {
+                creatingPostUiState = CreatingPostUiState.Error
+                println(e.stackTrace)
+            } catch (e: ExceptionInInitializerError) {
+                creatingPostUiState = CreatingPostUiState.Error
+                println(e.stackTrace)
+            }
+            creatingPostUiState = CreatingPostUiState.Success
+        }else{  // commuId를 받은 경우 commu post
+            try {
+                ribbitRepository.postCreateCommuPost(ribbitPost, commuId)
+            } catch (e: IOException) {
+                creatingPostUiState = CreatingPostUiState.Error
+                println(e.stackTrace)
+            } catch (e: ExceptionInInitializerError) {
+                creatingPostUiState = CreatingPostUiState.Error
+                println(e.stackTrace)
+            }
+            creatingPostUiState = CreatingPostUiState.Success
         }
-        creatingPostUiState = CreatingPostUiState.Success
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

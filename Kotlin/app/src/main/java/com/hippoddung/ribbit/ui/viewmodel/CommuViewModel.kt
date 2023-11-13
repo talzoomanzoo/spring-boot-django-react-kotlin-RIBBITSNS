@@ -28,6 +28,7 @@ sealed interface CommuUiState {
 sealed interface CommuClassificationUiState {
     object PublicCommu : CommuClassificationUiState
     object PrivateCommu : CommuClassificationUiState
+    object AllCommuPosts : CommuClassificationUiState
 }
 
 sealed interface CommuIdUiState {
@@ -43,11 +44,12 @@ sealed interface CreatingCommuUiState {
     object Error : CreatingCommuUiState
 }
 
-sealed interface EditingCommuUiState {
-    data class Ready(val commuItem: RibbitCommuItem) : EditingCommuUiState
-    data class Loading(val commuItem: RibbitCommuItem) : EditingCommuUiState
-    object Success : EditingCommuUiState
-    object Error : EditingCommuUiState
+sealed interface ManageCommuUiState {
+    data class ReadyManage(val commuItem: RibbitCommuItem) : ManageCommuUiState
+    data class ReadyEdit(val commuItem: RibbitCommuItem) : ManageCommuUiState
+    data class Loading(val commuItem: RibbitCommuItem) : ManageCommuUiState
+    object Success : ManageCommuUiState
+    object Error : ManageCommuUiState
 }
 
 sealed interface DeleteCommuUiState {
@@ -57,6 +59,24 @@ sealed interface DeleteCommuUiState {
     object Loading : DeleteCommuUiState
 }
 
+sealed interface SignupCommuIdUiState {
+    object Loading : SignupCommuIdUiState
+    data class Success(val commuItem: RibbitCommuItem) : SignupCommuIdUiState
+    data class Error(val errorCode: String) : SignupCommuIdUiState
+}
+
+sealed interface CommuSignupOkUiState {
+    data class Success(val commuItem: RibbitCommuItem) : CommuSignupOkUiState
+    data class Error(val errorCode: String) : CommuSignupOkUiState
+    object Loading : CommuSignupOkUiState
+}
+
+sealed interface SignoutCommuIdUiState {
+    data class Success(val commuItem: RibbitCommuItem) : SignoutCommuIdUiState
+    data class Error(val errorCode: String) : SignoutCommuIdUiState
+    object Loading : SignoutCommuIdUiState
+}
+
 @HiltViewModel
 class CommuViewModel @Inject constructor(
     private val commuRepository: CommuRepository,
@@ -64,13 +84,16 @@ class CommuViewModel @Inject constructor(
 ) : ViewModel() {
     var commuUiState: CommuUiState by mutableStateOf(CommuUiState.Loading)
     var commuClassificationUiState: CommuClassificationUiState by mutableStateOf(
-        CommuClassificationUiState.PublicCommu
+        CommuClassificationUiState.AllCommuPosts
     )
     var commuIdUiState: CommuIdUiState by mutableStateOf(CommuIdUiState.Loading)
     var creatingCommuUiState: CreatingCommuUiState by mutableStateOf(CreatingCommuUiState.Ready)
-    var editingCommuUiState: EditingCommuUiState by mutableStateOf(EditingCommuUiState.Loading(
-        RibbitCommuItem()
-    ))
+    var manageCommuUiState: ManageCommuUiState by mutableStateOf(
+        ManageCommuUiState.Loading(
+            RibbitCommuItem()
+        )
+    )
+    var commuSignupOkUiState: CommuSignupOkUiState by mutableStateOf(CommuSignupOkUiState.Loading)
 
     var deleteCommuIdState: Int? by mutableStateOf(null)
     var deleteCommuUiState: DeleteCommuUiState by mutableStateOf(DeleteCommuUiState.Ready)
@@ -79,12 +102,19 @@ class CommuViewModel @Inject constructor(
         UploadImageCloudinaryUiState.None
     )
 
+    var signupCommuClickedUiState: Boolean by mutableStateOf(false)
+    var signupCommuIdUiState: SignupCommuIdUiState by mutableStateOf(SignupCommuIdUiState.Loading)
+    var signupCommuState: RibbitCommuItem by mutableStateOf(RibbitCommuItem())
+
+    var signoutCommuClickedUiState: Boolean by mutableStateOf(false)
+    var signoutCommuIdState: Int? by mutableStateOf(null)
+    var signoutCommuIdUiState: SignoutCommuIdUiState by mutableStateOf(SignoutCommuIdUiState.Loading)
+
     var searchingUserClickedUiState: Boolean by mutableStateOf(false)
 
     fun getCommus() {  // 모든 Post 를 불러오는 메소드
         viewModelScope.launch(Dispatchers.IO) {
             commuUiState = CommuUiState.Loading
-            commuClassificationUiState = CommuClassificationUiState.PublicCommu
             Log.d("HippoLog, CommuViewModel", "getCommus1, $commuUiState")
             commuUiState = try {
                 CommuUiState.Success(commuRepository.getCommus())
@@ -175,8 +205,11 @@ class CommuViewModel @Inject constructor(
         var imageUrl: String? = null
 
         viewModelScope.launch(Dispatchers.IO) {
-            editingCommuUiState = (editingCommuUiState as EditingCommuUiState.Ready).commuItem.let { EditingCommuUiState.Loading(it) }
-            val commuItem = (editingCommuUiState as EditingCommuUiState.Loading).commuItem
+            manageCommuUiState =
+                (manageCommuUiState as ManageCommuUiState.ReadyEdit).commuItem.let {
+                    ManageCommuUiState.Loading(it)
+                }
+            val commuItem = (manageCommuUiState as ManageCommuUiState.Loading).commuItem
             uploadImageCloudinaryUiState = UploadImageCloudinaryUiState.None
             runBlocking {
                 launch(Dispatchers.IO) {
@@ -213,13 +246,13 @@ class CommuViewModel @Inject constructor(
         try {
             commuRepository.postEditCommu(ribbitCommuItem)
         } catch (e: IOException) {
-            editingCommuUiState = EditingCommuUiState.Error
+            manageCommuUiState = ManageCommuUiState.Error
             println(e.stackTrace)
         } catch (e: ExceptionInInitializerError) {
-            editingCommuUiState = EditingCommuUiState.Error
+            manageCommuUiState = ManageCommuUiState.Error
             println(e.stackTrace)
         }
-        editingCommuUiState = EditingCommuUiState.Success
+        manageCommuUiState = ManageCommuUiState.Success
     }
 
     fun getCommuIdCommu(commuId: Int) {
@@ -237,7 +270,10 @@ class CommuViewModel @Inject constructor(
                 CommuIdUiState.Error(e.message.toString())
 
             } catch (e: HttpException) {
-                Log.d("HippoLog, CommuViewModel", "getCommuIdCommu: ${e.stackTrace}, ${e.code()}, $e")
+                Log.d(
+                    "HippoLog, CommuViewModel",
+                    "getCommuIdCommu: ${e.stackTrace}, ${e.code()}, $e"
+                )
                 if (e.code() == 500) {
                     CommuIdUiState.Error(e.code().toString())
                 } else {
@@ -293,28 +329,97 @@ class CommuViewModel @Inject constructor(
 
     fun postAddUser(userId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            val commuId = (commuIdUiState as CommuIdUiState.Success).commuItem.id!! // 반드시 있는 경우임.
-            try {
-                Log.d("HippoLog, CommuViewModel", "postAddUser")
-                commuRepository.postAddUser(commuId, userId)
-            } catch (e: IOException) {
-                Log.d("HippoLog, CommuViewModel", "postAddUser error: ${e.message}")
-            } catch (e: ExceptionInInitializerError) {
-                Log.d("HippoLog, CommuViewModel", "postAddUser error: ${e.message}")
+            if (commuIdUiState is CommuIdUiState.Success) {
+                val commuId =
+                    (commuIdUiState as CommuIdUiState.Success).commuItem.id!! // 반드시 있는 경우임.
+                try {
+                    Log.d("HippoLog, CommuViewModel", "postAddUser, CommuIdUiState")
+                    commuRepository.postAddUser(commuId, userId)
+                } catch (e: IOException) {
+                    Log.d(
+                        "HippoLog, CommuViewModel",
+                        "postAddUser, CommuIdUiState error: ${e.message}"
+                    )
+                } catch (e: ExceptionInInitializerError) {
+                    Log.d(
+                        "HippoLog, CommuViewModel",
+                        "postAddUser, CommuIdUiState error: ${e.message}"
+                    )
+                }
+            }
+            if (manageCommuUiState is ManageCommuUiState.ReadyManage) {
+                val commuId =
+                    (manageCommuUiState as ManageCommuUiState.ReadyManage).commuItem.id!!  // 반드시 있는 경우임.
+                try {
+                    Log.d("HippoLog, CommuViewModel", "postAddUser, ManageCommuUiState")
+                    commuRepository.postAddUser(commuId, userId)
+                } catch (e: IOException) {
+                    Log.d(
+                        "HippoLog, CommuViewModel",
+                        "postAddUser, ManageCommuUiState error: ${e.message}"
+                    )
+                } catch (e: ExceptionInInitializerError) {
+                    Log.d(
+                        "HippoLog, CommuViewModel",
+                        "postAddUser, ManageCommuUiState error: ${e.message}"
+                    )
+                }
             }
         }
     }
 
-    fun signupCommu(commuId: Int) {
+    fun signupCommu(commuItem: RibbitCommuItem) {
+        signupCommuState = commuItem
         viewModelScope.launch(Dispatchers.IO) {
-            try {
-                Log.d("HippoLog, CommuViewModel", "signupCommu")
-                commuRepository.signupCommu(commuId)
-            } catch (e: IOException) {
-                Log.d("HippoLog, CommuViewModel", "signupCommu error: ${e.message}")
-            } catch (e: ExceptionInInitializerError) {
-                Log.d("HippoLog, CommuViewModel", "signupCommu error: ${e.message}")
-            }
+            signupCommuIdUiState = SignupCommuIdUiState.Loading
+            signupCommuIdUiState =
+                try {
+                    Log.d("HippoLog, CommuViewModel", "signupCommu")
+                    SignupCommuIdUiState.Success(commuRepository.signupCommu(commuItem.id!!)) // id는 반드시 있음.
+                } catch (e: IOException) {
+                    Log.d("HippoLog, CommuViewModel", "signupCommu error: ${e.message}")
+                    SignupCommuIdUiState.Error(e.message.toString())
+                } catch (e: ExceptionInInitializerError) {
+                    Log.d("HippoLog, CommuViewModel", "signupCommu error: ${e.message}")
+                    SignupCommuIdUiState.Error(e.message.toString())
+                }
         }
+    }
+
+    fun postSignupOk(commuId: Int, userId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            commuSignupOkUiState = CommuSignupOkUiState.Loading
+            commuSignupOkUiState =
+                try {
+                    Log.d("HippoLog, CommuViewModel", "postSignupOk")
+                    CommuSignupOkUiState.Success(
+                        commuRepository.postSignupOk(
+                            commuId,
+                            userId
+                        )
+                    ) // id는 반드시 있음.
+                } catch (e: IOException) {
+                    Log.d("HippoLog, CommuViewModel", "postSignupOk error: ${e.message}")
+                    CommuSignupOkUiState.Error(e.message.toString())
+                } catch (e: ExceptionInInitializerError) {
+                    Log.d("HippoLog, CommuViewModel", "postSignupOk error: ${e.message}")
+                    CommuSignupOkUiState.Error(e.message.toString())
+                }
+        }
+    }
+
+    suspend fun postSignoutCommuId(commuId: Int) {
+        signoutCommuIdUiState = SignoutCommuIdUiState.Loading
+        signoutCommuIdUiState =
+            try {
+                Log.d("HippoLog, CommuViewModel", "postSignoutCommuId")
+                SignoutCommuIdUiState.Success(commuRepository.postSignoutCommuId(commuId)) // id는 반드시 있음.
+            } catch (e: IOException) {
+                Log.d("HippoLog, CommuViewModel", "postSignoutCommuId error: ${e.message}")
+                SignoutCommuIdUiState.Error(e.message.toString())
+            } catch (e: ExceptionInInitializerError) {
+                Log.d("HippoLog, CommuViewModel", "postSignoutCommuId error: ${e.message}")
+                SignoutCommuIdUiState.Error(e.message.toString())
+            }
     }
 }

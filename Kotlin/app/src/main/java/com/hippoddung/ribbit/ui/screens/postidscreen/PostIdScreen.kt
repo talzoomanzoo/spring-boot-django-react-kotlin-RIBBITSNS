@@ -98,8 +98,9 @@ fun PostIdSuccessScreen(
     modifier: Modifier = Modifier
 ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentScreen = RibbitScreen.valueOf(backStackEntry?.destination?.route ?: RibbitScreen.HomeScreen.name)
-    getCardViewModel.setCurrentScreen(currentScreen)
+    val currentScreen =
+        RibbitScreen.valueOf(backStackEntry?.destination?.route ?: RibbitScreen.HomeScreen.name)
+    getCardViewModel.setCurrentScreen(currentScreen)    // homeScreen 진입 성공시 현재 screen 정보 저장.
     Scaffold(
         modifier = modifier,
 //        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),

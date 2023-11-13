@@ -1,8 +1,9 @@
-import AddCommentIcon from '@mui/icons-material/AddComment';
+import AddIcon from '@mui/icons-material/Add';
 import ChatIcon from '@mui/icons-material/Chat';
+import CloseIcon from "@mui/icons-material/Close";
 import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox';
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
-import { Avatar, Box, Modal } from "@mui/material";
+import { Avatar, Box, Button, IconButton, Modal, TextField } from "@mui/material";
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
@@ -20,24 +21,26 @@ const Chat = () => {
         top: "50%",
         left: "50%",
         transform: "translate(-50%, -50%)",
-        width: 500,
-        minHeight: 500,
-        maxHeight: 500,
+        width: 600,
+        minHeight: 600,
+        maxHeight: 600,
         bgcolor: "background.paper",
         p: 2,
         borderRadius: 3,
         outline: "none",
         overflow: "scroll-y",
     }
+
     const style2 = {
         position: "absolute",
         top: "50%",
         left: "50%",
         transform: "translate(-50%, -50%)",
-        width: 270,
-        minHeight: 100,
-        maxHeight: 100,
+        width: 400,
+        // minHeight: 200,
+        // maxHeight: 200,
         bgcolor: "background.paper",
+        boxShadow: 24,
         p: 2,
         borderRadius: 3,
         outline: "none",
@@ -47,7 +50,7 @@ const Chat = () => {
     const chatStyle = {
         position: "absolute",
         top: "91%",
-        right: "4%",
+        right: "1%",
         // transform: "translate(-50%, -50%)",
     }
 
@@ -346,20 +349,18 @@ const Chat = () => {
                         onClick={handleBack}
                     />
                     <h1 className="py-5 text-xl font-bold opacity-90 ml-5">
-                        Chat Room
+                        메시지
                     </h1>
                 </div>
-                <div className="absolute right-0 cursor-pointer"
-                >
+                <div className="absolute right-0 cursor-pointer">
                     <input
-                        type="text"
-                        placeholder="채팅방 이름"
                         value={roomName}
+                        type="text"
+                        placeholder="생성할 채팅방의 이름"
                         onChange={(e) => setRoomName(e.target.value)}
-                        className={`outline-none text-gray-500 ${theme.currentTheme === "light" ? "bg-stone-300" : "bg-[#151515]"}`}
+                        className={`py-3 rounded-full outline-none text-gray-500 pl-12 ${theme.currentTheme === "light" ? "bg-stone-300" : "bg-[#151515]"}`}
                     />
-                    <AddCommentIcon onClick={createRoom} />
-                    채팅방 생성
+                    <AddIcon onClick={createRoom} className='ml-3 cursor-pointer' />
                 </div>
             </section>
             {/* <button onClick={createRoom}>Create Chat Room</button> */}
@@ -382,24 +383,25 @@ const Chat = () => {
                         >
                             <button
                                 onClick={() => enterChatRoom(room.roomId, room.name)}//채팅방 입장
-                                style={{ cursor: 'pointer' }}
+                                style={{ cursor: 'pointer', fontSize: "larger", }}
                             >
                                 <ChatIcon />
                                 {room.name}
                             </button>
                             <div>
-                                <button
+                                <Button
                                     onClick={() => openEditModal(room.roomId, room.name)}//채팅방 정보 수정
                                     style={{ cursor: 'pointer', marginRight: '5px' }}
                                 >
-                                    이름 변경 /
-                                </button>
-                                <button
+                                    이름 변경
+                                </Button>
+                                /
+                                <Button
                                     onClick={() => deleteUserInRoom(room.roomId)}//채팅방 나가기
                                     style={{ cursor: 'pointer', }}
                                 >
                                     나가기
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     ))
@@ -413,24 +415,32 @@ const Chat = () => {
             >
                 <Box sx={style}>
                     <section className={`z-50 flex items-center sticky top-0 bg-opacity-95`}>
-                        <div className="absolute right-0 cursor-pointer">
-                            Chat Room: {selectedRoom}
-                        </div>
                     </section>
+
                     <div>
+                        <div className="z-50 flex items-center sticky top-0 space-x-5">
+                            <IconButton onClick={closeChatModal} aria-label="delete">
+                                <CloseIcon />
+                            </IconButton>
+                            <h1 className="text-xl">
+                                {selectedRoom}
+                            </h1>
+                        </div>
+
                         <input
+                            style={{ marginTop: 10 }}
                             value={search}
                             onChange={handleSearchChatUser}//채팅방에 초대할 유저 입력
                             type="text"
                             placeholder="유저 검색"
-                            className={`outline-none text-gray-500 ${theme.currentTheme === "light" ? "bg-stone-300" : "bg-[#151515]"}`}
+                            className={`py-2 rounded-full outline-none text-gray-500 pl-12 ${theme.currentTheme === "light" ? "bg-stone-300" : "bg-[#151515]"}`}
                         />
                         {search && (
-                            <div className={`absolute z-50 top-14 customeScrollbar overflow-y-scroll hideScrollbar css-scroll h-[20vh] border-gray-400 h-[20vh] w-40 rounded-md ${theme.currentTheme === "light" ? "bg-[#dbd9d9]" : "bg-[#151515] border"}`}>
+                            <div>
                                 {auth.userSearchResult && auth.userSearchResult.map((item) => (!userList.some((user) => user.email === item.email) && (
                                     //초대할 유저 검색, rightpart에 있는 '사용자 및 글 검색'그대로 가져와 수정함
                                     <div key={item.id}
-                                        className={`flex items-center ${theme.currentTheme === "light" ? "hover:bg-[#008000]" : "hover:bg-[#dbd9d9]"}
+                                        className={`rounded-full outline-none text-gray-500 pl-12 ${theme.currentTheme === "light" ? "hover:bg-[#008000]" : "hover:bg-[#dbd9d9]"}
                   ${theme.currentTheme === "light" ? "text-black hover:text-white" : "text-white  hover:text-black"} cursor-pointer`}
                                         onClick={() => {
                                             UserAddList(selectedRoomId, item.email.split(" ").join("_").toLowerCase(), item.fullName);
@@ -440,24 +450,27 @@ const Chat = () => {
                                             alt={item.fullName}
                                             src={item.image ? item.image : "https://cdn.pixabay.com/photo/2023/10/24/01/42/art-8337199_1280.png"}
                                             loading="lazy"
-                                        />
-                                        <div>
-                                            <p>{item.fullName}</p>
-                                            <p>{item.email.split(" ").join("_").toLowerCase()}</p>
-                                        </div>
+                                        >
+                                            <div>
+                                                <p>{item.fullName}</p>
+                                                <p>{item.email.split(" ").join("_").toLowerCase()}</p>
+                                            </div>
+                                        </Avatar>
                                     </div>
                                 )
                                 ))}
 
                             </div>
                         )}
+
                     </div>
+
                     <div>
                         {/* 사용자 목록을 표시 */}
                         <ul>
-                            {userList.map((user) => (
-                                <li key={user.id}>{user.sender}</li>
-                            ))}
+                            {/* {userList.map((user) =>
+                                (<li key={user.id}>{user.sender}</li>)
+                            )} */}
                         </ul>
                     </div>
                     <hr
@@ -470,38 +483,57 @@ const Chat = () => {
                             height: '1px',
                         }}
                     />
-                    <div>
+                    <div className={`customeScrollbar overflow-y-scroll css-scroll h-[40vh]`}>
                         {chatHistory.length > 0 ? (//채팅 내역
+
                             chatHistory.map((chat) => (
-                                <div key={chat.id}>
+                                <div key={chat.id} >
                                     {chat.message && (
                                         <span
+                                            className='text-xl rounded-full outline-none text-gray-500'
                                             style={{
                                                 display: 'block',
+                                                padding: '20',
+                                                // backgroundColor: '#07bc0c',
                                                 textAlign: auth.user?.fullName === chat.sender ? 'right' : 'left',//자신의 채팅은 오른쪽, 상대방은 왼쪽
+                                                textColor: auth.user?.fullName === chat.sender ? 'grey' : '#07bc0c',
+
+                                                // auth.user?.fullName !== chat.sender ? '50' : null,
+
                                             }}
                                         >
 
                                             {auth.user?.fullName === chat.sender//상대방 채팅은 "이름:채팅", 내 채팅은 "채팅:이름"으로 출력
                                                 ? `${chat.message}`
-                                                : <p className='bg-gray-500'>{chat.sender}: {chat.message}</p>}
+                                                : <li style={{ listStyleType: 'none' }} className="list-css"><Avatar
+                                                    onClick={() => navigate(`/profile/${chat.sender?.id}`)}
+                                                    alt="Avatar"
+                                                    src={
+                                                        chat.sender.image
+                                                            ? chat.sender.image
+                                                            : "https://cdn.pixabay.com/photo/2023/10/24/01/42/art-8337199_1280.png"
+                                                    }
+                                                    className="cursor-pointer"
+                                                    loading="lazy"
+                                                    style={{ float: "left" }}
+                                                />{chat.message}</li>}
                                         </span>
                                     )}
                                 </div>
                             ))
                         ) : (
-                            <div>아직 채팅 내역이 없습니다</div>
+                            <div style={{ marginTop: 10 }}>아직 채팅 내역이 없습니다.</div>
                         )}
                     </div>
                     <div style={chatStyle}>
                         <input
-                            size={47}
+                            size={37}
                             maxLength={200}
                             type="text"
                             placeholder="Your message"
                             value={message}
                             onChange={(e) => setMessage(e.target.value)}//채팅입력
-                            className={`outline-none text-gray-500 rounded-md border-gray-400 ${theme.currentTheme === "light" ? "bg-stone-300" : "bg-[#151515]"}`}
+                            className={`py-2 rounded-full outline-none text-gray-500 pl-12 ${theme.currentTheme === "light" ? "bg-stone-300" : "bg-[#151515]"}`}
                         />
                         <ForwardToInboxIcon fontSize='large' onClick={sendMessage} />
                         <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
@@ -512,15 +544,19 @@ const Chat = () => {
                 open={editModalIsOpen}
                 onClose={closeEditModal}>
                 <Box sx={style2}>
-                    <h2>채팅방 이름 수정</h2>
-                    <input
-                        type="text"
-                        placeholder="바꿀 이름"
+                    <TextField
+                        style={{ marginTop: 10 }}
+                        fullWidth multiline
+                        rows={1}
+                        id="chatroom name"
+                        name="chatroom name"
+                        label="채팅방 이름"
                         value={newRoomName}
-                        onChange={(e) => setNewRoomName(e.target.value)}//여기에 수정할 이름 입력
-                        className={`outline-none text-gray-500 ${theme.currentTheme === "light" ? "bg-stone-300" : "bg-[#151515]"}`}
                     />
-                    <button onClick={saveEditedRoomName}>변경</button>
+                    <Button
+                        variant="outlined"
+                        style={{ marginTop: 20 }}
+                        onClick={saveEditedRoomName}>변경</Button>
                 </Box>
             </Modal>
         </div>

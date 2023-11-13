@@ -29,6 +29,7 @@ import com.hippoddung.ribbit.ui.screens.commuscreens.CommuIdScreen
 import com.hippoddung.ribbit.ui.screens.commuscreens.CommuScreen
 import com.hippoddung.ribbit.ui.screens.commuscreens.CreatingCommuScreen
 import com.hippoddung.ribbit.ui.screens.commuscreens.EditingCommuScreen
+import com.hippoddung.ribbit.ui.screens.commuscreens.ManageCommuScreen
 import com.hippoddung.ribbit.ui.screens.homescreens.HomeScreen
 import com.hippoddung.ribbit.ui.screens.listscreens.CreatingListScreen
 import com.hippoddung.ribbit.ui.screens.listscreens.EditingListScreen
@@ -45,6 +46,7 @@ import com.hippoddung.ribbit.ui.viewmodel.CommuViewModel
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.ListViewModel
 import com.hippoddung.ribbit.ui.viewmodel.MyProfileUiState
+import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
@@ -65,6 +67,7 @@ enum class RibbitScreen(@StringRes val title: Int) {
     CommuScreen(title = R.string.commu_screen),
     CommuIdScreen(title = R.string.commu_id_screen),
     CreatingCommuScreen(title = R.string.creating_commu_screen),
+    ManageCommuScreen(title = R.string.manage_commu_screen),
     EditingCommuScreen(title = R.string.editing_commu_screen),
     LoadingScreen(title = R.string.loading_screen),
     ErrorScreen(title = R.string.error_screen)
@@ -118,6 +121,7 @@ fun RibbitScreen(
 ) {
     val listViewModel: ListViewModel = hiltViewModel()
     val commuViewModel: CommuViewModel = hiltViewModel()
+    val postingViewModel: PostingViewModel = hiltViewModel()
     var myId by remember { mutableStateOf(0) }
     if(userViewModel.myProfileUiState is MyProfileUiState.Exist){   // 앱 시작시 casting 이 문제되는 경우가 있어 state check 를 넣어줌.
         myId = (userViewModel.myProfileUiState as MyProfileUiState.Exist).myProfile.id!!
@@ -141,6 +145,7 @@ fun RibbitScreen(
 //                scrollBehavior = scrollBehavior,
                 navController = navController,
                 getCardViewModel = getCardViewModel,
+                postingViewModel = postingViewModel,
                 tokenViewModel = tokenViewModel,
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
@@ -194,6 +199,8 @@ fun RibbitScreen(
             Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> CreatingPostScreen")
             CreatingPostScreen(
                 getCardViewModel = getCardViewModel,
+                postingViewModel = postingViewModel,
+                commuViewModel = commuViewModel,
                 navController = navController,
                 modifier = modifier
             )
@@ -275,6 +282,7 @@ fun RibbitScreen(
                 userViewModel = userViewModel,
                 listViewModel = listViewModel,
                 commuViewModel = commuViewModel,
+                postingViewModel = postingViewModel,
                 myId = myId,   // 유저 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 것으로 가정한다.
                 modifier = modifier
             )
@@ -284,6 +292,19 @@ fun RibbitScreen(
             CreatingCommuScreen(
                 navController = navController,
                 userViewModel = userViewModel,
+                commuViewModel = commuViewModel,
+                modifier = modifier
+            )
+        }
+        composable(route = RibbitScreen.ManageCommuScreen.name) {
+            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> ManageCommuScreen")
+            ManageCommuScreen(
+                navController = navController,
+                getCardViewModel = getCardViewModel,
+                authViewModel = authViewModel,
+                tokenViewModel = tokenViewModel,
+                userViewModel = userViewModel,
+                listViewModel = listViewModel,
                 commuViewModel = commuViewModel,
                 modifier = modifier
             )

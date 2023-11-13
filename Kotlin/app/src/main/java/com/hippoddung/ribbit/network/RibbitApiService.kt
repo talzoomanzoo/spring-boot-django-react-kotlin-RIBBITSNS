@@ -2,7 +2,6 @@ package com.hippoddung.ribbit.network
 
 import com.hippoddung.ribbit.network.bodys.RibbitPost
 import com.hippoddung.ribbit.network.bodys.requestbody.ReplyRequest
-import com.hippoddung.ribbit.network.bodys.requestbody.TwitCreateRequest
 import com.hippoddung.ribbit.network.bodys.responsebody.DeleteResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -18,7 +17,7 @@ const val BASE_URL =
 interface RibbitApiService {
     @GET("api/twits/")
     suspend fun getRibbitPosts(): List<RibbitPost>
-    @GET("api/twits/followTwit")
+    @GET("api/followtwit/")  // 서버에서 버그 해결을 위해 컨트롤러 주소를 바꾸었으나 나머지는 모두 문제가 없는 상태여서 같은 곳에서 service 를 실행
     suspend fun getFollowingPosts(): List<RibbitPost>
 
     @GET("api/twits/topviews")
@@ -28,7 +27,7 @@ interface RibbitApiService {
 
     @POST("api/twits/create")
     suspend fun postCreatePost(
-        @Body twitCreateRequest: TwitCreateRequest
+        @Body ribbitPost: RibbitPost
     ): RibbitPost
 
     @POST("api/twits/edit")
@@ -94,10 +93,17 @@ interface RibbitApiService {
         @Path("listId") listId : Int
     ): List<RibbitPost>
 
+    @GET("api/twits/allComs")
+    suspend fun getAllCommuPosts(): List<RibbitPost>
     @GET("/api/twits/{comId}/comTwit")
     suspend fun getCommuIdPosts(
         @Path("comId") commuId : Int
     ): List<RibbitPost>
+    @POST("api/twits/{comId}/create")
+    suspend fun postCreateCommuPost(
+        @Body ribbitPost: RibbitPost,
+        @Path("comId") commuId : Int
+    ): RibbitPost
 }
 
 //    @GET("auth/refresh")
