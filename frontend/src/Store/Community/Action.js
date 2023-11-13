@@ -27,7 +27,24 @@ import {
     REMOVE_FOLLOW_REQUEST,
     REMOVE_FOLLOW_SUCCESS,
     REMOVE_FOLLOW_FAILURE,
+    COM_DELETE_REQUEST,
+    COM_DELETE_SUCCESS,
+    COM_DELETE_FAILURE,
 } from "./ActionType";
+
+export const deleteComRequest = () => ({
+    type: COM_DELETE_REQUEST,
+  });
+  
+  export const deleteComSuccess = (comId) => ({
+    type: COM_DELETE_SUCCESS,
+    payload: comId,
+  });
+  
+  export const deleteComFailure = (error) => ({
+    type: COM_DELETE_FAILURE,
+    payload: error,
+  });
 
 export const createComRequest = () => ({
     type: COM_CREATE_REQUEST,
@@ -136,32 +153,45 @@ export const addReady = (comId) => async (dispatch) => {
     try {
         const response = await api.post(`/api/communities/${comId}/signup`, comId);
         const signup = response.data;
-        dispatch({ type: SIGNUP_SUCCESS, payload: signup});
+        dispatch({ type: SIGNUP_SUCCESS, payload: signup });
     } catch (error) {
         dispatch({ type: SIGNUP_FAILURE, payload: error.message });
     }
 };
 
-export const removeFollow = (comId) => async(dispatch) => {
-    dispatch({type: REMOVE_FOLLOW_REQUEST});
-    try{
+export const removeFollow = (comId) => async (dispatch) => {
+    dispatch({ type: REMOVE_FOLLOW_REQUEST });
+    try {
         const response = await api.post(`/api/communities/${comId}/signout`, comId);
         const signout = response.data;
-        dispatch({type: REMOVE_FOLLOW_SUCCESS, payload: signout});
+        dispatch({ type: REMOVE_FOLLOW_SUCCESS, payload: signout });
     } catch (error) {
-        dispatch({type: REMOVE_FOLLOW_FAILURE, payload: error.message});
+        dispatch({ type: REMOVE_FOLLOW_FAILURE, payload: error.message });
     }
 }
 
-export const findComById = (comId) =>  async(dispatch) => {
-        dispatch({ type: FIND_COM_BY_ID_REQUEST });
+export const findComById = (comId) => async (dispatch) => {
+    dispatch({ type: FIND_COM_BY_ID_REQUEST });
+    try {
+        const response = await api.get(`/api/communities/${comId}`);
+        const com = response.data;
+        dispatch({ type: FIND_COM_BY_ID_SUCCESS, payload: com });
+        console.log("findComById check", com);
+    } catch (error) {
+        dispatch({ type: FIND_COM_BY_ID_FAILURE, payload: error.message });
+        console.log("findComById error", error.message);
+    }
+};
+
+export const deleteCom = (comId) => {
+    return async (dispatch) => {
+        dispatch(deleteComRequest());
         try {
-            const response = await api.get(`/api/communities/${comId}`);
-            const com = response.data;
-            dispatch({ type: FIND_COM_BY_ID_SUCCESS, payload: com });
-            console.log("findComById check", com);
+            await api.delete(`/api/communities/${comId}`);
+            dispatch(deleteComSuccess(comId));
+            console.log("delete com", comId);
         } catch (error) {
-            dispatch({ type: FIND_COM_BY_ID_FAILURE, payload: error.message });
-            console.log("findComById error", error.message);
+            dispatch(deleteComFailure(error.message));
         }
-    };
+    }
+}

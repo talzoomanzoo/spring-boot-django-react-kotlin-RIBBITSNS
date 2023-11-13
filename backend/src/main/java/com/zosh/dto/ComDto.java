@@ -21,7 +21,7 @@ public class ComDto {
 	
 	private UserDto user;
 	
-	private List<Twit> comTwits = new ArrayList<>();
+	private List<TwitDto> comTwits;
 	
 	private String comName;
 	
@@ -31,7 +31,7 @@ public class ComDto {
 	
 	private boolean privateMode;
 	
-	private List<User> followingsc = new ArrayList<>();
+	private List<UserDto> followingsc = new ArrayList<>();
 	
-	private List<User> followingscReady = new ArrayList<>();
+	private List<UserDto> followingscReady = new ArrayList<>();
 }

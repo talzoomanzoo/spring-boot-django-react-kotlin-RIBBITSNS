@@ -197,7 +197,6 @@ const ComModel2 = ({ com, handleClose, open }) => {
                                 <p>커뮤니티 관리</p>
                             </div>
                             <div>
-                                {/* {showDeleteButton && <Button type="submit">저장</Button>} */}
                                 <Button type="submit">저장</Button>
                             </div>
                         </div>

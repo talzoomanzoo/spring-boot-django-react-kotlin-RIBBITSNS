@@ -136,4 +136,11 @@ public class ComServiceImplementation implements ComService{
 		comRepository.save(community);
 		return community;
 	}
+
+	@Override
+	public void deleteComById(Long comId, Long id) throws ComException, UserException {
+		// TODO Auto-generated method stub
+		Community community = findById(comId);
+		comRepository.deleteById(community.getId());
+	}
 }

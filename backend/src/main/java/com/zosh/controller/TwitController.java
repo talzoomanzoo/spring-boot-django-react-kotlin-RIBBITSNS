@@ -43,7 +43,7 @@ public class TwitController {
 	private ListService listService;
 	private ComService comService;
 	
-	public TwitController(TwitService twitService,UserService userService, ListService listService, ComService comService) {
+	public TwitController(TwitService twitService, UserService userService, ListService listService, ComService comService) {
 		this.twitService=twitService;
 		this.userService=userService;
 		this.listService=listService;
@@ -261,17 +261,17 @@ public class TwitController {
 	}
 	
 	
-	@GetMapping("/followtwit/{userId}")
-	public ResponseEntity<List<TwitDto>> getUserFollowTwit(@PathVariable Long userId) throws UserException, TwitException{
-		User reqUser=userService.findUserById(userId);
-		System.out.println("reqUser + " + reqUser);
-		List<Twit> twits=twitService.findTwitFollowedByReqUser(reqUser.getId());
-		System.out.println("twits + " + twits);
-		List<TwitDto> twitDtos=TwitDtoMapper.toTwitDtos(twits, reqUser);
-		for (int i = 0; i < twitDtos.size(); i++) {
-			System.out.println("twitDtos + " + twitDtos.get(i).getReplyTwits());
-		}
-		return new ResponseEntity<List<TwitDto>>(twitDtos, HttpStatus.OK);
-		
-	}
+//	@GetMapping("/followtwit/{userId}")
+//	public ResponseEntity<List<TwitDto>> getUserFollowTwit(@PathVariable Long userId) throws UserException, TwitException{
+//		User reqUser=userService.findUserById(userId);
+//		System.out.println("reqUser + " + reqUser);
+//		List<Twit> twits=twitService.findTwitFollowedByReqUser(reqUser.getId());
+//		System.out.println("twits + " + twits);
+//		List<TwitDto> twitDtos=TwitDtoMapper.toTwitDtos(twits, reqUser);
+//		for (int i = 0; i < twitDtos.size(); i++) {
+//			System.out.println("twitDtos + " + twitDtos.get(i).getReplyTwits());
+//		}
+//		return new ResponseEntity<List<TwitDto>>(twitDtos, HttpStatus.OK);
+//		
+//	}
 }

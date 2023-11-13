@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.zosh.model.ListModel;
 
+@Transactional(readOnly = true)
 public interface ListRepository extends JpaRepository<ListModel, Long>{
 //	@Query("SELECT l FROM ListModel l WHERE l.privateMode=false ORDER BY l.createdAt DESC")
 //	List<ListModel> findPublicOrderByCreatedAtDesc();

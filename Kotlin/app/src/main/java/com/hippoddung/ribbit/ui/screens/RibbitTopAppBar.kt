@@ -61,6 +61,7 @@ import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
 import com.hippoddung.ribbit.ui.viewmodel.CommuViewModel
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.ListViewModel
+import com.hippoddung.ribbit.ui.viewmodel.MyProfileUiState
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 import kotlinx.coroutines.runBlocking
@@ -169,6 +170,8 @@ fun MainDropDownMenu(
         IconButton(
             onClick = {
                 commuViewModel.getCommus()
+                Log.d("HippoLog, RibbitTopAppBar", "api/users/profile, myProfileUiState: ${(userViewModel.myProfileUiState as MyProfileUiState.Exist).myProfile}")
+                Log.d("HippoLog, RibbitTopAppBar", "api/users/profile, myProfile: ${userViewModel.myProfile.value}")
                 navController.navigate(RibbitScreen.CommuScreen.name)
             },
             modifier = modifier.padding(4.dp)

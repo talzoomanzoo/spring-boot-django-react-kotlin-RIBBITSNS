@@ -4,7 +4,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -27,12 +30,20 @@ public class Community {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
+	@JsonBackReference
+	@JsonIgnoreProperties(value = {"twit", "likes", "user"})
+	//@JoinColumn(name = "user_id")
 	private User user;
 	
+	//private Long userId;
+	
+	@JsonIgnore
 	@OneToMany(cascade = {CascadeType.ALL, CascadeType.REMOVE})
-    @JoinColumn(name = "twit_id")
+	@JsonManagedReference
+    //@JoinColumn(name = "twit_id")
+	@JsonIgnoreProperties(value = {"twit", "likes", "user"})
     private List<Twit> comTwits = new ArrayList<>();
 	
 	@Column(nullable = false)
@@ -49,9 +60,11 @@ public class Community {
 
 	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.DETACH)
+	@JsonIgnoreProperties(value = {"twit", "likes", "user"})
 	private List<User> followingsc = new ArrayList<>();
 	
 	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.DETACH)
+	@JsonIgnoreProperties(value = {"twit", "likes", "user"})
 	private List<User> followingscReady = new ArrayList<>();
 }

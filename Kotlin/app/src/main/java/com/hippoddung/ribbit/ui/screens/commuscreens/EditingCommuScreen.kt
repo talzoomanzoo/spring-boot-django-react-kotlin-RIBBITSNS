@@ -26,8 +26,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.LockOpen
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -45,6 +47,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -55,6 +58,7 @@ import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.EditingCommuUiState
 import com.hippoddung.ribbit.ui.viewmodel.CommuViewModel
+import kotlinx.coroutines.runBlocking
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
@@ -121,13 +125,31 @@ fun EditCommuScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(
-            text = stringResource(R.string.edit_commu),
-            color = Color.Black,
+        Row(
             modifier = modifier
-                .padding(bottom = 16.dp)
-                .align(alignment = Alignment.Start)
-        )
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.edit_commu),
+                color = Color.Black,
+                modifier = modifier
+                    .padding(bottom = 16.dp)
+            )
+            Button(
+                onClick = {
+                    commuViewModel.deleteCommuIdState = ribbitCommuItem.id
+                    commuViewModel.deleteCommuClickedUiState = true
+                },
+                modifier = modifier
+            ) {
+                Text(
+                    text = stringResource(R.string.delete_commu),
+                    modifier = modifier
+                )
+            }
+        }
         TextField(
             value = inputCommuName,
             onValueChange = { inputCommuName = it },
@@ -253,5 +275,52 @@ fun EditCommuScreen(
             }
         }
         Spacer(modifier = modifier.height(150.dp))
+    }
+    if (commuViewModel.deleteCommuClickedUiState) {
+        AlertDialog(
+            onDismissRequest = { commuViewModel.deleteCommuClickedUiState = false },
+            confirmButton = {
+                OutlinedButton(
+                    onClick = {
+                        commuViewModel.deleteCommuClickedUiState = false
+                        runBlocking {   // 정확한 삭제정보 표시를 위해 동기로 실행
+                            Log.d("HippoLog, CommuScreen", "Delete Commu")
+                            commuViewModel.deleteCommuIdState?.let { commuViewModel.deleteCommuIdCommu(it) }
+                        }
+                        commuViewModel.getCommus()
+                    },
+                    content = {
+                        Text(
+                            text = "Delete Commu",
+                            color = Color(0xFF006400),
+                            fontSize = 14.sp,
+                            modifier = modifier
+                        )
+                    },
+                    modifier = modifier,
+                )
+            },
+            dismissButton = {
+                OutlinedButton(
+                    onClick = { commuViewModel.deleteCommuClickedUiState = false },
+                    content = {
+                        Text(
+                            text = "Cancel",
+                            color = Color(0xFF006400),
+                            fontSize = 14.sp,
+                            modifier = modifier
+                        )
+                    },
+                    modifier = modifier
+                )
+            },
+            text = {
+                Text(
+                    text = "Are you really going to delete this commu?",
+                    modifier = modifier
+                )
+            },
+            modifier = modifier
+        )
     }
 }

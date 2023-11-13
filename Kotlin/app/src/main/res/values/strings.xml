@@ -11,6 +11,8 @@
     <string name="loading">Loading</string>
     <string name="cancel">Cancel</string>
     <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="manage">Manage</string>
 
     <!--    Screens   -->
     <string name="loading_screen">LoadingScreen</string>
@@ -72,5 +74,6 @@
     <string name="create_commu">Create Commu</string>
     <string name="edit_commu">Edit Commu</string>
     <string name="commu_background_image">Commu Background Image</string>
+    <string name="delete_commu">Delete Commu</string>
 
 </resources>

@@ -1,6 +1,7 @@
 package com.zosh.dto;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -25,6 +26,8 @@ public class TwitDto {
 	private String video;
 	
 	private UserDto user;
+	
+	private ComDto community;
 	
 	private LocalDateTime createdAt;
 	

@@ -35,7 +35,7 @@ public class ListDtoMapper {
 			listDto.setBackgroundImage(listModel.getBackgroundImage());
 			listDto.setDescription(listModel.getDescription());
 			listDto.setListName(listModel.getListName());
-			//listDto.setFollowingsl(UserDtoMapper.toUserDtos(listModel.getFollowingsl()));
+			listDto.setFollowingsl(UserDtoMapper.toUserDtos(listModel.getFollowingsl()));
 			listDto.setPrivateMode(listModel.isPrivateMode());
 			listDto.setCreatedAt(listModel.getCreatedAt());
 			listDto.setUser(UserDtoMapper.toUserDto(listModel.getUser()));

@@ -26,6 +26,9 @@ import {
     REMOVE_FOLLOW_REQUEST,
     REMOVE_FOLLOW_SUCCESS,
     REMOVE_FOLLOW_FAILURE,
+    COM_DELETE_REQUEST,
+    COM_DELETE_SUCCESS,
+    COM_DELETE_FAILURE,
 } from "./ActionType";
 
 const initialState = {
@@ -41,6 +44,7 @@ const comReducer = (state = initialState, action) => {
         case COM_CREATE_REQUEST:
         case GET_COMS_REQUEST:
         case GET_USER_REQUEST:
+        case COM_DELETE_REQUEST:
         case UPDATE_COM_REQUEST:
             return {
                 ...state,
@@ -84,6 +88,14 @@ const comReducer = (state = initialState, action) => {
                 ...state,
                 loading: false,
                 coms: action.payload,
+                error: null,
+            };
+        case COM_DELETE_SUCCESS:
+            const ComIdToDelete = action.payload;
+            return {
+                ...state,
+                loading: false,
+                coms: state.lists.filter((com) => com.id !== ComIdToDelete),
                 error: null,
             };
         case UPDATE_COM_SUCCESS:
@@ -144,6 +156,7 @@ const comReducer = (state = initialState, action) => {
         case ADD_USER_FAILURE:
         case ADD_USER_SIGNUP_FAILURE:
         case REMOVE_FOLLOW_FAILURE:
+        case COM_DELETE_FAILURE:
         default:
             return state;
     }

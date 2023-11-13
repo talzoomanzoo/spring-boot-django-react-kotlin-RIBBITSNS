@@ -13,5 +13,7 @@ class CommuRepository @Inject constructor(
     suspend fun deleteCommuIdCommu(commuId: Int) = commuApiService.deleteCommuIdCommu(commuId)
     suspend fun postEditCommu(commuItem: RibbitCommuItem) = commuApiService.postEditCommu(commuItem)
     suspend fun postAddUser(commuId: Int, userId: Int) = commuApiService.postAddUser(commuId, userId)
+    suspend fun signupCommu(commuId: Int) = commuApiService.signupCommu(commuId)
+
 
 }
