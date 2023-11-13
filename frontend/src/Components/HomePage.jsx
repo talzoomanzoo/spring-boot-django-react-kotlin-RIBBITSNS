@@ -11,7 +11,7 @@ const FollowTwitEnc = React.lazy(() => import("./FollowTwit/FollowTwitEnc"));
 const TwitDetail = React.lazy(() => import("./Home/MiddlePart/TwitDetail"));
 const Lists = React.lazy(() => import("./Lists/Lists"));
 const Profile = React.lazy(() => import("./Profile/Profile"));
-const Chatroom = React.lazy(() => import("./Chat/Chat"));
+const Chatroom = React.lazy(() => import("./Chat/Chat1"));
 const ListsDetail = React.lazy(() => import("./Lists/ListsDetail"));
 const Communities = React.lazy(() => import("./Communities/Communities"));
 const ComDetail = React.lazy(() => import("./Communities/ComDetail"));

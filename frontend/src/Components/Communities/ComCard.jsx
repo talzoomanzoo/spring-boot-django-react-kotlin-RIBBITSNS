@@ -200,6 +200,9 @@ return (
                 }}
             />
             <section
+                style={{
+                    height: "100px"
+                }}
                 className="mt-5 items-center justify-content cursor-pointer"
                 onClick={handleNavigateToComDetail}>
                 <div className="text-xl items-center justify-content" >{com.comName}</div>

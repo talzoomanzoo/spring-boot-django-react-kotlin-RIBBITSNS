@@ -463,7 +463,7 @@ const ComDetail = () => {
           className="w-[100%] h-[15rem] object-cover"
           src={
             com.com?.backgroundImage ||
-            "https://png.pngtree.com/thumb_back/fw800/background/20230304/pngtree-green-base-vector-smooth-background-image_1770922.jpg"
+            "https://t1.daumcdn.net/cfile/tistory/174FF7354E6ACC7606"
           }
           alt=""
           loading="lazy"
@@ -498,17 +498,17 @@ const ComDetail = () => {
                 )}
               </div>
 
-            <section>
+            {/* <section>
                 <img
                     className="w-[100%] h-[15rem] object-cover"
                     src={
                         com.com?.backgroundImage ||
-                        "https://t1.daumcdn.net/cfile/tistory/174FF7354E6ACC7606"
+                        ""
                     }
                     alt=""
                     loading="lazy"
                 />
-            </section>
+            </section> */}
               {!uploadingImage && (
                 <div>
                   {selectedImage && (
