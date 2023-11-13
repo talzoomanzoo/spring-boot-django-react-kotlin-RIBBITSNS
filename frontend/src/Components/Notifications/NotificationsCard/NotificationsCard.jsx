@@ -21,16 +21,15 @@ const NotificationsCard = ({ notification }) => {
     return (
         <div class="flex space-x-5">
             <div
-                onClick={handleNavigateToTwitDetial}
                 className="cursor-pointer"
             />
             <div class="w-full">
                 <div class="flex justify-between items-center">
                     <div
-                        onClick={handleNavigateToTwitDetial}
                         className="flex cursor-pointer items-center space-x-1"
                     >
                         <li style={{listStyleType: 'none'}} className="list-css"><Avatar
+                        onClick={() => navigate(`/profile/${notification.user?.id}`)}
                         alt="Avatar"
                         src={
                             notification.user?.image
@@ -39,7 +38,7 @@ const NotificationsCard = ({ notification }) => {
                           }
                           loading="lazy"
                           style={{float:"left"}}
-                        /><span style={{padding:"5px",float:"left"}}>당신의 리빗을</span><span style={{padding:"5px",float:"left"}}>{notification.user.fullName}이(가) 좋아합니다.</span></li>
+                        /><div onClick={handleNavigateToTwitDetial} style={{padding:"5px",float:"left"}}><span style={{padding:"5px",float:"left"}}>{notification.user.fullName}이(가)</span><span style={{padding:"5px",float:"left"}}>당신의 리빗을  좋아합니다.</span></div></li>   
                     </div>
                 </div>
                 <hr
