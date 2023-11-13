@@ -64,8 +64,8 @@ public class Twit {
     @JsonIgnoreProperties(value = {"twit", "likes", "user"})
     private List<Like> likes = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "twit", cascade = CascadeType.ALL) // 붙는 엔티티가 List 1, 상대가 M
-//    private List<Notification> notifications = new ArrayList<>(); // 여러개의 twit에 하나의 like 리스트
+    @OneToMany(mappedBy = "twit", cascade = CascadeType.ALL) // 붙는 엔티티가 List 1, 상대가 M
+    private List<Notification> notifications = new ArrayList<>(); // 여러개의 twit에 하나의 like 리스트
 
     @OneToMany(cascade = {CascadeType.ALL, CascadeType.REMOVE})
     @JoinColumn(name = "twit_id")
