@@ -30,7 +30,10 @@ public class EmitterRepository {
      * @param id - 사용자 아이디.
      */
     public void deleteById(Long id) {
-        emitters.remove(id);
+        SseEmitter emitter = emitters.remove(id);
+        if (emitter != null) {
+            emitter.complete(); // 연결이 끊어진 경우, Emitter를 완료시켜 메모리 누수 방지
+        }
     }
 
     /**
@@ -41,5 +44,18 @@ public class EmitterRepository {
      */
     public SseEmitter get(Long id) {
         return emitters.get(id);
+    }
+
+    /**
+     * 주어진 아이디의 Emitter를 에러와 함께 완료
+     *
+     * @param id - 사용자 아이디.
+     * @param ex - 에러 객체.
+     */
+    public void completeWithError(Long id, Throwable ex) {
+        SseEmitter emitter = emitters.remove(id);
+        if (emitter != null) {
+            emitter.completeWithError(ex);
+        }
     }
 }

@@ -46,7 +46,6 @@ const validationSchema = Yup.object().shape({
 });
 
 const TwitCard = ({ twit }) => {
-
   const [selectedImage, setSelectedImage] = useState(twit.image);
   const [selectedVideo, setSelectedVideo] = useState(twit.video);
   const [selectedLocation, setSelectedLocation] = useState(twit.location);
@@ -64,7 +63,7 @@ const TwitCard = ({ twit }) => {
 
   const [ethiclabel, setEthiclabel] = useState(twit.ethiclabel);
   const [ethicrateMAX, setEthicrateMAX] = useState(twit.ethicrateMAX); //윤리수치 최대 수치
-  console.log("twit.ethicratemax: ",twit);
+  console.log("twit.ethicratemax: ", twit);
   //  const [isLoading, setIsLoading] = useState(false); //로딩창의 띄어짐의 유무를 판단한다. default는 true이다.
   const jwtToken = localStorage.getItem("jwt");
   const [isEdited, setIsEdited] = useState(twit.edited);
@@ -91,6 +90,23 @@ const TwitCard = ({ twit }) => {
   const [hoveredMarkerIndex, setHoveredMarkerIndex] = useState(null);
   const [showLocation, setShowLocation] = useState(true);
   const [isLocationSaved, setIsLocationSaved] = useState(false);
+  const [message, setMessage] = useState('');
+
+  useEffect(() => {
+      const userId = 1; // 원하는 사용자 ID로 설정
+      const eventSource = new EventSource(`http://localhost:8080/notifications/subscribe/${userId}`);
+
+      // 서버에서 이벤트 수신 시 처리
+      eventSource.addEventListener('message', (event) => {
+          const data = JSON.parse(event.data);
+          setMessage(data);
+      });
+
+      return () => {
+          // 컴포넌트 언마운트 시 이벤트 소스 종료
+          eventSource.close();
+      };
+  }, []);
 
   useEffect(() => {
     if (isLocationFormOpen && showLocation) {
@@ -440,7 +456,7 @@ const TwitCard = ({ twit }) => {
           }),
         }
       );
-      console.log("response.statis: ",response);
+      console.log("response.statis: ", response);
       if (response.status === 200) {
         const responseData = await response.json();
         setEthiclabel(responseData.ethiclabel);
@@ -660,12 +676,48 @@ const TwitCard = ({ twit }) => {
                   </p>
 
                   <p>
-                    {ethiclabel===0 && <div className="flex items-center font-bold rounded-md">폭력성<ProgressBar completed={ethicrateMAX} width="450%" margin="2px 0px 4px 4px"/></div>}
-                    {ethiclabel===1 && <div className="flex items-center font-bold rounded-md">선정성<ProgressBar completed={ethicrateMAX} width="450%" margin="2px 0px 4px 4px"/></div>}
-                    {ethiclabel===2 && <div className="flex items-center font-bold rounded-md">욕설<ProgressBar completed={ethicrateMAX} width="450%" margin="2px 0px 4px 4px"/></div>}
-                    {ethiclabel===3 && <div className="flex items-center font-bold rounded-md">차별성<ProgressBar completed={ethicrateMAX} width="450%" margin="2px 0px 4px 4px"/></div>}
+                    {ethiclabel === 0 && (
+                      <div className="flex items-center font-bold rounded-md">
+                        폭력성
+                        <ProgressBar
+                          completed={ethicrateMAX}
+                          width="450%"
+                          margin="2px 0px 4px 4px"
+                        />
+                      </div>
+                    )}
+                    {ethiclabel === 1 && (
+                      <div className="flex items-center font-bold rounded-md">
+                        선정성
+                        <ProgressBar
+                          completed={ethicrateMAX}
+                          width="450%"
+                          margin="2px 0px 4px 4px"
+                        />
+                      </div>
+                    )}
+                    {ethiclabel === 2 && (
+                      <div className="flex items-center font-bold rounded-md">
+                        욕설
+                        <ProgressBar
+                          completed={ethicrateMAX}
+                          width="450%"
+                          margin="2px 0px 4px 4px"
+                        />
+                      </div>
+                    )}
+                    {ethiclabel === 3 && (
+                      <div className="flex items-center font-bold rounded-md">
+                        차별성
+                        <ProgressBar
+                          completed={ethicrateMAX}
+                          width="450%"
+                          margin="2px 0px 4px 4px"
+                        />
+                      </div>
+                    )}
                   </p>
-                  
+
                   {twit.image && (
                     <img
                       className="w-[28rem] border border-gray-400 p-5 rounded-md"
@@ -689,6 +741,7 @@ const TwitCard = ({ twit }) => {
                 </div>
               )}
             </div>
+            <p>Received Message: {message}</p>
             {/* <ToastContainer /> */}
             <div className="flex justify-between items-center mt-5">
               <div className="flex space-x-5 items-center">
