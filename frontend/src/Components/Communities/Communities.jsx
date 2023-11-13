@@ -57,7 +57,7 @@ const Communities = () => {
             <div>
                 <div
                     className="space-y-3"
-                    style={{ marginTop: 10 }}>
+                    style={{ marginTop: 10, fontSize: "larger", }}>
                     커뮤니티 찾아보기
                     <hr
                         style={{
@@ -96,7 +96,7 @@ const Communities = () => {
             <section className="space-y-5" style={{ marginTop: 50 }}>
                 <div
                     className="space-y-3"
-                    style={{ marginTop: 10 }}>
+                    style={{ marginTop: 10, fontSize: "larger", }}>
                     내 커뮤니티 리빗 모아보기
                     <hr
                         style={{
