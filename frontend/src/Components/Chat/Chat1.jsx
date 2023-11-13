@@ -19,7 +19,7 @@ const Chat = () => {
         top: "50%",
         left: "50%",
         transform: "translate(-50%, -50%)",
-        width: 500,
+        width: 400,
         minHeight: 500,
         maxHeight: 500,
         bgcolor: "background.paper",
@@ -33,7 +33,7 @@ const Chat = () => {
         top: "50%",
         left: "50%",
         transform: "translate(-50%, -50%)",
-        width: 270,
+        width: 200,
         minHeight: 100,
         maxHeight: 100,
         bgcolor: "background.paper",
@@ -46,7 +46,7 @@ const Chat = () => {
     const chatStyle = {
         position: "absolute",
         top: "91%",
-        right: "4%",
+        right: "1%",
         // transform: "translate(-50%, -50%)",
     }
 
@@ -316,7 +316,7 @@ const Chat = () => {
                         onClick={handleBack}
                     />
                     <h1 className="py-5 text-xl font-bold opacity-90 ml-5">
-                        Chat Room
+                        메시지
                     </h1>
                 </div>
                 <div className="absolute right-0 cursor-pointer"
@@ -396,7 +396,7 @@ const Chat = () => {
                             className={`outline-none text-gray-500 ${theme.currentTheme === "light" ? "bg-stone-300" : "bg-[#151515]"}`}
                         />
                         {search && (
-                            <div className={`absolute z-50 top-14 customeScrollbar overflow-y-scroll hideScrollbar css-scroll h-[20vh] border-gray-400 h-[20vh] w-40 rounded-md ${theme.currentTheme === "light" ? "bg-[#dbd9d9]" : "bg-[#151515] border"}`}>
+                            <div>
                                 {auth.userSearchResult && auth.userSearchResult.map((item) => (!userList.some((user) => user.email === item.email) && (
                                     //초대할 유저 검색, rightpart에 있는 '사용자 및 글 검색'그대로 가져와 수정함
                                     <div key={item.id}
@@ -440,7 +440,7 @@ const Chat = () => {
                             height: '1px',
                         }}
                     />
-                    <div>
+                    <div  className={`outline-none absolute z-100 top-18 left-10 customeScrollbar overflow-y-scroll css-scroll h-[40vh] border-gray-400 w-80 ${theme.currentTheme === "light" ? "bg-[#dbd9d9]" : "bg-[#151515] border"}`}>
                         {chatHistory.length > 0 ? (//채팅 내역
                             chatHistory.map((chat) => (
                                 <div key={chat.id}>
@@ -454,7 +454,7 @@ const Chat = () => {
 
                                             {auth.user?.fullName === chat.sender//상대방 채팅은 "이름:채팅", 내 채팅은 "채팅:이름"으로 출력
                                                 ? `${chat.message}`
-                                                : <p className='bg-gray-500'>{chat.sender}: {chat.message}</p>}
+                                                : `${chat.sender}: ${chat.message}`}
                                         </span>
                                     )}
                                 </div>
@@ -465,7 +465,7 @@ const Chat = () => {
                     </div>
                     <div style={chatStyle}>
                         <input
-                            size={47}
+                            size={37}
                             maxLength={200}
                             type="text"
                             placeholder="Your message"
