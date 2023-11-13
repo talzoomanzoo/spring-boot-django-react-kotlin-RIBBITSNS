@@ -352,7 +352,7 @@ const Chat = () => {
                         >
                             <button
                                 onClick={() => enterChatRoom(room.roomId, room.name)}//채팅방 입장
-                                style={{ cursor: 'pointer' }}
+                                style={{ cursor: 'pointer', fontSize: "larger", }}
                             >
                                 <ChatIcon />
                                 {room.name}
