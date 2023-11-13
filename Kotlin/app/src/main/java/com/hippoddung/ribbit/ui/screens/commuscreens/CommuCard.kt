@@ -26,9 +26,9 @@ import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.R
 import com.hippoddung.ribbit.network.bodys.RibbitCommuItem
 import com.hippoddung.ribbit.ui.RibbitScreen
-import com.hippoddung.ribbit.ui.viewmodel.EditingCommuUiState
-import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.CommuViewModel
+import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
+import com.hippoddung.ribbit.ui.viewmodel.ManageCommuUiState
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -85,8 +85,8 @@ fun CommuCard(
         if (commuItem.user?.id == myId) {    // 관리자 계정일 경우
             OutlinedButton(
                 onClick = {
-                    commuViewModel.editingCommuUiState = EditingCommuUiState.Ready(commuItem)
-                    navController.navigate(RibbitScreen.EditingCommuScreen.name)
+                    commuViewModel.manageCommuUiState = ManageCommuUiState.ReadyManage(commuItem)
+                    navController.navigate(RibbitScreen.ManageCommuScreen.name)
                 },
                 modifier = modifier
             ) {
@@ -97,20 +97,51 @@ fun CommuCard(
                     modifier = modifier
                 )
             }
+//            OutlinedButton(
+//                onClick = {
+//                    commuViewModel.editingCommuUiState = EditingCommuUiState.Ready(commuItem)
+//                    navController.navigate(RibbitScreen.EditingCommuScreen.name)
+//                },
+//                modifier = modifier
+//            ) {
+//                Text(
+//                    text = stringResource(R.string.manage),
+//                    color = Color(0xFF006400),
+//                    fontSize = 14.sp,
+//                    modifier = modifier
+//                )
+//            }
         } else {  // 관리자 계정 아닐 경우
-            OutlinedButton(
-                onClick = {
-                    commuViewModel.signupCommu(commuItem.id!!)  // 반드시 있음.
-                    navController.navigate(RibbitScreen.EditingCommuScreen.name)
-                },
-                modifier = modifier
-            ) {
-                Text(
-                    text = "SignUp",
-                    color = Color(0xFF006400),
-                    fontSize = 14.sp,
+            if(commuItem.followingsc.any{ it?.id == myId}){
+                OutlinedButton(
+                    onClick = {
+                        commuViewModel.signoutCommuIdState = commuItem.id
+                        commuViewModel.signoutCommuClickedUiState = true
+                    },
                     modifier = modifier
-                )
+                ) {
+                    Text(
+                        text = "Signout",
+                        color = Color(0xFF006400),
+                        fontSize = 14.sp,
+                        modifier = modifier
+                    )
+                }
+            }else {
+                OutlinedButton(
+                    onClick = {
+                        commuViewModel.signupCommu(commuItem)
+                        commuViewModel.signupCommuClickedUiState = true
+                    },
+                    modifier = modifier
+                ) {
+                    Text(
+                        text = "Signup",
+                        color = Color(0xFF006400),
+                        fontSize = 14.sp,
+                        modifier = modifier
+                    )
+                }
             }
         }
     }

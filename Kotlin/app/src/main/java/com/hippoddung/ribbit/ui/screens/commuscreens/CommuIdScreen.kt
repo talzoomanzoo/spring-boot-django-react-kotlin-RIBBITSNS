@@ -7,7 +7,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -23,7 +23,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.hippoddung.ribbit.network.bodys.RibbitPost
+import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.screens.RibbitTopAppBar
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
@@ -33,6 +35,7 @@ import com.hippoddung.ribbit.ui.viewmodel.GetCommuIdPostsUiState
 import com.hippoddung.ribbit.ui.viewmodel.CommuIdUiState
 import com.hippoddung.ribbit.ui.viewmodel.CommuViewModel
 import com.hippoddung.ribbit.ui.viewmodel.ListViewModel
+import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
@@ -47,6 +50,7 @@ fun CommuIdScreen(
     userViewModel: UserViewModel,
     listViewModel: ListViewModel,
     commuViewModel: CommuViewModel,
+    postingViewModel: PostingViewModel,
     myId: Int,
     modifier: Modifier
 ) {
@@ -66,7 +70,7 @@ fun CommuIdScreen(
 
         is CommuIdUiState.Success -> {
             Log.d("HippoLog, CommuIdScreen", "commuIdUiState Success")
-            when(getCardViewModel.getCommuIdPostsUiState){
+            when (getCardViewModel.getCommuIdPostsUiState) {
                 is GetCommuIdPostsUiState.Loading -> {
                     Log.d("HippoLog, CommuIdScreen", "getCommuIdPostsUiState Loading")
                     LoadingScreen(modifier = modifier)
@@ -86,6 +90,7 @@ fun CommuIdScreen(
                         userViewModel = userViewModel,
                         listViewModel = listViewModel,
                         commuViewModel = commuViewModel,
+                        postingViewModel = postingViewModel,
                         navController = navController,
                         myId = myId,
                         modifier = modifier
@@ -106,6 +111,7 @@ fun CommuIdSuccessScreen(
     userViewModel: UserViewModel,
     listViewModel: ListViewModel,
     commuViewModel: CommuViewModel,
+    postingViewModel: PostingViewModel,
     navController: NavHostController,
     myId: Int,
     modifier: Modifier
@@ -115,7 +121,12 @@ fun CommuIdSuccessScreen(
     if (getCardViewModel.getCommuIdPostsUiState is GetCommuIdPostsUiState.Success) {   // 원래 state 에 따라 넘어오기 때문에 확인할 필요가 없으나 state 에 무관하게 내려오는 문제가 있어 여기서 재확인
         posts = (getCardViewModel.getCommuIdPostsUiState as GetCommuIdPostsUiState.Success).posts
     }
-
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentScreen =
+        RibbitScreen.valueOf(backStackEntry?.destination?.route ?: RibbitScreen.HomeScreen.name)
+//    postingViewModel.setCurrentScreen(currentScreen)    // CommuIdScreen 진입 성공시 현재 screen 정보 저장.
+//    getCardViewModel.setCurrentScreen(currentScreen)    // CommuIdScreen 진입 성공시 현재 screen 정보 저장.
+//    navigation시 backStack으로 이동하면서 다른 경로를 저장하는 것을 확인 onClick으로 이동
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -131,18 +142,20 @@ fun CommuIdSuccessScreen(
             )
         },
         floatingActionButton = {
-            if ((commuViewModel.commuIdUiState as CommuIdUiState.Success).commuItem.user?.id == myId) {
-                FloatingActionButton(
-                    onClick = { commuViewModel.searchingUserClickedUiState = true },
+            FloatingActionButton(
+                onClick = {
+                    postingViewModel.setCurrentScreen(currentScreen)    // CreatingPostScreen으로 이동시 현재 screen 정보 저장.
+                    getCardViewModel.setCurrentScreen(currentScreen)    // CreatingPostScreen으로 이동시 현재 screen 정보 저장.
+                    navController.navigate(RibbitScreen.CreatingPostScreen.name)
+                },
+                modifier = modifier
+                    .padding(14.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Edit,
+                    contentDescription = "Creating Commu Post.",
                     modifier = modifier
-                        .padding(14.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Add,
-                        contentDescription = "Add User Button.",
-                        modifier = modifier
-                    )
-                }
+                )
             }
         },
         floatingActionButtonPosition = FabPosition.End
@@ -152,39 +165,21 @@ fun CommuIdSuccessScreen(
                 .fillMaxSize()
                 .padding(it)
         ) {
-            // 231110 1120 이따가 처리해야 함
-//            if((commuViewModel.commuIdUiState as CommuIdUiState.Success).commuItem.followingsl.isNullOrEmpty()){
-//                Text(
-//                    text ="There is no following user at this commu",
-//                    modifier = modifier
-//                )
-//            }else {
-//                CommuIdPostsGrid(
-//                    posts = posts,
-//                    getCardViewModel = getCardViewModel,
-//                    userViewModel = userViewModel,
-//                    myId = myId,
-//                    navController = navController,
-//                    modifier = modifier
-//                )
-//            }
-        }
-        if (commuViewModel.searchingUserClickedUiState) {
-            Dialog(
-                onDismissRequest = {
-                    commuViewModel.searchingUserClickedUiState = false
-                },
-                content = {
-                    SearchingUserDialog(
-                        userViewModel = userViewModel,
-                        commuViewModel = commuViewModel,
-                        modifier = modifier
-                    )
-                }
-            )
-            // Dialog 호출 시에 현재 페이지를 recomposition 하면서 현재 카드 정보가 아닌 최근에 composition 된 카드의 정보가 넘어가는 문제가 있음.
-            // Dialog 자체의 문제로 추정되므로 가급적 쓰지 않는 것이 좋을 것으로 보이나 우선은 사용하기로 하고
-            // replyClickedUiState 에 카드의 정보를 담아서 사용하는 방식을 선택함.
+            if((commuViewModel.commuIdUiState as CommuIdUiState.Success).commuItem.followingsc.isEmpty()){
+                Text(
+                    text ="There is no following user at this commu",
+                    modifier = modifier
+                )
+            }else {
+                CommuIdPostsGrid(
+                    posts = posts,
+                    getCardViewModel = getCardViewModel,
+                    userViewModel = userViewModel,
+                    myId = myId,
+                    navController = navController,
+                    modifier = modifier
+                )
+            }
         }
     }
 }

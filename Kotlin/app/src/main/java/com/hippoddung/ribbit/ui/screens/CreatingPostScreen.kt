@@ -42,11 +42,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.hippoddung.ribbit.R
 import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.screens.textfielditems.InputTextField
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
+import com.hippoddung.ribbit.ui.viewmodel.CommuIdUiState
+import com.hippoddung.ribbit.ui.viewmodel.CommuViewModel
 import com.hippoddung.ribbit.ui.viewmodel.CreatingPostUiState
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
@@ -56,26 +59,35 @@ import java.io.File
 @Composable
 fun CreatingPostScreen(
     getCardViewModel: GetCardViewModel,
+    postingViewModel: PostingViewModel,
+    commuViewModel: CommuViewModel,
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    val postingViewModel: PostingViewModel = hiltViewModel()
     when (postingViewModel.creatingPostUiState) {
         is CreatingPostUiState.Ready -> {
             Log.d("HippoLog, CreatingPostScreen", "Ready")
             InputPostScreen(
                 navController = navController,
                 postingViewModel = postingViewModel,
+                commuViewModel = commuViewModel,
 //                cardViewModel = cardViewModel,
                 modifier = modifier
             )
         }
 
         is CreatingPostUiState.Success -> {
-            Log.d("HippoLog, CreatingPostScreen", "Success")
-            getCardViewModel.getRibbitPosts()
-            navController.navigate(RibbitScreen.HomeScreen.name)
-            postingViewModel.creatingPostUiState = CreatingPostUiState.Ready
+            if(postingViewModel.currentScreenState.value != RibbitScreen.CommuIdScreen) {   // CommuIdScreen 이 아닐 경우
+                Log.d("HippoLog, CreatingPostScreen", "Success to HomeScreen")
+                getCardViewModel.getRibbitPosts()
+                navController.navigate(RibbitScreen.HomeScreen.name)
+                postingViewModel.creatingPostUiState = CreatingPostUiState.Ready
+            }else{  // CommuIdScreen 인 경우
+                Log.d("HippoLog, CreatingPostScreen", "Success to CommuIdScreen")
+                getCardViewModel.getCommuIdPosts((commuViewModel.commuIdUiState as CommuIdUiState.Success).commuItem.id!!)
+                navController.navigate(RibbitScreen.CommuIdScreen.name)
+                postingViewModel.creatingPostUiState = CreatingPostUiState.Ready
+            }
         }
 
         is CreatingPostUiState.Loading -> {
@@ -94,6 +106,7 @@ fun CreatingPostScreen(
 fun InputPostScreen(
     navController: NavHostController,
     postingViewModel: PostingViewModel,
+    commuViewModel: CommuViewModel,
 //    cardViewModel: CardViewModel,
     modifier: Modifier = Modifier
 ) {
@@ -113,7 +126,6 @@ fun InputPostScreen(
         contract =
         ActivityResultContracts.GetContent()
     ) { uri: Uri? -> videoUri = uri }
-
     Column(
         modifier = modifier
             .padding(40.dp)
@@ -208,11 +220,21 @@ fun InputPostScreen(
             }
             Button(
                 onClick = {
-                    postingViewModel.createPost(
-                        image = bitmap.value,
-                        videoFile = videoFile,
-                        inputText = inputText
-                    )
+                    if(postingViewModel.currentScreenState.value != RibbitScreen.CommuIdScreen) {
+                        postingViewModel.createPost(
+                            image = bitmap.value,
+                            videoFile = videoFile,
+                            inputText = inputText,
+                            commuId = null
+                        )
+                    }else{
+                        postingViewModel.createPost(
+                            image = bitmap.value,
+                            videoFile = videoFile,
+                            inputText = inputText,
+                            commuId = (commuViewModel.commuIdUiState as CommuIdUiState.Success).commuItem.id
+                        )
+                    }
                 },
                 modifier = modifier.padding(14.dp)
             ) {
