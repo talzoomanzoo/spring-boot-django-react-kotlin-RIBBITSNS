@@ -3,23 +3,30 @@ package com.zosh.dto.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.zosh.dto.ComDto;
+import com.zosh.exception.UserException;
 import com.zosh.model.Community;
 import com.zosh.model.User;
+import com.zosh.service.UserService;
 
 public class ComDtoMapper1 {
 
+	
+	
 	public static ComDto toComDto(Community community, User reqUser) {
+		
 		
 		ComDto comDto= new ComDto();
 		comDto.setId(community.getId());
 		comDto.setUser(UserDtoMapper.toUserDto(community.getUser()));
-		comDto.setComTwits(community.getComTwits());
+		comDto.setComTwits(TwitDtoMapper.toTwitDtos(community.getComTwits(), reqUser));
 		comDto.setComName(community.getComName());
 		comDto.setDescription(community.getDescription());
 		comDto.setBackgroundImage(community.getBackgroundImage());
-		comDto.setFollowingsc(community.getFollowingsc());
-		comDto.setFollowingscReady(community.getFollowingscReady());
+		comDto.setFollowingsc(UserDtoMapper.toUserDtos(community.getFollowingsc()));
+		comDto.setFollowingscReady(UserDtoMapper.toUserDtos(community.getFollowingscReady()));
 		comDto.setPrivateMode(community.isPrivateMode());
 		
 		return comDto;
@@ -33,12 +40,12 @@ public class ComDtoMapper1 {
 			ComDto comDto= new ComDto();
 			comDto.setId(community.getId());
 			comDto.setUser(UserDtoMapper.toUserDto(community.getUser()));
-			comDto.setComTwits(community.getComTwits());
+			comDto.setComTwits(TwitDtoMapper.toTwitDtos(community.getComTwits(), reqUser));
 			comDto.setComName(community.getComName());
 			comDto.setDescription(community.getDescription());
 			comDto.setBackgroundImage(community.getBackgroundImage());
-			comDto.setFollowingsc(community.getFollowingsc());
-			comDto.setFollowingscReady(community.getFollowingscReady());
+			comDto.setFollowingsc(UserDtoMapper.toUserDtos(community.getFollowingsc()));
+			comDto.setFollowingscReady(UserDtoMapper.toUserDtos(community.getFollowingscReady()));
 			comDto.setPrivateMode(community.isPrivateMode());
 			comDtos.add(comDto);
 			

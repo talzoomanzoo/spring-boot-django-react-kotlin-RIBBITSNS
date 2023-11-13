@@ -4,6 +4,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,11 +20,13 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Data
+@Getter
+@Setter
 @RequiredArgsConstructor
 
 public class Twit {
@@ -27,31 +34,55 @@ public class Twit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
     @JoinColumn(name = "user_id") // 외래키를 매핑할 때 사용; name 속성에는 매핑할 외래키 이름 지정
+    @JsonIgnoreProperties(value = {"twit", "likes", "user"})
     private User user;
     
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
     @JoinColumn(name = "com_id") // 외래키를 매핑할 때 사용; name 속성에는 매핑할 외래키 이름 지정
+    @JsonIgnoreProperties(value = {"twit", "likes", "user"})
     private Community community;
+    
+//    private Long userId;
+//    
+//    private Long comId;
 
     @Column(nullable = false)
     private String content;
  
-    @OneToMany(mappedBy = "twit", cascade = CascadeType.DETACH)
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.DETACH)
+    //mappedBy = "twit", 
+    @JsonManagedReference
+    //@JsonIgnoreProperties(value = {"twit", "likes"})
+    @JoinColumn(name = "twit_id")
+    @JsonIgnoreProperties(value = {"twit", "likes", "user"})
     private List<Like> likes = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "twit", cascade = CascadeType.ALL) // 붙는 엔티티가 List 1, 상대가 M
-//    private List<Notification> notifications = new ArrayList<>(); // 여러개의 twit에 하나의 like 리스트
+    @OneToMany(mappedBy = "twit", cascade = CascadeType.ALL) // 붙는 엔티티가 List 1, 상대가 M
+    private List<Notification> notifications = new ArrayList<>(); // 여러개의 twit에 하나의 like 리스트
 
     @OneToMany(cascade = {CascadeType.ALL, CascadeType.REMOVE})
     @JoinColumn(name = "twit_id")
+    @JsonIgnore
+    @JsonManagedReference
+    @JsonIgnoreProperties(value = {"twit", "likes", "user"})
     private List<Twit> replyTwits = new ArrayList<>();
 
+    @JsonIgnore
     @ManyToMany(cascade = CascadeType.DETACH)
+    @JsonIgnoreProperties(value = {"twit", "likes", "user"})
     private List<User> retwitUser = new ArrayList<>();
 
-    @ManyToOne // 붙는 엔티티가 M, 상대가 1
+    @ManyToOne(fetch = FetchType.LAZY) // 붙는 엔티티가 M, 상대가 1
+    @JsonBackReference
+    @JsonIgnore
+    @JsonIgnoreProperties(value = {"twit", "likes", "user"})
     private Twit replyFor; // 하나의 트윗에 대해 M개의 댓글, Twit의 내용을 넣기 위해 사용
 
     @Column(nullable = false)

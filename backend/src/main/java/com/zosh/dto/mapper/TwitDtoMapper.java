@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.zosh.dto.TwitDto;
 import com.zosh.dto.UserDto;
-import com.zosh.model.Like;
 import com.zosh.model.Twit;
 import com.zosh.model.User;
 import com.zosh.util.TweetUtil;
@@ -53,13 +52,17 @@ public class TwitDtoMapper {
 		List<TwitDto> twitDtos=new ArrayList<>();
 		for(Twit twit : twits) {
 			TwitDto twitDto=toReplyTwitDto(twit, reqUser);
+			System.out.println("twitDto check" + twitDto);
 			twitDtos.add(twitDto);
 		}
 		return twitDtos;
 	}
 	
+	
 	public static TwitDto toReplyTwitDto(Twit twit, User reqUser) {
 		UserDto user=UserDtoMapper.toUserDto(twit.getUser());
+		user.setFollowers(null);
+		user.setFollowings(null);
 		
 		boolean isLiked=TweetUtil.isLikedByReqUser(reqUser, twit);
 		boolean isRetwited=TweetUtil.isLikedByReqUser(reqUser, twit);

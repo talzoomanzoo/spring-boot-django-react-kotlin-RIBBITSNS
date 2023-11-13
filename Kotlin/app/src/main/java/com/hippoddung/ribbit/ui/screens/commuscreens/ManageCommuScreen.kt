@@ -43,48 +43,9 @@ import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 import kotlinx.coroutines.runBlocking
 
 @RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun CommuScreen(
-    navController: NavHostController,
-    getCardViewModel: GetCardViewModel,
-    tokenViewModel: TokenViewModel,
-    authViewModel: AuthViewModel,
-    userViewModel: UserViewModel,
-    listViewModel: ListViewModel,
-    commuViewModel: CommuViewModel,
-    modifier: Modifier = Modifier
-) {
-    when (commuViewModel.commuUiState) {
-        is CommuUiState.Loading -> {
-            Log.d("HippoLog, CommuScreen", "Loading")
-            LoadingScreen(modifier = modifier)
-        }
-        is CommuUiState.Success -> {
-            Log.d("HippoLog, CommuScreen", "Success")
-            val commuItems = (commuViewModel.commuUiState as CommuUiState.Success).commuItems
-            CommuSuccessScreen(
-                getCardViewModel = getCardViewModel,
-                authViewModel = authViewModel,
-                tokenViewModel = tokenViewModel,
-                userViewModel = userViewModel,
-                listViewModel = listViewModel,
-                commuViewModel = commuViewModel,
-                navController = navController,
-                commuItems = commuItems,
-                modifier = modifier
-            )
-        }
-        is CommuUiState.Error -> {
-            Log.d("HippoLog, CommuScreen", "Error")
-            ErrorScreen(modifier = modifier)
-        }
-    }
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun CommuSuccessScreen(
+fun ManageCommuScreen(
     getCardViewModel: GetCardViewModel,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
@@ -92,16 +53,9 @@ fun CommuSuccessScreen(
     listViewModel: ListViewModel,
     commuViewModel: CommuViewModel,
     navController: NavHostController,
-    commuItems: List<RibbitCommuItem>,
+    commuItem: RibbitCommuItem,
     modifier: Modifier
 ) {
-    var filteredCommuItems by remember { mutableStateOf(listOf<RibbitCommuItem>()) }
-    filteredCommuItems = when(commuViewModel.commuClassificationUiState){
-        is CommuClassificationUiState.PublicCommu ->  // commuClassificationUiState 가 PublicCommu 인 경우
-            commuItems.filter { it.privateMode == false}   // RibbitCommuItem.privateMode 가 false 인 경우만 필터
-        is CommuClassificationUiState.PrivateCommu ->  // commuClassificationUiState 가 PrivateCommu 인 경우
-            commuItems.filter { it.privateMode == true}  // RibbitCommuItem.privateMode 가 true 인 경우만 필터
-    }
     val myId by remember { mutableStateOf(userViewModel.myProfile.value?.id!!) }    // 로그인시 저장한 정보기 때문에 반드시 값이 존재함.
     Scaffold(
         modifier = modifier,
@@ -138,9 +92,9 @@ fun CommuSuccessScreen(
                 .padding(it)
         ) {
             Box(modifier = modifier) {
-                CommuGrid(
+                ManageCommuGrid(
                     myId = myId,
-                    filteredCommuItems = filteredCommuItems,
+                    commuItem = commuItem,
                     getCardViewModel = getCardViewModel,
                     commuViewModel = commuViewModel,
                     navController = navController,

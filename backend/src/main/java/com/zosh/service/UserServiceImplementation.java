@@ -128,7 +128,7 @@ public class UserServiceImplementation implements UserService {
 		
 		userRepository.save(user);
 		userRepository.save(followToUser);
-		followTwitRepository.save(followTwit);
+		//followTwitRepository.save(followTwit);
 		return followToUser;
 	}
 

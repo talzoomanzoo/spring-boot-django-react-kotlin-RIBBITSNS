@@ -153,7 +153,7 @@ const RightPart = () => {
           />
         </div>
 
-        <section
+        {/* <section
           className={`my-5`}
         // ${
         //   theme.currentTheme === "dark" ? " bg-[#151515] p-5 rounded-md" : ""
@@ -170,7 +170,7 @@ const RightPart = () => {
             체크 구독
           </Button>
           
-        </section>
+        </section> */}
 
         <hr
             style={{

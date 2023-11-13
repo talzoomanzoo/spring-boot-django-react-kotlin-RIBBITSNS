@@ -50,6 +50,7 @@ import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.CreatingCommuUiState
 import com.hippoddung.ribbit.ui.viewmodel.CommuViewModel
+import com.hippoddung.ribbit.ui.viewmodel.MyProfileUiState
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
 @SuppressLint("CoroutineCreationDuringComposition")
@@ -213,11 +214,14 @@ fun InputCommuScreen(
             }
             Button(
                 onClick = {
+                    Log.d("HippoLog, CreatingCommuScreen", "myProfileUiState: ${(userViewModel.myProfileUiState as MyProfileUiState.Exist).myProfile}")
+                    Log.d("HippoLog, CreatingCommuScreen", "myProfile: ${userViewModel.myProfile.value}")
                     commuViewModel.createCommu(
                         backgroundImage = bitmap.value,
                         description = inputDescription,
                         commuName = inputCommuName,
                         privateMode = privateMode,
+//                        user = (userViewModel.myProfileUiState as MyProfileUiState.Exist).myProfile
                         user = userViewModel.myProfile.value
                     )
                 },

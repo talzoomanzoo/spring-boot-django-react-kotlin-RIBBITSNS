@@ -30,9 +30,9 @@ import com.hippoddung.ribbit.ui.viewmodel.CommuViewModel
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("UnrememberedMutableState")
 @Composable
-fun CommuGrid(
+fun ManageCommuGrid(
     myId: Int,
-    filteredCommuItems: List<RibbitCommuItem>,
+    commuItem: RibbitCommuItem,
     getCardViewModel: GetCardViewModel,
     commuViewModel: CommuViewModel,
     navController: NavHostController,
@@ -40,7 +40,7 @@ fun CommuGrid(
 ) {
     val comparator = compareByDescending<RibbitCommuItem> { it.id }
 
-    val sortedRibbitCommuItem = remember(filteredCommuItems, comparator) {
+    val sortedRibbitCommuItem = remember(commuItem., comparator) {
         filteredCommuItems.sortedWith(comparator)
     }   // LazyColumn items 에 Commu 를 바로 주는 것이 아니라 Comparator 로 정렬하여 remember 로 기억시켜서 recomposition 을 방지하여 성능을 올린다.
     LazyColumn(modifier = modifier) {

@@ -4,7 +4,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -27,9 +29,14 @@ public class ListModel {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonBackReference
 	@JoinColumn(name = "user_id")
+	@JsonIgnoreProperties(value = {"twit", "likes", "user"})
 	private User user;
+	
+	//private Long userId;
 
 	@Column(nullable = false)
 	private LocalDateTime createdAt;
@@ -45,6 +52,7 @@ public class ListModel {
 
 	@JsonIgnore
 	@ManyToMany(cascade = CascadeType.DETACH)
+	@JsonIgnoreProperties(value = {"twit", "likes", "user"})
 	private List<User> followingsl = new ArrayList<>();
 
 }

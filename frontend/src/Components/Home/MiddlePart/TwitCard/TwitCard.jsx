@@ -26,7 +26,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 import ProgressBar from "@ramonak/react-progress-bar";
 import "react-toastify/dist/ReactToastify.css"; // React Toastify 스타일
 import * as Yup from "yup";
-import { incrementNotificationCount } from "../../../../Store/Notification/Action";
+import { incrementNotificationCount,
+        decreaseNotificationCount,
+      } from "../../../../Store/Notification/Action";
 import {
   createRetweet,
   createTweet,
@@ -320,7 +322,7 @@ const TwitCard = ({ twit }) => {
   }
 
   const [isRetwit, setIsRetwit] = useState(
-    twit.retwitUsersId.includes(auth.user.id)
+    twit.retwitUsersId?.includes(auth.user.id)
   );
 
   const handleToggleLocationForm = () => {
@@ -335,20 +337,32 @@ const TwitCard = ({ twit }) => {
   };
 
   const handleLikeTweet = (num) => {
-    if (!isLiked) {
-      const TuserId = twit.user.id;
-      dispatch(incrementNotificationCount(TuserId)); // 알림 카운트 증가
-    }
+    //const TuserId = twit.user.id;
+    // if (!isLiked) {
+    //   dispatch(incrementNotificationCount(TuserId)); // 알림 카운트 증가
+    // } 
+    // else {
+    //   dispatch(decreaseNotificationCount(TuserId));
+    // }
     dispatch(likeTweet(twit.id));
     setIsLiked(!isLiked);
     setLikes(likes + num);
     window.location.reload();
   };
 
+  const handleIncrement = () => {
+    const twitId = twit.id;
+    dispatch(incrementNotificationCount(twitId));
+  }
+  const handleDecrease = () => {
+    const TuserId = twit.user.id;
+    dispatch(decreaseNotificationCount(TuserId));
+  }
+
   const handleCreateRetweet = () => {
     if (auth.user.id !== twit.user.id) {
       const TuserId = twit.user.id;
-      dispatch(incrementNotificationCount(TuserId));
+      //dispatch(incrementNotificationCount(TuserId));
       dispatch(createRetweet(twit.id));
       setRetwit(isRetwit ? retwit - 1 : retwit + 1);
       setIsRetwit(!retwit);
@@ -513,9 +527,9 @@ const TwitCard = ({ twit }) => {
   return (
     <div className="">
       {loading ? <Loading /> : null}
-      {auth.findUser?.id !== twit.user.id &&
+      {auth.findUser?.id !== twit.user?.id &&
       location.pathname === `/profile/${auth.findUser?.id}` &&
-      twit.retwitUsersId.length > 0 ? (
+      twit.retwitUsersId?.length > 0 ? (
         <div className="flex items-center font-semibold text-yellow-500 py-2">
           <RepeatIcon />
           <p className="ml-3">Reribbit</p>
@@ -523,7 +537,7 @@ const TwitCard = ({ twit }) => {
       ) : null}
       <div className="flex space-x-5 ">
         <Avatar
-          onClick={() => navigate(`/profile/${twit.user.id}`)}
+          onClick={() => navigate(`/profile/${twit.user?.id}`)}
           alt="Avatar"
           src={
             twit.user.image
@@ -838,9 +852,9 @@ const TwitCard = ({ twit }) => {
                     } space-x-3 flex items-center `}
                   >
                     {isLiked ? (
-                      <FavoriteIcon onClick={() => handleLikeTweet(-1)} />
+                      <FavoriteIcon onClick={() => {handleLikeTweet(-1);}} />
                     ) : (
-                      <FavoriteBorderIcon onClick={() => handleLikeTweet(1)} />
+                      <FavoriteBorderIcon onClick={() => {handleLikeTweet(1); handleIncrement();}} />
                     )}
                     {likes > 0 && <p>{likes}</p>}
                   </div>

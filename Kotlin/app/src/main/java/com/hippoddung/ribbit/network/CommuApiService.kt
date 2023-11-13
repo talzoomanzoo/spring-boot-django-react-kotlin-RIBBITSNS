@@ -33,9 +33,14 @@ interface CommuApiService {
         @Body commuItem: RibbitCommuItem
     ): RibbitCommuItem
 
-    @POST("api/communities/{comId}/add1/{userId}")
+    @POST("api/communities/{comId}/add2/{userId}")
     suspend fun postAddUser(
         @Path("comId") commuId : Int,
         @Path("userId") userId : Int
+    ): RibbitCommuItem
+
+    @POST("api/communities/{comId}/signup")
+    suspend fun signupCommu(
+        @Path("comId") commuId : Int
     ): RibbitCommuItem
 }
