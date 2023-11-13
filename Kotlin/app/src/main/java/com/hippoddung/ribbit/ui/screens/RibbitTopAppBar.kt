@@ -169,6 +169,7 @@ fun MainDropDownMenu(
         }
         IconButton(
             onClick = {
+                getCardViewModel.getAllCommuPosts()
                 commuViewModel.getCommus()
                 Log.d("HippoLog, RibbitTopAppBar", "api/users/profile, myProfileUiState: ${(userViewModel.myProfileUiState as MyProfileUiState.Exist).myProfile}")
                 Log.d("HippoLog, RibbitTopAppBar", "api/users/profile, myProfile: ${userViewModel.myProfile.value}")

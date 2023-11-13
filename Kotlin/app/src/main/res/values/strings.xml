@@ -35,6 +35,7 @@
     <string name="editing_list_screen">EditingListScreen</string>
     <string name="commu_screen">CommuScreen</string>
     <string name="commu_id_screen">CommuIdScreen</string>
+    <string name="manage_commu_screen">ManageCommuScreen</string>
     <string name="creating_commu_screen">CreatingCommuScreen</string>
     <string name="editing_commu_screen">EditingCommuScreen</string>
 
