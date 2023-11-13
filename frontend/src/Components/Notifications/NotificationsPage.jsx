@@ -17,6 +17,18 @@ const NotificationsPage = () => {
     }, []);
 
     return (
+        <div>
+            <section className={`z-50 flex items-center sticky top-0 bg-opacity-95`}>
+            <div className="z-50 flex items-center sticky top-0 space-x-5">
+                    <KeyboardBackspaceIcon
+                        className="cursor-pointer"
+                        onClick={handleBack}
+                    />
+                    <h1 className="py-5 text-xl font-bold opacity-90 ml-5">
+                        알림
+                    </h1>
+                </div>
+            </section>
         <div id="np" className="space-y-5">
             <section
                 className="space-y-5 customeScrollbar overflow-y-scroll css-scroll hideScrollbar border-gray-700 h-[40vh] w-full rounded-md">
@@ -27,6 +39,7 @@ const NotificationsPage = () => {
                 )}
             </section>
 
+        </div>
         </div>
     )
 }

@@ -3,6 +3,9 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { viewPlus } from "../../../Store/Tweet/Action";
 import { decreaseNotificationCount } from "../../../Store/Notification/Action";
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+import { Avatar } from "@mui/material";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 
 const NotificationsCard = ({ notification }) => {
     const { auth } = useSelector((store) => store);
@@ -27,9 +30,28 @@ const NotificationsCard = ({ notification }) => {
                         onClick={handleNavigateToTwitDetial}
                         className="flex cursor-pointer items-center space-x-1"
                     >
-                        <li className="list-css"><span>{auth.user.fullName}의 게시물을 {notification.user.fullName}이 좋아합니다.</span></li>
+                        <li style={{listStyleType: 'none'}} className="list-css"><Avatar
+                        alt="Avatar"
+                        src={
+                            notification.user?.image
+                              ? notification.user.image
+                              : "https://cdn.pixabay.com/photo/2023/10/24/01/42/art-8337199_1280.png"
+                          }
+                          loading="lazy"
+                          style={{float:"left"}}
+                        /><span style={{padding:"5px",float:"left"}}>당신의 리빗을</span><span style={{padding:"5px",float:"left"}}>{notification.user.fullName}이(가) 좋아합니다.</span></li>
                     </div>
                 </div>
+                <hr
+            style={{
+              marginTop: 10,
+              marginBottom: 1,
+              background: 'grey',
+              color: 'grey',
+              borderColor: 'grey',
+              height: '1px',
+            }}
+          />
             </div>
         </div>
     );
