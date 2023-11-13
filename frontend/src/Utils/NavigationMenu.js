@@ -73,37 +73,24 @@ export const navigationMenu = [
       ],
     },
   },
-  {
-    id: 7,
-    title: "그린체크",
-    icon: <CheckCircleIcon />,
-    path: "/verified",
-    pattern: {
-      y: 16,
-      squares: [
-        [0, 1],
-        [1, 3],
-      ],
-    },
-  },
+  // {
+  //   id: 7,
+  //   title: "그린체크",
+  //   icon: <CheckCircleIcon />,
+  //   path: "/verified",
+  //   pattern: {
+  //     y: 16,
+  //     squares: [
+  //       [0, 1],
+  //       [1, 3],
+  //     ],
+  //   },
+  // },
   {
     id: 8,
     title: "프로필",
     icon: <AccountBoxIcon />,
     path: "/profile",
-    pattern: {
-      y: 16,
-      squares: [
-        [0, 1],
-        [1, 3],
-      ],
-    },
-  },
-  {
-    id: 9,
-    title: "더보기",
-    icon: <MoreHorizIcon />,
-    path: "/more",
     pattern: {
       y: 16,
       squares: [
