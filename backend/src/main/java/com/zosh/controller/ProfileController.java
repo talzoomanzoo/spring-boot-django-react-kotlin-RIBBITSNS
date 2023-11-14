@@ -24,7 +24,7 @@ public class ProfileController {
 	//키워드를 입력하면 views.py의 making_image함수로 전송해 키워드에 맞는 webp url을 전송한다.
 	@GetMapping("/sendprompt")	
 	public String keyword(@RequestParam String keyword){
-        String url = "http://localhost:8000";
+        String url = "http://3.36.249.200:8000";
         
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> entity = restTemplate.getForEntity(url+"?keyword="+keyword, String.class);
@@ -74,7 +74,7 @@ public class ProfileController {
 	        headers.setContentType(MediaType.IMAGE_JPEG); // Content-Type을 이미지 형식으로 설정
 
 	        ResponseEntity<byte[]> responseEntity = restTemplate.postForEntity(
-	            "http://localhost:8000/webptojpg/",
+	            "http://3.36.249.200:8000/webptojpg/",
 	            karlourl,
 	            byte[].class
 	        );

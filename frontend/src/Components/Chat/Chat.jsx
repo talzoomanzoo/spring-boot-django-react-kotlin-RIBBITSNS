@@ -62,7 +62,7 @@ const Chat = () => {
   const [userList, setUserList] = useState([]);
 
   useEffect(() => {//웹소켓 연결
-    const socket = new SockJS('http://localhost:8080/ws');
+    const socket = new SockJS('http://3.36.249.200:8080/ws');
     const stompClient = Stomp.over(socket);
     const stoconnect = stompClient.connect({}, () => {
       setStompClient(stompClient);
@@ -77,7 +77,7 @@ const Chat = () => {
       return;
     }
 
-    axios.post('http://localhost:8080/createroom', {//백엔드로 채팅방 관련 소스 보냄
+    axios.post('http://3.36.249.200:8080/createroom', {//백엔드로 채팅방 관련 소스 보냄
       name: roomName,
       creator: auth.user?.fullName,
       creatorEmail: auth.user?.email.split(" ")[0],
@@ -102,7 +102,7 @@ const Chat = () => {
 
   const enterChatRoom = (roomId, roomname) => {//채팅방 들어갈때의 함수
     // Fetch chat history for the room
-    axios.post('http://localhost:8080/getchat', roomId, {//백엔드로 채팅 정보 보네 이전 채팅 내역 출력
+    axios.post('http://3.36.249.200:8080/getchat', roomId, {//백엔드로 채팅 정보 보네 이전 채팅 내역 출력
       headers: {
         'Content-Type': 'text/plain',
       },
@@ -128,7 +128,7 @@ const Chat = () => {
   };
 
   const saveEditedRoomName = () => {//채팅방 제목 수정시 이용
-    axios.post('http://localhost:8080/editroom', {
+    axios.post('http://3.36.249.200:8080/editroom', {
       roomId: selectedEditRoomId,//기존 채팅방 id와 새롭게 작성한 채팅방 이름을 전송
       name: newRoomName,
     })
@@ -168,7 +168,7 @@ const Chat = () => {
       sender: sendername,
     };
 
-    axios.post('http://localhost:8080/addusers',adduser)//유저추가시 보내는 경로
+    axios.post('http://3.36.249.200:8080/addusers',adduser)//유저추가시 보내는 경로
       .then((response)=>{
         if(response.status === 201){
           setFinduserrender((prev) => prev + 1);//유저 내역 부분 랜더링
@@ -195,7 +195,7 @@ const Chat = () => {
 
   const deleteUserInRoom = (roomId) => {//채팅방에서 나갈때 이용되는 함수
     axios
-      .post('http://localhost:8080/deleteusers', {//내 이메일과 나가려는 채팅방 id 전송
+      .post('http://3.36.249.200:8080/deleteusers', {//내 이메일과 나가려는 채팅방 id 전송
         email: auth.user?.email.split(" ")[0],
         roomId: roomId,
       })
@@ -211,7 +211,7 @@ const Chat = () => {
   };
 
   useEffect(() => {
-    axios.get('http://localhost:8080/allrooms').then((response) => {//자신이 소속된 채팅방 출력
+    axios.get('http://3.36.249.200:8080/allrooms').then((response) => {//자신이 소속된 채팅방 출력
       const rooms = response.data;
       console.log("rooms: ",rooms);
       setChatRooms(rooms);
@@ -225,7 +225,7 @@ const Chat = () => {
   useEffect(() => {//해당 채팅방에 누가 소속되 있는지를 출력하는 함수
     if (modalIsOpen) {
       axios
-        .post('http://localhost:8080/findusers', selectedRoomId, {
+        .post('http://3.36.249.200:8080/findusers', selectedRoomId, {
           headers: {
             'Content-Type': 'text/plain',
           },
@@ -242,7 +242,7 @@ const Chat = () => {
   const checkUserInRoom = (roomId) => {//채팅방에 들어가 검색해서 유저를 추가할때 이미 있는데 중복되느 말도록 관리해주는 함수
     //이미 본인이 있으면 검색창에서 조회가 안됨
     axios
-      .post('http://localhost:8080/finduser', {
+      .post('http://3.36.249.200:8080/finduser', {
         email: auth.user?.email.split(" ")[0],
         roomId: roomId,
       })

@@ -101,7 +101,7 @@ const ProfileModel = ({ handleClose, open }) => {
   const handleGenerateImage = async () => {
     setLoading(true);
     try {
-      const url = 'http://localhost:8080/sendprompt';
+      const url = 'http://3.36.249.200:8080/sendprompt';
 
       const requestdata = {
         keyword: keyword,
@@ -135,7 +135,7 @@ const ProfileModel = ({ handleClose, open }) => {
   const handleAIImageChange = async (event) => {//ai이미지를 cloudinary로 업로드하는 함수이다.
     setLoading(true);
 
-    const response = await fetch('http://localhost:8080/webptojpg', {
+    const response = await fetch('http://3.36.249.200:8080/webptojpg', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -378,7 +378,7 @@ const ProfileModel = ({ handleClose, open }) => {
                       }}
                     >
                     <a
-                      href={`http://localhost:8080/download`}
+                      href={`http://3.36.249.200:8080/download`}
                       download="generated_image.jpg"
                     >이미지 저장</a>
                     </Button>

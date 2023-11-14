@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Suspense, Loading } from "react";
+import { Suspense/*, Loading*/ } from "react";
+import Loading from "./../Profile/Loading/Loading";
 import { useParams } from "react-router";
 const FollowTwit = React.lazy(() => import("./FollowTwit"));
 
