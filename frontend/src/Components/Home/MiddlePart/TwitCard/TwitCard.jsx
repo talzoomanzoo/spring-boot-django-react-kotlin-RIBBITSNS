@@ -441,7 +441,7 @@ const TwitCard = ({ twit }) => {
   const ethicreveal = async (twitid, twitcontent) => {
     try {
       const response = await fetch(
-        "http://localhost:8080/api/ethic/reqsentence",
+        "http://3.36.249.200:8080/api/ethic/reqsentence",
         {
           method: "POST",
           headers: {
@@ -455,8 +455,10 @@ const TwitCard = ({ twit }) => {
         }
       );
       console.log("response.statis: ",response);
+      console.log("responseData: ",response.json());
       if (response.status === 200) {
         const responseData = await response.json();
+        console.log("responseData: ",response);
         setEthiclabel(responseData.ethiclabel);
         setEthicrateMAX(responseData.ethicrateMAX);
         setRefreshTwits((prev) => prev + 1);
