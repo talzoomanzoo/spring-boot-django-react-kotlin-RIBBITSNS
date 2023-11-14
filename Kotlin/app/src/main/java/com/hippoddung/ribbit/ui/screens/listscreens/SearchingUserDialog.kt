@@ -49,7 +49,7 @@ fun SearchingUserDialog(
 ) {
     var searchQuery by remember { mutableStateOf(TextFieldValue()) }
     var isSearched by remember { mutableStateOf(false) }
-    val usersData by userViewModel.usersData.collectAsState()
+    val usersData by userViewModel.usersSearchData.collectAsState()
 
     Column(
         modifier = modifier

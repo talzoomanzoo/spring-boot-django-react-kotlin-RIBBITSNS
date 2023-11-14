@@ -210,6 +210,9 @@ const ComCard = ({ com }) => {
                 }}
             />
             <section
+                style={{
+                    height: "100px"
+                }}
                 className="mt-5 items-center justify-content cursor-pointer"
                 onClick={() => handleNavigateToComDetail(com)}>
                 <div className="text-xl items-center justify-content" >{com.comName}</div>

@@ -23,25 +23,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.network.bodys.RibbitCommuItem
+import com.hippoddung.ribbit.network.bodys.User
+import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.CommuClassificationUiState
 import com.hippoddung.ribbit.ui.viewmodel.CommuViewModel
+import com.hippoddung.ribbit.ui.viewmodel.ManageCommuUiState
 
 @RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun ManageCommuGrid(
-    myId: Int,
     commuItem: RibbitCommuItem,
-    getCardViewModel: GetCardViewModel,
     commuViewModel: CommuViewModel,
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    val comparator = compareByDescending<RibbitCommuItem> { it.id }
-
-    val sortedRibbitCommuItem = remember(commuItem., comparator) {
-        filteredCommuItems.sortedWith(comparator)
+    val comparator = compareByDescending<User> { it.id }
+    val sortedCommuReadyUser = remember(commuItem.followingscReady, comparator) {
+        commuItem.followingscReady.sortedWith(comparator)
     }   // LazyColumn items 에 Commu 를 바로 주는 것이 아니라 Comparator 로 정렬하여 remember 로 기억시켜서 recomposition 을 방지하여 성능을 올린다.
     LazyColumn(modifier = modifier) {
         item {
@@ -53,40 +53,41 @@ fun ManageCommuGrid(
                 ) {
                     TextButton(
                         onClick = {
-                            commuViewModel.commuClassificationUiState = CommuClassificationUiState.PublicCommu
+                            commuViewModel.manageCommuUiState = ManageCommuUiState.ReadyManage(commuItem)
                         },
                         colors = ButtonDefaults.textButtonColors(
-                            containerColor = if(commuViewModel.commuClassificationUiState is CommuClassificationUiState.PublicCommu){
+                            containerColor = if(commuViewModel.manageCommuUiState is ManageCommuUiState.ReadyManage){
                                 Color(0xFF006400)
                             } else Color.White,
-                            contentColor = if(commuViewModel.commuClassificationUiState is CommuClassificationUiState.PublicCommu){
+                            contentColor = if(commuViewModel.manageCommuUiState is ManageCommuUiState.ReadyManage){
                                 Color.White
                             } else Color(0xFF006400),
                         ),
                         modifier = modifier
                     ) {
                         Text(
-                            text = "Public Commu",
+                            text = "Manage",
                             fontSize = 16.sp,
                             modifier = modifier
                         )
                     }
                     TextButton(
                         onClick = {
-                            commuViewModel.commuClassificationUiState = CommuClassificationUiState.PrivateCommu
+                            commuViewModel.manageCommuUiState = ManageCommuUiState.ReadyEdit(commuItem)
+                            navController.navigate(RibbitScreen.EditingCommuScreen.name)
                         },
                         colors = ButtonDefaults.textButtonColors(
-                            containerColor = if(commuViewModel.commuClassificationUiState is CommuClassificationUiState.PrivateCommu){
+                            containerColor = if(commuViewModel.manageCommuUiState is ManageCommuUiState.ReadyEdit){
                                 Color(0xFF006400)
                             } else Color.White,
-                            contentColor = if(commuViewModel.commuClassificationUiState is CommuClassificationUiState.PrivateCommu){
+                            contentColor = if(commuViewModel.manageCommuUiState is ManageCommuUiState.ReadyEdit){
                                 Color.White
                             } else Color(0xFF006400),
                         ),
                         modifier = modifier
                     ) {
                         Text(
-                            text = "Private Commu",
+                            text = "Edit",
                             fontSize = 16.sp,
                             modifier = modifier
                         )
@@ -105,13 +106,10 @@ fun ManageCommuGrid(
                 )
             }
         }
-        items(items = sortedRibbitCommuItem, key = { commuItem -> commuItem.id!! }) {   // commuItem 을 받아오면 id 는 반드시 있음.
-            CommuCard(
-                myId = myId,
-                commuItem = it,
+        items(items = sortedCommuReadyUser, key = { commuItem -> commuItem.id!! }) {   // commuItem 을 받아오면 id 는 반드시 있음.
+            ManageCommuUserCard(
+                user = it,
                 commuViewModel = commuViewModel,
-                getCardViewModel = getCardViewModel,
-                navController = navController,
                 modifier = modifier
             )
         }

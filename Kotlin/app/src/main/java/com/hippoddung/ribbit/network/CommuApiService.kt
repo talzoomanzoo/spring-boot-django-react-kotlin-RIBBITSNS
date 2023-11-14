@@ -43,4 +43,15 @@ interface CommuApiService {
     suspend fun signupCommu(
         @Path("comId") commuId : Int
     ): RibbitCommuItem
+
+    @POST("api/communities/{comId}/signupok/{userId}")
+    suspend fun postSignupOk(
+        @Path("comId") commuId : Int,
+        @Path("userId") userId : Int
+    ): RibbitCommuItem
+
+    @POST("api/communities/{comId}/signout")
+    suspend fun postSignoutCommuId(
+        @Path("comId") commuId : Int
+    ): RibbitCommuItem
 }

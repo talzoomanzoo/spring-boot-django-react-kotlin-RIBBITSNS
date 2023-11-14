@@ -14,10 +14,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.hippoddung.ribbit.network.bodys.RibbitPost
 import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.screens.RibbitTopAppBar
@@ -28,6 +31,7 @@ import com.hippoddung.ribbit.ui.viewmodel.CommuViewModel
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.HomeUiState
 import com.hippoddung.ribbit.ui.viewmodel.ListViewModel
+import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
@@ -38,6 +42,7 @@ fun HomeScreen(
 //    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
     getCardViewModel: GetCardViewModel,
+    postingViewModel: PostingViewModel,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
@@ -58,6 +63,7 @@ fun HomeScreen(
             val ribbitPosts = (getCardViewModel.homeUiState as HomeUiState.Success).posts
             HomeSuccessScreen(
                 getCardViewModel = getCardViewModel,
+                postingViewModel = postingViewModel,
                 authViewModel = authViewModel,
                 tokenViewModel = tokenViewModel,
                 userViewModel = userViewModel,
@@ -83,6 +89,7 @@ fun HomeScreen(
 @Composable
 fun HomeSuccessScreen(
     getCardViewModel: GetCardViewModel,
+    postingViewModel: PostingViewModel,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
@@ -94,6 +101,11 @@ fun HomeSuccessScreen(
     myId: Int,
     modifier: Modifier
 ) {
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentScreen =
+        RibbitScreen.valueOf(backStackEntry?.destination?.route ?: RibbitScreen.HomeScreen.name)
+    postingViewModel.setCurrentScreen(currentScreen)    // homeScreen 진입 성공시 현재 screen 정보 저장.
+    getCardViewModel.setCurrentScreen(currentScreen)    // homeScreen 진입 성공시 현재 screen 정보 저장.
     Scaffold(
         modifier = modifier,
 //        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -135,7 +147,7 @@ fun HomeSuccessScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Edit,
-                        contentDescription = "Floating action button.",
+                        contentDescription = "Creating Post Screen.",
                         modifier = modifier
                     )
                 }

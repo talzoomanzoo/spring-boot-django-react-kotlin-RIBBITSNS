@@ -11,10 +11,11 @@ const FollowTwitEnc = React.lazy(() => import("./FollowTwit/FollowTwitEnc"));
 const TwitDetail = React.lazy(() => import("./Home/MiddlePart/TwitDetail"));
 const Lists = React.lazy(() => import("./Lists/Lists"));
 const Profile = React.lazy(() => import("./Profile/Profile"));
-const Chatroom = React.lazy(() => import("./Chat/Chat"));
+const Chatroom = React.lazy(() => import("./Chat/Chat1"));
 const ListsDetail = React.lazy(() => import("./Lists/ListsDetail"));
 const Communities = React.lazy(() => import("./Communities/Communities"));
 const ComDetail = React.lazy(() => import("./Communities/ComDetail"));
+const NotificationsPage = React.lazy(() => import("./Notifications/NotificationsPage"));
 
 const HomePage = () => {
   const { theme } = useSelector((store) => store);
@@ -68,6 +69,11 @@ const HomePage = () => {
             <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
               <ComDetail />
             </Suspense>}></Route>
+            <Route path="/notifications" element={
+            <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
+              <NotificationsPage />
+            </Suspense>}></Route>
+            
         </Routes>
       </Grid>
       <Grid item xs={0} lg={3} className="hidden lg:block">

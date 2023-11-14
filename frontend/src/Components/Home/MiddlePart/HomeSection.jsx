@@ -443,7 +443,7 @@ const HomeSection = () => {
                 <input
                   type="text"
                   name="content"
-                  placeholder="뭔 일 있음?"
+                  placeholder="리빗에 일상을 공유해 보세요!"
                   className={`border-none outline-none text-xl bg-transparent`}
                   size="50"
                   {...formik.getFieldProps("content")}
