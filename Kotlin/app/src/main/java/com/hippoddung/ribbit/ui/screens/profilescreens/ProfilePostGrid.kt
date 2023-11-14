@@ -5,6 +5,7 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -91,23 +92,35 @@ fun ProfilePostsGrid(
                         .height(150.dp)
                 ) {
                     // profile background image
-                    AsyncImage(
-                        model = ImageRequest.Builder(context = LocalContext.current).data(
-                            profileUser.backgroundImage
-                                ?: "https://res.heraldm.com/content/image/2015/06/15/20150615000967_0.jpg"
-
+                    if (profileUser.backgroundImage == null) {
+                        Image(
+                            painter = painterResource(id = R.drawable.pond),
+                            contentDescription = "default profile background image",
+                            contentScale = ContentScale.Crop,
+                            modifier = modifier
+                                .fillMaxWidth()
+                                .height(100.dp),
+                            alignment = Alignment.TopStart,
                         )
-                            .crossfade(true).build(),
-                        contentDescription = stringResource(R.string.user_image),
-                        modifier = modifier
-                            .fillMaxWidth()
-                            .height(100.dp),
-                        placeholder = painterResource(R.drawable.loading_img),
-                        error = painterResource(R.drawable.ic_broken_image),
-                        alignment = Alignment.TopStart,
-                        contentScale = ContentScale.Crop,
+                    } else {
+                        AsyncImage(
+                            model = ImageRequest.Builder(context = LocalContext.current).data(
+                                profileUser.backgroundImage
+//                                ?: "https://res.heraldm.com/content/image/2015/06/15/20150615000967_0.jpg"
 
-                        )
+                            )
+                                .crossfade(true).build(),
+                            contentDescription = stringResource(R.string.user_image),
+                            modifier = modifier
+                                .fillMaxWidth()
+                                .height(100.dp),
+                            placeholder = painterResource(R.drawable.loading_img),
+                            error = painterResource(R.drawable.ic_broken_image),
+                            alignment = Alignment.TopStart,
+                            contentScale = ContentScale.Crop,
+
+                            )
+                    }
                     // withdrawal button
                     if (profileUser.id == userViewModel.myProfile.value?.id) {
                         OutlinedButton(
@@ -132,21 +145,32 @@ fun ProfilePostsGrid(
                             .height(100.dp)
                     ) {
                         // profile image
-                        AsyncImage(
-                            model = ImageRequest.Builder(context = LocalContext.current).data(
-                                profileUser.image
-                                    ?: "https://img.animalplanet.co.kr/news/2020/01/13/700/sfu2275cc174s39hi89k.jpg"
-
+                        if (profileUser.image == null) {
+                            Image(
+                                painter = painterResource(id = R.drawable.pngwing_com),
+                                contentDescription = "default image",
+                                contentScale = ContentScale.Crop,
+                                modifier = modifier
+                                    .size(100.dp)
+                                    .clip(CircleShape)
                             )
-                                .crossfade(true).build(),
-                            contentDescription = stringResource(R.string.user_image),
-                            modifier = modifier
-                                .size(100.dp)
-                                .clip(CircleShape),
-                            placeholder = painterResource(R.drawable.loading_img),
-                            error = painterResource(R.drawable.ic_broken_image),
-                            contentScale = ContentScale.Crop,
-                        )
+                        } else {
+                            AsyncImage(
+                                model = ImageRequest.Builder(context = LocalContext.current).data(
+                                    profileUser.image
+//                                        ?: "https://img.animalplanet.co.kr/news/2020/01/13/700/sfu2275cc174s39hi89k.jpg"
+
+                                )
+                                    .crossfade(true).build(),
+                                contentDescription = stringResource(R.string.user_image),
+                                modifier = modifier
+                                    .size(100.dp)
+                                    .clip(CircleShape),
+                                placeholder = painterResource(R.drawable.loading_img),
+                                error = painterResource(R.drawable.ic_broken_image),
+                                contentScale = ContentScale.Crop,
+                            )
+                        }
                         Box(
                             modifier = modifier
                                 .fillMaxSize()
@@ -255,10 +279,10 @@ fun ProfilePostsGrid(
                             }   // userViewModel 의 user 가 없는 경우 접근 자체가 불가능
                         },
                         colors = ButtonDefaults.textButtonColors(
-                            containerColor = if(getCardViewModel.userIdClassificationUiState is UserIdClassificationUiState.Ribbit){
+                            containerColor = if (getCardViewModel.userIdClassificationUiState is UserIdClassificationUiState.Ribbit) {
                                 Color(0xFF006400)
                             } else Color.White,
-                            contentColor = if(getCardViewModel.userIdClassificationUiState is UserIdClassificationUiState.Ribbit){
+                            contentColor = if (getCardViewModel.userIdClassificationUiState is UserIdClassificationUiState.Ribbit) {
                                 Color.White
                             } else Color(0xFF006400),
                         ),
@@ -279,10 +303,10 @@ fun ProfilePostsGrid(
                             }   // userViewModel 의 user 가 없는 경우 접근 자체가 불가능
                         },
                         colors = ButtonDefaults.textButtonColors(
-                            containerColor = if(getCardViewModel.userIdClassificationUiState is UserIdClassificationUiState.Replies){
+                            containerColor = if (getCardViewModel.userIdClassificationUiState is UserIdClassificationUiState.Replies) {
                                 Color(0xFF006400)
                             } else Color.White,
-                            contentColor = if(getCardViewModel.userIdClassificationUiState is UserIdClassificationUiState.Replies){
+                            contentColor = if (getCardViewModel.userIdClassificationUiState is UserIdClassificationUiState.Replies) {
                                 Color.White
                             } else Color(0xFF006400),
                         ),
@@ -306,10 +330,10 @@ fun ProfilePostsGrid(
                             // state 관리가 어려운 점이 있어 같은 통신을 쓰지만 uiState 만 다르게 한 getCardViewModel.getUserIdMedias 함수를 만들어서 사용
                         },
                         colors = ButtonDefaults.textButtonColors(
-                            containerColor = if(getCardViewModel.userIdClassificationUiState is UserIdClassificationUiState.Media){
+                            containerColor = if (getCardViewModel.userIdClassificationUiState is UserIdClassificationUiState.Media) {
                                 Color(0xFF006400)
                             } else Color.White,
-                            contentColor = if(getCardViewModel.userIdClassificationUiState is UserIdClassificationUiState.Media){
+                            contentColor = if (getCardViewModel.userIdClassificationUiState is UserIdClassificationUiState.Media) {
                                 Color.White
                             } else Color(0xFF006400),
                         ),
@@ -330,10 +354,10 @@ fun ProfilePostsGrid(
                             }   // userViewModel 의 user 가 없는 경우 접근 자체가 불가능
                         },
                         colors = ButtonDefaults.textButtonColors(
-                            containerColor = if(getCardViewModel.userIdClassificationUiState is UserIdClassificationUiState.Likes){
+                            containerColor = if (getCardViewModel.userIdClassificationUiState is UserIdClassificationUiState.Likes) {
                                 Color(0xFF006400)
                             } else Color.White,
-                            contentColor = if(getCardViewModel.userIdClassificationUiState is UserIdClassificationUiState.Likes){
+                            contentColor = if (getCardViewModel.userIdClassificationUiState is UserIdClassificationUiState.Likes) {
                                 Color.White
                             } else Color(0xFF006400),
                         ),

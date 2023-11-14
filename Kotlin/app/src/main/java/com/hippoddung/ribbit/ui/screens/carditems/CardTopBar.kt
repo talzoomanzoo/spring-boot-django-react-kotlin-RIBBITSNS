@@ -3,6 +3,7 @@ package com.hippoddung.ribbit.ui.screens.carditems
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -53,29 +54,48 @@ fun CardTopBar(
             modifier = modifier
                 .size(40.dp)
         ) {
-            AsyncImage(
-                model = ImageRequest.Builder(context = LocalContext.current)
-                    .data(
-                        post.user?.image
-                            ?: "https://img.animalplanet.co.kr/news/2020/01/13/700/sfu2275cc174s39hi89k.jpg"
-                    )
-                    .crossfade(true).build(),
-                error = painterResource(R.drawable.ic_broken_image),
-                placeholder = painterResource(R.drawable.loading_img),
-                contentDescription = stringResource(R.string.user_image),
-                contentScale = ContentScale.Crop,
-                modifier = modifier
-                    .fillMaxSize()
-                    .clip(CircleShape)
-                    .clickable {    // 해당 Composable function 을 click 하여 "() -> unit" 을 받을 수 있는 형태로 만들어 줌.
-                        Log.d("HippoLog, CardTopBar", "profileImageClick")
-                        post.user?.id?.let {
-                            getCardViewModel.getUserIdPosts(userId = it)
-                            userViewModel.getProfile(userId = it)
+            if(post.user?.image == null){
+                Image(
+                    painter = painterResource(id = R.drawable.pngwing_com),
+                    contentDescription = "default image",
+                    contentScale = ContentScale.Crop,
+                    modifier = modifier
+                        .fillMaxSize()
+                        .clip(CircleShape)
+                        .clickable {    // 해당 Composable function 을 click 하여 "() -> unit" 을 받을 수 있는 형태로 만들어 줌.
+                            Log.d("HippoLog, CardTopBar", "profileImageClick")
+                            post.user?.id?.let {
+                                getCardViewModel.getUserIdPosts(userId = it)
+                                userViewModel.getProfile(userId = it)
+                            }
+                            navController.navigate(RibbitScreen.ProfileScreen.name)
                         }
-                        navController.navigate(RibbitScreen.ProfileScreen.name)
-                    }
-            )
+                )
+            }else {
+                AsyncImage(
+                    model = ImageRequest.Builder(context = LocalContext.current)
+                        .data(
+                            post.user.image
+//                                ?: "https://img.animalplanet.co.kr/news/2020/01/13/700/sfu2275cc174s39hi89k.jpg"
+                        )
+                        .crossfade(true).build(),
+                    error = painterResource(R.drawable.ic_broken_image),
+                    placeholder = painterResource(R.drawable.loading_img),
+                    contentDescription = stringResource(R.string.user_image),
+                    contentScale = ContentScale.Crop,
+                    modifier = modifier
+                        .fillMaxSize()
+                        .clip(CircleShape)
+                        .clickable {    // 해당 Composable function 을 click 하여 "() -> unit" 을 받을 수 있는 형태로 만들어 줌.
+                            Log.d("HippoLog, CardTopBar", "profileImageClick")
+                            post.user?.id?.let {
+                                getCardViewModel.getUserIdPosts(userId = it)
+                                userViewModel.getProfile(userId = it)
+                            }
+                            navController.navigate(RibbitScreen.ProfileScreen.name)
+                        }
+                )
+            }
         }
         Row(
             modifier = modifier.padding(bottom = 4.dp)
