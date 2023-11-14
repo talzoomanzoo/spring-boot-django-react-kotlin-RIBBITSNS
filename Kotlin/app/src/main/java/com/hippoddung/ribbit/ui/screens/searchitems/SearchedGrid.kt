@@ -16,8 +16,8 @@ import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun SearchedGrid(
-    sortedUsers: List<User>,
-    sortedPosts: List<RibbitPost>,
+    sortedUsersSearch: List<User>,
+    sortedPostsSearch: List<RibbitPost>,
     getCardViewModel: GetCardViewModel,
     userViewModel: UserViewModel,
     navController: NavHostController,
@@ -29,7 +29,7 @@ fun SearchedGrid(
             // 자동으로 스크롤이 됨
     ) {
         Column(modifier = modifier) {
-            sortedUsers.forEach { user ->
+            sortedUsersSearch.forEach { user ->
                 SearchedUserCard(
                     user = user,
                     getCardViewModel = getCardViewModel,
@@ -41,7 +41,7 @@ fun SearchedGrid(
             }
         }
         Column(modifier = modifier) {
-            sortedPosts.forEach { post ->
+            sortedPostsSearch.forEach { post ->
                 SearchedPostCard(
                     post = post,
                     getCardViewModel = getCardViewModel,
