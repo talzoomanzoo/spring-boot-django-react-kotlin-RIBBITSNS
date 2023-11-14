@@ -125,8 +125,9 @@ private UserRepository userRepository;
 	public ResponseEntity<ListDto> setPrivate(@PathVariable Long listId, 
 			@RequestHeader("Authorization") String jwt) throws ListException, UserException {
 		User user = userService.findUserProfileByJwt(jwt);
-		ListModel listModel=listService.setPrivateById(listId, user.getId());
+		ListModel listModel=listService.setPrivateById(listId);
 		ListDto listDto=ListDtoMapper.toListDto(listModel, user);
+		System.out.println("======================");
 		return new ResponseEntity<>(listDto, HttpStatus.CREATED);
 	}
 	
