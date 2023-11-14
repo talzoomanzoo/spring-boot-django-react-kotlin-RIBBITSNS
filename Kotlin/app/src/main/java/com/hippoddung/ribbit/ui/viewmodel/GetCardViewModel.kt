@@ -99,6 +99,7 @@ class GetCardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으
     private val ribbitRepository: RibbitRepository
 ) : ViewModel() {
     var homeUiState: HomeUiState by mutableStateOf(HomeUiState.Loading)
+
     var classificationUiState: ClassificationUiState by mutableStateOf(ClassificationUiState.Recent)
     var deletePostUiState: DeletePostUiState by mutableStateOf(DeletePostUiState.Ready)
     var postIdUiState: PostIdUiState by mutableStateOf(PostIdUiState.Loading)
@@ -115,40 +116,17 @@ class GetCardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으
     var postReplyUiState: PostReplyUiState by mutableStateOf(PostReplyUiState.Ready)
     var replyClickedUiState: ReplyClickedUiState by mutableStateOf(ReplyClickedUiState.NotClicked)
 
-    private var _postsData = MutableStateFlow<List<RibbitPost>>(listOf())
-    val postsData: StateFlow<List<RibbitPost>> = _postsData.asStateFlow()
+    private var _postsSearchData = MutableStateFlow<List<RibbitPost>>(listOf())
+    val postsSearchData: StateFlow<List<RibbitPost>> = _postsSearchData.asStateFlow()
 
 //    var whereReplyClickedUiState: WhereReplyClickedUiState by mutableStateOf( // 현재 viewModel 에 접근하는 스크린의 정보상태를 저장하려고 했으나 아래의 currentScreenState 로 대체
 //        WhereReplyClickedUiState.HomeScreen
 //    )
     private val currentScreenState = mutableStateOf(RibbitScreen.HomeScreen)    // 현재 viewModel 에 접근하는 스크린의 정보를 가져온다.
-//    fun getCurrentScreen(): State<RibbitScreen> {
-//        return currentScreenState
-//    }
     fun setCurrentScreen(screen: RibbitScreen) {
         currentScreenState.value = screen
     }
 
-//    val homeResponse: MutableLiveData<ApiResponse<List<RibbitPost>>> by lazy {
-//        MutableLiveData<ApiResponse<List<RibbitPost>>>()
-//    }
-
-//    init {
-//        getRibbitPosts(
-////            object : CoroutinesErrorHandler {
-////                override fun onError(message: String) {
-////                    Log.d("HippoLog, HomeViewModel", "Error! $message")
-////                }
-////            }
-//        )
-//    }
-
-    //    fun getRibbitPosts(coroutinesErrorHandler: CoroutinesErrorHandler) = baseRequest(
-//        homeResponse, coroutinesErrorHandler
-//    ) {
-//        Log.d("HippoLog, HomeViewModel", "getRibbitPosts")
-//        ribbitRepository.getPosts()
-//    }
     fun getRibbitPosts() {  // 모든 Post 를 불러오는 메소드
         viewModelScope.launch(Dispatchers.IO) {
             homeUiState = HomeUiState.Loading
@@ -230,7 +208,7 @@ class GetCardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으
             classificationUiState = ClassificationUiState.TopLikes
             Log.d("HippoLog, GetCardViewModel", "getTopLikesRibbitPosts, $homeUiState")
             homeUiState = try {
-                HomeUiState.Success(ribbitRepository.getTopLikesRibbitPosts())
+                HomeUiState.Success(ribbitRepository.getTopViewsRibbitPosts())
             } catch (e: IOException) {
                 Log.d("HippoLog, GetCardViewModel", "getTopLikesRibbitPosts, ${e.stackTrace}, ${e.message}")
                 HomeUiState.Error(e.message.toString())
@@ -526,7 +504,7 @@ class GetCardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 Log.d("HippoLog, UserViewModel", "getUserSearch")
-                _postsData.value = (ribbitRepository.getPostsSearch(searchQuery))
+                _postsSearchData.value = (ribbitRepository.getPostsSearch(searchQuery))
             } catch (e: IOException) {
                 Log.d("HippoLog, UserViewModel", "getUserSearch error: ${e.message}")
                 SearchingUserUiState.Error
