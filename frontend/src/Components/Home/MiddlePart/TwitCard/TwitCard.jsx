@@ -764,7 +764,7 @@ const TwitCard = ({ twit }) => {
                 </div>
               )}
             </div>
-            <p>Received Message: {message}</p>
+            {/* <p>Received Message: {message}</p> */}
             {/* <ToastContainer /> */}
             <div className="flex justify-between items-center mt-5">
               <div className="flex space-x-5 items-center">
