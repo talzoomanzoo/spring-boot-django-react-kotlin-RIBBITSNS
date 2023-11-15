@@ -216,24 +216,15 @@ fun EditProfileReadyScreen(
                             }
                         }
                     } else {
-                        AsyncImage(
-                            model = ImageRequest.Builder(context = LocalContext.current).data(
-                                if (userViewModel.profileUiState is ProfileUiState.Exist) {
-                                    (userViewModel.profileUiState as ProfileUiState.Exist).user.backgroundImage
-                                        ?: "https://res.heraldm.com/content/image/2015/06/15/20150615000967_0.jpg"
-                                } else {
-                                }
-                            )
-                                .crossfade(true).build(),
-                            contentDescription = stringResource(R.string.user_image),
+                        Image(
+                            painter = painterResource(id = R.drawable.pond),
+                            contentDescription = "default profile background image",
                             modifier = modifier
                                 .fillMaxWidth()
                                 .height(100.dp)
                                 .clickable { backgroundImageLauncher.launch("image/*") },
-                            placeholder = painterResource(R.drawable.loading_img),
-                            error = painterResource(R.drawable.ic_broken_image),
                             alignment = Alignment.Center,
-                            contentScale = ContentScale.Crop,
+                            contentScale = ContentScale.Crop
                         )
                     }
                     Row(
@@ -269,24 +260,14 @@ fun EditProfileReadyScreen(
                                 }
                             }
                         } else {
-                            AsyncImage(
-                                model = ImageRequest.Builder(context = LocalContext.current)
-                                    .data(
-                                        if (userViewModel.profileUiState is ProfileUiState.Exist) {
-                                            (userViewModel.profileUiState as ProfileUiState.Exist).user.image
-                                                ?: "https://img.animalplanet.co.kr/news/2020/01/13/700/sfu2275cc174s39hi89k.jpg"
-                                        } else {
-                                        }
-                                    )
-                                    .crossfade(true).build(),
-                                contentDescription = stringResource(R.string.user_image),
+                            Image(
+                                painter = painterResource(id = R.drawable.pngwing_com),
+                                contentDescription = "default profile image",
                                 modifier = modifier
                                     .size(100.dp)
                                     .clip(CircleShape)
                                     .clickable { profileImageLauncher.launch("image/*") },
-                                placeholder = painterResource(R.drawable.loading_img),
-                                error = painterResource(R.drawable.ic_broken_image),
-                                contentScale = ContentScale.Crop,
+                                contentScale = ContentScale.Crop
                             )
                         }
 

@@ -33,6 +33,7 @@ import com.hippoddung.ribbit.ui.viewmodel.CommuViewModel
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.ListViewModel
 import com.hippoddung.ribbit.ui.viewmodel.PostIdUiState
+import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
@@ -42,6 +43,7 @@ fun PostIdScreen(
 //    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
     getCardViewModel: GetCardViewModel,
+    postingViewModel: PostingViewModel,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
@@ -62,6 +64,7 @@ fun PostIdScreen(
             val post = (getCardViewModel.postIdUiState as PostIdUiState.Success).post
             PostIdSuccessScreen(
                 getCardViewModel = getCardViewModel,
+                postingViewModel = postingViewModel,
                 tokenViewModel = tokenViewModel,
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
@@ -87,6 +90,7 @@ fun PostIdScreen(
 @Composable
 fun PostIdSuccessScreen(
     getCardViewModel: GetCardViewModel,
+    postingViewModel: PostingViewModel,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
@@ -132,6 +136,7 @@ fun PostIdSuccessScreen(
                         post = post,
                         posts = post.replyTwits as List<RibbitPost>,    // Null or Empty check 를 하였음에도 컴파일오류가 계속되어 강제 캐스팅함.
                         getCardViewModel = getCardViewModel,
+                        postingViewModel = postingViewModel,
                         userViewModel = userViewModel,
                         myId = myId,
                         navController = navController,
@@ -141,6 +146,7 @@ fun PostIdSuccessScreen(
                     RibbitCard(
                         post = post,
                         getCardViewModel = getCardViewModel,
+                        postingViewModel = postingViewModel,
                         userViewModel = userViewModel,
                         myId = myId,
                         navController = navController,
