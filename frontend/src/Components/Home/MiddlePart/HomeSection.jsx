@@ -362,6 +362,7 @@ const HomeSection = () => {
       );
       console.log("response.status: ",response);
       if (response.status === 200) {
+        console.log("response: ",response.json());
         setLoading(false);
         setRefreshTwits((prev) => prev + 1);
       }

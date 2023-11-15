@@ -67,6 +67,7 @@ public class EthicController {
 		TwitDto ethicdto = TwitDtoMapper.toTwitDto(ethictwit, user);
 		
 		System.out.println("게시물 id: "+req.getId());
+		System.out.println("ethicdto label"+ethicdto.getEthiclabel());
 		System.out.println("ethicdto: "+ethicdto.getEthicrate());
 		System.out.println("ethicdto MAX: "+ethicdto.getEthicrateMAX());
 		return new ResponseEntity<>(ethicdto,HttpStatus.OK);

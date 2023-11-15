@@ -64,7 +64,9 @@ const TwitCard = ({ twit }) => {
 
   const [ethiclabel, setEthiclabel] = useState(twit.ethiclabel);
   const [ethicrateMAX, setEthicrateMAX] = useState(twit.ethicrateMAX); //윤리수치 최대 수치
-  console.log("twit.ethicratemax: ",twit);
+  console.log("twit.ethicratemax: ",twit.ethicrateMAX);
+  console.log("twit.ethicratemax: ",twit.ethiclabel);
+  console.log("twit.ethicratemax: ",twit.ethicrate);
   //  const [isLoading, setIsLoading] = useState(false); //로딩창의 띄어짐의 유무를 판단한다. default는 true이다.
   const jwtToken = localStorage.getItem("jwt");
   const [isEdited, setIsEdited] = useState(twit.edited);
@@ -664,6 +666,7 @@ const TwitCard = ({ twit }) => {
                     {ethiclabel===1 && <div className="flex items-center font-bold rounded-md">선정성<ProgressBar completed={ethicrateMAX} width="450%" margin="2px 0px 4px 4px"/></div>}
                     {ethiclabel===2 && <div className="flex items-center font-bold rounded-md">욕설<ProgressBar completed={ethicrateMAX} width="450%" margin="2px 0px 4px 4px"/></div>}
                     {ethiclabel===3 && <div className="flex items-center font-bold rounded-md">차별성<ProgressBar completed={ethicrateMAX} width="450%" margin="2px 0px 4px 4px"/></div>}
+                    {ethiclabel===4 && <div className="flex items-center font-bold rounded-md">정상<ProgressBar completed={ethicrateMAX} width="450%" margin="2px 0px 4px 4px"/></div>}
                   </p>
                   
                   {twit.image && (
