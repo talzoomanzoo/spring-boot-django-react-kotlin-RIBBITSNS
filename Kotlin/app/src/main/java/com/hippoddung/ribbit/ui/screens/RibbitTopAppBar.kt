@@ -58,6 +58,7 @@ import com.hippoddung.ribbit.network.bodys.User
 import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.screens.searchitems.SearchedGrid
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
+import com.hippoddung.ribbit.ui.viewmodel.CommuClassificationUiState
 import com.hippoddung.ribbit.ui.viewmodel.CommuViewModel
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.ListViewModel
@@ -169,6 +170,8 @@ fun MainDropDownMenu(
         }
         IconButton(
             onClick = {
+                getCardViewModel.getAllCommuPosts()
+                commuViewModel.commuClassificationUiState = CommuClassificationUiState.AllCommuPosts
                 commuViewModel.getCommus()
                 Log.d("HippoLog, RibbitTopAppBar", "api/users/profile, myProfileUiState: ${(userViewModel.myProfileUiState as MyProfileUiState.Exist).myProfile}")
                 Log.d("HippoLog, RibbitTopAppBar", "api/users/profile, myProfile: ${userViewModel.myProfile.value}")
@@ -264,8 +267,8 @@ fun RibbitSearchBar(
     var isExpanded by remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf(TextFieldValue()) }
     var isSearched by remember { mutableStateOf(false) }
-    val usersData by userViewModel.usersData.collectAsState()
-    val postsData by getCardViewModel.postsData.collectAsState()
+    val usersSearchData by userViewModel.usersSearchData.collectAsState()
+    val postsSearchData by getCardViewModel.postsSearchData.collectAsState()
 
     Row(
         horizontalArrangement = Arrangement.End,
@@ -315,12 +318,12 @@ fun RibbitSearchBar(
             .fillMaxWidth()
     ) {
         val userComparator = compareByDescending<User> { it.id }
-        val sortedUsers = remember(usersData, userComparator) {
-            usersData.sortedWith(userComparator)
+        val sortedUsersSearch = remember(usersSearchData, userComparator) {
+            usersSearchData.sortedWith(userComparator)
         }   // LazyColumn items 에 List 를 바로 주는 것이 아니라 Comparator 로 정렬하여 remember 로 기억시켜서 recomposition 을 방지하여 성능을 올린다.
         val postComparator = compareByDescending<RibbitPost> { it.id }
-        val sortedPosts = remember(postsData, postComparator) {
-            postsData.sortedWith(postComparator)
+        val sortedPostsSearch = remember(postsSearchData, postComparator) {
+            postsSearchData.sortedWith(postComparator)
         }   // LazyColumn items 에 List 를 바로 주는 것이 아니라 Comparator 로 정렬하여 remember 로 기억시켜서 recomposition 을 방지하여 성능을 올린다.
         TextField(
             value = searchQuery,
@@ -392,8 +395,8 @@ fun RibbitSearchBar(
                     .sizeIn(maxWidth = Dp.Infinity, maxHeight = Dp.Infinity)
             ) {
                 SearchedGrid(
-                    sortedUsers = sortedUsers,
-                    sortedPosts = sortedPosts,
+                    sortedUsersSearch = sortedUsersSearch,
+                    sortedPostsSearch = sortedPostsSearch,
                     getCardViewModel = getCardViewModel,
                     userViewModel = userViewModel,
                     navController = navController,

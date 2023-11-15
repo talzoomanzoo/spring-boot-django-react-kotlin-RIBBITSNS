@@ -95,8 +95,8 @@ class UserViewModel @Inject constructor(
         UploadProfileBackgroundImageCloudinaryUiState.None
     )
 
-    private var _usersData = MutableStateFlow<List<User>>(listOf())
-    val usersData: StateFlow<List<User>> = _usersData.asStateFlow()
+    private var _usersSearchData = MutableStateFlow<List<User>>(listOf())
+    val usersSearchData: StateFlow<List<User>> = _usersSearchData.asStateFlow()
 
     fun getMyProfile() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -286,7 +286,7 @@ class UserViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 Log.d("HippoLog, UserViewModel", "getUserSearch")
-                _usersData.value = (userRepository.getUsersSearch(searchQuery))
+                _usersSearchData.value = (userRepository.getUsersSearch(searchQuery))
             } catch (e: IOException) {
                 Log.d("HippoLog, UserViewModel", "getUserSearch error: ${e.message}")
                 SearchingUserUiState.Error

@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 import { Suspense } from "react";
-import Loading from "./../Profile/Loading/Loading"
 import { useParams } from "react-router";
+import Loading from "../Profile/Loading/Loading";
 const FollowTwit = React.lazy(() => import("./FollowTwit"));
-
-
 const FollowTwitEnc = () => {
     // const dispatch = useDispatch();
     // const navigate = useNavigate();

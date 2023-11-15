@@ -89,7 +89,7 @@ const RightPart = () => {
             // onChange={handleSearchUser}
             type="text"
             placeholder="사용자 및 글 검색"
-            className={`py-3 rounded-full outline-none text-gray- w-full pl-12 ${theme.currentTheme === "light" ? "bg-stone-300" : "bg-[#151515]"}`}
+            className={`py-3 rounded-full outline-none text-gray-500 w-full pl-12 ${theme.currentTheme === "light" ? "bg-stone-300" : "bg-[#151515]"}`}
           />
           <span className="absolute top-0 left-0 pl-3 pt-3">
             <SearchIcon className="text-gray-400" />
@@ -153,7 +153,7 @@ const RightPart = () => {
           />
         </div>
 
-        <section
+        {/* <section
           className={`my-5`}
         // ${
         //   theme.currentTheme === "dark" ? " bg-[#151515] p-5 rounded-md" : ""
@@ -170,7 +170,7 @@ const RightPart = () => {
             체크 구독
           </Button>
           
-        </section>
+        </section> */}
 
         <hr
             style={{

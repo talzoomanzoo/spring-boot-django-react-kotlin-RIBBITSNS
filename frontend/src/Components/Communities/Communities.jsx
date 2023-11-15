@@ -1,18 +1,16 @@
+import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
-import PlaylistAddIcon from "@mui/icons-material/PlaylistAdd";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { getAllComs } from "../../Store/Community/Action";
-import { getAllLists } from "../../Store/List/Action";
-import GroupAddIcon from '@mui/icons-material/GroupAdd';
-import ComModel from "./ComModel";
-import ComCard from "./ComCard";
-import ComBottom from "./ComBottom";
-import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCoverflow, Pagination } from "swiper";
 import "swiper/css";
 import "swiper/css/effect-coverflow";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { getAllComs } from "../../Store/Community/Action";
+import ComBottom from "./ComBottom";
+import ComCard from "./ComCard";
+import ComModel from "./ComModel";
 
 const Communities = () => {
     const dispatch = useDispatch();
@@ -57,7 +55,7 @@ const Communities = () => {
             <div>
                 <div
                     className="space-y-3"
-                    style={{ marginTop: 10 }}>
+                    style={{ marginTop: 10, fontSize: "larger", }}>
                     커뮤니티 찾아보기
                     <hr
                         style={{
@@ -96,7 +94,7 @@ const Communities = () => {
             <section className="space-y-5" style={{ marginTop: 50 }}>
                 <div
                     className="space-y-3"
-                    style={{ marginTop: 10 }}>
+                    style={{ marginTop: 10, fontSize: "larger", }}>
                     내 커뮤니티 리빗 모아보기
                     <hr
                         style={{
