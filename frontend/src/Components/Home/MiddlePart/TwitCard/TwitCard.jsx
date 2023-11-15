@@ -857,6 +857,7 @@ const TwitCard = ({ twit }) => {
                             onChange={(e) => setSearchKeyword(e.target.value)}
                             id="keyword"
                             size="15"
+                            className={`${theme.currentTheme === "light" ? "" : "text-black"}`}
                           />
                           <Button type="submit">검색하기</Button>
                         </form>
