@@ -426,6 +426,16 @@ const Chat = () => {
                   나가기
                 </Button>
               </div>
+              <hr
+            style={{
+              marginTop: 10,
+              marginBottom: 1,
+              background: 'grey',
+              color: 'grey',
+              borderColor: 'grey',
+              height: '1px',
+            }}
+          />
             </div>
           ))
         ) : (
@@ -516,10 +526,10 @@ const Chat = () => {
            className="fixed top-0 right-0 bottom-0 left-0 bg-black bg-opacity-40 flex justify-center items-center"
            style={{ display: showUserList ? 'flex' : 'none', position: 'absolute', zIndex: 1 }}
          >
-           <div className="bg-white p-4 rounded-md">
+           <div className={`p-4 rounded-md ${theme.currentTheme === "light" ? "bg-white" : "bg-stone-900"}`}>
              <div className="flex items-center justify-between mb-4">
-               <h3 className={`text-lg font-bold text-black`}>참여 중인 멤버</h3>
-               <button onClick={() => setShowUserList(false)}><CloseIcon className="text-black"/></button>
+               <h3 className={`text-lg font-bold ${theme.currentTheme === "light" ? "text-black" : "text-white"}`}>참여 중인 멤버</h3>
+               <button onClick={() => setShowUserList(false)}><CloseIcon className={`${theme.currentTheme === "light" ? "text-black" : "text-white"}`}/></button>
              </div>
              <ul>
                {userList.map((user) => (
@@ -533,7 +543,7 @@ const Chat = () => {
                         }
                         loading="lazy"
                       />
-                      <div className="text-black">
+                      <div className={`${theme.currentTheme === "light" ? "text-black" : "text-white"}`}>
                         <p className="font-bold">{user.fullName}</p>
                         <p className="opacity-70">{user.email.split(" ")[0]}</p>
                       </div>
@@ -588,7 +598,7 @@ const Chat = () => {
                     >
                       {auth.user?.fullName === chat.sender ? (
                         <p
-                        className={`${theme.currentTheme === "light" ? "bg-white text-black" : "text-white"}`}
+                        className={`${theme.currentTheme === "light" ? "bg-stone-200 text-black" : "bg-stone-800 text-white"}`}
                           style={{
                             padding: "10px",
                             borderRadius: "10px",
@@ -624,7 +634,7 @@ const Chat = () => {
                               </p>
                             )}
                             <p
-                                                    className={`${theme.currentTheme === "light" ? "bg-white text-black" : "text-white"}`}
+                                                    className={`${theme.currentTheme === "light" ? "bg-stone-200 text-black" : "bg-stone-800 text-white"}`}
                               style={{
                                 // backgroundColor:
                                 //   auth.user?.fullName === chat.sender
