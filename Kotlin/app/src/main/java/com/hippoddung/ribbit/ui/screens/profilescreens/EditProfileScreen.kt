@@ -216,16 +216,36 @@ fun EditProfileReadyScreen(
                             }
                         }
                     } else {
-                        Image(
-                            painter = painterResource(id = R.drawable.pond),
-                            contentDescription = "default profile background image",
-                            modifier = modifier
-                                .fillMaxWidth()
-                                .height(100.dp)
-                                .clickable { backgroundImageLauncher.launch("image/*") },
-                            alignment = Alignment.Center,
-                            contentScale = ContentScale.Crop
-                        )
+                        if (myProfile.backgroundImage != null) {
+                            AsyncImage(
+                                model = ImageRequest.Builder(context = LocalContext.current).data(
+                                    myProfile.backgroundImage
+//                                ?: "https://res.heraldm.com/content/image/2015/06/15/20150615000967_0.jpg"
+                                )
+                                    .crossfade(true).build(),
+                                contentDescription = stringResource(R.string.user_image),
+                                modifier = modifier
+                                    .fillMaxWidth()
+                                    .height(100.dp)
+                                    .clickable { backgroundImageLauncher.launch("image/*") },
+
+                                placeholder = painterResource(R.drawable.loading_img),
+                                error = painterResource(R.drawable.ic_broken_image),
+                                alignment = Alignment.TopStart,
+                                contentScale = ContentScale.Crop
+                            )
+                        } else {
+                            Image(
+                                painter = painterResource(id = R.drawable.pond),
+                                contentDescription = "default profile background image",
+                                modifier = modifier
+                                    .fillMaxWidth()
+                                    .height(100.dp)
+                                    .clickable { backgroundImageLauncher.launch("image/*") },
+                                alignment = Alignment.Center,
+                                contentScale = ContentScale.Crop
+                            )
+                        }
                     }
                     Row(
                         modifier = modifier
@@ -260,15 +280,35 @@ fun EditProfileReadyScreen(
                                 }
                             }
                         } else {
-                            Image(
-                                painter = painterResource(id = R.drawable.pngwing_com),
-                                contentDescription = "default profile image",
-                                modifier = modifier
-                                    .size(100.dp)
-                                    .clip(CircleShape)
-                                    .clickable { profileImageLauncher.launch("image/*") },
-                                contentScale = ContentScale.Crop
-                            )
+                            if (myProfile.image != null) {
+                                AsyncImage(
+                                    model = ImageRequest.Builder(context = LocalContext.current)
+                                        .data(
+                                            myProfile.image
+//                                        ?: "https://img.animalplanet.co.kr/news/2020/01/13/700/sfu2275cc174s39hi89k.jpg"
+
+                                        )
+                                        .crossfade(true).build(),
+                                    contentDescription = stringResource(R.string.user_image),
+                                    modifier = modifier
+                                        .size(100.dp)
+                                        .clip(CircleShape)
+                                        .clickable { profileImageLauncher.launch("image/*") },
+                                    placeholder = painterResource(R.drawable.loading_img),
+                                    error = painterResource(R.drawable.ic_broken_image),
+                                    contentScale = ContentScale.Crop,
+                                )
+                            } else {
+                                Image(
+                                    painter = painterResource(id = R.drawable.pngwing_com),
+                                    contentDescription = "default profile image",
+                                    modifier = modifier
+                                        .size(100.dp)
+                                        .clip(CircleShape)
+                                        .clickable { profileImageLauncher.launch("image/*") },
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
                         }
 
                         // email
