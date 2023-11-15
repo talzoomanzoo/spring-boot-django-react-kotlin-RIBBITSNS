@@ -518,8 +518,8 @@ const Chat = () => {
          >
            <div className="bg-white p-4 rounded-md">
              <div className="flex items-center justify-between mb-4">
-               <h3 className="text-lg font-bold">참여 중인 멤버</h3>
-               <button onClick={() => setShowUserList(false)}><CloseIcon/></button>
+               <h3 className={`text-lg font-bold text-black`}>참여 중인 멤버</h3>
+               <button onClick={() => setShowUserList(false)}><CloseIcon className="text-black"/></button>
              </div>
              <ul>
                {userList.map((user) => (
@@ -533,7 +533,7 @@ const Chat = () => {
                         }
                         loading="lazy"
                       />
-                      <div>
+                      <div className="text-black">
                         <p className="font-bold">{user.fullName}</p>
                         <p className="opacity-70">{user.email.split(" ")[0]}</p>
                       </div>
@@ -588,8 +588,8 @@ const Chat = () => {
                     >
                       {auth.user?.fullName === chat.sender ? (
                         <p
+                        className={`${theme.currentTheme === "light" ? "bg-white text-black" : "text-white"}`}
                           style={{
-                            backgroundColor: "#f2f2f2",
                             padding: "10px",
                             borderRadius: "10px",
                             maxWidth: "100%",
@@ -624,11 +624,12 @@ const Chat = () => {
                               </p>
                             )}
                             <p
+                                                    className={`${theme.currentTheme === "light" ? "bg-white text-black" : "text-white"}`}
                               style={{
-                                backgroundColor:
-                                  auth.user?.fullName === chat.sender
-                                    ? "#a5d8d1"
-                                    : "#f2f2f2",
+                                // backgroundColor:
+                                //   auth.user?.fullName === chat.sender
+                                //     ? "#a5d8d1"
+                                //     : "#f2f2f2",
                                 padding: "10px",
                                 borderRadius: "10px",
                                 maxWidth: "100%",
