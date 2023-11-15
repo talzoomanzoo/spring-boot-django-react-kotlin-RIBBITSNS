@@ -6,6 +6,8 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,6 +42,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -48,8 +51,10 @@ import com.hippoddung.ribbit.network.bodys.RibbitPost
 import com.hippoddung.ribbit.network.bodys.User
 import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.screens.carditems.RibbitCard
+import com.hippoddung.ribbit.ui.screens.searchitems.SearchedUserCard
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
+import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
 import com.hippoddung.ribbit.ui.viewmodel.ProfileUiState
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserIdClassificationUiState
@@ -62,6 +67,7 @@ import kotlinx.coroutines.runBlocking
 fun ProfilePostsGrid(
     posts: List<RibbitPost>,
     getCardViewModel: GetCardViewModel,
+    postingViewModel: PostingViewModel,
     userViewModel: UserViewModel,
     authViewModel: AuthViewModel,
     tokenViewModel: TokenViewModel,
@@ -83,6 +89,8 @@ fun ProfilePostsGrid(
         }
     }
     var withdrawalIsClicked by remember { mutableStateOf(false) }
+    var followingsIsClicked by remember { mutableStateOf(false) }
+    var followersIsClicked by remember { mutableStateOf(false) }
     LazyColumn(modifier = modifier) {
         item {
             Column(modifier = modifier) {
@@ -258,11 +266,17 @@ fun ProfilePostsGrid(
                         text = "${profileUser.followings?.size ?: 0} followings",
                         modifier = modifier
                             .padding(start = 12.dp, end = 12.dp)
+                            .clickable {
+                                followingsIsClicked = true
+                            }
                     )
                     Text(
                         text = "${profileUser.followers?.size ?: 0} followers",
                         modifier = modifier
                             .padding(start = 12.dp, end = 12.dp)
+                            .clickable {
+                                followersIsClicked = true
+                            }
                     )
                 }
                 Row(
@@ -387,6 +401,7 @@ fun ProfilePostsGrid(
             RibbitCard(
                 post = it,
                 getCardViewModel = getCardViewModel,
+                postingViewModel = postingViewModel,
                 myId = myId,
                 navController = navController,
                 userViewModel = userViewModel,
@@ -442,5 +457,61 @@ fun ProfilePostsGrid(
             },
             modifier = modifier
         )
+    }
+    if (followingsIsClicked) {
+        Dialog(
+            onDismissRequest = {
+                followingsIsClicked = false
+            }
+        ) {
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .background(Color.White),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                if (!profileUser.followings.isNullOrEmpty()) {
+                    profileUser.followings?.forEach { user ->
+                        SearchedUserCard(
+                            user = user!!,  // 위에서 null check 함
+                            getCardViewModel = getCardViewModel,
+                            navController = navController,
+                            userViewModel = userViewModel,
+                            modifier = modifier
+                        )
+                    }
+                } else {
+                    Text(text = "There is no followings", modifier = modifier)
+                }
+            }
+        }
+    }
+    if (followersIsClicked) {
+        Dialog(
+            onDismissRequest = {
+                followersIsClicked = false
+            }
+        ) {
+            Column(
+                modifier = modifier
+                    .fillMaxSize()
+                    .background(Color.White),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                if (!profileUser.followers.isNullOrEmpty()) {
+                    profileUser.followers?.forEach { user ->
+                        SearchedUserCard(
+                            user = user!!,
+                            getCardViewModel = getCardViewModel,
+                            navController = navController,
+                            userViewModel = userViewModel,
+                            modifier = modifier
+                        )
+                    }
+                } else {
+                    Text(text = "There is no followers", modifier = modifier)
+                }
+            }
+        }
     }
 }

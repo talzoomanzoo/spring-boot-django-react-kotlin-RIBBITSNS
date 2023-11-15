@@ -161,6 +161,7 @@ fun RibbitScreen(
             PostIdScreen(
                 navController = navController,
                 getCardViewModel = getCardViewModel,
+                postingViewModel = postingViewModel,
                 tokenViewModel = tokenViewModel,
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
@@ -176,6 +177,7 @@ fun RibbitScreen(
             ProfileScreen(
                 navController = navController,
                 getCardViewModel = getCardViewModel,
+                postingViewModel = postingViewModel,
                 tokenViewModel = tokenViewModel,
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
@@ -209,6 +211,7 @@ fun RibbitScreen(
             Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> EditingPostScreen")
             EditingPostScreen(
                 getCardViewModel = getCardViewModel,
+                postingViewModel = postingViewModel,
                 navController = navController,
                 modifier = modifier
             )
@@ -232,6 +235,7 @@ fun RibbitScreen(
             ListIdScreen(
                 navController = navController,
                 getCardViewModel = getCardViewModel,
+                postingViewModel = postingViewModel,
                 tokenViewModel = tokenViewModel,
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
@@ -264,6 +268,7 @@ fun RibbitScreen(
             CommuScreen(
                 navController = navController,
                 getCardViewModel = getCardViewModel,
+                postingViewModel = postingViewModel,
                 tokenViewModel = tokenViewModel,
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,

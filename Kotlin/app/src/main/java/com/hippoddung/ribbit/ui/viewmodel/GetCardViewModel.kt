@@ -208,7 +208,7 @@ class GetCardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으
             classificationUiState = ClassificationUiState.TopLikes
             Log.d("HippoLog, GetCardViewModel", "getTopLikesRibbitPosts, $homeUiState")
             homeUiState = try {
-                HomeUiState.Success(ribbitRepository.getTopViewsRibbitPosts())
+                HomeUiState.Success(ribbitRepository.getTopLikesRibbitPosts())
             } catch (e: IOException) {
                 Log.d("HippoLog, GetCardViewModel", "getTopLikesRibbitPosts, ${e.stackTrace}, ${e.message}")
                 HomeUiState.Error(e.message.toString())

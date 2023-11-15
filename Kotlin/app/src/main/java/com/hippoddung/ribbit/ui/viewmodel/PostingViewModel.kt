@@ -28,7 +28,7 @@ import javax.inject.Inject
 sealed interface CreatingPostUiState {
     object Ready : CreatingPostUiState
     object Loading : CreatingPostUiState
-    object Success : CreatingPostUiState
+    data class Success(val post: RibbitPost) : CreatingPostUiState
     object Error : CreatingPostUiState
 }
 
@@ -53,16 +53,31 @@ sealed interface UploadVideoCloudinaryUiState {
     object None : UploadVideoCloudinaryUiState
 }
 
+sealed interface AnalyzingPostEthicUiState {
+    object Loading : AnalyzingPostEthicUiState
+    data class Success(val post: RibbitPost) : AnalyzingPostEthicUiState
+    data class Error(val error: String) : AnalyzingPostEthicUiState
+}
+
 @HiltViewModel
 class PostingViewModel @Inject constructor(
     private val ribbitRepository: RibbitRepository,
     private val uploadCloudinaryRepository: UploadCloudinaryRepository
 ) : ViewModel() {
-    var creatingPostUiState: CreatingPostUiState by mutableStateOf( CreatingPostUiState.Ready )
-    var editingPostUiState: EditingPostUiState by mutableStateOf( EditingPostUiState.Loading( RibbitPost() )
+    var creatingPostUiState: CreatingPostUiState by mutableStateOf(CreatingPostUiState.Ready)
+    var editingPostUiState: EditingPostUiState by mutableStateOf(
+        EditingPostUiState.Loading(RibbitPost())
     )
-    private var uploadImageCloudinaryUiState: UploadImageCloudinaryUiState by mutableStateOf( UploadImageCloudinaryUiState.None )
-    private var uploadVideoCloudinaryUiState: UploadVideoCloudinaryUiState by mutableStateOf( UploadVideoCloudinaryUiState.None )
+    var analyzingPostEthicUiState: AnalyzingPostEthicUiState by mutableStateOf(
+        AnalyzingPostEthicUiState.Loading
+    )
+
+    private var uploadImageCloudinaryUiState: UploadImageCloudinaryUiState by mutableStateOf(
+        UploadImageCloudinaryUiState.None
+    )
+    private var uploadVideoCloudinaryUiState: UploadVideoCloudinaryUiState by mutableStateOf(
+        UploadVideoCloudinaryUiState.None
+    )
 
     var currentScreenState = mutableStateOf(RibbitScreen.HomeScreen)
     fun setCurrentScreen(screen: RibbitScreen) {
@@ -86,7 +101,7 @@ class PostingViewModel @Inject constructor(
             creatingPostUiState = CreatingPostUiState.Loading
             uploadImageCloudinaryUiState = UploadImageCloudinaryUiState.None
             uploadVideoCloudinaryUiState = UploadVideoCloudinaryUiState.None
-            runBlocking {
+            runBlocking {   // 이미지와 비디오가 있는 경우 url을 리턴받기 위해 기다려야 함.
                 launch(Dispatchers.IO) {
                     if (image != null) {
                         uploadImageCloudinaryUiState = UploadImageCloudinaryUiState.Loading
@@ -128,7 +143,7 @@ class PostingViewModel @Inject constructor(
                         image = imageUrl,
                         video = videoUrl
                     ),
-                    commuId
+                    commuId // commu 에서 쓰지 않을 경우 null 값이 들어간다.
                 )
             } else {    // uploadImageCloudinaryUiState 와 uploadVideoCloudinaryUiState 가 다른 상태일 때 처리를 위함 미구현
             }
@@ -136,28 +151,57 @@ class PostingViewModel @Inject constructor(
     }
 
     private suspend fun postCreatePost(ribbitPost: RibbitPost, commuId: Int?) {
-        if(commuId == null) { // commuId를 받지 않은 경우, 일반 post
-            try {
-                ribbitRepository.postCreatePost(ribbitPost)
-            } catch (e: IOException) {
-                creatingPostUiState = CreatingPostUiState.Error
-                println(e.stackTrace)
-            } catch (e: ExceptionInInitializerError) {
-                creatingPostUiState = CreatingPostUiState.Error
-                println(e.stackTrace)
-            }
-            creatingPostUiState = CreatingPostUiState.Success
-        }else{  // commuId를 받은 경우 commu post
-            try {
-                ribbitRepository.postCreateCommuPost(ribbitPost, commuId)
-            } catch (e: IOException) {
-                creatingPostUiState = CreatingPostUiState.Error
-                println(e.stackTrace)
-            } catch (e: ExceptionInInitializerError) {
-                creatingPostUiState = CreatingPostUiState.Error
-                println(e.stackTrace)
-            }
-            creatingPostUiState = CreatingPostUiState.Success
+        if (commuId == null) { // commuId를 받지 않은 경우, 일반 post
+            creatingPostUiState =
+                try {
+                    CreatingPostUiState.Success(post = ribbitRepository.postCreatePost(ribbitPost))
+                } catch (e: IOException) {
+                    CreatingPostUiState.Error
+                } catch (e: ExceptionInInitializerError) {
+                    CreatingPostUiState.Error
+                }
+        } else {  // commuId를 받은 경우 commu post
+            creatingPostUiState =
+                try {
+                    CreatingPostUiState.Success(
+                        post = ribbitRepository.postCreateCommuPost(
+                            ribbitPost = ribbitPost,
+                            commuId = commuId
+                        )
+                    )
+                } catch (e: IOException) {
+                    CreatingPostUiState.Error
+                } catch (e: ExceptionInInitializerError) {
+                    CreatingPostUiState.Error
+                }
+        }
+        if (creatingPostUiState is CreatingPostUiState.Success) { // creatingPostUiState 가 Success 되면 윤리검사 함수를 실행
+            postCreatePostEthic((creatingPostUiState as CreatingPostUiState.Success).post)
+        }
+    }
+
+    private fun postCreatePostEthic(ribbitPost: RibbitPost) {
+        viewModelScope.launch(Dispatchers.IO) {
+            analyzingPostEthicUiState = AnalyzingPostEthicUiState.Loading
+            Thread.sleep(2000)
+            analyzingPostEthicUiState =
+                try {
+                    AnalyzingPostEthicUiState.Success(
+                        post = ribbitRepository.postCreatePostEthic(
+                            ribbitPost
+                        )
+                    )
+                } catch (e: IOException) {
+                    Log.d("HippoLog PostingViewModel", "postCreatePostEthic, ${e.message}")
+                    AnalyzingPostEthicUiState.Error(e.message.toString())
+                } catch (e: ExceptionInInitializerError) {
+                    Log.d("HippoLog PostingViewModel", "postCreatePostEthic, ${e.message}")
+                    AnalyzingPostEthicUiState.Error(e.message.toString())
+                }
+            Log.d(
+                "HippoLog PostingViewModel",
+                "postCreatePostEthic, Success, $analyzingPostEthicUiState"
+            )
         }
     }
 
@@ -227,7 +271,8 @@ class PostingViewModel @Inject constructor(
                 post.image = imageUrl
                 post.video = videoUrl
                 post.edited = edited
-                post.editedAt = LocalDateTime.now().toString()  // 수정 여부 및 수정 시각은 프론트에서 직접 값을 넣어서 보냄.
+                post.editedAt =
+                    LocalDateTime.now().toString()  // 수정 여부 및 수정 시각은 프론트에서 직접 값을 넣어서 보냄.
                 postEditPost(
                     post
                 )

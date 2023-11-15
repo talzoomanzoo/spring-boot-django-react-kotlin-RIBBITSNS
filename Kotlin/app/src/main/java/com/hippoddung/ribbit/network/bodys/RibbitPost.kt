@@ -1,5 +1,7 @@
 package com.hippoddung.ribbit.network.bodys
 
+import com.google.gson.annotations.SerializedName
+
 data class RibbitPost(
     val com: Boolean? = false,
     val community: RibbitCommuItem? = null,
@@ -24,4 +26,17 @@ data class RibbitPost(
     val user: User? = null,
     var video: String? = null,
     val viewCount: Int = 0,
+
+    val ethicrateMAX: Int? = null,
+    @SerializedName("is_liked")
+    val isLiked: Boolean? = null,
+    @SerializedName("is_notification")
+    val isNotification: Boolean? = null,
+    @SerializedName("is_retwit")
+    val isRetwit: Boolean? = null,
+    val location: String? = null,
+    val notifications: List<Notification?>? = null,
+    val retwitAt: String? = null,
+    val thumbnail: String? = null,
+    val twit: Boolean? = null
 )

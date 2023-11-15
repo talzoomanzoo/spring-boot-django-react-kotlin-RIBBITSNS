@@ -15,8 +15,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.network.bodys.RibbitPost
+import com.hippoddung.ribbit.ui.screens.ReplyScreen
 import com.hippoddung.ribbit.ui.screens.RibbitTopAppBar
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
@@ -25,6 +27,8 @@ import com.hippoddung.ribbit.ui.viewmodel.CommuViewModel
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.GetUserIdPostsUiState
 import com.hippoddung.ribbit.ui.viewmodel.ListViewModel
+import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
+import com.hippoddung.ribbit.ui.viewmodel.ReplyClickedUiState
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserIdClassificationUiState
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
@@ -35,6 +39,7 @@ fun ProfileScreen(
 //    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
     getCardViewModel: GetCardViewModel,
+    postingViewModel: PostingViewModel,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
@@ -59,6 +64,7 @@ fun ProfileScreen(
             Log.d("HippoLog, ProfileScreen", "Success")
             ProfileSuccessScreen(
                 getCardViewModel = getCardViewModel,
+                postingViewModel = postingViewModel,
                 authViewModel = authViewModel,
                 tokenViewModel = tokenViewModel,
                 userViewModel = userViewModel,
@@ -78,6 +84,7 @@ fun ProfileScreen(
 @Composable
 fun ProfileSuccessScreen(
     getCardViewModel: GetCardViewModel,
+    postingViewModel: PostingViewModel,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
@@ -123,6 +130,7 @@ fun ProfileSuccessScreen(
             ProfilePostsGrid(
                 posts = posts,
                 getCardViewModel = getCardViewModel,
+                postingViewModel = postingViewModel,
                 userViewModel = userViewModel,
                 authViewModel = authViewModel,
                 tokenViewModel = tokenViewModel,
