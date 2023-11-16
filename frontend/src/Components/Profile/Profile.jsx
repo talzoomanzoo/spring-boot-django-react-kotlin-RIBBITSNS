@@ -22,7 +22,7 @@ import TwitCard from "../Home/MiddlePart/TwitCard/TwitCard";
 //import ProfileModel from "./ProfileModel";
 import "../RightPart/Scrollbar.css";
 import Loading from "./Loading/Loading";
-import "./Profile.css";
+import CloseIcon from "@mui/icons-material/Close";
 
 const Maplocation = React.lazy(() => import("./Maplocation"));
 const ProfileModel = React.lazy(() => import("./ProfileModel"));
@@ -207,14 +207,13 @@ const Profile = () => {
             loading="lazy"
           />
           {auth.findUser?.req_user ? (
-            <button
+            <Button
               onClick={handleOpenProfileModel}
               sx={{ borderRadius: "20px" }}
               variant="outlined"
-              className="rounded-full profile--chage--btn"
             >
-              <a></a>
-            </button>
+              프로필 변경
+            </Button>
           ) : (
             <Button
               onClick={handleFollowUser}
@@ -320,6 +319,7 @@ const Profile = () => {
                     >
                       followers
                     </Button>
+                    <button style={{marginLeft: "12.7%"}} onClick={() => closeFollowingsModal()}><CloseIcon className={`${theme.currentTheme === "light" ? "text-black" : "text-white"}`} /></button>
                     <div
                       ref={followersListRef}
                       className={`customeScrollbar overflow-y-scroll css-scroll hideScrollbar h-[40vh]`}
@@ -381,6 +381,7 @@ const Profile = () => {
                     >
                       followers
                     </Button>
+                    <button style={{marginLeft: "10%"}} onClick={() => closeFollowersModal()}><CloseIcon className={`${theme.currentTheme === "light" ? "text-black" : "text-white"}`} /></button>
                     <div
                       ref={followersListRef}
                       className={`customeScrollbar overflow-y-scroll css-scroll hideScrollbar h-[40vh] `}

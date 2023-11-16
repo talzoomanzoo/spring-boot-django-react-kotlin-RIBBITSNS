@@ -66,28 +66,12 @@ const Communities = () => {
                             height: '1px',
                         }}
                     />
-                </div>
-
-                <div className="flex inline-block justify-content border-gray-700 h-[35vh] w-full rounded-md">
-                <Swiper
-        effect={"coverflow"}
-        grabCursor={true}
-        centeredSlides={true}
-        slidesPerView={2}
-        coverflowEffect={{
-          rotate: 50,
-          stretch: 0,
-          depth: 100,
-          modifier: 1,
-          slideShadows: true,
-        }}
-        modules={[EffectCoverflow, Pagination]}
-        className="swiper"
-      >
                 
-                            {com.coms.map((item) => (<SwiperSlide><ComCard style={{ marginTop: 10 }} com={item} /></SwiperSlide>))}
+
+                <section className="space-y-5 customeScrollbar overflow-y-scroll css-scroll hideScrollbar border-gray-700 h-[40vh] w-full rounded-md">
+                            {com.coms.map((item) => (<ComCard style={{ marginTop: 10 }} com={item} />))}
                             {/* com.privateMode? && auth.user.id == */}
-                            </Swiper>
+                </section>
                 </div>
             </div>
 
