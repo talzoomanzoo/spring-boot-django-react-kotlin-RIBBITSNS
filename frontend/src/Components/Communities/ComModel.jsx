@@ -11,6 +11,7 @@ import {
 import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
 import BackdropComponent from "../Backdrop/Backdrop";
 import Loading from "../Profile/Loading/Loading";
+import "../RightPart/Scrollbar.css";
 //npm install --save react-native-infinite-scroll --save --legacy-peer-deps
 //npm install react-native-web
 
@@ -97,7 +98,7 @@ const ComModel = ({ handleClose, open }) => {
                             <Button type="submit">저장</Button>
                         </div>
 
-                        <div className="customeScrollbar overflow-y-scroll hideScrollbar overflow-x-hidden h-[58vh]">
+                        <div className="customeScrollbar overflow-y-scroll css-scroll hideScrollbar overflow-x-hidden h-[58vh]">
                             <div className="">
                                 <div className="w-full">
                                     <div className="relative">

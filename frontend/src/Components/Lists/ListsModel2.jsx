@@ -8,7 +8,7 @@ import {
   Button,
   IconButton,
   Modal,
-  Switch,
+//  Switch,
   TextField,
 } from "@mui/material";
 import { useFormik } from "formik";
@@ -17,6 +17,7 @@ import { createRoot } from "react-dom/client";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { searchUser } from "../../Store/Auth/Action";
+import { Switch } from "react-native";
 import {
   addUserAction,
   getUserAction,
@@ -379,12 +380,20 @@ const ListsModel2 = ({ list, handleClose, open }) => {
                       marginTop: 1,
                       marginRight: 20,
                     }}
-
+                    name="privateMode"
                     trackColor={{ false: "#767577", true: "#36d916" }}
                     // thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
                     ios_backgroundColor="#3e3e3e"
-                    onValueChange={toggleSwitch}
-                    value={isEnabled}
+                    // onValueChange={toggleSwitch}
+                    // value={isEnabled}
+                    value={formik.values.privateMode}
+                    onValueChange={value => formik.setFieldValue('privateMode', value)}
+                    error={
+                      formik.touched.description &&
+                      Boolean(formik.errors.description)
+                    }
+                    helperText={
+                      formik.touched.description && formik.errors.description}
                   />
                 </div>
 

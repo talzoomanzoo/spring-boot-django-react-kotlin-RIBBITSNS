@@ -15,6 +15,7 @@ import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
 import "./ProfileModel.css";
 import axios from 'axios';
 import Loading from "./Loading/Loading";
+import "../RightPart/Scrollbar.css";
 
 const style = {
   position: "absolute",
@@ -178,7 +179,7 @@ const ProfileModel = ({ handleClose, open }) => {
                   <Button type="submit">저장</Button>
                 </div>
 
-                <div className="customeScrollbar overflow-y-scroll  overflow-x-hidden h-[80vh]">
+                <div className="customeScrollbar overflow-y-scroll css-scroll overflow-x-hidden h-[80vh]">
                   <div className="">
                     <div className="w-full">
                       <div className="relative ">
@@ -258,7 +259,7 @@ const ProfileModel = ({ handleClose, open }) => {
                       fullWidth
                       id="website"
                       name="website"
-                      label="링크"
+                      label="웹사이트"
                       value={formik.values.website}
                       onChange={formik.handleChange}
                       error={
@@ -339,8 +340,9 @@ const ProfileModel = ({ handleClose, open }) => {
                 <div
                   className="image-source-options">
                   <p
+                    style={{ marginLeft: "22%"}}
                     align="center"
-                  >키워드를 입력하여 이미지를 생성해주세요!</p>
+                  >키워드를 입력하여 이미지를 생성해주세요! <button style={{marginLeft: "21%"}} onClick={() => closeInputAiKeywordModal()}><CloseIcon className={`${theme.currentTheme === "light" ? "text-black" : "text-white"}`} /></button></p>
                   <TextField
                     style={{
                       objectFit: 'cover',
