@@ -125,8 +125,7 @@ fun ProfilePostsGrid(
                             placeholder = painterResource(R.drawable.loading_img),
                             error = painterResource(R.drawable.ic_broken_image),
                             alignment = Alignment.TopStart,
-                            contentScale = ContentScale.Crop,
-
+                            contentScale = ContentScale.Crop
                             )
                     }
                     // withdrawal button

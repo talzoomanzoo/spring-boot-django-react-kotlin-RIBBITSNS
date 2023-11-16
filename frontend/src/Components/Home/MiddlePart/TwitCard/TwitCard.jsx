@@ -26,9 +26,10 @@ import { useLocation, useNavigate } from "react-router-dom";
 import ProgressBar from "@ramonak/react-progress-bar";
 import "react-toastify/dist/ReactToastify.css"; // React Toastify 스타일
 import * as Yup from "yup";
-import { incrementNotificationCount,
-        decreaseNotificationCount,
-      } from "../../../../Store/Notification/Action";
+import {
+  decreaseNotificationCount,
+  incrementNotificationCount,
+} from "../../../../Store/Notification/Action";
 import {
   createRetweet,
   createTweet,
@@ -48,7 +49,6 @@ const validationSchema = Yup.object().shape({
 });
 
 const TwitCard = ({ twit }) => {
-
   const [selectedImage, setSelectedImage] = useState(twit.image);
   const [selectedVideo, setSelectedVideo] = useState(twit.video);
   const [selectedLocation, setSelectedLocation] = useState(twit.location);
@@ -66,7 +66,7 @@ const TwitCard = ({ twit }) => {
 
   const [ethiclabel, setEthiclabel] = useState(twit.ethiclabel);
   const [ethicrateMAX, setEthicrateMAX] = useState(twit.ethicrateMAX); //윤리수치 최대 수치
-  console.log("twit.ethicratemax: ",twit);
+  console.log("twit.ethicratemax: ", twit);
   //  const [isLoading, setIsLoading] = useState(false); //로딩창의 띄어짐의 유무를 판단한다. default는 true이다.
   const jwtToken = localStorage.getItem("jwt");
   const [isEdited, setIsEdited] = useState(twit.edited);
@@ -93,6 +93,31 @@ const TwitCard = ({ twit }) => {
   const [hoveredMarkerIndex, setHoveredMarkerIndex] = useState(null);
   const [showLocation, setShowLocation] = useState(true);
   const [isLocationSaved, setIsLocationSaved] = useState(false);
+  const [message, setMessage] = useState('');
+
+  // useEffect(() => {
+  //     const userId = 1; // 원하는 사용자 ID로 설정
+  //     const eventSource = new EventSource(`http://localhost:8080/notifications/subscribe/${userId}`);
+
+  //     // 서버에서 이벤트 수신 시 처리
+  //     eventSource.addEventListener('message', (event) => {
+  //         const data = JSON.parse(event.data);
+  //         setMessage(data);
+  //     });
+
+  //     return () => {
+  //         // 컴포넌트 언마운트 시 이벤트 소스 종료
+  //         eventSource.close();
+  //     };
+  // }, []);
+
+  // const eventSource = new EventSource(
+  //   "http://localhost:8080/notifications/subscribe/1"
+  // );
+
+  // eventSource.addEventListener("sse", (event) => {
+  //   console.log(event);
+  // });
 
   useEffect(() => {
     if (isLocationFormOpen && showLocation) {
@@ -337,7 +362,7 @@ const TwitCard = ({ twit }) => {
   };
 
   const handleLikeTweet = (num) => {
-    //const TuserId = twit.user.id;
+     //const TuserId = twit.user.id;
     // if (!isLiked) {
     //   dispatch(incrementNotificationCount(TuserId)); // 알림 카운트 증가
     // } 
@@ -454,8 +479,7 @@ const TwitCard = ({ twit }) => {
           }),
         }
       );
-      console.log("response.statis: ",response);
-      console.log("responseData: ",response.json());
+      console.log("response.statis: ", response);
       if (response.status === 200) {
         const responseData = await response.json();
         console.log("responseData: ",response);
@@ -676,12 +700,48 @@ const TwitCard = ({ twit }) => {
                   </p>
 
                   <p>
-                    {ethiclabel===0 && <div className="flex items-center font-bold rounded-md">폭력성<ProgressBar completed={ethicrateMAX} width="450%" margin="2px 0px 4px 4px"/></div>}
-                    {ethiclabel===1 && <div className="flex items-center font-bold rounded-md">선정성<ProgressBar completed={ethicrateMAX} width="450%" margin="2px 0px 4px 4px"/></div>}
-                    {ethiclabel===2 && <div className="flex items-center font-bold rounded-md">욕설<ProgressBar completed={ethicrateMAX} width="450%" margin="2px 0px 4px 4px"/></div>}
-                    {ethiclabel===3 && <div className="flex items-center font-bold rounded-md">차별성<ProgressBar completed={ethicrateMAX} width="450%" margin="2px 0px 4px 4px"/></div>}
+                    {ethiclabel === 0 && (
+                      <div className="flex items-center font-bold rounded-md">
+                        폭력성
+                        <ProgressBar
+                          completed={ethicrateMAX}
+                          width="450%"
+                          margin="2px 0px 4px 4px"
+                        />
+                      </div>
+                    )}
+                    {ethiclabel === 1 && (
+                      <div className="flex items-center font-bold rounded-md">
+                        선정성
+                        <ProgressBar
+                          completed={ethicrateMAX}
+                          width="450%"
+                          margin="2px 0px 4px 4px"
+                        />
+                      </div>
+                    )}
+                    {ethiclabel === 2 && (
+                      <div className="flex items-center font-bold rounded-md">
+                        욕설
+                        <ProgressBar
+                          completed={ethicrateMAX}
+                          width="450%"
+                          margin="2px 0px 4px 4px"
+                        />
+                      </div>
+                    )}
+                    {ethiclabel === 3 && (
+                      <div className="flex items-center font-bold rounded-md">
+                        차별성
+                        <ProgressBar
+                          completed={ethicrateMAX}
+                          width="450%"
+                          margin="2px 0px 4px 4px"
+                        />
+                      </div>
+                    )}
                   </p>
-                  
+
                   {twit.image && (
                     <img
                       className="w-[28rem] border border-gray-400 p-5 rounded-md"
@@ -705,6 +765,7 @@ const TwitCard = ({ twit }) => {
                 </div>
               )}
             </div>
+            {/* <p>Received Message: {message}</p> */}
             {/* <ToastContainer /> */}
             <div className="flex justify-between items-center mt-5">
               <div className="flex space-x-5 items-center">
@@ -797,6 +858,7 @@ const TwitCard = ({ twit }) => {
                             onChange={(e) => setSearchKeyword(e.target.value)}
                             id="keyword"
                             size="15"
+                            className={`${theme.currentTheme === "light" ? "" : "text-black"}`}
                           />
                           <Button type="submit">검색하기</Button>
                         </form>
@@ -853,7 +915,7 @@ const TwitCard = ({ twit }) => {
                       isLiked ? "text-yellow-500" : "text-gray-600"
                     } space-x-3 flex items-center `}
                   >
-                    {isLiked ? (
+                     {isLiked ? (
                       <FavoriteIcon onClick={() => {handleLikeTweet(-1);}} />
                     ) : (
                       <FavoriteBorderIcon onClick={() => {handleLikeTweet(1); handleIncrement();}} />

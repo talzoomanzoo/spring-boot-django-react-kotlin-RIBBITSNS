@@ -90,7 +90,7 @@ fun CardTopBar(
                         .clip(CircleShape)
                         .clickable {    // 해당 Composable function 을 click 하여 "() -> unit" 을 받을 수 있는 형태로 만들어 줌.
                             Log.d("HippoLog, CardTopBar", "profileImageClick")
-                            post.user?.id?.let {
+                            post.user.id?.let {
                                 getCardViewModel.getUserIdPosts(userId = it)
                                 userViewModel.getProfile(userId = it)
                             }

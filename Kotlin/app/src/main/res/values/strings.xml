@@ -13,6 +13,7 @@
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
     <string name="manage">Manage</string>
+    <string name="keyword">Keyword</string>
 
     <!--    Screens   -->
     <string name="loading_screen">LoadingScreen</string>

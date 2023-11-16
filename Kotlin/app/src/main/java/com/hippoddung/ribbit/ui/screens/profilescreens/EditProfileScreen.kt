@@ -9,6 +9,7 @@ import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,16 +21,24 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -42,13 +51,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -58,8 +74,11 @@ import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.EditingProfileUiState
+import com.hippoddung.ribbit.ui.viewmodel.GetAiImageUrlUiState
 import com.hippoddung.ribbit.ui.viewmodel.ProfileUiState
+import com.hippoddung.ribbit.ui.viewmodel.ReplyClickedUiState
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
+import kotlinx.coroutines.runBlocking
 
 @Composable
 fun EditProfileScreen(
@@ -115,10 +134,13 @@ fun EditProfileReadyScreen(
     var inputBirthDate by remember { mutableStateOf(myProfile.birthDate ?: "") }
 
     var profileImageUri by remember { mutableStateOf<Uri?>(null) }
-    val profileBitmap = remember { mutableStateOf<Bitmap?>(null) }
+    var profileBitmap by remember { mutableStateOf<Bitmap?>(null) }
 
     var profileBackgroundImageUri by remember { mutableStateOf<Uri?>(null) }
-    val profileBackgroundBitmap = remember { mutableStateOf<Bitmap?>(null) }
+    var profileBackgroundBitmap by remember { mutableStateOf<Bitmap?>(null) }
+
+    var profileImageIsClicked by remember { mutableStateOf(false) }
+    var profileBackgroundImageIsClicked by remember { mutableStateOf(false) }
 
     val profileImageLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -139,8 +161,8 @@ fun EditProfileReadyScreen(
                 inputWebsite = inputWebsite,
                 inputEducation = inputEducation,
                 inputBirthDate = inputBirthDate,
-                profileImage = profileBitmap.value,
-                profileBackgroundImage = profileBackgroundBitmap.value,
+                profileImage = profileBitmap,
+                profileBackgroundImage = profileBackgroundBitmap,
                 modifier = modifier
             )
         },
@@ -153,8 +175,8 @@ fun EditProfileReadyScreen(
                         inputWebsite = inputWebsite,
                         inputEducation = inputEducation,
                         inputBirthDate = inputBirthDate,
-                        profileImage = profileBitmap.value,
-                        profileBackgroundImage = profileBackgroundBitmap.value
+                        profileImage = profileBitmap,
+                        profileBackgroundImage = profileBackgroundBitmap
                     )
                 },
                 modifier = modifier
@@ -192,7 +214,7 @@ fun EditProfileReadyScreen(
                     if (profileBackgroundImageUri != null) {
                         profileBackgroundImageUri?.let {
                             if (Build.VERSION.SDK_INT < 28) {
-                                profileBackgroundBitmap.value =
+                                profileBackgroundBitmap =
                                     MediaStore.Images.Media.getBitmap(
                                         context.contentResolver,
                                         it
@@ -200,20 +222,22 @@ fun EditProfileReadyScreen(
                             } else {
                                 val source = ImageDecoder
                                     .createSource(context.contentResolver, it)
-                                profileBackgroundBitmap.value =
+                                profileBackgroundBitmap =
                                     ImageDecoder.decodeBitmap(source)
                             }
-                            profileBackgroundBitmap.value?.let { btm ->
-                                Image(
-                                    bitmap = btm.asImageBitmap(),
-                                    contentScale = ContentScale.Crop,
-                                    contentDescription = null,
-                                    modifier = modifier
-                                        .fillMaxWidth()
-                                        .height(100.dp)
-                                        .clickable { backgroundImageLauncher.launch("image/*") },
-                                )
-                            }
+                        }
+                    }
+                    if (profileBackgroundBitmap != null) {
+                        profileBackgroundBitmap?.let { btm ->
+                            Image(
+                                bitmap = btm.asImageBitmap(),
+                                contentScale = ContentScale.Crop,
+                                contentDescription = null,
+                                modifier = modifier
+                                    .fillMaxWidth()
+                                    .height(100.dp)
+                                    .clickable { profileBackgroundImageIsClicked = true },
+                            )
                         }
                     } else {
                         if (myProfile.backgroundImage != null) {
@@ -227,7 +251,7 @@ fun EditProfileReadyScreen(
                                 modifier = modifier
                                     .fillMaxWidth()
                                     .height(100.dp)
-                                    .clickable { backgroundImageLauncher.launch("image/*") },
+                                    .clickable { profileBackgroundImageIsClicked = true },
 
                                 placeholder = painterResource(R.drawable.loading_img),
                                 error = painterResource(R.drawable.ic_broken_image),
@@ -241,7 +265,7 @@ fun EditProfileReadyScreen(
                                 modifier = modifier
                                     .fillMaxWidth()
                                     .height(100.dp)
-                                    .clickable { backgroundImageLauncher.launch("image/*") },
+                                    .clickable { profileBackgroundImageIsClicked = true },
                                 alignment = Alignment.Center,
                                 contentScale = ContentScale.Crop
                             )
@@ -257,7 +281,7 @@ fun EditProfileReadyScreen(
                         if (profileImageUri != null) {
                             profileImageUri?.let {
                                 if (Build.VERSION.SDK_INT < 28) {
-                                    profileBitmap.value = MediaStore.Images
+                                    profileBitmap = MediaStore.Images
                                         .Media.getBitmap(
                                             context.contentResolver,
                                             it
@@ -265,19 +289,21 @@ fun EditProfileReadyScreen(
                                 } else {
                                     val source = ImageDecoder
                                         .createSource(context.contentResolver, it)
-                                    profileBitmap.value = ImageDecoder.decodeBitmap(source)
+                                    profileBitmap = ImageDecoder.decodeBitmap(source)
                                 }
-                                profileBitmap.value?.let { btm ->
-                                    Image(
-                                        bitmap = btm.asImageBitmap(),
-                                        contentScale = ContentScale.Crop,
-                                        contentDescription = null,
-                                        modifier = modifier
-                                            .size(100.dp)
-                                            .clip(CircleShape)
-                                            .clickable { profileImageLauncher.launch("image/*") },
-                                    )
-                                }
+                            }
+                        }
+                        if (profileBitmap != null) {
+                            profileBitmap?.let { btm ->
+                                Image(
+                                    bitmap = btm.asImageBitmap(),
+                                    contentScale = ContentScale.Crop,
+                                    contentDescription = null,
+                                    modifier = modifier
+                                        .size(100.dp)
+                                        .clip(CircleShape)
+                                        .clickable { profileImageIsClicked = true },
+                                )
                             }
                         } else {
                             if (myProfile.image != null) {
@@ -293,7 +319,7 @@ fun EditProfileReadyScreen(
                                     modifier = modifier
                                         .size(100.dp)
                                         .clip(CircleShape)
-                                        .clickable { profileImageLauncher.launch("image/*") },
+                                        .clickable { profileImageIsClicked = true },
                                     placeholder = painterResource(R.drawable.loading_img),
                                     error = painterResource(R.drawable.ic_broken_image),
                                     contentScale = ContentScale.Crop,
@@ -305,7 +331,7 @@ fun EditProfileReadyScreen(
                                     modifier = modifier
                                         .size(100.dp)
                                         .clip(CircleShape)
-                                        .clickable { profileImageLauncher.launch("image/*") },
+                                        .clickable { profileImageIsClicked = true },
                                     contentScale = ContentScale.Crop
                                 )
                             }
@@ -417,6 +443,303 @@ fun EditProfileReadyScreen(
                         .fillMaxWidth(),
                 )
                 Spacer(modifier = modifier.height(150.dp))
+            }
+            if (profileBackgroundImageIsClicked) {
+                Dialog(onDismissRequest = { profileBackgroundImageIsClicked = false }) {
+                    var aiImageIsClicked by remember { mutableStateOf(false) }
+                    if (!aiImageIsClicked) {
+                        // 이미지 생성방식 선택 dialog
+                        Column(
+                            modifier = modifier
+                                .background(
+                                    color = MaterialTheme.colorScheme.background,
+                                    shape = RoundedCornerShape(12.dp)
+                                )
+                                .size(300.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = ("How would you like to create the background image?"),
+                                fontSize = 16.sp,
+                                modifier = modifier
+                                    .padding(start = 28.dp, top = 28.dp, end = 0.dp, bottom = 0.dp)
+                                    .align(alignment = Alignment.Start)
+                            )
+                            Row(
+                                modifier = modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = 28.dp),
+                                horizontalArrangement = Arrangement.SpaceEvenly
+                            ) {
+                                Button(
+                                    onClick = {
+                                        aiImageIsClicked = true
+                                    },
+                                    modifier = modifier
+                                ) {
+                                    Text(
+                                        text = "AI Image",
+                                        modifier = modifier
+                                    )
+                                }
+                                Button(
+                                    onClick = {
+                                        backgroundImageLauncher.launch("image/*")
+                                    },
+                                    modifier = modifier
+                                ) {
+                                    Text(
+                                        text = "your phone",
+                                        modifier = modifier
+                                    )
+                                }
+                            }
+                        }
+                    } else {
+                        // ai background image 생성 dialog
+                        when (userViewModel.getAiImageUiState) {
+                            is GetAiImageUrlUiState.Error -> {}
+                            is GetAiImageUrlUiState.Loading -> {
+                                Column(modifier = modifier) {
+                                    Text(text = "Loading your AI Image", modifier = modifier)
+                                    Image(
+                                        modifier = modifier.size(200.dp),
+                                        painter = painterResource(R.drawable.loading_img),
+                                        contentDescription = stringResource(id = R.string.loading)
+                                    )
+                                }
+                            }
+
+                            is GetAiImageUrlUiState.Success -> {
+                                profileBackgroundBitmap =
+                                    (userViewModel.getAiImageUiState as GetAiImageUrlUiState.Success).aiImageBitmap
+                                userViewModel.getAiImageUiState = GetAiImageUrlUiState.Ready
+                                profileBackgroundImageIsClicked = false
+                            }
+
+                            is GetAiImageUrlUiState.Ready -> {
+                                var inputAiKeywords by remember { mutableStateOf("") }
+                                Column(
+                                    modifier = modifier
+                                        .background(
+                                            color = MaterialTheme.colorScheme.background,
+                                            shape = RoundedCornerShape(12.dp)
+                                        ),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center
+                                ) {
+                                    Text(
+                                        text = ("Input keywords to create AI image"),
+                                        fontSize = 16.sp,
+                                        modifier = modifier
+                                            .padding(
+                                                start = 28.dp,
+                                                top = 28.dp,
+                                                end = 0.dp,
+                                                bottom = 0.dp
+                                            )
+                                            .align(alignment = Alignment.Start)
+                                    )
+                                    TextField(
+                                        singleLine = true,
+                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                                        label = {
+                                            Text(
+                                                text = stringResource(R.string.keyword)
+                                            )
+                                        },
+                                        value = inputAiKeywords,
+                                        onValueChange = { inputAiKeywords = it },
+                                        modifier = modifier
+                                            .padding(bottom = 12.dp)
+                                            .fillMaxWidth(),
+                                    )
+                                    Row(
+                                        modifier = modifier
+                                            .fillMaxWidth()
+                                            .wrapContentHeight()
+                                            .padding(bottom = 28.dp),
+                                        horizontalArrangement = Arrangement.SpaceEvenly
+                                    ) {
+                                        Button(
+                                            onClick = {
+                                                aiImageIsClicked = false
+                                            },
+                                            modifier = modifier
+                                        ) {
+                                            Text(
+                                                text = stringResource(id = R.string.cancel),
+                                                modifier = modifier
+                                            )
+                                        }
+                                        Button(
+                                            onClick = {
+                                                // ai 그림 생성 통신
+                                                userViewModel.getAiImage(inputAiKeywords)
+
+                                            },
+                                            modifier = modifier
+                                        ) {
+                                            Text(
+                                                text = "Request",
+                                                modifier = modifier
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if (profileImageIsClicked) {
+                Dialog(onDismissRequest = { profileImageIsClicked = false }) {
+                    var aiImageIsClicked by remember { mutableStateOf(false) }
+                    if (!aiImageIsClicked) {
+                        // 이미지 생성방식 선택 dialog
+                        Column(
+                            modifier = modifier
+                                .background(
+                                    color = MaterialTheme.colorScheme.background,
+                                    shape = RoundedCornerShape(12.dp)
+                                )
+                                .size(300.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = ("How would you like to create the background image?"),
+                                fontSize = 16.sp,
+                                modifier = modifier
+                                    .padding(start = 28.dp, top = 28.dp, end = 0.dp, bottom = 0.dp)
+                                    .align(alignment = Alignment.Start)
+                            )
+                            Row(
+                                modifier = modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = 28.dp),
+                                horizontalArrangement = Arrangement.SpaceEvenly
+                            ) {
+                                Button(
+                                    onClick = {
+                                        aiImageIsClicked = true
+                                    },
+                                    modifier = modifier
+                                ) {
+                                    Text(
+                                        text = "AI Image",
+                                        modifier = modifier
+                                    )
+                                }
+                                Button(
+                                    onClick = {
+                                        profileImageLauncher.launch("image/*")
+                                    },
+                                    modifier = modifier
+                                ) {
+                                    Text(
+                                        text = "your phone",
+                                        modifier = modifier
+                                    )
+                                }
+                            }
+                        }
+                    } else {
+                        // ai image 생성 dialog
+                        when (userViewModel.getAiImageUiState) {
+                            is GetAiImageUrlUiState.Error -> {}
+                            is GetAiImageUrlUiState.Loading -> {
+                                Column(modifier = modifier) {
+                                    Text(text = "Loading your AI Image", modifier = modifier)
+                                    Image(
+                                        modifier = modifier.size(200.dp),
+                                        painter = painterResource(R.drawable.loading_img),
+                                        contentDescription = stringResource(id = R.string.loading)
+                                    )
+                                }
+                            }
+
+                            is GetAiImageUrlUiState.Success -> {
+                                profileBitmap =
+                                    (userViewModel.getAiImageUiState as GetAiImageUrlUiState.Success).aiImageBitmap
+                                userViewModel.getAiImageUiState = GetAiImageUrlUiState.Ready
+                                profileImageIsClicked = false
+                            }
+
+                            is GetAiImageUrlUiState.Ready -> {
+                                var inputAiKeywords by remember { mutableStateOf("") }
+                                Column(
+                                    modifier = modifier
+                                        .background(
+                                            color = MaterialTheme.colorScheme.background,
+                                            shape = RoundedCornerShape(12.dp)
+                                        ),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center
+                                ) {
+                                    Text(
+                                        text = ("Input keywords to create AI image"),
+                                        fontSize = 16.sp,
+                                        modifier = modifier
+                                            .padding(
+                                                start = 28.dp,
+                                                top = 28.dp,
+                                                end = 0.dp,
+                                                bottom = 0.dp
+                                            )
+                                            .align(alignment = Alignment.Start)
+                                    )
+                                    TextField(
+                                        singleLine = true,
+                                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                                        label = {
+                                            Text(
+                                                text = stringResource(R.string.keyword)
+                                            )
+                                        },
+                                        value = inputAiKeywords,
+                                        onValueChange = { inputAiKeywords = it },
+                                        modifier = modifier
+                                            .padding(bottom = 12.dp)
+                                            .fillMaxWidth(),
+                                    )
+                                    Row(
+                                        modifier = modifier
+                                            .fillMaxWidth()
+                                            .padding(bottom = 28.dp),
+                                        horizontalArrangement = Arrangement.SpaceEvenly
+                                    ) {
+                                        Button(
+                                            onClick = {
+                                                aiImageIsClicked = false
+                                            },
+                                            modifier = modifier
+                                        ) {
+                                            Text(
+                                                text = stringResource(id = R.string.cancel),
+                                                modifier = modifier
+                                            )
+                                        }
+                                        Button(
+                                            onClick = {
+                                                // ai 그림 생성 통신
+                                                userViewModel.getAiImage(inputAiKeywords)
+
+                                            },
+                                            modifier = modifier
+                                        ) {
+                                            Text(
+                                                text = "Request",
+                                                modifier = modifier
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
