@@ -8,7 +8,6 @@ import {
   Button,
   IconButton,
   Modal,
-//  Switch,
   TextField,
 } from "@mui/material";
 import { useFormik } from "formik";
@@ -17,7 +16,6 @@ import { createRoot } from "react-dom/client";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { searchUser } from "../../Store/Auth/Action";
-import { Switch } from "react-native";
 import {
   addUserAction,
   getUserAction,
@@ -27,6 +25,7 @@ import {
 import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
 import Loading from "../Profile/Loading/Loading";
 import "../RightPart/Scrollbar.css";
+import { Switch } from 'react-native'; // 여기서만 import 할것, switch 건들 ㄴㄴ
 
 const style = {
   position: "absolute",
@@ -130,9 +129,9 @@ const ListsModel2 = ({ list, handleClose, open }) => {
 
   const [isEnabled, setIsEnabled] = useState(list.privateMode);
 
-  const toggleSwitch = () => {
+  const toggleSwitch = async(listId) => {
     setIsEnabled(previousState => !previousState);
-    dispatch(setPrivate(list.id));
+    dispatch(setPrivate(listId));
   };
 
   const Element = memo(({ listVal }) => {
@@ -380,20 +379,11 @@ const ListsModel2 = ({ list, handleClose, open }) => {
                       marginTop: 1,
                       marginRight: 20,
                     }}
-                    name="privateMode"
-                    trackColor={{ false: "#767577", true: "#36d916" }}
-                    // thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
+                    //trackColor={{ false: "#767577", true: "#36d916" }}
+                    thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
                     ios_backgroundColor="#3e3e3e"
-                    // onValueChange={toggleSwitch}
-                    // value={isEnabled}
-                    value={formik.values.privateMode}
-                    onValueChange={value => formik.setFieldValue('privateMode', value)}
-                    error={
-                      formik.touched.description &&
-                      Boolean(formik.errors.description)
-                    }
-                    helperText={
-                      formik.touched.description && formik.errors.description}
+                    onValueChange={() => toggleSwitch(list.id)}
+                    value={isEnabled}
                   />
                 </div>
 

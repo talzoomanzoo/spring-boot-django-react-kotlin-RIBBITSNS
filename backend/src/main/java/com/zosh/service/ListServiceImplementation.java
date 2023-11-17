@@ -96,17 +96,15 @@ public class ListServiceImplementation implements ListService {
 	}
 
 	@Override
-	public ListModel setPrivateById(Long listId, Long userId) throws ListException, UserException {
-		// TODO Auto-generated method stub
-		ListModel listModel = findById(listId);
-		// if (listModel.isPrivateMode() == false) {
-		// listModel.setPrivateMode(true);
-		// } else {
-		// listModel.setPrivateMode(false);
-		// }
-		// listRepository.save(listModel);
-		listModel.setPrivateMode(!listModel.isPrivateMode());
-		listRepository.save(listModel);
-		return listModel;
+	public ListModel setPrivateById(Long listId) throws ListException {
+	    // TODO Auto-generated method stub
+	    ListModel listModel = findById(listId);
+	    listModel.setPrivateMode(!listModel.isPrivateMode());
+
+	    // Reload the entity from the database
+	    listModel = listRepository.findById(listId).orElse(null);
+
+	    listRepository.save(listModel);
+	    return listModel;
 	}
 }
