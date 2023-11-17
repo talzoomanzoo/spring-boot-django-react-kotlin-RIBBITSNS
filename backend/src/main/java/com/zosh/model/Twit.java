@@ -48,6 +48,9 @@ public class Twit {
     @JsonIgnoreProperties(value = {"twit", "likes", "user"})
     private Community community;
     
+    @Column(name = "com_name")
+    private String comName;
+
 //    private Long userId;
 //    
 //    private Long comId;
