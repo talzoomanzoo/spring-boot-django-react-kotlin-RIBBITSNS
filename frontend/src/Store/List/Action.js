@@ -130,6 +130,7 @@ export const setPrivate= (listId) => async(dispatch) => {
     try {
         const response = await api.post(`/api/lists/${listId}/setPrivate`);
         const list = response.data;
+        console.log("setPrivate test");
         dispatch({type: SET_PRIVATE_SUCCESS, payload: list});
     } catch (error) {
         dispatch({type: SET_PRIVATE_FAILURE, payload: error.message});

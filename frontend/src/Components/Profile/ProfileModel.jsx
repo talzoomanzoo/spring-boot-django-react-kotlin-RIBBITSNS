@@ -16,6 +16,7 @@ import "./ProfileModel.css";
 import axios from 'axios';
 import Loading from "./Loading/Loading";
 import "../RightPart/Scrollbar.css";
+import { API_BASE_URL } from "../../Config/apiConfig";
 
 const style = {
   position: "absolute",
@@ -102,7 +103,7 @@ const ProfileModel = ({ handleClose, open }) => {
   const handleGenerateImage = async () => {
     setLoading(true);
     try {
-      const url = 'http://3.36.249.200:8080/sendprompt';
+      const url = API_BASE_URL + '/sendprompt';
 
       const requestdata = {
         keyword: keyword,
@@ -136,7 +137,7 @@ const ProfileModel = ({ handleClose, open }) => {
   const handleAIImageChange = async (event) => {//ai이미지를 cloudinary로 업로드하는 함수이다.
     setLoading(true);
 
-    const response = await fetch('http://3.36.249.200:8080/webptojpg', {
+    const response = await fetch(API_BASE_URL + '/webptojpg', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -380,7 +381,7 @@ const ProfileModel = ({ handleClose, open }) => {
                       }}
                     >
                     <a
-                      href={`http://3.36.249.200:8080/download`}
+                      href={ API_BASE_URL + `/download`}
                       download="generated_image.jpg"
                     >이미지 저장</a>
                     </Button>

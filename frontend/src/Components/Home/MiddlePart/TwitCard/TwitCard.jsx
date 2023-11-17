@@ -43,6 +43,7 @@ import { uploadToCloudinary } from "../../../../Utils/UploadToCloudinary";
 import Loading from "../../../Profile/Loading/Loading";
 import "../TwitMap.css";
 import ReplyModal from "./ReplyModal";
+import { API_BASE_URL } from "../../../../Config/apiConfig";
 
 const validationSchema = Yup.object().shape({
   content: Yup.string().required("내용이 없습니다"),
@@ -443,7 +444,7 @@ const TwitCard = ({ twit }) => {
   const ethicreveal = async (twitid, twitcontent) => {
     try {
       const response = await fetch(
-        "http://3.36.249.200:8080/api/ethic/reqsentence",
+        API_BASE_URL + "/api/ethic/reqsentence",
         {
           method: "POST",
           headers: {
