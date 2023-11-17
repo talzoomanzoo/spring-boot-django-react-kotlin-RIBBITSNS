@@ -60,14 +60,13 @@ const Lists = () => {
                 }}>
                 공개 리스트
                 <hr
-                    style={{
-                        marginTop: 10,
-                        background: 'grey',
-                        color: 'grey',
-                        borderColor: 'grey',
-                        height: '1px',
-                    }}
-                />
+            style={{
+              marginTop: 10,
+              background: "hsla(0, 0%, 80%, 0.5)",
+              borderColor: "hsl(0, 0%, 80%)",
+              height: "5px",
+            }}
+          />
                 <section
                     className="space-y-5 customeScrollbar overflow-y-scroll css-scroll hideScrollbar border-gray-700 h-[40vh] w-full rounded-md">
                     {list.lists.map((item) => ( !item.privateMode ? (<ListCard style={{ marginTop: 10 }} list={item} />) : null)) }
@@ -82,14 +81,13 @@ const Lists = () => {
                 }}>
                 비공개 리스트
                 <hr
-                    style={{
-                        marginTop: 10,
-                        background: 'grey',
-                        color: 'grey',
-                        borderColor: 'grey',
-                        height: '1px',
-                    }}
-                />
+            style={{
+              marginTop: 10,
+              background: "hsla(0, 0%, 80%, 0.5)",
+              borderColor: "hsl(0, 0%, 80%)",
+              height: "5px",
+            }}
+          />
                 <section
                     className="space-y-5 customeScrollbar overflow-y-scroll css-scroll hideScrollbar border-gray-700 h-[40vh] w-full rounded-md">
                     {/* {list.lists && list.lists.length > 0 ?

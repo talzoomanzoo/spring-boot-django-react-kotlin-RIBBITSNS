@@ -3,10 +3,12 @@ import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { EffectCoverflow, Pagination } from "swiper";
-import "swiper/css";
-import "swiper/css/effect-coverflow";
-import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination } from 'swiper';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import 'swiper/css/scrollbar';
+import { Swiper, SwiperSlide } from 'swiper/react';
 import { getAllComs } from "../../Store/Community/Action";
 import ComBottom from "./ComBottom";
 import ComCard from "./ComCard";
@@ -56,34 +58,27 @@ const Communities = () => {
           <hr
             style={{
               marginTop: 10,
-              background: "grey",
-              color: "grey",
-              borderColor: "grey",
-              height: "1px",
+              background: "hsla(0, 0%, 80%, 0.5)",
+              borderColor: "hsl(0, 0%, 80%)",
+              height: "5px",
             }}
           />
         </div>
 
-        <div className="flex inline-block justify-content border-gray-700 h-[35vh] w-full rounded-md">
+        <div>
           <Swiper
-            effect={"coverflow"}
-            grabCursor={true}
-            centeredSlides={true}
+            modules={[Navigation, Pagination]}
+            spaceBetween={-50}
             slidesPerView={2}
-            coverflowEffect={{
-              rotate: 50,
-              stretch: 0,
-              depth: 100,
-              modifier: 1,
-              slideShadows: true,
-            }}
-            modules={[EffectCoverflow, Pagination]}
-            className="swiper"
+            navigation
+            pagination={{ clickable: true }}
+            scrollbar={{ draggable: true }}
           >
             {com.coms.map((item) => (
               <SwiperSlide>
                 <ComCard style={{ marginTop: 10 }} com={item} />
               </SwiperSlide>
+
             ))}
           </Swiper>
         </div>
@@ -98,10 +93,9 @@ const Communities = () => {
           <hr
             style={{
               marginTop: 10,
-              background: "grey",
-              color: "grey",
-              borderColor: "grey",
-              height: "1px",
+              background: "hsla(0, 0%, 80%, 0.5)",
+              borderColor: "hsl(0, 0%, 80%)",
+              height: "5px",
             }}
           />
         </div>

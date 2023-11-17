@@ -1,7 +1,9 @@
 .list-card {
     background-color: none;
+    transition: all 0.5s ease;
 }
 
 .list-card:hover {
-    background-color: hsla(120, 92%, 33%, 0.267);
+    background-color: hsla(120, 100%, 25%, 0.16);
+    border-radius: 20px;
 }
