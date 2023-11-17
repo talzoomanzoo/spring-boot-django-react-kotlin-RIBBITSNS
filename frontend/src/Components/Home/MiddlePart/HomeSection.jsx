@@ -108,13 +108,6 @@ const HomeSection = () => {
     },
   });
 
-  // useEffect(() => {
-  //   console.log("Address Updated:", address); // 주소 확인
-  //   formikLocation.setValues({
-  //     location: address,
-  //   });
-  // }, [address]);
-
   useEffect(() => {
     const container = document.getElementById("map");
 
@@ -308,7 +301,7 @@ const HomeSection = () => {
       dispatch(createTweetRequest());
       try {
         const { data } = await api.post(
-          API_BASE_URL+ "/api/twits/create",
+          API_BASE_URL + "/api/twits/create",
           tweetData
         );
 
@@ -346,21 +339,18 @@ const HomeSection = () => {
 
   const ethicreveal = async (twitid, twitcontent) => {
     try {
-      const response = await fetch(
-        API_BASE_URL + "/api/ethic/reqsentence",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${jwtToken}`,
-          },
-          body: JSON.stringify({
-            id: twitid,
-            content: twitcontent,
-          }),
-        }
-      );
-      console.log("response.status: ",response);
+      const response = await fetch(API_BASE_URL + "/api/ethic/reqsentence", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwtToken}`,
+        },
+        body: JSON.stringify({
+          id: twitid,
+          content: twitcontent,
+        }),
+      });
+      console.log("response.status: ", response);
       if (response.status === 200) {
         setLoading(false);
         setRefreshTwits((prev) => prev + 1);
@@ -420,10 +410,37 @@ const HomeSection = () => {
     }
   };
 
+  const [totalEthicRateMAX, setTotalEthicRateMAX] = useState(0);
+  const [averageEthicRateMAX, setAverageEthicRateMAX] = useState(0);
+
+  useEffect(() => {
+    // Calculate total ethicrateMAX
+    const totalEthicRateMAXValue = twit.twits
+      .filter((tweet) => tweet.ethiclabel !== 4) // ethiclabel이 4인 경우 필터링
+      .reduce((sum, tweet) => sum + (tweet.ethicrateMAX || 0), 0);
+
+    // Calculate average ethicrateMAX
+    const filteredTwits = twit.twits.filter((tweet) => tweet.ethiclabel !== 4);
+    const averageEthicRateMAXValue =
+      filteredTwits.length > 0
+        ? totalEthicRateMAXValue / filteredTwits.length
+        : 0;
+
+    // 정수로 변환
+    const roundedAverageEthicRateMAX = Math.floor(averageEthicRateMAXValue);
+
+    // 상태 업데이트
+    setTotalEthicRateMAX(totalEthicRateMAXValue);
+    setAverageEthicRateMAX(roundedAverageEthicRateMAX);
+
+    // ... (다른 코드)
+  }, [twit.twits, auth.user]);
+
   return (
     <div className="space-y-5">
       <section className="sticky top-0">
         <h1 className="py-5 text-xl font-bold opacity-90 ml-5">홈</h1>
+        <p>평균 ethicrateMAX: {averageEthicRateMAX}</p>
       </section>
       <section className="pb-10">
         {/* ${theme.currentTheme==="dark"?" bg-[#151515] p-10 rounded-md mb-10":""} */}
@@ -446,11 +463,11 @@ const HomeSection = () => {
                   placeholder="리빗에 일상을 공유해 보세요!"
                   className={`border-none outline-none text-xl bg-transparent`}
                   size="50"
-                  // {...formik.getFieldProps("content")}
+                  {...formik.getFieldProps("content")}
                 />
-                {/* {formik.errors.content && formik.touched.content && (
+                {formik.errors.content && formik.touched.content && (
                   <div className="text-red-500">{formik.errors.content}</div>
-                )} */}
+                )}
               </div>
 
               {!uploadingImage && (
@@ -531,79 +548,81 @@ const HomeSection = () => {
           </div>
         </div>
         <div style={{ marginTop: 20 }}>
-        {isLocationFormOpen && showLocation && (
-              <div>
-                <div className="mt-2 mb-2 space-y-3">
-                  <div className="flex items-center text-gray-500">
-                    <form onSubmit={formikLocation.handleSubmit}>
-                      <Button
-                        type="submit"
-                        onClick={toggleMap}
-                        className="save-location-button"
-                      >
-                        저장
-                      </Button>
-                    </form>
-                    <p className="text-gray-500 ml-3">{address}</p>
-                  </div>
+          {isLocationFormOpen && showLocation && (
+            <div>
+              <div className="mt-2 mb-2 space-y-3">
+                <div className="flex items-center text-gray-500">
+                  <form onSubmit={formikLocation.handleSubmit}>
+                    <Button
+                      type="submit"
+                      onClick={toggleMap}
+                      className="save-location-button"
+                    >
+                      저장
+                    </Button>
+                  </form>
+                  <p className="text-gray-500 ml-3">{address}</p>
                 </div>
+              </div>
 
-                <div className="map_wrap">
-                  <div
-                    id="map"
-                    style={{
-                      width: "70%",
-                      height: "100%",
-                      position: "relative",
-                      overflow: "hidden",
-                    }}
-                  ></div>
-                  <div id="list_wrap" className="bg_white">
-                    <div className="option" style={{ textAlign: "right" }}>
-                      <div>
-                        <form
-                          onSubmit={(e) => {
-                            e.preventDefault();
-                            handleSearch();
-                          }}
+              <div className="map_wrap">
+                <div
+                  id="map"
+                  style={{
+                    width: "70%",
+                    height: "100%",
+                    position: "relative",
+                    overflow: "hidden",
+                  }}
+                ></div>
+                <div id="list_wrap" className="bg_white">
+                  <div className="option" style={{ textAlign: "right" }}>
+                    <div>
+                      <form
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          handleSearch();
+                        }}
+                      >
+                        <input
+                          type="text"
+                          value={searchKeyword}
+                          placeholder="장소·주소 검색"
+                          onChange={(e) => setSearchKeyword(e.target.value)}
+                          id="keyword"
+                          size="15"
+                          className={`${
+                            theme.currentTheme === "light" ? "" : "text-black"
+                          }`}
+                        />
+                        <Button type="submit">검색하기</Button>
+                      </form>
+                    </div>
+                  </div>
+                  <hr />
+
+                  <ul id="placesList">
+                    {currentItems.map((result, index) =>
+                      createSearchResultItem(result, index)
+                    )}
+                  </ul>
+
+                  <div id="pagination">
+                    <ul className={`page-numbers text-black`}>
+                      {pageNumbers.map((number) => (
+                        <li
+                          key={number}
+                          onClick={() => handlePageClick(number)}
                         >
-                          <input
-                            type="text"
-                            value={searchKeyword}
-                            placeholder="장소·주소 검색"
-                            onChange={(e) => setSearchKeyword(e.target.value)}
-                            id="keyword"
-                            size="15"
-                            className={`${theme.currentTheme === "light" ? "" : "text-black"}`}
-                          />
-                          <Button type="submit">검색하기</Button>
-                        </form>
-                      </div>
-                    </div>
-                    <hr />
-
-                    <ul id="placesList">
-                      {currentItems.map((result, index) =>
-                        createSearchResultItem(result, index)
-                      )}
+                          {number}
+                        </li>
+                      ))}
                     </ul>
-
-                    <div id="pagination">
-                      <ul className={`page-numbers text-black`}>
-                        {pageNumbers.map((number) => (
-                          <li
-                            key={number}
-                            onClick={() => handlePageClick(number)}
-                          >
-                            {number}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
                   </div>
                 </div>
               </div>
-            )}
+            </div>
+          )}
           {loading ? <Loading /> : null}
           {twit.twits && twit.twits.length > 0 ? (
             twit.twits.map((item) => <TwitCard twit={item} key={item.id} />)
@@ -612,10 +631,8 @@ const HomeSection = () => {
           )}
         </div>
       </section>
-      <section>
-        {uploadingImage ? <Loading/> : null}
-      </section>
-      <ScrollToTop/>
+      <section>{uploadingImage ? <Loading /> : null}</section>
+      <ScrollToTop />
     </div>
   );
 };

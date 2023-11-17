@@ -20,9 +20,9 @@ import {
 import TwitCard from "../Home/MiddlePart/TwitCard/TwitCard";
 //import Maplocation from "./Maplocation";
 //import ProfileModel from "./ProfileModel";
+import CloseIcon from "@mui/icons-material/Close";
 import "../RightPart/Scrollbar.css";
 import Loading from "./Loading/Loading";
-import CloseIcon from "@mui/icons-material/Close";
 
 const Maplocation = React.lazy(() => import("./Maplocation"));
 const ProfileModel = React.lazy(() => import("./ProfileModel"));
@@ -167,6 +167,32 @@ const Profile = () => {
     closeFollowingsModal();
   };
 
+  const [totalEthicRateMAX, setTotalEthicRateMAX] = useState(0);
+  const [averageEthicRateMAX, setAverageEthicRateMAX] = useState(0);
+
+  useEffect(() => {
+    // Calculate total ethicrateMAX
+    const totalEthicRateMAXValue = twit.twits
+      .filter((tweet) => tweet.ethiclabel !== 4) // ethiclabel이 4인 경우 필터링
+      .reduce((sum, tweet) => sum + (tweet.ethicrateMAX || 0), 0);
+
+    // Calculate average ethicrateMAX
+    const filteredTwits = twit.twits.filter((tweet) => tweet.ethiclabel !== 4);
+    const averageEthicRateMAXValue =
+      filteredTwits.length > 0
+        ? totalEthicRateMAXValue / filteredTwits.length
+        : 0;
+
+    // 정수로 변환
+    const roundedAverageEthicRateMAX = Math.floor(averageEthicRateMAXValue);
+
+    // 상태 업데이트
+    setTotalEthicRateMAX(totalEthicRateMAXValue);
+    setAverageEthicRateMAX(roundedAverageEthicRateMAX);
+
+    // ... (다른 코드)
+  }, [twit.twits, auth.user]);
+
   return (
     <div>
       <section
@@ -225,6 +251,7 @@ const Profile = () => {
             </Button>
           )}
         </div>
+        <p>평균 ethicrateMAX: {averageEthicRateMAX}</p>
         <div>
           <div>
             <div className="flex items-center">
