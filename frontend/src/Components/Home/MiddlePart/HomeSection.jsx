@@ -146,6 +146,10 @@ const HomeSection = () => {
     }
   }, [map]);
 
+  useEffect(() => {
+    dispatch(getAllTweets());
+  }, [refreshTwits]);
+
   function getListItem(index, places) {
     return (
       <div className="item" key={index}>
@@ -294,10 +298,6 @@ const HomeSection = () => {
     pageNumbers.push(i);
   }
 
-  useEffect(() => {
-    dispatch(getAllTweets());
-  }, [refreshTwits]);
-
   const handleToggleLocationForm = () => {
     setLocationFormOpen((prev) => !prev);
   };
@@ -314,7 +314,7 @@ const HomeSection = () => {
 
         dispatch(createTweetSuccess(data));
 
-        const response = await ethicreveal(data.id, data.content);
+        await ethicreveal(data.id, data.content);
         handleSendPushNotification();
       } catch (error) {
         dispatch(createTweetFailure(error.message));
@@ -324,24 +324,34 @@ const HomeSection = () => {
     };
   };
 
-  const handleSubmit = (values, actions) => {
-    if (values.content.trim() !== "") {
-      // 게시글이 비어있지 않을 때만 실행
-      const tweetData = {
-        content: values.content,
-        image: values.image,
-        video: values.video,
-        location: address, // 저장한 주소값을 사용
-      };
+  // const handleSubmit = (values, actions) => {
+  //   if (values.content.trim() !== "") {
+  //     //게시글이 비어있지 않을 때만 실행
+  //     const tweetData = {
+  //       content: values.content,
+  //       image: values.image,
+  //       video: values.video,
+  //       location: address, // 저장한 주소값을 사용
+  //     };
 
-      dispatch(HomeCreateTweet(tweetData));
+  //     dispatch(HomeCreateTweet(tweetData));
+  //     actions.resetForm();
+  //     setSelectedImage("");
+  //     setSelectedVideo("");
+  //     setAddress(""); // 게시글을 작성하고 나면 주소값 초기화
+  //   }
+  //   handleCloseEmoji();
+  //   //window.location.reload();
+  // };
+
+
+  const handleSubmit = (values, actions) => {
+      dispatch(HomeCreateTweet(values));
       actions.resetForm();
       setSelectedImage("");
       setSelectedVideo("");
       setAddress(""); // 게시글을 작성하고 나면 주소값 초기화
-    }
     handleCloseEmoji();
-    //window.location.reload();
   };
 
   const ethicreveal = async (twitid, twitcontent) => {
@@ -377,7 +387,7 @@ const HomeSection = () => {
       video: "",
       location: address,
     },
-    validationSchema,
+    //validationSchema,
     onSubmit: handleSubmit,
   });
 
@@ -446,11 +456,11 @@ const HomeSection = () => {
                   placeholder="리빗에 일상을 공유해 보세요!"
                   className={`border-none outline-none text-xl bg-transparent`}
                   size="50"
-                  // {...formik.getFieldProps("content")}
+                  {...formik.getFieldProps("content")}
                 />
-                {/* {formik.errors.content && formik.touched.content && (
+                {formik.errors.content && formik.touched.content && (
                   <div className="text-red-500">{formik.errors.content}</div>
-                )} */}
+                )}
               </div>
 
               {!uploadingImage && (

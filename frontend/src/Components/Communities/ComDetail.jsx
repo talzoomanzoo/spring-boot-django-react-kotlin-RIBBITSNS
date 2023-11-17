@@ -311,7 +311,7 @@ const ComDetail = () => {
 
 
   const authCheck = (com) => {
-      for (let i=0; i< com.com?.followingsc.length; i++) {
+      for (let i=0; i< com.com?.followingsc?.length; i++) {
           if(com.com?.followingsc[i].id === auth.user.id) {
               return true;
           }

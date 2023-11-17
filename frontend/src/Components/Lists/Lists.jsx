@@ -9,6 +9,7 @@ import ListsModel from "./ListsModel";
 import "../RightPart/Scrollbar.css";
 
 const Lists = () => {
+    
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { list } = useSelector((store) => store);
@@ -55,8 +56,9 @@ const Lists = () => {
             {/* ListTop */}
             <div
                 className="space-y-3"
-                style={{ marginTop: 10,
-                         fontSize: "larger",
+                style={{
+                    marginTop: 10,
+                    fontSize: "larger",
                 }}>
                 공개 리스트
                 <hr
@@ -70,15 +72,16 @@ const Lists = () => {
                 />
                 <section
                     className="space-y-5 customeScrollbar overflow-y-scroll css-scroll hideScrollbar border-gray-700 h-[40vh] w-full rounded-md">
-                    {list.lists.map((item) => ( !item.privateMode ? (<ListCard style={{ marginTop: 10 }} list={item} />) : null)) }
+                    {list.lists.map((item) => (!item.privateMode ? (<ListCard style={{ marginTop: 10 }} list={item} />) : null))}
                 </section>
             </div>
 
             {/* ListBottom */}
             <div
                 className="space-y-3"
-                style={{ marginTop: 60,
-                         fontSize: "larger",
+                style={{
+                    marginTop: 60,
+                    fontSize: "larger",
                 }}>
                 비공개 리스트
                 <hr
@@ -94,8 +97,8 @@ const Lists = () => {
                     className="space-y-5 customeScrollbar overflow-y-scroll css-scroll hideScrollbar border-gray-700 h-[40vh] w-full rounded-md">
                     {/* {list.lists && list.lists.length > 0 ?
                         ( */}
-                        {list.lists.map((item) => ( item.privateMode ? (<ListCard style={{ marginTop: 10 }} list={item} />) : null)) }
-                        {/* )) :
+                    {list.lists.map((item) => (item.privateMode ? (<ListCard style={{ marginTop: 10 }} list={item} />) : null))}
+                    {/* )) :
                         (
                             <div>게시된 리스트가 없습니다.</div>
                         )} */}

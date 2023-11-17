@@ -8,6 +8,7 @@ import { deleteList } from "../../../Store/List/Action";
 import ListsModel2 from "../ListsModel2";
 
 const ListCard = ({ list }) => {
+  const [refreshTwits, setRefreshTwits] = useState(0);
   const navigate = useNavigate();
   const [openListsModel, setOpenListsModel] = useState();
   const handleCloseListsModel = () => setOpenListsModel(false);
@@ -26,7 +27,8 @@ const ListCard = ({ list }) => {
     try {
       dispatch(deleteList(list.id));
       //   handleClose();
-      window.location.reload();
+      //  window.location.reload();
+      setRefreshTwits((prev) => prev + 1);
     } catch (error) {
       console.error("리스트 삭제 중 오류 발생: ", error);
     }
