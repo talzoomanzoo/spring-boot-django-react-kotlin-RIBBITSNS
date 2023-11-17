@@ -1,0 +1,7 @@
+.list-card {
+    background-color: none;
+}
+
+.list-card:hover {
+    background-color: hsla(120, 92%, 33%, 0.267);
+}

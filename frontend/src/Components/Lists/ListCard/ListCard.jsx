@@ -6,6 +6,7 @@ import { useSelector } from "react-redux/es/hooks/useSelector";
 import { useNavigate } from "react-router-dom";
 import { deleteList } from "../../../Store/List/Action";
 import ListsModel2 from "../ListsModel2";
+import "./ListCard.css";
 
 const ListCard = ({ list }) => {
   const navigate = useNavigate();
@@ -44,7 +45,7 @@ const ListCard = ({ list }) => {
             onClick={handleNavigateToListsDetail}
             className="flex cursor-pointer items-center space-x-1"
           >
-            <li style={{listStyleType: "none"}} ><span><ListIcon /> {list.listName}</span></li>
+            <li style={{listStyleType: "none"}} ><span className="list-card"><ListIcon /> {list.listName}</span></li>
           </div>
         </div>
       </div>
