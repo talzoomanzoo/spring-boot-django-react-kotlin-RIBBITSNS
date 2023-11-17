@@ -108,12 +108,12 @@ const HomeSection = () => {
     },
   });
 
-  useEffect(() => {
-    console.log("Address Updated:", address); // 주소 확인
-    formikLocation.setValues({
-      location: address,
-    });
-  }, [address]);
+  // useEffect(() => {
+  //   console.log("Address Updated:", address); // 주소 확인
+  //   formikLocation.setValues({
+  //     location: address,
+  //   });
+  // }, [address]);
 
   useEffect(() => {
     const container = document.getElementById("map");
@@ -446,11 +446,11 @@ const HomeSection = () => {
                   placeholder="리빗에 일상을 공유해 보세요!"
                   className={`border-none outline-none text-xl bg-transparent`}
                   size="50"
-                  {...formik.getFieldProps("content")}
+                  // {...formik.getFieldProps("content")}
                 />
-                {formik.errors.content && formik.touched.content && (
+                {/* {formik.errors.content && formik.touched.content && (
                   <div className="text-red-500">{formik.errors.content}</div>
-                )}
+                )} */}
               </div>
 
               {!uploadingImage && (
