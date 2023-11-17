@@ -49,6 +49,7 @@ const validationSchema = Yup.object().shape({
 });
 
 const TwitCard = ({ twit }) => {
+  const { com } = useSelector((store) => store);
   const [selectedImage, setSelectedImage] = useState(twit.image);
   const [selectedVideo, setSelectedVideo] = useState(twit.video);
   const [selectedLocation, setSelectedLocation] = useState(twit.location);
@@ -93,31 +94,7 @@ const TwitCard = ({ twit }) => {
   const [hoveredMarkerIndex, setHoveredMarkerIndex] = useState(null);
   const [showLocation, setShowLocation] = useState(true);
   const [isLocationSaved, setIsLocationSaved] = useState(false);
-  const [message, setMessage] = useState('');
-
-  // useEffect(() => {
-  //     const userId = 1; // 원하는 사용자 ID로 설정
-  //     const eventSource = new EventSource(`http://localhost:8080/notifications/subscribe/${userId}`);
-
-  //     // 서버에서 이벤트 수신 시 처리
-  //     eventSource.addEventListener('message', (event) => {
-  //         const data = JSON.parse(event.data);
-  //         setMessage(data);
-  //     });
-
-  //     return () => {
-  //         // 컴포넌트 언마운트 시 이벤트 소스 종료
-  //         eventSource.close();
-  //     };
-  // }, []);
-
-  // const eventSource = new EventSource(
-  //   "http://localhost:8080/notifications/subscribe/1"
-  // );
-
-  // eventSource.addEventListener("sse", (event) => {
-  //   console.log(event);
-  // });
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     if (isLocationFormOpen && showLocation) {
@@ -362,10 +339,10 @@ const TwitCard = ({ twit }) => {
   };
 
   const handleLikeTweet = (num) => {
-     //const TuserId = twit.user.id;
+    //const TuserId = twit.user.id;
     // if (!isLiked) {
     //   dispatch(incrementNotificationCount(TuserId)); // 알림 카운트 증가
-    // } 
+    // }
     // else {
     //   dispatch(decreaseNotificationCount(TuserId));
     // }
@@ -378,11 +355,11 @@ const TwitCard = ({ twit }) => {
   const handleIncrement = () => {
     const twitId = twit.id;
     dispatch(incrementNotificationCount(twitId));
-  }
+  };
   const handleDecrease = () => {
     const TuserId = twit.user.id;
     dispatch(decreaseNotificationCount(TuserId));
-  }
+  };
 
   const handleCreateRetweet = () => {
     if (auth.user.id !== twit.user.id) {
@@ -596,6 +573,13 @@ const TwitCard = ({ twit }) => {
                 <LocationOnIcon />
                 <p className="text-gray-500">{twit.location || address}</p>
               </span>
+
+              <span className="flex items-center text-gray-500">
+                <p className="text-gray-500">{twit.comName}</p>
+              </span>
+
+              {console.log("twit", twit)}
+
               {twit.user.verified && (
                 <img className="ml-2 w-5 h-5" src="" alt="" loading="lazy" />
               )}
@@ -764,8 +748,6 @@ const TwitCard = ({ twit }) => {
                 </div>
               )}
             </div>
-            <p>Received Message: {message}</p>
-            {/* <ToastContainer /> */}
             <div className="flex justify-between items-center mt-5">
               <div className="flex space-x-5 items-center">
                 {isEditing && (
@@ -913,10 +895,19 @@ const TwitCard = ({ twit }) => {
                       isLiked ? "text-yellow-500" : "text-gray-600"
                     } space-x-3 flex items-center `}
                   >
-                     {isLiked ? (
-                      <FavoriteIcon onClick={() => {handleLikeTweet(-1);}} />
+                    {isLiked ? (
+                      <FavoriteIcon
+                        onClick={() => {
+                          handleLikeTweet(-1);
+                        }}
+                      />
                     ) : (
-                      <FavoriteBorderIcon onClick={() => {handleLikeTweet(1); handleIncrement();}} />
+                      <FavoriteBorderIcon
+                        onClick={() => {
+                          handleLikeTweet(1);
+                          handleIncrement();
+                        }}
+                      />
                     )}
                     {likes > 0 && <p>{likes}</p>}
                   </div>
