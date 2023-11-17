@@ -38,11 +38,11 @@ import kotlinx.coroutines.runBlocking
 fun RibbitDropDownMenu(
     post: RibbitPost,
     getCardViewModel: GetCardViewModel,
+    postingViewModel: PostingViewModel,
     myId: Int,
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    val postingViewModel: PostingViewModel = hiltViewModel()
     var isDropDownMenuExpanded by remember { mutableStateOf(false) }
 
     Box(

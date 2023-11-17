@@ -36,7 +36,7 @@ const ListsDetail = () => {
                     onClick={handleBack}
                 />
                 <h1 className="py-5 text-xl font-bold opacity-90 ml-5 ${}">
-                    <p className="list-css">{`${list.list?.listName}`}</p>
+                    <p>{`${list.list?.listName}`}</p>
                 </h1>
             </section>
             <section>

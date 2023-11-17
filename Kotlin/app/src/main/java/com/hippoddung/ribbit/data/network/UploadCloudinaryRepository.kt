@@ -21,8 +21,8 @@ class UploadCloudinaryRepository @Inject constructor(
     suspend fun uploadImageCloudinary(image: Bitmap): UploadCloudinaryResponse {
         val bitmapRequestBody = BitmapRequestBody(image)
         val bitmapMultipartBody: MultipartBody.Part = MultipartBody.Part.createFormData("file", "hsb_image", bitmapRequestBody)
-        val uploadPreset: RequestBody = "instagram".toRequestBody("text/plain".toMediaTypeOrNull())
-        val cloudName: RequestBody = "dnbw04gbs".toRequestBody("text/plain".toMediaTypeOrNull())
+        val uploadPreset: RequestBody = "vo09fwkv".toRequestBody("text/plain".toMediaTypeOrNull())
+        val cloudName: RequestBody = "dedvvc7cr".toRequestBody("text/plain".toMediaTypeOrNull())
         val uploadCloudinary = UploadCloudinaryRequest(file = bitmapMultipartBody, uploadPreset = uploadPreset, cloudName = cloudName)
 
         return uploadCloudinaryApiService.uploadImageCloudinary(uploadCloudinary.file, uploadCloudinary.uploadPreset, uploadCloudinary.cloudName)
@@ -37,8 +37,8 @@ class UploadCloudinaryRepository @Inject constructor(
     suspend fun uploadVideoCloudinary(videoFile: File): UploadCloudinaryResponse {
         val videoRequestBody = videoFile.asRequestBody("video/mp4".toMediaType())
         val videoMultipartBody = MultipartBody.Part.createFormData("file", videoFile.name, videoRequestBody)
-        val uploadPreset: RequestBody = "instagram".toRequestBody("text/plain".toMediaTypeOrNull())
-        val cloudName: RequestBody = "dnbw04gbs".toRequestBody("text/plain".toMediaTypeOrNull())
+        val uploadPreset: RequestBody = "vo09fwkv".toRequestBody("text/plain".toMediaTypeOrNull())
+        val cloudName: RequestBody = "dedvvc7cr".toRequestBody("text/plain".toMediaTypeOrNull())
         val uploadCloudinary = UploadCloudinaryRequest(file = videoMultipartBody, uploadPreset = uploadPreset, cloudName = cloudName)
 
         return uploadCloudinaryApiService.uploadVideoCloudinary(uploadCloudinary.file, uploadCloudinary.uploadPreset, uploadCloudinary.cloudName)

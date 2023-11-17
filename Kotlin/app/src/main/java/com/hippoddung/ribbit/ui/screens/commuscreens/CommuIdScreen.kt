@@ -175,6 +175,7 @@ fun CommuIdSuccessScreen(
                 CommuIdPostsGrid(
                     posts = posts,
                     getCardViewModel = getCardViewModel,
+                    postingViewModel = postingViewModel,
                     userViewModel = userViewModel,
                     myId = myId,
                     navController = navController,

@@ -26,6 +26,7 @@ import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
 import BackdropComponent from "../Backdrop/Backdrop";
 import "../RightPart/Scrollbar.css";
 import { Switch } from 'react-native'; // 여기서만 import 할것, switch 건들 ㄴㄴ
+import "../RightPart/Scrollbar.css";
 
 const style = {
     position: "absolute",
@@ -412,9 +413,11 @@ const ComModel2 = ({ com, handleClose, open }) => {
                                             marginTop: 10,
                                             marginRight: 20,
                                         }}
-                                        trackColor={{ false: "#767577", true: "#81b0ff" }}
-                                        thumbColor={formik.values.privateMode ? "#f5dd4b" : "#f4f3f4"}
+                                        trackColor={{ false: "#767577", true: "#36d916" }}
+                                        // thumbColor={formik.values.privateMode ? "#f5dd4b" : "#f4f3f4"}
                                         ios_backgroundColor="#3e3e3e"
+                                        //onValueChange={toggleSwitch}
+                                        //value={isEnabled}
                                         value={formik.values.privateMode}
                                         onValueChange={value => formik.setFieldValue('privateMode', value)}
                                         error={

@@ -42,6 +42,7 @@ import com.hippoddung.ribbit.ui.viewmodel.CommuUiState
 import com.hippoddung.ribbit.ui.viewmodel.CommuViewModel
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.ListViewModel
+import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 import kotlinx.coroutines.runBlocking
@@ -51,6 +52,7 @@ import kotlinx.coroutines.runBlocking
 fun CommuScreen(
     navController: NavHostController,
     getCardViewModel: GetCardViewModel,
+    postingViewModel: PostingViewModel,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
@@ -68,6 +70,7 @@ fun CommuScreen(
             val commuItems = (commuViewModel.commuUiState as CommuUiState.Success).commuItems
             CommuSuccessScreen(
                 getCardViewModel = getCardViewModel,
+                postingViewModel = postingViewModel,
                 authViewModel = authViewModel,
                 tokenViewModel = tokenViewModel,
                 userViewModel = userViewModel,
@@ -90,6 +93,7 @@ fun CommuScreen(
 @Composable
 fun CommuSuccessScreen(
     getCardViewModel: GetCardViewModel,
+    postingViewModel: PostingViewModel,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
@@ -147,6 +151,7 @@ fun CommuSuccessScreen(
                     myId = myId,
                     filteredCommuItems = filteredCommuItems,
                     getCardViewModel = getCardViewModel,
+                    postingViewModel = postingViewModel,
                     userViewModel = userViewModel,
                     commuViewModel = commuViewModel,
                     navController = navController,

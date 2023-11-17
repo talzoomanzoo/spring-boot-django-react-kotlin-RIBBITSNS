@@ -134,6 +134,7 @@ fun HomeSuccessScreen(
                 PostsGrid(
                     posts = ribbitPosts,
                     getCardViewModel = getCardViewModel,
+                    postingViewModel = postingViewModel,
                     userViewModel = userViewModel,
                     myId = myId,
                     navController = navController,
