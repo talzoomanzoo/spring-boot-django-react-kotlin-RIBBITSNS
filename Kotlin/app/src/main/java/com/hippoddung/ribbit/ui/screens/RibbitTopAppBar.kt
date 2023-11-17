@@ -252,6 +252,22 @@ fun MainDropDownMenu(
             },
             modifier = modifier
         )
+        DropdownMenuItem(
+            onClick = {
+                navController.navigate(RibbitScreen.ChatScreen.name)
+                isDropDownMenuExpanded = false
+            },
+            text = {
+                Text(
+                    text = "Chat",
+                    color = Color(0xFF006400),
+                    fontSize = 14.sp,
+                    style = MaterialTheme.typography.labelSmall,
+                    modifier = modifier
+                )
+            },
+            modifier = modifier
+        )
     }
 }
 
