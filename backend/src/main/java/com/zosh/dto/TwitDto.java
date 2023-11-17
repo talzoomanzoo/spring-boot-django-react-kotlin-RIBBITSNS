@@ -1,10 +1,7 @@
 package com.zosh.dto;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -56,6 +53,8 @@ public class TwitDto {
     private List<Long> retwitUsersId;
 
     private List<TwitDto> replyTwits;
+
+	private String comName;
 	
     private String ethicrate; //윤리수치 저장
     private int ethiclabel; //수치중 가장 큰것을 라벨값으로 저장
