@@ -12,8 +12,8 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 const val BASE_URL =
-    "http://54.180.96.205:8080/"
-
+    "http://3.36.249.200:8080/"
+//    "http://54.180.96.205:8080/"
 interface RibbitApiService {
     @GET("api/twits/")
     suspend fun getRibbitPosts(): List<RibbitPost>
@@ -27,6 +27,10 @@ interface RibbitApiService {
 
     @POST("api/twits/create")
     suspend fun postCreatePost(
+        @Body ribbitPost: RibbitPost
+    ): RibbitPost
+    @POST("api/ethic/reqsentence")
+    suspend fun postCreatePostEthic(
         @Body ribbitPost: RibbitPost
     ): RibbitPost
 
@@ -66,7 +70,7 @@ interface RibbitApiService {
     @POST("api/{postId}/like")
     suspend fun postPostIdLike(
         @Path("postId") postId : Int
-    ): RibbitPost
+    )
 
 //    @DELETE("api/{postId}/unlike")
 //    suspend fun deletePostIdLike(
@@ -76,12 +80,12 @@ interface RibbitApiService {
     @PUT("api/twits/{postId}/retwit")
     suspend fun putPostIdRepost(
         @Path("postId") postId : Int
-    ): RibbitPost
+    )
 
     @POST("api/twits/{postId}/count")
     suspend fun postPostIdCount(
         @Path("postId") postId : Int
-    ): RibbitPost
+    )
 
     @GET("api/twits/search2")
     suspend fun getPostsSearch(
@@ -101,8 +105,8 @@ interface RibbitApiService {
     ): List<RibbitPost>
     @POST("api/twits/{comId}/create")
     suspend fun postCreateCommuPost(
-        @Body ribbitPost: RibbitPost,
-        @Path("comId") commuId : Int
+        @Path("comId") commuId : Int,
+        @Body ribbitPost: RibbitPost
     ): RibbitPost
 }
 

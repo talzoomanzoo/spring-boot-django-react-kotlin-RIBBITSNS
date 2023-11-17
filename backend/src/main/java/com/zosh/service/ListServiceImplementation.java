@@ -54,7 +54,7 @@ public class ListServiceImplementation implements ListService {
 		listModel.setBackgroundImage(req.getBackgroundImage());
 		listModel.setDescription(req.getDescription());
 		listModel.setListName(req.getListName());
-		listModel.setPrivateMode(req.isPrivateMode());
+		//listModel.setPrivateMode(req.isPrivateMode());
 		listRepository.save(listModel);
 
 		return listModel;

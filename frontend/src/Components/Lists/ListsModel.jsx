@@ -13,7 +13,6 @@ import BackdropComponent from "../Backdrop/Backdrop";
 import Loading from "../Profile/Loading/Loading";
 //npm install --save react-native-infinite-scroll --save --legacy-peer-deps
 //npm install react-native-web
-import "./ListCard/ListCard.css";
 import "../RightPart/Scrollbar.css";
 const style = {
   position: "absolute",
@@ -134,6 +133,8 @@ const ListsModel = ({ handleClose, open }) => {
                     formik.touched.listName && Boolean(formik.errors.listName)
                   }
                   helperText=""
+                  placeholder="10자 이내로 작성하세요"
+                  inputProps={{ maxLength: 10}}
                 />
                 <TextField
                   fullWidth
@@ -164,7 +165,7 @@ const ListsModel = ({ handleClose, open }) => {
                   }}
                 />
 
-                <div className="flex items-center justify-between font-xl">
+                <div className="flex items-center justify-between font-xl qlrhdrP">
                   {" "}
                   비공개 활성화
                   <Switch

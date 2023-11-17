@@ -40,7 +40,7 @@ public class EthicController {
 		User user=userService.findUserProfileByJwt(jwt);
 		System.out.println("UserL: "+user.getFullName());
 		
-		String url = "http://localhost:8000/ethic/";
+		String url = "http://3.36.249.200:8000/ethic/";
 		RestTemplate restTemplate = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);

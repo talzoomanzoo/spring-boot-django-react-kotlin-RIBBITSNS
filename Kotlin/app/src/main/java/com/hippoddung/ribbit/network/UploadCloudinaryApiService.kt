@@ -9,7 +9,7 @@ import retrofit2.http.POST
 import retrofit2.http.Part
 
 const val CLOUDINARY_URL =
-    "https://api.cloudinary.com/v1_1/dnbw04gbs/"
+    "https://api.cloudinary.com/v1_1/dedvvc7cr/"
 
 interface UploadCloudinaryApiService {
     @Multipart

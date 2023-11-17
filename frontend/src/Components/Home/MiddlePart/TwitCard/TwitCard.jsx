@@ -443,7 +443,7 @@ const TwitCard = ({ twit }) => {
   const ethicreveal = async (twitid, twitcontent) => {
     try {
       const response = await fetch(
-        "http://localhost:8080/api/ethic/reqsentence",
+        "http://3.36.249.200:8080/api/ethic/reqsentence",
         {
           method: "POST",
           headers: {
@@ -459,6 +459,7 @@ const TwitCard = ({ twit }) => {
       console.log("response.statis: ", response);
       if (response.status === 200) {
         const responseData = await response.json();
+        console.log("responseData: ",response);
         setEthiclabel(responseData.ethiclabel);
         setEthicrateMAX(responseData.ethicrateMAX);
         setRefreshTwits((prev) => prev + 1);
@@ -839,6 +840,7 @@ const TwitCard = ({ twit }) => {
                             onChange={(e) => setSearchKeyword(e.target.value)}
                             id="keyword"
                             size="15"
+                            className={`${theme.currentTheme === "light" ? "" : "text-black"}`}
                           />
                           <Button type="submit">검색하기</Button>
                         </form>

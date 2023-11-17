@@ -308,7 +308,7 @@ const HomeSection = () => {
       dispatch(createTweetRequest());
       try {
         const { data } = await api.post(
-          "http://localhost:8080/api/twits/create",
+          "http://3.36.249.200:8080/api/twits/create",
           tweetData
         );
 
@@ -347,7 +347,7 @@ const HomeSection = () => {
   const ethicreveal = async (twitid, twitcontent) => {
     try {
       const response = await fetch(
-        "http://localhost:8080/api/ethic/reqsentence",
+        "http://3.36.249.200:8080/api/ethic/reqsentence",
         {
           method: "POST",
           headers: {
@@ -574,6 +574,7 @@ const HomeSection = () => {
                             onChange={(e) => setSearchKeyword(e.target.value)}
                             id="keyword"
                             size="15"
+                            className={`${theme.currentTheme === "light" ? "" : "text-black"}`}
                           />
                           <Button type="submit">검색하기</Button>
                         </form>

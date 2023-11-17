@@ -16,6 +16,7 @@ import {
 } from "../../Store/Community/Action";
 import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
 import BackdropComponent from "../Backdrop/Backdrop";
+import "../RightPart/Scrollbar.css";
 
 const style = {
     position: "absolute",
@@ -116,7 +117,7 @@ const ComModel3 = ({ com, handleClose, open }) => {
                                 <p>커뮤니티 정보</p>
                             </div>
                         </div>
-                        <div className="customeScrollbar overflow-y-scroll  overflow-x-hidden h-[50vh]">
+                        <div className="customeScrollbar overflow-y-scroll css-scroll overflow-x-hidden h-[50vh]">
                             <div className="">
                                 <div className="w-full">
                                     <div className="relative">
