@@ -44,6 +44,11 @@ public class TwitDtoMapper {
 		twitDto.setEthicrate(twit.getEthicrate());
 		twitDto.setEthiclabel(twit.getEthiclabel());
 		twitDto.setEthicrateMAX(twit.getEthicrateMAX());
+		twitDto.setCom(twit.isCom());
+		if (twit.isCom() == true) {
+			twitDto.setCommunity(ComDtoMapper1.toComDto(twit.getCommunity(), reqUser));
+			twitDto.setComName(twit.getCommunity().getComName());
+		}
 		
 		return twitDto;
 	}
@@ -93,6 +98,11 @@ public class TwitDtoMapper {
 		twitDto.setEthicrate(twit.getEthicrate());
 		twitDto.setEthiclabel(twit.getEthiclabel());
 		twitDto.setEthicrateMAX(twit.getEthicrateMAX());
+		twitDto.setCom(twit.isCom());
+		if (twit.isCom() == true) {
+			twitDto.setCommunity(ComDtoMapper1.toComDto(twit.getCommunity(), reqUser));
+			twitDto.setComName(twit.getCommunity().getComName());
+		}
 		
 		return twitDto;
 	}

@@ -479,7 +479,6 @@ const HomeSection = () => {
                       onChange={handleSelectImage}
                     />
                   </label>
-
                   <label className="flex items-center space-x-2  rounded-md cursor-pointer">
                     <SlideshowIcon className="text-[#42c924]" />
                     <input
@@ -489,7 +488,6 @@ const HomeSection = () => {
                       onChange={handleSelectVideo}
                     />
                   </label>
-
                   <label className="flex items-center space-x-2 rounded-md cursor-pointer">
                     <FmdGoodIcon
                       className="text-[#42c924]"
@@ -513,7 +511,6 @@ const HomeSection = () => {
                     )}
                   </div>
                 </div>
-
                 <div>
                   <Button
                     type="submit"

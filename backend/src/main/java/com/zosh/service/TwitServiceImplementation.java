@@ -65,6 +65,7 @@ public class TwitServiceImplementation implements TwitService {
 		Community community = comService.findById(comId);
 		twit.setCom(true);
 		twit.setCommunity(community);
+		twit.setComName(community.getComName()); 
 		
 		return twitRepository.save(twit);
 	}
