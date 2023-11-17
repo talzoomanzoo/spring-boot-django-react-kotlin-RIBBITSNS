@@ -700,7 +700,7 @@ const TwitCard = ({ twit }) => {
                           completed={ethicrateMAX}
                           width="450%"
                           margin="2px 0px 4px 4px"
-                          bgColor="red"
+                          bgColor={`${ethicrateMAX < 25 ? "hsla(195, 100%, 35%, 0.8)" : ethicrateMAX < 50 ? "hsla(120, 100%, 25%, 0.7)" : ethicrateMAX < 75 ? "hsla(48, 100%, 40%, 0.8)" : "hsla(0, 100%, 55%, 0.8)"}`}
                         />
                       </div>
                     )}
@@ -711,7 +711,7 @@ const TwitCard = ({ twit }) => {
                           completed={ethicrateMAX}
                           width="450%"
                           margin="2px 0px 4px 4px"
-                          bgColor="red"
+                          bgColor={`${ethicrateMAX < 25 ? "hsla(195, 100%, 35%, 0.8)" : ethicrateMAX < 50 ? "hsla(120, 100%, 25%, 0.7)" : ethicrateMAX < 75 ? "hsla(48, 100%, 40%, 0.8)" : "hsla(0, 100%, 55%, 0.8)"}`}
                         />
                       </div>
                     )}
@@ -722,7 +722,7 @@ const TwitCard = ({ twit }) => {
                           completed={ethicrateMAX}
                           width="450%"
                           margin="2px 0px 4px 4px"
-                          bgColor="red"
+                          bgColor={`${ethicrateMAX < 25 ? "hsla(195, 100%, 35%, 0.8)" : ethicrateMAX < 50 ? "hsla(120, 100%, 25%, 0.7)" : ethicrateMAX < 75 ? "hsla(48, 100%, 40%, 0.8)" : "red"}`}
                         />
                       </div>
                     )}
@@ -733,7 +733,7 @@ const TwitCard = ({ twit }) => {
                           completed={ethicrateMAX}
                           width="450%"
                           margin="2px 0px 4px 4px"
-                          bgColor="red"
+                          bgColor={`${ethicrateMAX < 25 ? "hsla(195, 100%, 35%, 0.8)" : ethicrateMAX < 50 ? "hsla(120, 100%, 25%, 0.7)" : ethicrateMAX < 75 ? "hsla(48, 100%, 40%, 0.8)" : "hsla(0, 100%, 55%, 0.8)"}`}
                         />
                       </div>
                     )}
@@ -859,7 +859,7 @@ const TwitCard = ({ twit }) => {
                         </form>
                       </div>
                     </div>
-                    <hr />
+                    
 
                     <ul id="placesList">
                       {currentItems.map((result, index) =>
@@ -936,15 +936,15 @@ const TwitCard = ({ twit }) => {
             </div>
           </div>
           <hr
-            style={{
-              marginTop: 3,
-              marginBottom: 10,
-              background: "grey",
-              color: "grey",
-              borderColor: "grey",
-              height: "1px",
-            }}
-          />
+                style={{
+                    marginTop: 10,
+                    marginBottom: 1,
+                    background: "hsla(0, 0%, 80%, 1)",
+                    color: 'grey',
+                    borderColor: "hsl(0, 0%, 80%)",
+                    height: '1px',
+                }}
+            />
         </div>
       </div>
 
