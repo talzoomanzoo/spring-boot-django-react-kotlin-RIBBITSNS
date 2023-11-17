@@ -8,7 +8,7 @@ import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
-import { api } from "../../../Config/apiConfig";
+import { API_BASE_URL, api } from "../../../Config/apiConfig";
 import { getAllTweets } from "../../../Store/Tweet/Action";
 import { uploadToCloudinary } from "../../../Utils/UploadToCloudinary";
 import Loading from "../../Profile/Loading/Loading";
@@ -308,7 +308,7 @@ const HomeSection = () => {
       dispatch(createTweetRequest());
       try {
         const { data } = await api.post(
-          "http://3.36.249.200:8080/api/twits/create",
+          API_BASE_URL+ "/api/twits/create",
           tweetData
         );
 
@@ -347,7 +347,7 @@ const HomeSection = () => {
   const ethicreveal = async (twitid, twitcontent) => {
     try {
       const response = await fetch(
-        "http://3.36.249.200:8080/api/ethic/reqsentence",
+        API_BASE_URL + "/api/ethic/reqsentence",
         {
           method: "POST",
           headers: {
