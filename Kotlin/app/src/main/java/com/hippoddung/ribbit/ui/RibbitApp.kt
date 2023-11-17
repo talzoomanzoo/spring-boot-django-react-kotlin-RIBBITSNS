@@ -21,6 +21,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.hippoddung.ribbit.R
+import com.hippoddung.ribbit.ui.screens.ChatScreen
 import com.hippoddung.ribbit.ui.screens.CreatingPostScreen
 import com.hippoddung.ribbit.ui.screens.EditingPostScreen
 import com.hippoddung.ribbit.ui.screens.authscreens.LoginScreen
@@ -42,6 +43,7 @@ import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthUiState
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
+import com.hippoddung.ribbit.ui.viewmodel.ChatViewModel
 import com.hippoddung.ribbit.ui.viewmodel.CommuViewModel
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.ListViewModel
@@ -69,6 +71,7 @@ enum class RibbitScreen(@StringRes val title: Int) {
     CreatingCommuScreen(title = R.string.creating_commu_screen),
     ManageCommuScreen(title = R.string.manage_commu_screen),
     EditingCommuScreen(title = R.string.editing_commu_screen),
+    ChatScreen(title = R.string.chat_screen),
     LoadingScreen(title = R.string.loading_screen),
     ErrorScreen(title = R.string.error_screen)
 }
@@ -319,6 +322,13 @@ fun RibbitScreen(
             EditingCommuScreen(
                 navController = navController,
                 commuViewModel = commuViewModel,
+                modifier = modifier
+            )
+        }
+
+        composable(route = RibbitScreen.ChatScreen.name) {
+            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> EditingCommuScreen")
+            ChatScreen(
                 modifier = modifier
             )
         }
