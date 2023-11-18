@@ -1,6 +1,6 @@
 package com.hippoddung.ribbit.network
 
-import com.hippoddung.ribbit.network.bodys.chatbodys.ChatDto
+import com.hippoddung.ribbit.network.bodys.chatbodys.MessageBody
 import com.hippoddung.ribbit.network.bodys.chatbodys.ChatRoomDto
 import okhttp3.RequestBody
 import retrofit2.http.Body
@@ -17,5 +17,5 @@ interface ChatApiService {
     ): ChatRoomDto
 
     @POST("/getchat")
-    suspend fun getChatHistory(@Body requestBody: RequestBody): List<ChatDto>
+    suspend fun getChatHistory(@Body requestBody: RequestBody): List<MessageBody>
 }

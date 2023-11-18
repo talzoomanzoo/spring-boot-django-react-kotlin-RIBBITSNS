@@ -2,13 +2,13 @@ package com.hippoddung.ribbit.network.bodys.chatbodys
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 @RequiresApi(Build.VERSION_CODES.O)
-data class ChatDto constructor(
+@Serializable
+data class MessageBody constructor(
     val id: Long? = null,
     val type: MessageType = MessageType.TALK,   // 서버에서 구현하려다가 그만둔 기능
     val roomId: String? = null,
@@ -35,4 +35,3 @@ data class ChatDto constructor(
         )
     }
 }
-

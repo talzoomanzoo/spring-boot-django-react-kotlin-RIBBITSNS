@@ -134,15 +134,15 @@ fun RibbitScreen(
     val postingViewModel: PostingViewModel = hiltViewModel()
     val chatViewModel: ChatViewModel = hiltViewModel()
     var myId by remember { mutableStateOf(0) }
-    if(userViewModel.myProfileUiState is MyProfileUiState.Exist){   // 앱 시작시 casting 이 문제되는 경우가 있어 state check 를 넣어줌.
+    if (userViewModel.myProfileUiState is MyProfileUiState.Exist) {   // 앱 시작시 casting 이 문제되는 경우가 있어 state check 를 넣어줌.
         myId = (userViewModel.myProfileUiState as MyProfileUiState.Exist).myProfile.id!!
     }
     var myProfile by remember { mutableStateOf(User()) }
-    if(userViewModel.myProfileUiState is MyProfileUiState.Exist){   // 앱 시작시 casting 이 문제되는 경우가 있어 state check 를 넣어줌.
+    if (userViewModel.myProfileUiState is MyProfileUiState.Exist) {   // 앱 시작시 casting 이 문제되는 경우가 있어 state check 를 넣어줌.
         myProfile = (userViewModel.myProfileUiState as MyProfileUiState.Exist).myProfile
     }
-        // myId 는 다양한 페이지에서 쓰이므로 여기서 composable 에 기억시킨다.
-        // myId 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 상황이다.
+    // myId 는 다양한 페이지에서 쓰이므로 여기서 composable 에 기억시킨다.
+    // myId 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 상황이다.
 //    val backStackEntry by navController.currentBackStackEntryAsState()
 //    val currentScreen = RibbitScreen.valueOf(backStackEntry?.destination?.route ?: RibbitScreen.HomeScreen.name)
 //    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -350,7 +350,7 @@ fun RibbitScreen(
         composable(route = RibbitScreen.CreateChatRoomScreen.name) {
             Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> CreateChatRoomScreen")
             CreateChatRoomScreen(
-                navController =navController,
+                navController = navController,
                 chatViewModel = chatViewModel,
                 myProfile = myProfile,
                 modifier = modifier
@@ -359,10 +359,16 @@ fun RibbitScreen(
         composable(route = RibbitScreen.ChatScreen.name) {
             Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> ChatScreen")
             ChatScreen(
-                navController =navController,
+                modifier = modifier,
                 chatViewModel = chatViewModel,
+                getCardViewModel = getCardViewModel,
+                tokenViewModel = tokenViewModel,
+                authViewModel = authViewModel,
+                userViewModel = userViewModel,
+                listViewModel = listViewModel,
+                commuViewModel = commuViewModel,
+                navController = navController,
                 myProfile = myProfile,
-                modifier = modifier
             )
         }
 

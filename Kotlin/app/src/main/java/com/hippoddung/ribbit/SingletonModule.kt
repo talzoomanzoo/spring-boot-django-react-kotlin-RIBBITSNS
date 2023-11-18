@@ -9,7 +9,6 @@ import com.hippoddung.ribbit.data.local.TokenManager
 import com.hippoddung.ribbit.network.AuthApiService
 import com.hippoddung.ribbit.network.AuthAuthenticator
 import com.hippoddung.ribbit.network.AuthInterceptor
-import com.hippoddung.ribbit.network.BASE_URL
 import com.hippoddung.ribbit.network.CLOUDINARY_URL
 import com.hippoddung.ribbit.network.ChatApiService
 import com.hippoddung.ribbit.network.CommuApiService
@@ -28,7 +27,6 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
-import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "ribbit_preferences")

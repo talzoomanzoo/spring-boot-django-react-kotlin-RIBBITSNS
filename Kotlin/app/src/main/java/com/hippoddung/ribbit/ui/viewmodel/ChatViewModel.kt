@@ -9,17 +9,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.JsonObject
+import com.hippoddung.ribbit.WS_URL
 import com.hippoddung.ribbit.data.network.ChatRepository
-import com.hippoddung.ribbit.network.BASE_IP
-import com.hippoddung.ribbit.network.bodys.chatbodys.ChatDto
 import com.hippoddung.ribbit.network.bodys.chatbodys.ChatRoomDto
+import com.hippoddung.ribbit.network.bodys.chatbodys.FullResponse
+import com.hippoddung.ribbit.network.bodys.chatbodys.MessageBody
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
 import ua.naiksoftware.stomp.Stomp
 import ua.naiksoftware.stomp.dto.LifecycleEvent
 import ua.naiksoftware.stomp.dto.StompHeader
@@ -29,55 +32,102 @@ import javax.inject.Inject
 class ChatViewModel @Inject constructor(
     private val chatRepository: ChatRepository
 ) : ViewModel() {
-    val url = "ws://$BASE_IP/ws/websocket" // 리액트에서 사용하는 라이브러리가 없어서 뒤에 websocket을 붙여줘야 함.
-    val stompClient =  Stomp.over(Stomp.ConnectionProvider.OKHTTP, url)
+    val stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, WS_URL)
+
+    var subscribedRooms: MutableMap<String, Disposable> = mutableMapOf()
 
     var selectedRoomIdState: String by mutableStateOf("")
 
     private var _chatRooms = MutableStateFlow<List<ChatRoomDto>>(emptyList())
     val chatRooms: StateFlow<List<ChatRoomDto>> = _chatRooms.asStateFlow()
 
-    private val _chatHistory = MutableStateFlow<List<ChatDto>>(emptyList())
-    val chatHistory: StateFlow<List<ChatDto>> = _chatHistory
+    private val _chatHistory = MutableStateFlow<List<MessageBody>>(emptyList())
+    val chatHistory: StateFlow<List<MessageBody>> = _chatHistory
 
-    private val _messages = MutableStateFlow<List<String>>(emptyList())
-    val messages: StateFlow<List<String>> = _messages
+    init {
+        connectStomp()
+    }
+    private fun connectStomp() {
+        val headerList = arrayListOf<StompHeader>()
+        headerList.add(StompHeader("Content-Type", "text/plain"))
+        stompClient.connect(headerList)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun subscribeRoom(roomId: String){
+        // 구독중이지 않은 경우 구독 function 으로 넘긴다.
+        if (roomId !in subscribedRooms.keys){
+            subscribeStomp(roomId)
+        }
+    }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("CheckResult")
-    fun runStomp(){
+    fun subscribeStomp(roomId: String) {
 
-        stompClient.topic("/topic/$selectedRoomIdState").subscribe { topicMessage ->
-            Log.i("message Recieve", topicMessage.payload)
-        }
+        val disposableStomp = stompClient.topic("/topic/$roomId")
+            .subscribe { topicMessage ->    // topicMessage: JSONString
+                Log.i("HippoLog ChatViewModel", "received message: " + topicMessage.payload)
+                try {
+                    val topicMessageStr = topicMessage.payload
+                    val jsonTree = Json.parseToJsonElement(topicMessageStr)
 
-        val headerList = arrayListOf<StompHeader>()
-//        headerList.add(StompHeader("inviteCode","test0912"))
-        headerList.add(StompHeader("Content-Type","text/plain",))
-        stompClient.connect(headerList)
+                    // Check if the message has the "headers" property
+                    if (jsonTree.jsonObject.containsKey("headers")) {
+                        // It's in the extended format, so deserialize as FullResponse
+//                    val fullResponse = Json.decodeFromString<FullResponse>(topicMessageStr)
+                        // Use the parsed data as needed
+                        _chatHistory.value =
+                            _chatHistory.value + Json.decodeFromString<FullResponse>(topicMessageStr).body
+                        Log.i(
+                            "HippoLog ChatViewModel",
+                            "received message2-1:  ${chatHistory.value}"
+                        )
+                        // Handle the extended format as needed
+                    } else {
+                        Log.i(
+                            "HippoLog ChatViewModel",
+                            "received message2-2:  ${chatHistory.value}"
+                        )
+                        // It's in the simple format, so deserialize as MessageBody directly
+//                    val messageBody = Json.decodeFromString<MessageBody>(topicMessageStr)
+                        // Use the parsed body as needed
+//                    println("Body: $messageBody")
+                        // Handle the simple format as needed
+                    }
+                } catch (e: Exception) {
+                    // Handle the case where the message doesn't match either format
+                    Log.i("HippoLog ChatViewModel", "Exception: ${e.message}")
+                }
+            }
 
         stompClient.lifecycle().subscribe { lifecycleEvent ->
             when (lifecycleEvent.type) {
                 LifecycleEvent.Type.OPENED -> {
                     Log.i("HippoLog ChatViewModel", "runStomp Opened")
                 }
+
                 LifecycleEvent.Type.CLOSED -> {
                     Log.i("HippoLog ChatViewModel", "runStomp Closed")
 
                 }
+
                 LifecycleEvent.Type.ERROR -> {
                     Log.i("HippoLog ChatViewModel", "runStomp Error")
-                    Log.e("HippoLog ChatViewModel", "runStomp Error: " + lifecycleEvent.exception.toString())
+                    Log.e(
+                        "HippoLog ChatViewModel",
+                        "runStomp Error: " + lifecycleEvent.exception.toString()
+                    )
                 }
-                else ->{
+
+                else -> {
                     Log.i("HippoLog ChatViewModel", "runStomp Else" + lifecycleEvent.message)
                 }
             }
         }
-
-        val data = ChatDto()
-
-        stompClient.send("/stream/chat/send", data.toString()).subscribe()
+        // 여러 방을 구독하고 관리하기 위해 Map에 담아준다.
+        subscribedRooms[roomId] = disposableStomp
     }
 
     fun getChatRooms() {
@@ -121,10 +171,16 @@ class ChatViewModel @Inject constructor(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun sendMessage(email: String,message: String, sender: String){
-        val data = ChatDto(roomId = selectedRoomIdState, sender = sender, email = email, message = message)
+    fun sendMessage(email: String, message: String, sender: String) {
+        val data = MessageBody(
+            roomId = selectedRoomIdState,
+            sender = sender,
+            email = email,
+            message = message
+        )
 
-        stompClient.send("/app/savechat/$selectedRoomIdState", data.toJsonObject().toString()).subscribe()
+        stompClient.send("/app/savechat/$selectedRoomIdState", data.toJsonObject().toString())
+            .subscribe()
         Log.d("HippoLog ChatViewModel", "sendMessage: $message")
     }
 

@@ -11,11 +11,6 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-const val BASE_IP =
-    "3.36.249.200:8080"
-//    "54.180.96.205:8080"
-const val BASE_URL =
-    "http://$BASE_IP/"
 interface RibbitApiService {
     @GET("api/twits/")
     suspend fun getRibbitPosts(): List<RibbitPost>

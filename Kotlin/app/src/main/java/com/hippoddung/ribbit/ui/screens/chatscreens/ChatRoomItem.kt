@@ -33,7 +33,7 @@ fun ChatRoomItem(
             .padding(vertical = 8.dp),
         onClick = {
             chatViewModel.selectedRoomIdState = chatRoom.roomId
-            chatViewModel.runStomp()
+            chatViewModel.subscribeRoom(chatRoom.roomId)
             navController.navigate(RibbitScreen.ChatScreen.name)
         }
     ) {
