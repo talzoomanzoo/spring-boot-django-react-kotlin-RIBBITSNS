@@ -11,6 +11,7 @@ import com.hippoddung.ribbit.network.AuthAuthenticator
 import com.hippoddung.ribbit.network.AuthInterceptor
 import com.hippoddung.ribbit.network.BASE_URL
 import com.hippoddung.ribbit.network.CLOUDINARY_URL
+import com.hippoddung.ribbit.network.ChatApiService
 import com.hippoddung.ribbit.network.CommuApiService
 import com.hippoddung.ribbit.network.ListApiService
 import com.hippoddung.ribbit.network.RibbitApiService
@@ -115,6 +116,14 @@ class SingletonModule {
             .client(okHttpClient)
             .build()
             .create(CommuApiService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideChatAPIService(okHttpClient: OkHttpClient, retrofit: Retrofit.Builder): ChatApiService =
+        retrofit
+            .client(okHttpClient)
+            .build()
+            .create(ChatApiService::class.java)
 
     @Singleton
     @Provides

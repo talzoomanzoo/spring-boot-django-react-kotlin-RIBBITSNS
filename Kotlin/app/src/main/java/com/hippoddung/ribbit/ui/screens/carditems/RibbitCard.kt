@@ -122,14 +122,14 @@ fun RibbitCard(
                 modifier = modifier.padding(16.dp),
                 style = MaterialTheme.typography.headlineSmall
             )
-            if (post.image != null) {
+            if (!post.image.isNullOrBlank()) {
                 RibbitImage(
                     image = post.image!!,
                     modifier = modifier
                 )
             }
 
-            if (post.video != null) {
+            if (!post.video.isNullOrBlank()) {
                 Log.d("HippoLog, RibbitCard", "RibbitVideo")
                 RibbitVideo(
                     videoUrl = post.video!!,
