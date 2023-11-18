@@ -76,10 +76,19 @@ fun ChatScreen(
     var message by remember { mutableStateOf("") }
     val lazyColumnState = rememberLazyListState()
 
+    DisposableEffect(chatHistory) {
+
+        CoroutineScope(Dispatchers.Main).launch {
+            // Scroll to the bottom whenever the chat history changes
+            lazyColumnState.scrollToItem(chatHistory.size)
+        }
+
+        onDispose { /* cleanup code if needed */ }
+    }
+
     LaunchedEffect(chatViewModel) {
         // Retrieve chat history when the screen is launched
         chatViewModel.selectedRoomIdState.let { chatViewModel.getChatHistory(it) }
-        lazyColumnState.scrollToItem(chatHistory.size)
     }
 
 
