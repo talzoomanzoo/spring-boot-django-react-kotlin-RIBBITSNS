@@ -44,11 +44,9 @@ const NotificationsCard = ({ notification }) => {
                 <hr
             style={{
               marginTop: 10,
-              marginBottom: 1,
-              background: 'grey',
-              color: 'grey',
-              borderColor: 'grey',
-              height: '1px',
+              background: "hsla(0, 0%, 80%, 0.5)",
+              borderColor: "hsl(0, 0%, 80%)",
+              height: "5px",
             }}
           />
             </div>

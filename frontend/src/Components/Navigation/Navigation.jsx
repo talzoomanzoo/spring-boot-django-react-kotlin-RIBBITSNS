@@ -59,7 +59,7 @@ const Navigation = () => {
       <div>
         <div className="cursor-pointer py-5">
           <img
-            className="w-10"
+            className="w-10 hover:w-12"
             src="https://cdn.pixabay.com/photo/2023/10/26/06/44/frog-8341850_1280.png"
             alt=""
             onClick={()=> navigate(`/`)}

@@ -172,16 +172,16 @@ const RightPart = () => {
           
         </section> */}
 
-        <hr
-            style={{
-              marginTop: 30,
-              marginBottom: 1,
-              background: 'grey',
-              color: 'grey',
-              borderColor: 'grey',
-              height: '1px',
-            }}
-          />
+<hr
+                style={{
+                    marginTop: 10,
+                    marginBottom: 1,
+                    background: "hsla(0, 0%, 80%, 1)",
+                    color: 'grey',
+                    borderColor: "hsl(0, 0%, 80%)",
+                    height: '2px',
+                }}
+            />
 
         <section
           className={`mt-5 space-y-5 `}

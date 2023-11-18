@@ -21,6 +21,8 @@ import "react-toastify/dist/ReactToastify.css";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 import { searchChatUser } from "../../Store/Auth/Action";
+import "./Chat.css";
+import SearchIcon from "@mui/icons-material/Search";
 
 const Chat = () => {
   const style = {
@@ -405,6 +407,9 @@ const Chat = () => {
             className={`py-3 rounded-full outline-none text-gray-500 pl-12 ${theme.currentTheme === "light" ? "bg-stone-300" : "bg-[#151515]"
               }`}
           />
+          <span className="absolute top-0 left-0 pl-3 pt-3">
+            <SearchIcon className="text-gray-400" />
+          </span>
           <AddIcon onClick={createRoom} className="ml-3 cursor-pointer" />
         </div>
       </section>
@@ -414,6 +419,7 @@ const Chat = () => {
         {chatRooms.length > 0 ? ( //채팅방 목록 출력
           chatRooms.map((room) => (
             <div
+              className="chat-card"
               key={room.roomId}
               style={{
                 padding: "10px",
@@ -424,13 +430,15 @@ const Chat = () => {
                 display: room.isVisible ? "block" : "none",
               }}
             >
-              <button
-                onClick={() => enterChatRoom(room.roomId, room.name)} //채팅방 입장
-                style={{ cursor: "pointer", fontSize: "larger" }}
-              >
-                <ChatIcon />
-                <span style={{ marginLeft: "5px" }}>{room.name}</span>
-              </button>
+              <div className="cursor-pointer" style={{ width: "100%" }} onClick={() => enterChatRoom(room.roomId, room.name)}>
+                <button
+                  //채팅방 입장
+                  style={{ cursor: "pointer", fontSize: "larger" }}
+                >
+                  <ChatIcon />
+                  <span style={{ marginLeft: "5px" }}>{room.name}</span>
+                </button>
+              </div>
               <div>
                 <Button
                   onClick={() => openEditModal(room.roomId, room.name)} //채팅방 정보 수정
@@ -446,7 +454,7 @@ const Chat = () => {
                   나가기
                 </Button>
               </div>
-              <hr
+              {/* <hr
                 style={{
                   marginTop: 10,
                   marginBottom: 1,
@@ -455,7 +463,7 @@ const Chat = () => {
                   borderColor: 'grey',
                   height: '1px',
                 }}
-              />
+              /> */}
             </div>
           ))
         ) : (
@@ -500,8 +508,8 @@ const Chat = () => {
                         <div
                           key={item.id}
                           className={`rounded-full outline-none text-gray-500 pl-6 ${theme.currentTheme === "light"
-                              ? "hover:bg-[#008000]"
-                              : "hover:bg-[#dbd9d9]"
+                            ? "hover:bg-[#008000]"
+                            : "hover:bg-[#dbd9d9]"
                             }
                           ${theme.currentTheme === "light"
                               ? "text-black hover:text-white"
@@ -725,8 +733,8 @@ const Chat = () => {
                   marginRight: "10px", // 왼쪽 여백 추가
                 }}
                 className={`py-2 rounded-full outline-none text-gray-500 pl-12 ${theme.currentTheme === "light"
-                    ? "bg-stone-300"
-                    : "bg-[#151515]"
+                  ? "bg-stone-300"
+                  : "bg-[#151515]"
                   }`}
               />
               <ForwardToInboxIcon

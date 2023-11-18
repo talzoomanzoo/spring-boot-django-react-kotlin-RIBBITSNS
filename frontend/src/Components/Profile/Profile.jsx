@@ -448,7 +448,7 @@ const Profile = () => {
               {twit.twits?.map((item) => (
                 <div>
                   <TwitCard twit={item} />
-                  <Divider sx={{ margin: "2rem 0rem" }} />
+                  {/* <Divider sx={{ margin: "2rem 0rem" }} /> */}
                 </div>
               ))}
             </TabPanel>
@@ -456,7 +456,7 @@ const Profile = () => {
               {twit.twits?.map((item) => (
                 <div>
                   <TwitCard twit={item} />
-                  <Divider sx={{ margin: "2rem 0rem" }} />
+                  {/* <Divider sx={{ margin: "2rem 0rem" }} /> */}
                 </div>
               ))}
             </TabPanel>
@@ -466,7 +466,7 @@ const Profile = () => {
                 .map((item) => (
                   <div>
                     <TwitCard twit={item} />
-                    <Divider sx={{ margin: "2rem 0rem" }} />
+                    {/* <Divider sx={{ margin: "2rem 0rem" }} /> */}
                   </div>
                 ))}
             </TabPanel>

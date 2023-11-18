@@ -133,8 +133,8 @@ const ListsModel = ({ handleClose, open }) => {
                     formik.touched.listName && Boolean(formik.errors.listName)
                   }
                   helperText=""
-                  placeholder="10자 이내로 작성하세요"
-                  inputProps={{ maxLength: 10}}
+                  placeholder="20자 이내로 작성하세요"
+                  inputProps={{ maxLength: 20}}
                 />
                 <TextField
                   fullWidth
