@@ -79,9 +79,9 @@ fun ChatScreen(
     LaunchedEffect(chatViewModel) {
         // Retrieve chat history when the screen is launched
         chatViewModel.selectedRoomIdState.let { chatViewModel.getChatHistory(it) }
-        lazyColumnState.scrollToItem(chatHistory.size - 1)
+        lazyColumnState.scrollToItem(chatHistory.size)
     }
-    
+
 
     Scaffold(
         modifier = modifier,

@@ -47,6 +47,7 @@ class ChatViewModel @Inject constructor(
     init {
         connectStomp()
     }
+
     private fun connectStomp() {
         val headerList = arrayListOf<StompHeader>()
         headerList.add(StompHeader("Content-Type", "text/plain"))
@@ -54,9 +55,9 @@ class ChatViewModel @Inject constructor(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun subscribeRoom(roomId: String){
+    fun subscribeRoom(roomId: String) {
         // 구독중이지 않은 경우 구독 function 으로 넘긴다.
-        if (roomId !in subscribedRooms.keys){
+        if (roomId !in subscribedRooms.keys) {
             subscribeStomp(roomId)
         }
     }
@@ -156,17 +157,15 @@ class ChatViewModel @Inject constructor(
         }
     }
 
-    fun getChatHistory(roomId: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val chatHistoryFromServer = chatRepository.getChatHistory(roomId)
-                Log.i("HippoLog ChatViewModel", "getChatHistory Success:  $chatHistoryFromServer")
-                _chatHistory.value = chatHistoryFromServer
-                Log.i("HippoLog ChatViewModel", "getChatHistory Success:  ${chatHistory.value}")
-            } catch (e: Exception) {
-                // Handle error
-                Log.e("HippoLog ChatViewModel", "getChatHistory Error: " + e.message)
-            }
+    suspend fun getChatHistory(roomId: String) {
+        try {
+            val chatHistoryFromServer = chatRepository.getChatHistory(roomId)
+            Log.i("HippoLog ChatViewModel", "getChatHistory Success:  $chatHistoryFromServer")
+            _chatHistory.value = chatHistoryFromServer
+            Log.i("HippoLog ChatViewModel", "getChatHistory Success:  ${chatHistory.value}")
+        } catch (e: Exception) {
+            // Handle error
+            Log.e("HippoLog ChatViewModel", "getChatHistory Error: " + e.message)
         }
     }
 
