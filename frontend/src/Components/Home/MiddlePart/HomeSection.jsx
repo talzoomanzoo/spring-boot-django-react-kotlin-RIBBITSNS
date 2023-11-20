@@ -8,7 +8,7 @@ import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
-import { api } from "../../../Config/apiConfig";
+import { API_BASE_URL, api } from "../../../Config/apiConfig";
 import { getAllTweets } from "../../../Store/Tweet/Action";
 import { uploadToCloudinary } from "../../../Utils/UploadToCloudinary";
 import Loading from "../../Profile/Loading/Loading";
@@ -91,12 +91,6 @@ const HomeSection = () => {
     }
   }, [isLocationFormOpen, showLocation]);
 
-  const toggleMap = () => {
-    // 주소값만 저장하고 상태 업데이트
-    setAddress(formikLocation.values.location);
-    setLocationFormOpen(false); // 주소 저장 후 폼을 닫음
-  };
-
   const formikLocation = useFormik({
     initialValues: {
       location: address,
@@ -107,13 +101,6 @@ const HomeSection = () => {
       formikLocation.resetForm();
     },
   });
-
-  useEffect(() => {
-    console.log("Address Updated:", address); // 주소 확인
-    formikLocation.setValues({
-      location: address,
-    });
-  }, [address]);
 
   useEffect(() => {
     const container = document.getElementById("map");
@@ -269,6 +256,7 @@ const HomeSection = () => {
       map.setCenter(markerPosition); // 클릭한 마커를 중심으로 지도 재설정
       setAddress(place.place_name); // 주소 업데이트
       infowindow.close(); // 마커 클릭 시 인포윈도우 닫기
+      setLocationFormOpen(false);
     });
 
     kakao.maps.event.addListener(marker, "mouseout", function () {
@@ -308,7 +296,7 @@ const HomeSection = () => {
       dispatch(createTweetRequest());
       try {
         const { data } = await api.post(
-          "http://localhost:8080/api/twits/create",
+          API_BASE_URL + "/api/twits/create",
           tweetData
         );
 
@@ -346,21 +334,18 @@ const HomeSection = () => {
 
   const ethicreveal = async (twitid, twitcontent) => {
     try {
-      const response = await fetch(
-        "http://localhost:8080/api/ethic/reqsentence",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${jwtToken}`,
-          },
-          body: JSON.stringify({
-            id: twitid,
-            content: twitcontent,
-          }),
-        }
-      );
-      console.log("response.status: ",response);
+      const response = await fetch(API_BASE_URL + "/api/ethic/reqsentence", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwtToken}`,
+        },
+        body: JSON.stringify({
+          id: twitid,
+          content: twitcontent,
+        }),
+      });
+      console.log("response.status: ", response);
       if (response.status === 200) {
         console.log("response: ",response.json());
         setLoading(false);
@@ -421,10 +406,40 @@ const HomeSection = () => {
     }
   };
 
+  const [totalEthicRateMAX, setTotalEthicRateMAX] = useState(0);
+  const [averageEthicRateMAX, setAverageEthicRateMAX] = useState(0);
+
+  useEffect(() => {
+    // Calculate total ethicrateMAX
+    const totalEthicRateMAXValue = twit.twits.reduce(
+      (sum, tweet) => {
+        // ethiclabel이 4인 경우 0으로 포함하여 합산
+        return sum + (tweet.ethiclabel === 4 ? 0 : tweet.ethicrateMAX || 0);
+      },
+      0
+    );
+
+    // Calculate average ethicrateMAX
+    const averageEthicRateMAXValue =
+    twit.twits.length > 0
+      ? totalEthicRateMAXValue / twit.twits.length
+      : 0;
+
+    // 정수로 변환
+    const roundedAverageEthicRateMAX = Math.floor(averageEthicRateMAXValue);
+
+    // 상태 업데이트
+    setTotalEthicRateMAX(totalEthicRateMAXValue);
+    setAverageEthicRateMAX(roundedAverageEthicRateMAX);
+
+    // ... (다른 코드)
+  }, [twit.twits, auth.user]);
+
   return (
     <div className="space-y-5">
       <section className="sticky top-0">
         <h1 className="py-5 text-xl font-bold opacity-90 ml-5">홈</h1>
+        <p>평균 ethicrateMAX: {averageEthicRateMAX}</p>
       </section>
       <section className="pb-10">
         {/* ${theme.currentTheme==="dark"?" bg-[#151515] p-10 rounded-md mb-10":""} */}
@@ -480,7 +495,6 @@ const HomeSection = () => {
                       onChange={handleSelectImage}
                     />
                   </label>
-
                   <label className="flex items-center space-x-2  rounded-md cursor-pointer">
                     <SlideshowIcon className="text-[#42c924]" />
                     <input
@@ -490,7 +504,6 @@ const HomeSection = () => {
                       onChange={handleSelectVideo}
                     />
                   </label>
-
                   <label className="flex items-center space-x-2 rounded-md cursor-pointer">
                     <FmdGoodIcon
                       className="text-[#42c924]"
@@ -514,7 +527,6 @@ const HomeSection = () => {
                     )}
                   </div>
                 </div>
-
                 <div>
                   <Button
                     type="submit"
@@ -535,79 +547,66 @@ const HomeSection = () => {
           </div>
         </div>
         <div style={{ marginTop: 20 }}>
-        {isLocationFormOpen && showLocation && (
-              <div>
-                <div className="mt-2 mb-2 space-y-3">
-                  <div className="flex items-center text-gray-500">
-                    <form onSubmit={formikLocation.handleSubmit}>
-                      <Button
-                        type="submit"
-                        onClick={toggleMap}
-                        className="save-location-button"
+          {isLocationFormOpen && showLocation && (
+            <div>
+              <div className="map_wrap">
+                <div
+                  id="map"
+                  style={{
+                    width: "70%",
+                    height: "100%",
+                    position: "relative",
+                    overflow: "hidden",
+                  }}
+                ></div>
+                <div id="list_wrap" className="bg_white">
+                  <div className="option" style={{ textAlign: "right" }}>
+                    <div>
+                      <form
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          handleSearch();
+                        }}
                       >
-                        저장
-                      </Button>
-                    </form>
-                    <p className="text-gray-500 ml-3">{address}</p>
+                        <input
+                          type="text"
+                          value={searchKeyword}
+                          placeholder="장소·주소 검색"
+                          onChange={(e) => setSearchKeyword(e.target.value)}
+                          id="keyword"
+                          size="15"
+                          className={`${
+                            theme.currentTheme === "light" ? "" : "text-black"
+                          }`}
+                        />
+                        <Button type="submit">검색하기</Button>
+                      </form>
+                    </div>
                   </div>
-                </div>
+                  <hr />
 
-                <div className="map_wrap">
-                  <div
-                    id="map"
-                    style={{
-                      width: "70%",
-                      height: "100%",
-                      position: "relative",
-                      overflow: "hidden",
-                    }}
-                  ></div>
-                  <div id="list_wrap" className="bg_white">
-                    <div className="option" style={{ textAlign: "right" }}>
-                      <div>
-                        <form
-                          onSubmit={(e) => {
-                            e.preventDefault();
-                            handleSearch();
-                          }}
+                  <ul id="placesList">
+                    {currentItems.map((result, index) =>
+                      createSearchResultItem(result, index)
+                    )}
+                  </ul>
+
+                  <div id="pagination">
+                    <ul className={`page-numbers text-black`}>
+                      {pageNumbers.map((number) => (
+                        <li
+                          key={number}
+                          onClick={() => handlePageClick(number)}
                         >
-                          <input
-                            type="text"
-                            value={searchKeyword}
-                            placeholder="장소·주소 검색"
-                            onChange={(e) => setSearchKeyword(e.target.value)}
-                            id="keyword"
-                            size="15"
-                            className={`${theme.currentTheme === "light" ? "" : "text-black"}`}
-                          />
-                          <Button type="submit">검색하기</Button>
-                        </form>
-                      </div>
-                    </div>
-                    <hr />
-
-                    <ul id="placesList">
-                      {currentItems.map((result, index) =>
-                        createSearchResultItem(result, index)
-                      )}
+                          {number}
+                        </li>
+                      ))}
                     </ul>
-
-                    <div id="pagination">
-                      <ul className={`page-numbers text-black`}>
-                        {pageNumbers.map((number) => (
-                          <li
-                            key={number}
-                            onClick={() => handlePageClick(number)}
-                          >
-                            {number}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
                   </div>
                 </div>
               </div>
-            )}
+            </div>
+          )}
           {loading ? <Loading /> : null}
           {twit.twits && twit.twits.length > 0 ? (
             twit.twits.map((item) => <TwitCard twit={item} key={item.id} />)
@@ -616,10 +615,8 @@ const HomeSection = () => {
           )}
         </div>
       </section>
-      <section>
-        {uploadingImage ? <Loading/> : null}
-      </section>
-      <ScrollToTop/>
+      <section>{uploadingImage ? <Loading /> : null}</section>
+      <ScrollToTop />
     </div>
   );
 };

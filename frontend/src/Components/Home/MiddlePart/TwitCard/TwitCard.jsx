@@ -26,6 +26,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import ProgressBar from "@ramonak/react-progress-bar";
 import "react-toastify/dist/ReactToastify.css"; // React Toastify 스타일
 import * as Yup from "yup";
+import { API_BASE_URL } from "../../../../Config/apiConfig";
 import {
   decreaseNotificationCount,
   incrementNotificationCount,
@@ -43,12 +44,15 @@ import { uploadToCloudinary } from "../../../../Utils/UploadToCloudinary";
 import Loading from "../../../Profile/Loading/Loading";
 import "../TwitMap.css";
 import ReplyModal from "./ReplyModal";
+import { API_BASE_URL } from "../../../../Config/apiConfig";
+import GroupsIcon from "@mui/icons-material/Groups";
 
 const validationSchema = Yup.object().shape({
   content: Yup.string().required("내용이 없습니다"),
 });
 
 const TwitCard = ({ twit }) => {
+  const { com } = useSelector((store) => store);
   const [selectedImage, setSelectedImage] = useState(twit.image);
   const [selectedVideo, setSelectedVideo] = useState(twit.video);
   const [selectedLocation, setSelectedLocation] = useState(twit.location);
@@ -66,7 +70,7 @@ const TwitCard = ({ twit }) => {
 
   const [ethiclabel, setEthiclabel] = useState(twit.ethiclabel);
   const [ethicrateMAX, setEthicrateMAX] = useState(twit.ethicrateMAX); //윤리수치 최대 수치
-  console.log("twit.ethicratemax: ", twit);
+  // console.log("twit.ethicratemax: ", twit);
   //  const [isLoading, setIsLoading] = useState(false); //로딩창의 띄어짐의 유무를 판단한다. default는 true이다.
   const jwtToken = localStorage.getItem("jwt");
   const [isEdited, setIsEdited] = useState(twit.edited);
@@ -93,31 +97,6 @@ const TwitCard = ({ twit }) => {
   const [hoveredMarkerIndex, setHoveredMarkerIndex] = useState(null);
   const [showLocation, setShowLocation] = useState(true);
   const [isLocationSaved, setIsLocationSaved] = useState(false);
-  const [message, setMessage] = useState('');
-
-  // useEffect(() => {
-  //     const userId = 1; // 원하는 사용자 ID로 설정
-  //     const eventSource = new EventSource(`http://localhost:8080/notifications/subscribe/${userId}`);
-
-  //     // 서버에서 이벤트 수신 시 처리
-  //     eventSource.addEventListener('message', (event) => {
-  //         const data = JSON.parse(event.data);
-  //         setMessage(data);
-  //     });
-
-  //     return () => {
-  //         // 컴포넌트 언마운트 시 이벤트 소스 종료
-  //         eventSource.close();
-  //     };
-  // }, []);
-
-  // const eventSource = new EventSource(
-  //   "http://localhost:8080/notifications/subscribe/1"
-  // );
-
-  // eventSource.addEventListener("sse", (event) => {
-  //   console.log(event);
-  // });
 
   useEffect(() => {
     if (isLocationFormOpen && showLocation) {
@@ -143,21 +122,10 @@ const TwitCard = ({ twit }) => {
     }
   }, [isLocationFormOpen, showLocation]);
 
-  const toggleMap = (values) => {
-    console.log("values", values);
-    if (isLocationSaved) {
-      dispatch(updateTweet(values));
-    }
-    setLocationFormOpen(false);
-    setShowLocation(!isLocationSaved);
-    setIsLocationSaved(!isLocationSaved);
-  };
-
   const formikLocation = useFormik({
     initialValues: {
       location: address,
     },
-    onSubmit: toggleMap,
   });
 
   useEffect(() => {
@@ -321,6 +289,7 @@ const TwitCard = ({ twit }) => {
       map.setCenter(markerPosition); // 클릭한 마커를 중심으로 지도 재설정
       setAddress(place.place_name); // 주소 업데이트
       infowindow.close(); // 마커 클릭 시 인포윈도우 닫기
+      setLocationFormOpen(false);
     });
 
     kakao.maps.event.addListener(marker, "mouseout", function () {
@@ -362,10 +331,10 @@ const TwitCard = ({ twit }) => {
   };
 
   const handleLikeTweet = (num) => {
-     //const TuserId = twit.user.id;
+    //const TuserId = twit.user.id;
     // if (!isLiked) {
     //   dispatch(incrementNotificationCount(TuserId)); // 알림 카운트 증가
-    // } 
+    // }
     // else {
     //   dispatch(decreaseNotificationCount(TuserId));
     // }
@@ -378,11 +347,11 @@ const TwitCard = ({ twit }) => {
   const handleIncrement = () => {
     const twitId = twit.id;
     dispatch(incrementNotificationCount(twitId));
-  }
+  };
   const handleDecrease = () => {
     const TuserId = twit.user.id;
     dispatch(decreaseNotificationCount(TuserId));
-  }
+  };
 
   const handleCreateRetweet = () => {
     if (auth.user.id !== twit.user.id) {
@@ -465,23 +434,21 @@ const TwitCard = ({ twit }) => {
 
   const ethicreveal = async (twitid, twitcontent) => {
     try {
-      const response = await fetch(
-        "http://localhost:8080/api/ethic/reqsentence",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${jwtToken}`,
-          },
-          body: JSON.stringify({
-            id: twitid,
-            content: twitcontent,
-          }),
-        }
-      );
+      const response = await fetch(API_BASE_URL + "/api/ethic/reqsentence", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwtToken}`,
+        },
+        body: JSON.stringify({
+          id: twitid,
+          content: twitcontent,
+        }),
+      });
       console.log("response.statis: ", response);
       if (response.status === 200) {
         const responseData = await response.json();
+        console.log("responseData: ", response);
         setEthiclabel(responseData.ethiclabel);
         setEthicrateMAX(responseData.ethicrateMAX);
         setRefreshTwits((prev) => prev + 1);
@@ -596,6 +563,11 @@ const TwitCard = ({ twit }) => {
                 <LocationOnIcon />
                 <p className="text-gray-500">{twit.location || address}</p>
               </span>
+
+              <span className="flex items-center text-gray-500">
+                <p className="text-gray-500"><GroupsIcon sx={{marginRight: "7px"}}/>{twit.comName}</p>
+              </span>
+
               {twit.user.verified && (
                 <img className="ml-2 w-5 h-5" src="" alt="" loading="lazy" />
               )}
@@ -706,6 +678,7 @@ const TwitCard = ({ twit }) => {
                           completed={ethicrateMAX}
                           width="450%"
                           margin="2px 0px 4px 4px"
+                          bgColor={`${ethicrateMAX < 25 ? "hsla(195, 100%, 35%, 0.8)" : ethicrateMAX < 50 ? "hsla(120, 100%, 25%, 0.7)" : ethicrateMAX < 75 ? "hsla(48, 100%, 40%, 0.8)" : "hsla(0, 100%, 55%, 0.8)"}`}
                         />
                       </div>
                     )}
@@ -716,6 +689,7 @@ const TwitCard = ({ twit }) => {
                           completed={ethicrateMAX}
                           width="450%"
                           margin="2px 0px 4px 4px"
+                          bgColor={`${ethicrateMAX < 25 ? "hsla(195, 100%, 35%, 0.8)" : ethicrateMAX < 50 ? "hsla(120, 100%, 25%, 0.7)" : ethicrateMAX < 75 ? "hsla(48, 100%, 40%, 0.8)" : "hsla(0, 100%, 55%, 0.8)"}`}
                         />
                       </div>
                     )}
@@ -726,6 +700,7 @@ const TwitCard = ({ twit }) => {
                           completed={ethicrateMAX}
                           width="450%"
                           margin="2px 0px 4px 4px"
+                          bgColor={`${ethicrateMAX < 25 ? "hsla(195, 100%, 35%, 0.8)" : ethicrateMAX < 50 ? "hsla(120, 100%, 25%, 0.7)" : ethicrateMAX < 75 ? "hsla(48, 100%, 40%, 0.8)" : "red"}`}
                         />
                       </div>
                     )}
@@ -736,6 +711,7 @@ const TwitCard = ({ twit }) => {
                           completed={ethicrateMAX}
                           width="450%"
                           margin="2px 0px 4px 4px"
+                          bgColor={`${ethicrateMAX < 25 ? "hsla(195, 100%, 35%, 0.8)" : ethicrateMAX < 50 ? "hsla(120, 100%, 25%, 0.7)" : ethicrateMAX < 75 ? "hsla(48, 100%, 40%, 0.8)" : "hsla(0, 100%, 55%, 0.8)"}`}
                         />
                       </div>
                     )}
@@ -764,8 +740,6 @@ const TwitCard = ({ twit }) => {
                 </div>
               )}
             </div>
-            {/* <p>Received Message: {message}</p> */}
-            {/* <ToastContainer /> */}
             <div className="flex justify-between items-center mt-5">
               <div className="flex space-x-5 items-center">
                 {isEditing && (
@@ -794,6 +768,7 @@ const TwitCard = ({ twit }) => {
                         className="text-[#42c924]"
                         onClick={handleToggleLocationForm}
                       />
+                      <p className="text-gray-500 ml-3">{twit.twits?.location || address}</p>
                     </label>
                     <div className="relative">
                       <TagFacesIcon
@@ -816,21 +791,6 @@ const TwitCard = ({ twit }) => {
             </div>
             {isEditing && isLocationFormOpen && showLocation && (
               <div>
-                <div className="mt-2 mb-2 space-y-3">
-                  <div className="flex items-center text-gray-500">
-                    <form onSubmit={formikLocation.handleSubmit}>
-                      <Button
-                        type="submit"
-                        onClick={toggleMap}
-                        className="save-location-button"
-                      >
-                        저장
-                      </Button>
-                    </form>
-                    <p className="text-gray-500 ml-3">{address}</p>
-                  </div>
-                </div>
-
                 <div className="map_wrap">
                   <div
                     id="map"
@@ -857,13 +817,15 @@ const TwitCard = ({ twit }) => {
                             onChange={(e) => setSearchKeyword(e.target.value)}
                             id="keyword"
                             size="15"
-                            className={`${theme.currentTheme === "light" ? "" : "text-black"}`}
+                            className={`${
+                              theme.currentTheme === "light" ? "" : "text-black"
+                            }`}
                           />
                           <Button type="submit">검색하기</Button>
                         </form>
                       </div>
                     </div>
-                    <hr />
+                    
 
                     <ul id="placesList">
                       {currentItems.map((result, index) =>
@@ -914,10 +876,19 @@ const TwitCard = ({ twit }) => {
                       isLiked ? "text-yellow-500" : "text-gray-600"
                     } space-x-3 flex items-center `}
                   >
-                     {isLiked ? (
-                      <FavoriteIcon onClick={() => {handleLikeTweet(-1);}} />
+                    {isLiked ? (
+                      <FavoriteIcon
+                        onClick={() => {
+                          handleLikeTweet(-1);
+                        }}
+                      />
                     ) : (
-                      <FavoriteBorderIcon onClick={() => {handleLikeTweet(1); handleIncrement();}} />
+                      <FavoriteBorderIcon
+                        onClick={() => {
+                          handleLikeTweet(1);
+                          handleIncrement();
+                        }}
+                      />
                     )}
                     {likes > 0 && <p>{likes}</p>}
                   </div>
@@ -933,15 +904,15 @@ const TwitCard = ({ twit }) => {
             </div>
           </div>
           <hr
-            style={{
-              marginTop: 3,
-              marginBottom: 10,
-              background: "grey",
-              color: "grey",
-              borderColor: "grey",
-              height: "1px",
-            }}
-          />
+                style={{
+                    marginTop: 10,
+                    marginBottom: 1,
+                    background: "hsla(0, 0%, 80%, 1)",
+                    color: 'grey',
+                    borderColor: "hsl(0, 0%, 80%)",
+                    height: '1px',
+                }}
+            />
         </div>
       </div>
 

@@ -35,6 +35,7 @@ import com.hippoddung.ribbit.ui.viewmodel.GetListIdPostsUiState
 import com.hippoddung.ribbit.ui.viewmodel.GetUserIdPostsUiState
 import com.hippoddung.ribbit.ui.viewmodel.ListIdUiState
 import com.hippoddung.ribbit.ui.viewmodel.ListViewModel
+import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
@@ -44,6 +45,7 @@ fun ListIdScreen(
 //    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
     getCardViewModel: GetCardViewModel,
+    postingViewModel: PostingViewModel,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
@@ -52,7 +54,6 @@ fun ListIdScreen(
     myId: Int,
     modifier: Modifier
 ) {
-
 //    비동기처리를 통해 listViewModel 에서 listIdUiState 를 업데이트하고 getCardViewModel 의 getListIdPosts 함수를 통해 getListIdPostsUiState 를 업데이트하도록 설계한다.
     when (listViewModel.listIdUiState) {
 
@@ -83,6 +84,7 @@ fun ListIdScreen(
                     Log.d("HippoLog, ListIdScreen", "getListIdPostsUiState Success")
                     ListIdSuccessScreen(
                         getCardViewModel = getCardViewModel,
+                        postingViewModel = postingViewModel,
                         authViewModel = authViewModel,
                         tokenViewModel = tokenViewModel,
                         userViewModel = userViewModel,
@@ -103,6 +105,7 @@ fun ListIdScreen(
 @Composable
 fun ListIdSuccessScreen(
     getCardViewModel: GetCardViewModel,
+    postingViewModel: PostingViewModel,
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
@@ -163,6 +166,7 @@ fun ListIdSuccessScreen(
                 ListIdPostsGrid(
                     posts = posts,
                     getCardViewModel = getCardViewModel,
+                    postingViewModel = postingViewModel,
                     userViewModel = userViewModel,
                     myId = myId,
                     navController = navController,

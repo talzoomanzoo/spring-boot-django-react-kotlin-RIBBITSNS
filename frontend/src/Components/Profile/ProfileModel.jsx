@@ -15,6 +15,8 @@ import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
 import "./ProfileModel.css";
 import axios from 'axios';
 import Loading from "./Loading/Loading";
+import "../RightPart/Scrollbar.css";
+import { API_BASE_URL } from "../../Config/apiConfig";
 
 const style = {
   position: "absolute",
@@ -101,7 +103,7 @@ const ProfileModel = ({ handleClose, open }) => {
   const handleGenerateImage = async () => {
     setLoading(true);
     try {
-      const url = 'http://localhost:8080/sendprompt';
+      const url = API_BASE_URL + '/sendprompt';
 
       const requestdata = {
         keyword: keyword,
@@ -135,7 +137,7 @@ const ProfileModel = ({ handleClose, open }) => {
   const handleAIImageChange = async (event) => {//ai이미지를 cloudinary로 업로드하는 함수이다.
     setLoading(true);
 
-    const response = await fetch('http://localhost:8080/webptojpg', {
+    const response = await fetch(API_BASE_URL + '/webptojpg', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -178,7 +180,7 @@ const ProfileModel = ({ handleClose, open }) => {
                   <Button type="submit">저장</Button>
                 </div>
 
-                <div className="customeScrollbar overflow-y-scroll  overflow-x-hidden h-[80vh]">
+                <div className="customeScrollbar overflow-y-scroll css-scroll overflow-x-hidden h-[80vh]">
                   <div className="">
                     <div className="w-full">
                       <div className="relative ">
@@ -258,7 +260,7 @@ const ProfileModel = ({ handleClose, open }) => {
                       fullWidth
                       id="website"
                       name="website"
-                      label="링크"
+                      label="웹사이트"
                       value={formik.values.website}
                       onChange={formik.handleChange}
                       error={
@@ -339,8 +341,9 @@ const ProfileModel = ({ handleClose, open }) => {
                 <div
                   className="image-source-options">
                   <p
+                    style={{ marginLeft: "22%"}}
                     align="center"
-                  >키워드를 입력하여 이미지를 생성해주세요!</p>
+                  >키워드를 입력하여 이미지를 생성해주세요! <button style={{marginLeft: "21%"}} onClick={() => closeInputAiKeywordModal()}><CloseIcon className={`${theme.currentTheme === "light" ? "text-black" : "text-white"}`} /></button></p>
                   <TextField
                     style={{
                       objectFit: 'cover',
@@ -378,7 +381,7 @@ const ProfileModel = ({ handleClose, open }) => {
                       }}
                     >
                     <a
-                      href={`http://localhost:8080/download`}
+                      href={ API_BASE_URL + `/download`}
                       download="generated_image.jpg"
                     >이미지 저장</a>
                     </Button>

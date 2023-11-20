@@ -13,6 +13,8 @@ import { deleteCom } from "../../Store/Community/Action";
 import "./ComCard.css";
 import ComModel2 from "./ComModel2";
 import ComModel3 from "./ComModel3";
+import "../RightPart/Scrollbar.css";
+import CloseIcon from "@mui/icons-material/Close";
 
 const ComCard = ({ com }) => {
 
@@ -45,6 +47,7 @@ const ComCard = ({ com }) => {
     const MembersListRef = useRef(null);
 
     const [openMembers, setOpenMembers] = useState(false);
+    const {theme} = useSelector((store) => store);
 
     const handleDelete = async () => {
         try {
@@ -100,10 +103,11 @@ const ComCard = ({ com }) => {
                 <Box
                     sx={style}
                 >
-                    <Button sx={{ fontSize: "105%", textDecoration: "underline", left: "25%" }}>Members of {com.comName}</Button>
+                    <Button sx={{ maxWidth: "200px", fontSize: "105%", textDecoration: "underline", left: "137px" }}>Members of {com.comName}</Button>
+                    <button style={{ position: "fixed", top: "25px", right: "30px"}} onClick={() => closeMembersModal()}><CloseIcon className={`${theme.currentTheme === "light" ? "text-black" : "text-white"}`} /></button>
                     <div
                         ref={MembersListRef}
-                        className={`overflow-y-scroll hideScrollbar h-[40vh]`}>
+                        className={`overflow-y-scroll css-scroll hideScrollbar h-[40vh]`}>
                         {com.followingsc?.map((item) => (
                             <div
                                 onClick={() => { navigateToProfile(item.id); closeMembersModal(); }}
@@ -127,11 +131,11 @@ const ComCard = ({ com }) => {
             </Modal>
 
             {showDeleteButton ? (
-                <div>
+                <>
                 <Button
                     onClick={handleOpenComModel}
                     //handleClose={handleCloseListsModel}
-                    sx={{ borderRadius: "20px" }}
+                    sx={{ borderRadius: "20px", marginLeft: "33%" }}
                     variant="outlined"
                     className="rounded-full"
                 >
@@ -141,19 +145,19 @@ const ComCard = ({ com }) => {
                 <Button
                     onClick={handleDelete}
                     //handleClose={handleCloseListsModel}
-                    sx={{ borderRadius: "20px" }}
+                    sx={{ borderRadius: "20px", marginLeft: "2%"}}
                     variant="outlined"
                     className="rounded-full"
                 >
                     삭제
                 </Button>
-                </div>
+                </>
             ) :
                 (
                     <Button
                         onClick={handleOpenComModel3}
                         //handleClose={handleCloseListsModel}
-                        sx={{ borderRadius: "20px" }}
+                        sx={{ borderRadius: "20px", marginLeft: "45%"}}
                         variant="outlined"
                         className="rounded-full"
                     >
@@ -179,7 +183,6 @@ const ComCard = ({ com }) => {
             </section>
 
             <section> 
-                {/* 모달 창 수정 필요, 라이트모드 다크모드 다름 */}
                 <Modal
                     open={openAlertModal}
                     handleClose={handleCloseAlertModal}
@@ -189,11 +192,11 @@ const ComCard = ({ com }) => {
                         justifyContent: "center",
                     }}
                 >
-                    <div className="withdrawal-modal" style={{ background: "white", padding: "20px", borderRadius: "8px" }}>
+                    <div className={`withdrawal-modal outline-none ${theme.currentTheme === "light" ? "bg-gray-200" : "bg-stone-950"}`}  style={{padding: "20px", borderRadius: "8px" }}>
                         <p id="description">
                             해당 커뮤니티는 비공개입니다. 
                         </p>
-                        <Button onClick={handleCloseAlertModal}>확인</Button>
+                        <Button style={{marginLeft: "165px"}} onClick={handleCloseAlertModal}>확인</Button>
                     </div>
                 </Modal>
             </section>
@@ -203,15 +206,16 @@ const ComCard = ({ com }) => {
                 style={{
                     marginTop: 10,
                     marginBottom: 1,
-                    background: 'grey',
+                    background: "hsla(0, 0%, 80%, 1)",
                     color: 'grey',
-                    borderColor: 'grey',
+                    borderColor: "hsl(0, 0%, 80%)",
                     height: '1px',
                 }}
             />
             <section
                 style={{
-                    height: "100px"
+                    height: "100px",
+                    textAlign: "center"
                 }}
                 className="mt-5 items-center justify-content cursor-pointer"
                 onClick={() => handleNavigateToComDetail(com)}>

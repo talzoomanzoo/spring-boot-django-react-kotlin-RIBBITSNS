@@ -5,12 +5,12 @@ import ForwardToInboxIcon from "@mui/icons-material/ForwardToInbox";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import ListIcon from "@mui/icons-material/List";
 import {
-    Avatar,
-    Box,
-    Button,
-    IconButton,
-    Modal,
-    TextField,
+  Avatar,
+  Box,
+  Button,
+  IconButton,
+  Modal,
+  TextField,
 } from "@mui/material";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
@@ -21,6 +21,8 @@ import "react-toastify/dist/ReactToastify.css";
 import SockJS from "sockjs-client";
 import Stomp from "stompjs";
 import { searchChatUser } from "../../Store/Auth/Action";
+import "./Chat.css";
+import SearchIcon from "@mui/icons-material/Search";
 
 const Chat = () => {
   const style = {
@@ -60,6 +62,21 @@ const Chat = () => {
     right: "1%",
     width: 580,
   };
+
+  const userStyle = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 285,
+    minHeight: 200,
+    maxHeight: 200,
+    bgcolor: "background.paper",
+    p: 2,
+    borderRadius: 3,
+    outline: "none",
+    overflow: "scroll-y",
+  }
 
   const [roomName, setRoomName] = useState("");
   const [chatRooms, setChatRooms] = useState([]);
@@ -139,7 +156,7 @@ const Chat = () => {
           setCompleteCreated((prev) => prev + 1); //부분 렌더링
         }
       })
-      .catch((error) => {});
+      .catch((error) => { });
   };
 
   const handleSearchChatUser = (event) => {
@@ -163,7 +180,7 @@ const Chat = () => {
           setChatHistory(response.data); //해당 방 이전 채팅 내역을 출력
         }
       })
-      .catch((error) => {});
+      .catch((error) => { });
 
     setSelectedRoom(roomname); //해당 채팅방 이름
     setSelectedRoomId(roomId); //해당 채팅방 id
@@ -190,7 +207,7 @@ const Chat = () => {
           setCompleteEdited((prev) => prev + 1); //부분 렌더링
         }
       })
-      .catch((error) => {});
+      .catch((error) => { });
   };
 
   useEffect(() => {
@@ -262,7 +279,7 @@ const Chat = () => {
           setSearch(""); //검색창 초기화
         }
       })
-      .catch((error) => {});
+      .catch((error) => { });
   };
 
   useEffect(() => {
@@ -300,7 +317,7 @@ const Chat = () => {
         } else if (response.status === 404) {
         }
       })
-      .catch((error) => {});
+      .catch((error) => { });
   };
 
   useEffect(() => {
@@ -328,7 +345,7 @@ const Chat = () => {
         .then((response) => {
           setUserList(response.data);
         })
-        .catch((error) => {});
+        .catch((error) => { });
     }
   }, [modalIsOpen, selectedRoomId, finduserrender]); //부분 렌더링
 
@@ -355,7 +372,7 @@ const Chat = () => {
           );
         }
       })
-      .catch((error) => {});
+      .catch((error) => { });
   };
 
   const closeChatModal = () => {
@@ -364,6 +381,12 @@ const Chat = () => {
   const closeEditModal = () => {
     setEditModalIsOpen(false);
   };
+  const closeUserModal = () => {
+    setShowUserList(false);
+  }
+  const openUserModal = () => {
+    setShowUserList(true);
+  }
 
   return (
     <div>
@@ -381,10 +404,12 @@ const Chat = () => {
             type="text"
             placeholder="생성할 채팅방의 이름"
             onChange={(e) => setRoomName(e.target.value)}
-            className={`py-3 rounded-full outline-none text-gray-500 pl-12 ${
-              theme.currentTheme === "light" ? "bg-stone-300" : "bg-[#151515]"
-            }`}
+            className={`py-3 rounded-full outline-none text-gray-500 pl-12 ${theme.currentTheme === "light" ? "bg-stone-300" : "bg-[#151515]"
+              }`}
           />
+          <span className="absolute top-0 left-0 pl-3 pt-3">
+            <SearchIcon className="text-gray-400" />
+          </span>
           <AddIcon onClick={createRoom} className="ml-3 cursor-pointer" />
         </div>
       </section>
@@ -394,6 +419,7 @@ const Chat = () => {
         {chatRooms.length > 0 ? ( //채팅방 목록 출력
           chatRooms.map((room) => (
             <div
+              className="chat-card"
               key={room.roomId}
               style={{
                 padding: "10px",
@@ -404,13 +430,15 @@ const Chat = () => {
                 display: room.isVisible ? "block" : "none",
               }}
             >
-              <button
-                onClick={() => enterChatRoom(room.roomId, room.name)} //채팅방 입장
-                style={{ cursor: "pointer", fontSize: "larger" }}
-              >
-                <ChatIcon />
-                <span style={{ marginLeft: "5px" }}>{room.name}</span>
-              </button>
+              <div className="cursor-pointer" style={{ width: "100%" }} onClick={() => enterChatRoom(room.roomId, room.name)}>
+                <button
+                  //채팅방 입장
+                  style={{ cursor: "pointer", fontSize: "larger" }}
+                >
+                  <ChatIcon />
+                  <span style={{ marginLeft: "5px" }}>{room.name}</span>
+                </button>
+              </div>
               <div>
                 <Button
                   onClick={() => openEditModal(room.roomId, room.name)} //채팅방 정보 수정
@@ -426,16 +454,16 @@ const Chat = () => {
                   나가기
                 </Button>
               </div>
-              <hr
-            style={{
-              marginTop: 10,
-              marginBottom: 1,
-              background: 'grey',
-              color: 'grey',
-              borderColor: 'grey',
-              height: '1px',
-            }}
-          />
+              {/* <hr
+                style={{
+                  marginTop: 10,
+                  marginBottom: 1,
+                  background: 'grey',
+                  color: 'grey',
+                  borderColor: 'grey',
+                  height: '1px',
+                }}
+              /> */}
             </div>
           ))
         ) : (
@@ -461,12 +489,11 @@ const Chat = () => {
               onChange={handleSearchChatUser} //채팅방에 초대할 유저 입력
               type="text"
               placeholder="유저 검색"
-              className={`py-2 rounded-full outline-none text-gray-500 pl-12 ${
-                theme.currentTheme === "light" ? "bg-stone-300" : "bg-[#080808]"
-              }`}
+              className={`py-2 rounded-full outline-none text-gray-500 pl-12 ${theme.currentTheme === "light" ? "bg-stone-300" : "bg-[#080808]"
+                }`}
             />
             <IconButton
-              onClick={() => setShowUserList((prevState) => !prevState)} // Toggle showUserList
+              onClick={openUserModal} // Toggle showUserList
               aria-label="list"
             >
               <ListIcon />
@@ -480,16 +507,14 @@ const Chat = () => {
                         //초대할 유저 검색, rightpart에 있는 '사용자 및 글 검색'그대로 가져와 수정함
                         <div
                           key={item.id}
-                          className={`rounded-full outline-none text-gray-500 pl-6 ${
-                            theme.currentTheme === "light"
-                              ? "hover:bg-[#008000]"
-                              : "hover:bg-[#dbd9d9]"
-                          }
-                          ${
-                            theme.currentTheme === "light"
+                          className={`rounded-full outline-none text-gray-500 pl-6 ${theme.currentTheme === "light"
+                            ? "hover:bg-[#008000]"
+                            : "hover:bg-[#dbd9d9]"
+                            }
+                          ${theme.currentTheme === "light"
                               ? "text-black hover:text-white"
                               : "text-white  hover:text-black"
-                          } cursor-pointer`}
+                            } cursor-pointer`}
                           onClick={() => {
                             UserAddList(
                               selectedRoomId,
@@ -522,36 +547,65 @@ const Chat = () => {
             )}
           </div>
           {showUserList && (
-           <div
-           className="fixed top-0 right-0 bottom-0 left-0 bg-black bg-opacity-40 flex justify-center items-center"
-           style={{ display: showUserList ? 'flex' : 'none', position: 'absolute', zIndex: 1 }}
-         >
-           <div className={`p-4 rounded-md ${theme.currentTheme === "light" ? "bg-white" : "bg-stone-900"}`}>
-             <div className="flex items-center justify-between mb-4">
-               <h3 className={`text-lg font-bold ${theme.currentTheme === "light" ? "text-black" : "text-white"}`}>참여 중인 멤버</h3>
-               <button onClick={() => setShowUserList(false)}><CloseIcon className={`${theme.currentTheme === "light" ? "text-black" : "text-white"}`}/></button>
-             </div>
-             <ul>
-               {userList.map((user) => (
-                 <li key={user.email} className="flex items-center mb-2">
-                      <Avatar
-                        alt={user.fullName}
-                        src={
-                          user?.image
-                            ? user.image
-                            : "https://cdn.pixabay.com/photo/2023/10/24/01/42/art-8337199_1280.png"
-                        }
-                        loading="lazy"
-                      />
-                      <div className={`${theme.currentTheme === "light" ? "text-black" : "text-white"}`}>
-                        <p className="font-bold">{user.fullName}</p>
-                        <p className="opacity-70">{user.email.split(" ")[0]}</p>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
+            <Modal open={showUserList} onClose={closeUserModal}>
+              <Box sx={userStyle}>
+                <div className={`p-4 rounded-md customeScrollbar overflow-y-scroll css-scroll hideScrollbar h-[19vh] ${theme.currentTheme === "light" ? "bg-white" : "bg-stone-900"}`}>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className={`text-lg font-bold ${theme.currentTheme === "light" ? "text-black" : "text-white"}`}>참여 중인 멤버</h3>
+                    <button onClick={() => closeUserModal()}><CloseIcon className={`${theme.currentTheme === "light" ? "text-black" : "text-white"}`} /></button>
+                  </div>
+                  <ul>
+                    {userList.map((user) => (
+                      <li key={user.email} className="flex items-center mb-2">
+                        <Avatar
+                          alt={user.fullName}
+                          src={
+                            user?.image
+                              ? user.image
+                              : "https://cdn.pixabay.com/photo/2023/10/24/01/42/art-8337199_1280.png"
+                          }
+                          loading="lazy"
+                        />
+                        <div className={`${theme.currentTheme === "light" ? "text-black" : "text-white"}`}>
+                          <p className="font-bold">{user.fullName}</p>
+                          <p className="opacity-70">{user.email.split(" ")[0]}</p>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </Box>
+            </Modal>
+            //    <div
+            //    className="fixed top-0 right-0 bottom-0 left-0 bg-black bg-opacity-40 flex justify-center items-center"
+            //    style={{ display: showUserList ? 'flex' : 'none', position: 'absolute', zIndex: 1 }}
+            //  >
+            //    <div className={`p-4 rounded-md ${theme.currentTheme === "light" ? "bg-white" : "bg-stone-900"}`}>
+            //      <div className="flex items-center justify-between mb-4">
+            //        <h3 className={`text-lg font-bold ${theme.currentTheme === "light" ? "text-black" : "text-white"}`}>참여 중인 멤버</h3>
+            //        <button onClick={() => setShowUserList(false)}><CloseIcon className={`${theme.currentTheme === "light" ? "text-black" : "text-white"}`}/></button>
+            //      </div>
+            //      <ul>
+            //        {userList.map((user) => (
+            //          <li key={user.email} className="flex items-center mb-2">
+            //               <Avatar
+            //                 alt={user.fullName}
+            //                 src={
+            //                   user?.image
+            //                     ? user.image
+            //                     : "https://cdn.pixabay.com/photo/2023/10/24/01/42/art-8337199_1280.png"
+            //                 }
+            //                 loading="lazy"
+            //               />
+            //               <div className={`${theme.currentTheme === "light" ? "text-black" : "text-white"}`}>
+            //                 <p className="font-bold">{user.fullName}</p>
+            //                 <p className="opacity-70">{user.email.split(" ")[0]}</p>
+            //               </div>
+            //             </li>
+            //           ))}
+            //         </ul>
+            //       </div>
+            //     </div>
           )}
           <hr
             style={{
@@ -598,7 +652,7 @@ const Chat = () => {
                     >
                       {auth.user?.fullName === chat.sender ? (
                         <p
-                        className={`${theme.currentTheme === "light" ? "bg-stone-200 text-black" : "bg-stone-800 text-white"}`}
+                          className={`${theme.currentTheme === "light" ? "bg-stone-200 text-black" : "bg-stone-800 text-white"}`}
                           style={{
                             padding: "10px",
                             borderRadius: "10px",
@@ -634,7 +688,7 @@ const Chat = () => {
                               </p>
                             )}
                             <p
-                                                    className={`${theme.currentTheme === "light" ? "bg-stone-200 text-black" : "bg-stone-800 text-white"}`}
+                              className={`${theme.currentTheme === "light" ? "bg-stone-200 text-black" : "bg-stone-800 text-white"}`}
                               style={{
                                 // backgroundColor:
                                 //   auth.user?.fullName === chat.sender
@@ -678,11 +732,10 @@ const Chat = () => {
                   boxSizing: "border-box",
                   marginRight: "10px", // 왼쪽 여백 추가
                 }}
-                className={`py-2 rounded-full outline-none text-gray-500 pl-12 ${
-                  theme.currentTheme === "light"
-                    ? "bg-stone-300"
-                    : "bg-[#151515]"
-                }`}
+                className={`py-2 rounded-full outline-none text-gray-500 pl-12 ${theme.currentTheme === "light"
+                  ? "bg-stone-300"
+                  : "bg-[#151515]"
+                  }`}
               />
               <ForwardToInboxIcon
                 fontSize="large"

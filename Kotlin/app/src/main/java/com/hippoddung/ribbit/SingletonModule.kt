@@ -9,11 +9,12 @@ import com.hippoddung.ribbit.data.local.TokenManager
 import com.hippoddung.ribbit.network.AuthApiService
 import com.hippoddung.ribbit.network.AuthAuthenticator
 import com.hippoddung.ribbit.network.AuthInterceptor
-import com.hippoddung.ribbit.network.BASE_URL
 import com.hippoddung.ribbit.network.CLOUDINARY_URL
+import com.hippoddung.ribbit.network.ChatApiService
 import com.hippoddung.ribbit.network.CommuApiService
 import com.hippoddung.ribbit.network.ListApiService
 import com.hippoddung.ribbit.network.RibbitApiService
+import com.hippoddung.ribbit.network.StringApiService
 import com.hippoddung.ribbit.network.UploadCloudinaryApiService
 import com.hippoddung.ribbit.network.UserApiService
 import dagger.Module
@@ -25,6 +26,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.scalars.ScalarsConverterFactory
 import javax.inject.Singleton
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "ribbit_preferences")
@@ -112,6 +114,25 @@ class SingletonModule {
             .client(okHttpClient)
             .build()
             .create(CommuApiService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideChatAPIService(okHttpClient: OkHttpClient, retrofit: Retrofit.Builder): ChatApiService =
+        retrofit
+            .client(okHttpClient)
+            .build()
+            .create(ChatApiService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideStringAPIService(okHttpClient: OkHttpClient): StringApiService =
+        Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .client(okHttpClient)
+            .build()
+            .create(StringApiService::class.java)
 
     @Singleton
     @Provides

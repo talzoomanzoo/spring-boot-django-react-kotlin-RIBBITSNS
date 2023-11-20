@@ -8,7 +8,6 @@ import {
   Button,
   IconButton,
   Modal,
-  Switch,
   TextField,
 } from "@mui/material";
 import { useFormik } from "formik";
@@ -26,6 +25,7 @@ import {
 import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
 import Loading from "../Profile/Loading/Loading";
 import "../RightPart/Scrollbar.css";
+import { Switch } from 'react-native'; // 여기서만 import 할것, switch 건들 ㄴㄴ
 
 const style = {
   position: "absolute",
@@ -129,9 +129,9 @@ const ListsModel2 = ({ list, handleClose, open }) => {
 
   const [isEnabled, setIsEnabled] = useState(list.privateMode);
 
-  const toggleSwitch = () => {
+  const toggleSwitch = async(listId) => {
     setIsEnabled(previousState => !previousState);
-    dispatch(setPrivate(list.id));
+    dispatch(setPrivate(listId));
   };
 
   const Element = memo(({ listVal }) => {
@@ -379,11 +379,10 @@ const ListsModel2 = ({ list, handleClose, open }) => {
                       marginTop: 1,
                       marginRight: 20,
                     }}
-
-                    trackColor={{ false: "#767577", true: "#36d916" }}
-                    // thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
+                    //trackColor={{ false: "#767577", true: "#36d916" }}
+                    thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
                     ios_backgroundColor="#3e3e3e"
-                    onValueChange={toggleSwitch}
+                    onValueChange={() => toggleSwitch(list.id)}
                     value={isEnabled}
                   />
                 </div>

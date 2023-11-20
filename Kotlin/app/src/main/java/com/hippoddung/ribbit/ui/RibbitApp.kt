@@ -1,5 +1,6 @@
 package com.hippoddung.ribbit.ui
 
+import ChatScreen
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -11,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -21,10 +23,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.hippoddung.ribbit.R
+import com.hippoddung.ribbit.network.bodys.User
 import com.hippoddung.ribbit.ui.screens.CreatingPostScreen
 import com.hippoddung.ribbit.ui.screens.EditingPostScreen
 import com.hippoddung.ribbit.ui.screens.authscreens.LoginScreen
 import com.hippoddung.ribbit.ui.screens.authscreens.SignUpScreen
+import com.hippoddung.ribbit.ui.screens.chatscreens.ChatRoomListScreen
+import com.hippoddung.ribbit.ui.screens.chatscreens.CreateChatRoomScreen
 import com.hippoddung.ribbit.ui.screens.commuscreens.CommuIdScreen
 import com.hippoddung.ribbit.ui.screens.commuscreens.CommuScreen
 import com.hippoddung.ribbit.ui.screens.commuscreens.CreatingCommuScreen
@@ -42,6 +47,7 @@ import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
 import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.AuthUiState
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
+import com.hippoddung.ribbit.ui.viewmodel.ChatViewModel
 import com.hippoddung.ribbit.ui.viewmodel.CommuViewModel
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.ListViewModel
@@ -69,6 +75,9 @@ enum class RibbitScreen(@StringRes val title: Int) {
     CreatingCommuScreen(title = R.string.creating_commu_screen),
     ManageCommuScreen(title = R.string.manage_commu_screen),
     EditingCommuScreen(title = R.string.editing_commu_screen),
+    ChatRoomListScreen(title = R.string.chat_room_list_screen),
+    CreateChatRoomScreen(title = R.string.create_chat_room_screen),
+    ChatScreen(title = R.string.chat_screen),
     LoadingScreen(title = R.string.loading_screen),
     ErrorScreen(title = R.string.error_screen)
 }
@@ -109,6 +118,7 @@ fun RibbitApp(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun RibbitScreen(
@@ -122,12 +132,17 @@ fun RibbitScreen(
     val listViewModel: ListViewModel = hiltViewModel()
     val commuViewModel: CommuViewModel = hiltViewModel()
     val postingViewModel: PostingViewModel = hiltViewModel()
+    val chatViewModel: ChatViewModel = hiltViewModel()
     var myId by remember { mutableStateOf(0) }
-    if(userViewModel.myProfileUiState is MyProfileUiState.Exist){   // 앱 시작시 casting 이 문제되는 경우가 있어 state check 를 넣어줌.
+    if (userViewModel.myProfileUiState is MyProfileUiState.Exist) {   // 앱 시작시 casting 이 문제되는 경우가 있어 state check 를 넣어줌.
         myId = (userViewModel.myProfileUiState as MyProfileUiState.Exist).myProfile.id!!
     }
-        // myId 는 다양한 페이지에서 쓰이므로 여기서 composable 에 기억시킨다.
-        // myId 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 상황이다.
+    var myProfile by remember { mutableStateOf(User()) }
+    if (userViewModel.myProfileUiState is MyProfileUiState.Exist) {   // 앱 시작시 casting 이 문제되는 경우가 있어 state check 를 넣어줌.
+        myProfile = (userViewModel.myProfileUiState as MyProfileUiState.Exist).myProfile
+    }
+    // myId 는 다양한 페이지에서 쓰이므로 여기서 composable 에 기억시킨다.
+    // myId 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 상황이다.
 //    val backStackEntry by navController.currentBackStackEntryAsState()
 //    val currentScreen = RibbitScreen.valueOf(backStackEntry?.destination?.route ?: RibbitScreen.HomeScreen.name)
 //    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -161,6 +176,7 @@ fun RibbitScreen(
             PostIdScreen(
                 navController = navController,
                 getCardViewModel = getCardViewModel,
+                postingViewModel = postingViewModel,
                 tokenViewModel = tokenViewModel,
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
@@ -176,6 +192,7 @@ fun RibbitScreen(
             ProfileScreen(
                 navController = navController,
                 getCardViewModel = getCardViewModel,
+                postingViewModel = postingViewModel,
                 tokenViewModel = tokenViewModel,
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
@@ -209,6 +226,7 @@ fun RibbitScreen(
             Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> EditingPostScreen")
             EditingPostScreen(
                 getCardViewModel = getCardViewModel,
+                postingViewModel = postingViewModel,
                 navController = navController,
                 modifier = modifier
             )
@@ -232,6 +250,7 @@ fun RibbitScreen(
             ListIdScreen(
                 navController = navController,
                 getCardViewModel = getCardViewModel,
+                postingViewModel = postingViewModel,
                 tokenViewModel = tokenViewModel,
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
@@ -264,6 +283,7 @@ fun RibbitScreen(
             CommuScreen(
                 navController = navController,
                 getCardViewModel = getCardViewModel,
+                postingViewModel = postingViewModel,
                 tokenViewModel = tokenViewModel,
                 authViewModel = authViewModel,
                 userViewModel = userViewModel,
@@ -315,6 +335,40 @@ fun RibbitScreen(
                 navController = navController,
                 commuViewModel = commuViewModel,
                 modifier = modifier
+            )
+        }
+
+        composable(route = RibbitScreen.ChatRoomListScreen.name) {
+            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> ChatRoomListScreen")
+            ChatRoomListScreen(
+                navController = navController,
+                chatViewModel = chatViewModel,
+                myProfile = myProfile,
+                modifier = modifier
+            )
+        }
+        composable(route = RibbitScreen.CreateChatRoomScreen.name) {
+            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> CreateChatRoomScreen")
+            CreateChatRoomScreen(
+                navController = navController,
+                chatViewModel = chatViewModel,
+                myProfile = myProfile,
+                modifier = modifier
+            )
+        }
+        composable(route = RibbitScreen.ChatScreen.name) {
+            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> ChatScreen")
+            ChatScreen(
+                modifier = modifier,
+                chatViewModel = chatViewModel,
+                getCardViewModel = getCardViewModel,
+                tokenViewModel = tokenViewModel,
+                authViewModel = authViewModel,
+                userViewModel = userViewModel,
+                listViewModel = listViewModel,
+                commuViewModel = commuViewModel,
+                navController = navController,
+                myProfile = myProfile,
             )
         }
 

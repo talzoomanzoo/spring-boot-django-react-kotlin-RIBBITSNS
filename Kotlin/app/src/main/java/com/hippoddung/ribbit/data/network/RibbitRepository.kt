@@ -16,7 +16,7 @@ class RibbitRepository @Inject constructor(
 
     // Post
     suspend fun postCreatePost(ribbitPost: RibbitPost) = ribbitApiService.postCreatePost(ribbitPost)
-
+    suspend fun postCreatePostEthic(ribbitPost: RibbitPost) = ribbitApiService.postCreatePostEthic(ribbitPost)
     suspend fun postEditPost(post: RibbitPost) = ribbitApiService.postEditPost(post)
     suspend fun deletePost(postId: Int) = ribbitApiService.deletePost(postId)
 
@@ -44,5 +44,5 @@ class RibbitRepository @Inject constructor(
     // Commu Posts
     suspend fun getAllCommuPosts() = ribbitApiService.getAllCommuPosts()
     suspend fun getCommuIdPosts(commuId: Int) = ribbitApiService.getCommuIdPosts(commuId)
-    suspend fun postCreateCommuPost(ribbitPost: RibbitPost, commuId: Int) = ribbitApiService.postCreateCommuPost(ribbitPost, commuId)
+    suspend fun postCreateCommuPost(ribbitPost: RibbitPost, commuId: Int) = ribbitApiService.postCreateCommuPost(commuId = commuId, ribbitPost = ribbitPost)
 }

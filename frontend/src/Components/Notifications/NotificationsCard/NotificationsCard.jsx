@@ -24,31 +24,29 @@ const NotificationsCard = ({ notification }) => {
                 className="cursor-pointer"
             />
             <div class="w-full">
-                <div class="flex justify-between items-center">
+                <div class="flex justify-between items-center cursor-pointer">
                     <div
                         className="flex cursor-pointer items-center space-x-1"
-                    >
-                        <li style={{listStyleType: 'none'}} className="list-css"><Avatar
-                        onClick={() => navigate(`/profile/${notification.user?.id}`)}
-                        alt="Avatar"
-                        src={
-                            notification.user?.image
-                              ? notification.user.image
-                              : "https://cdn.pixabay.com/photo/2023/10/24/01/42/art-8337199_1280.png"
-                          }
-                          loading="lazy"
-                          style={{float:"left"}}
-                        /><div onClick={handleNavigateToTwitDetial} style={{padding:"5px",float:"left"}}><span style={{padding:"5px",float:"left"}}>{notification.user.fullName}이(가)</span><span style={{padding:"5px",float:"left"}}>당신의 리빗을  좋아합니다.</span></div></li>   
+                    ><Avatar
+                    onClick={() => navigate(`/profile/${notification.user?.id}`)}
+                    alt="Avatar"
+                    src={
+                        notification.user?.image
+                          ? notification.user.image
+                          : "https://cdn.pixabay.com/photo/2023/10/24/01/42/art-8337199_1280.png"
+                      }
+                      loading="lazy"
+                      style={{float:"left"}}
+                    />
+                        <div style={{width: "800px"}} onClick={handleNavigateToTwitDetial} ><li style={{listStyleType: 'none'}}><div style={{padding:"5px",float:"left"}}><span style={{padding:"5px",float:"left"}}>{notification.user.fullName}이(가)</span><span style={{padding:"5px",float:"left"}}>당신의 리빗을  좋아합니다.</span></div></li></div>
                     </div>
                 </div>
                 <hr
             style={{
               marginTop: 10,
-              marginBottom: 1,
-              background: 'grey',
-              color: 'grey',
-              borderColor: 'grey',
-              height: '1px',
+              background: "hsla(0, 0%, 80%, 0.5)",
+              borderColor: "hsl(0, 0%, 80%)",
+              height: "5px",
             }}
           />
             </div>

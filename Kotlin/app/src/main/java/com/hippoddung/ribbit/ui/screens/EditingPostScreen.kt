@@ -64,13 +64,13 @@ import java.io.File
 @Composable
 fun EditingPostScreen(
     getCardViewModel: GetCardViewModel,
+    postingViewModel: PostingViewModel,
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
-    val postingViewModel: PostingViewModel = hiltViewModel()
     when (postingViewModel.editingPostUiState) {
         is EditingPostUiState.Ready -> {
-            Log.d("HippoLog, EditingPostScreen", "Ready")
+            Log.d("HippoLog, EditingPostScreen", "Ready, ${postingViewModel.editingPostUiState}")
             EditPostScreen(
                 navController = navController,
                 postingViewModel = postingViewModel,
@@ -80,19 +80,19 @@ fun EditingPostScreen(
         }
 
         is EditingPostUiState.Success -> {
-            Log.d("HippoLog, EditingPostScreen", "Success")
+            Log.d("HippoLog, EditingPostScreen", "Success, ${postingViewModel.editingPostUiState}")
             getCardViewModel.getRibbitPosts()
             navController.navigate(RibbitScreen.HomeScreen.name)
             postingViewModel.editingPostUiState = EditingPostUiState.Ready(RibbitPost())
         }
 
         is EditingPostUiState.Loading -> {
-            Log.d("HippoLog, EditingPostScreen", "Loading")
+            Log.d("HippoLog, EditingPostScreen", "Loading, ${postingViewModel.editingPostUiState}")
             LoadingScreen(modifier = modifier)
         }
 
         is EditingPostUiState.Error -> {
-            Log.d("HippoLog, EditingPostScreen", "Error")
+            Log.d("HippoLog, EditingPostScreen", "Error, ${postingViewModel.editingPostUiState}")
             ErrorScreen(modifier = modifier)
         }
     }

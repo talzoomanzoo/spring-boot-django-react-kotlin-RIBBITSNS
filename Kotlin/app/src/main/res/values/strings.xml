@@ -13,6 +13,7 @@
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
     <string name="manage">Manage</string>
+    <string name="keyword">Keyword</string>
 
     <!--    Screens   -->
     <string name="loading_screen">LoadingScreen</string>
@@ -38,6 +39,9 @@
     <string name="manage_commu_screen">ManageCommuScreen</string>
     <string name="creating_commu_screen">CreatingCommuScreen</string>
     <string name="editing_commu_screen">EditingCommuScreen</string>
+    <string name="chat_room_list_screen">ChatRoomListScreen</string>
+    <string name="create_chat_room_screen">CreateChatRoomScreen</string>
+    <string name="chat_screen">ChatScreen</string>
 
     <!--    Auth   -->
     <string name="login">Login</string>
@@ -77,4 +81,6 @@
     <string name="commu_background_image">Commu Background Image</string>
     <string name="delete_commu">Delete Commu</string>
 
+    <!--    Chat Screen   -->
+    <string name="create_chat_room">Create Chat Room</string>
 </resources>

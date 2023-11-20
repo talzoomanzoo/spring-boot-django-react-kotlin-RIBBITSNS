@@ -103,7 +103,7 @@ fun RibbitVideo(
                     Icons.Filled.PlayCircleOutline,
                     "Video play button.",
                     modifier = modifier.size(100.dp),
-                    tint = Color.Magenta
+                    tint = Color.Green
                 )
             }
         }

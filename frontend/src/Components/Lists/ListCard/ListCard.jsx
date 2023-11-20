@@ -6,7 +6,7 @@ import { useSelector } from "react-redux/es/hooks/useSelector";
 import { useNavigate } from "react-router-dom";
 import { deleteList } from "../../../Store/List/Action";
 import ListsModel2 from "../ListsModel2";
-import "./ListCard.css"
+import "./ListCard.css";
 
 const ListCard = ({ list }) => {
   const navigate = useNavigate();
@@ -43,13 +43,13 @@ const ListCard = ({ list }) => {
         <div class="flex justify-between items-center">
           <div
             onClick={handleNavigateToListsDetail}
-            className="flex cursor-pointer items-center space-x-1"
+            className="flex cursor-pointer items-center list-card w-full space-x-1"
           >
-            <li className="list-css"><span>{list.listName}</span></li>
+            <li style={{listStyleType: "none"}} ><span><ListIcon /> {list.listName}</span></li>
           </div>
         </div>
       </div>
-      {showDeleteButton && (
+      {showDeleteButton ? (
         <>
           <section>
             <Button
@@ -82,7 +82,7 @@ const ListCard = ({ list }) => {
             />
           </section>
         </>
-      )}
+      ): ( <div style={{width: "32.5%"}}></div>)}
     </div>
   );
 };

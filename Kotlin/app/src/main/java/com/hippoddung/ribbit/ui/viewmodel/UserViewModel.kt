@@ -1,6 +1,8 @@
 package com.hippoddung.ribbit.ui.viewmodel
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -8,9 +10,11 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hippoddung.ribbit.data.network.StringRepository
 import com.hippoddung.ribbit.data.network.UploadCloudinaryRepository
 import com.hippoddung.ribbit.data.network.UserRepository
 import com.hippoddung.ribbit.network.bodys.User
+import com.hippoddung.ribbit.network.bodys.requestbody.KarloUrl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,6 +24,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import retrofit2.HttpException
 import java.io.IOException
+import java.net.URLEncoder
 import javax.inject.Inject
 
 sealed interface MyProfileUiState {
@@ -72,9 +77,17 @@ sealed interface UploadProfileBackgroundImageCloudinaryUiState {
     object None : UploadProfileBackgroundImageCloudinaryUiState
 }
 
+sealed interface GetAiImageUrlUiState {
+    object Ready : GetAiImageUrlUiState
+    object Loading : GetAiImageUrlUiState
+    data class Success(val aiImageBitmap: Bitmap) : GetAiImageUrlUiState
+    object Error : GetAiImageUrlUiState
+}
+
 @HiltViewModel
 class UserViewModel @Inject constructor(
     private val userRepository: UserRepository,
+    private val stringRepository: StringRepository,
     private val uploadCloudinaryRepository: UploadCloudinaryRepository
 ) : ViewModel() {
     var myProfile = MutableLiveData<User?>()
@@ -85,6 +98,8 @@ class UserViewModel @Inject constructor(
         private set
 
     var editingProfileUiState: EditingProfileUiState by mutableStateOf(EditingProfileUiState.Ready)
+    private var editingProfileImageUrl: String? = null
+    private var editingProfileBackgroundImageUrl: String? = null
 
     var withdrawingUserUiState: WithdrawingUserUiState by mutableStateOf(WithdrawingUserUiState.Ready)
 
@@ -97,6 +112,9 @@ class UserViewModel @Inject constructor(
 
     private var _usersSearchData = MutableStateFlow<List<User>>(listOf())
     val usersSearchData: StateFlow<List<User>> = _usersSearchData.asStateFlow()
+
+    var getAiImageUiState: GetAiImageUrlUiState by mutableStateOf(GetAiImageUrlUiState.Ready)
+    private var kakaoImageUrlState: String? by mutableStateOf(null)
 
     fun getMyProfile() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -171,7 +189,7 @@ class UserViewModel @Inject constructor(
     }
 
     fun editProfile(
-        inputFullName: String?,
+        inputFullName: String = "",
         inputBio: String?,
         inputWebsite: String?,
         inputEducation: String?,
@@ -179,9 +197,6 @@ class UserViewModel @Inject constructor(
         profileImage: Bitmap?,
         profileBackgroundImage: Bitmap?,
     ) {
-        var profileImageUrl: String? = null
-        var profileBackgroundImageUrl: String? = null
-
         Log.d("HippoLog, UserViewModel", "editProfile 1")
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -200,7 +215,7 @@ class UserViewModel @Inject constructor(
                         // 성공하면 uploadImageCloudinary 함수에서 UploadImageCloudinaryUiState.Success 로 업데이트함
                         when (uploadProfileImageCloudinaryUiState) {
                             is UploadProfileImageCloudinaryUiState.Success -> {
-                                profileImageUrl =
+                                editingProfileImageUrl =
                                     (uploadProfileImageCloudinaryUiState as UploadProfileImageCloudinaryUiState.Success).profileImageUrl
                             }
 
@@ -217,7 +232,7 @@ class UserViewModel @Inject constructor(
                         // 성공하면 uploadVideoCloudinary 함수에서 UploadVideoCloudinaryUiState.Success 로 업데이트함
                         when (uploadProfileBackgroundImageCloudinaryUiState) {
                             is UploadProfileBackgroundImageCloudinaryUiState.Success -> {
-                                profileBackgroundImageUrl =
+                                editingProfileBackgroundImageUrl =
                                     (uploadProfileBackgroundImageCloudinaryUiState as UploadProfileBackgroundImageCloudinaryUiState.Success).profileBackgroundImageUrl
                             }
 
@@ -237,13 +252,13 @@ class UserViewModel @Inject constructor(
                 Log.d("HippoLog, UserViewModel", "editProfile 4")
                 putEditingProfile(
                     User(
-                        backgroundImage = profileBackgroundImageUrl,
+                        backgroundImage = editingProfileBackgroundImageUrl,
                         bio = inputBio,
                         birthDate = inputBirthDate,
                         education = inputEducation,
                         email = myProfile.value!!.email,
                         fullName = inputFullName,
-                        image = profileImageUrl,
+                        image = editingProfileImageUrl,
                         website = inputWebsite
                     )
                 )
@@ -295,6 +310,47 @@ class UserViewModel @Inject constructor(
                 SearchingUserUiState.Error
             }
         }
+    }
+
+    @SuppressLint("SuspiciousIndentation")
+    fun getAiImage(query: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            getAiImageUiState = GetAiImageUrlUiState.Loading
+            try {
+                Log.d("HippoLog, UserViewModel", "getAiImage 1-1")
+                kakaoImageUrlState = ((stringRepository.getSendPrompt(query)).kakaoImageUrl)
+            } catch (e: IOException) {
+                Log.d("HippoLog, UserViewModel", "getAiImage 1-2 error: ${e.message}")
+                getAiImageUiState = GetAiImageUrlUiState.Error
+            } catch (e: ExceptionInInitializerError) {
+                Log.d("HippoLog, UserViewModel", "getAiImage 1-3 error: ${e.message}")
+                getAiImageUiState = GetAiImageUrlUiState.Error
+            }
+            try {
+                Log.d("HippoLog, UserViewModel", "getAiImage 2-1")
+                kakaoImageUrlState?.let { Log.d("HippoLog, UserViewModel", it) }
+                val imageBytes: ByteArray =
+                    stringRepository.postWebpToJpg(KarloUrl(kakaoImageUrlState)).bytes()
+                getAiImageUiState =
+                    GetAiImageUrlUiState.Success(byteArrayToBitmap(imageBytes))
+            } catch (e: IOException) {
+                Log.d("HippoLog, UserViewModel", "getAiImage 2-2 error: ${e.message}")
+                getAiImageUiState = GetAiImageUrlUiState.Error
+            } catch (e: ExceptionInInitializerError) {
+                Log.d("HippoLog, UserViewModel", "getAiImage 2-3 error: ${e.message}")
+                getAiImageUiState = GetAiImageUrlUiState.Error
+            } catch (e: Exception) {
+                Log.d(
+                    "HippoLog, UserViewModel",
+                    "getAiImage 2-4 error: ${e.message}, ${e.stackTrace}"
+                )
+                getAiImageUiState = GetAiImageUrlUiState.Error
+            }
+        }
+    }
+
+    fun byteArrayToBitmap(imageBytes: ByteArray): Bitmap {
+        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
     }
 
     private suspend fun uploadProfileImageCloudinary(profileImage: Bitmap?) { // CreatingPostViewModel 에 있던 함수, 어떻게 불러와서 쓸지 결정을 못해서 우선 복붙함.

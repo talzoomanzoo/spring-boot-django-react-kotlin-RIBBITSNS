@@ -26,6 +26,11 @@ import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
 import BackdropComponent from "../Backdrop/Backdrop";
 import "../RightPart/Scrollbar.css";
 import { Switch } from 'react-native'; // 여기서만 import 할것, switch 건들 ㄴㄴ
+import "../RightPart/Scrollbar.css";
+import TabContext from "@mui/lab/TabContext";
+import TabList from "@mui/lab/TabList";
+import TabPanel from "@mui/lab/TabPanel";
+import Tab from "@mui/material/Tab";
 
 const style = {
     position: "absolute",
@@ -48,6 +53,7 @@ const ComModel2 = ({ com, handleClose, open }) => {
     const navigate = useNavigate();
     const { theme, auth } = useSelector((store) => store);
     const [followingscClicked, setFollowingscClicked] = useState(false);
+    const [tabValue, setTabValue] = useState(1);
 
     const handleSubmit = (values) => {
         dispatch(updateCom(values));
@@ -119,7 +125,7 @@ const ComModel2 = ({ com, handleClose, open }) => {
     };
 
     const handleAddUserSignup = (comId, userId) => {
-        
+
         dispatch(addUserActionSignup(comId, userId));
         dispatch(getUserActionCom(comId));
     }
@@ -127,6 +133,15 @@ const ComModel2 = ({ com, handleClose, open }) => {
     const handleFollowingscClick = () => {
         setFollowingscClicked(!followingscClicked);
     };
+
+    const handleTabChange = (event, newValue) => {
+        setTabValue(newValue);
+        if (newValue === 2) {
+
+        } else if (newValue === 1) {
+
+        }
+    }
 
     const Element = memo(({ comVal }) => {
         return (
@@ -208,7 +223,7 @@ const ComModel2 = ({ com, handleClose, open }) => {
                                         <img
                                             src={
                                                 formik.values?.backgroundImage ||
-                                                "https://t1.daumcdn.net/cfile/tistory/174FF7354E6ACC7606"
+                                                "https://png.pngtree.com/thumb_back/fw800/background/20230304/pngtree-green-base-vector-smooth-background-image_1770922.jpg"
                                             }
                                             alt="Img"
                                             className="w-full h-[12rem] object-cover object-center"
@@ -255,141 +270,145 @@ const ComModel2 = ({ com, handleClose, open }) => {
                                 />
                             </div>
 
-                            <div
-                                className="font-bold"
-                                style={{ marginTop: 20, marginLeft: 10, marginBottom: 10 }}>
-                                커뮤니티 사용자 검색
-                            </div>
-
-                            <div
-                                className="relative flex items-center"
-                            >
-                                <input
-                                    value={search}
-                                    onChange={handleSearchUser}
-                                    type="text"
-                                    placeholder="사용자를 검색하여 추가하거나 삭제할 수 있습니다."
-                                    className={`py-3 rounded-full onutline-none text-gray-500 w-full pl-12 ${theme.currentTheme === "light" ? "bg-stone-300" : "bg-[#151515]"
-                                        }`}
-                                />
-                                <span className="absolute top-0 left-0 pl-3 pt-3">
-                                    <SearchIcon className="text-gray-500" />
-                                </span>
-                                {search && (
-                                    <div
-                                        className={`css-scroll overflow-y-scroll hideScrollbar absolute z-50 top-14  border-gray-700 h-[40vh] w-full rounded-md ${theme.currentTheme === "light" ? "bg-white" : "bg-[#151515] border"
-                                            }`}
-                                    >
-                                        {auth.userSearchResult &&
-                                            auth.userSearchResult.map((item) => (
+                            <Box sx={{ width: "100%", typography: "body1", marginTop: "20px" }}>
+                                <TabContext value={tabValue}>
+                                    <Box sx={{ borderBottom: 1, borderColor: "divider", }}>
+                                        <TabList
+                                            onChange={handleTabChange}
+                                            aria-label="lab API tabs example"
+                                            
+                                        >
+                                            <Tab label="커뮤니티 사용자 검색" value={1} sx={{marginLeft: "11%"}} />
+                                            <Tab label="가입 신청 승인 대기 목록" value={2} sx={{marginLeft: "12%"}}/>
+                                        </TabList>
+                                    </Box>
+                                    <TabPanel value={1}>
+                                        <div
+                                            className="relative flex items-center"
+                                        >
+                                            <input
+                                                value={search}
+                                                onChange={handleSearchUser}
+                                                type="text"
+                                                placeholder="사용자를 검색하여 추가하거나 삭제할 수 있습니다."
+                                                className={`py-3 rounded-full onutline-none text-gray-500 w-full pl-12 ${theme.currentTheme === "light" ? "bg-stone-300" : "bg-[#151515]"
+                                                    }`}
+                                            />
+                                            <span className="absolute top-0 left-0 pl-3 pt-3">
+                                                <SearchIcon className="text-gray-500" />
+                                            </span>
+                                            {search && (
                                                 <div
-                                                    className={` flex float items-center `}
-                                                // ${
-                                                //   theme.currentTheme === "light"
-                                                //     ? "hover:bg-[#008000]"
-                                                //     : "hover:bg-[#dbd9d9]"
-                                                // } 
-                                                //   ${
-                                                //     theme.currentTheme === "light"
-                                                //       ? "text-black hover:text-white"
-                                                //       : "text-white  hover:text-black"
-                                                //   }
+                                                    className={`css-scroll overflow-y-scroll hideScrollbar absolute z-50 top-14  border-gray-700 h-[40vh] w-full rounded-md ${theme.currentTheme === "light" ? "bg-white" : "bg-[#151515] border"
+                                                        }`}
                                                 >
-                                                    <div
-                                                        style={{ paddingRight: 300 }}
-                                                        onClick={() => {
-                                                            if (Array.isArray(item)) {
-                                                                item.forEach((i) => navigateToProfile(i));
-                                                            } else {
-                                                                navigateToProfile(item.id);
-                                                            }
-                                                        }}
-                                                        className={`flex items-center left-3 justify-content hover:bg-green-700 relative right-5 cursor-pointer`}
-                                                        key={item.id}
-                                                    >
-                                                        <Avatar alt={item.fullName} src={item.image} loading="lazy" />
-                                                        <div className="ml-2">
-                                                            <p>{item.fullName}</p>
-                                                            <p className="text-sm">
-                                                                @{item.fullName.split(" ").join("_").toLowerCase()}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                    {itemsCheck(item) ? (
-                                                        <RemoveIcon
-                                                            style={{ marginLeft: 30 }}
-                                                            className="flex hover:bg-green-700 float-right absolute right-5 cursor-pointer"
-                                                            onClick={() => {
-                                                                handleAddUserCom(com.id, item.id);
-                                                            }}
-                                                        ></RemoveIcon>
-                                                    ) : (
-                                                        <AddIcon
-                                                            style={{ marginLeft: 0 }}
-                                                            className={`flex hover:bg-green-700 float-right absolute right-5 cursor-pointer`}
-                                                            onClick={() => {
-                                                                handleAddUserCom(com.id, item.id);
-                                                            }}
-                                                        ></AddIcon>
-                                                    )}
+                                                    {auth.userSearchResult &&
+                                                        auth.userSearchResult.map((item) => (
+                                                            <div
+                                                                className={` flex float items-center `}
+                                                            // ${
+                                                            //   theme.currentTheme === "light"
+                                                            //     ? "hover:bg-[#008000]"
+                                                            //     : "hover:bg-[#dbd9d9]"
+                                                            // } 
+                                                            //   ${
+                                                            //     theme.currentTheme === "light"
+                                                            //       ? "text-black hover:text-white"
+                                                            //       : "text-white  hover:text-black"
+                                                            //   }
+                                                            >
+                                                                <div
+                                                                    style={{ paddingRight: 300 }}
+                                                                    onClick={() => {
+                                                                        if (Array.isArray(item)) {
+                                                                            item.forEach((i) => navigateToProfile(i));
+                                                                        } else {
+                                                                            navigateToProfile(item.id);
+                                                                        }
+                                                                    }}
+                                                                    className={`flex items-center left-3 justify-content hover:bg-green-700 relative right-5 cursor-pointer`}
+                                                                    key={item.id}
+                                                                >
+                                                                    <Avatar alt={item.fullName} src={item.image} loading="lazy" />
+                                                                    <div className="ml-2">
+                                                                        <p>{item.fullName}</p>
+                                                                        <p className="text-sm">
+                                                                            @{item.fullName.split(" ").join("_").toLowerCase()}
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                                {itemsCheck(item) ? (
+                                                                    <RemoveIcon
+                                                                        style={{ marginLeft: 30 }}
+                                                                        className="flex hover:bg-green-700 float-right absolute right-5 cursor-pointer"
+                                                                        onClick={() => {
+                                                                            handleAddUserCom(com.id, item.id);
+                                                                        }}
+                                                                    ></RemoveIcon>
+                                                                ) : (
+                                                                    <AddIcon
+                                                                        style={{ marginLeft: 0 }}
+                                                                        className={`flex hover:bg-green-700 float-right absolute right-5 cursor-pointer`}
+                                                                        onClick={() => {
+                                                                            handleAddUserCom(com.id, item.id);
+                                                                        }}
+                                                                    ></AddIcon>
+                                                                )}
+                                                            </div>
+                                                        ))}
                                                 </div>
-                                            ))}
-                                    </div>
-                                )}
-                            </div>
-
-                            <div id="element">
-                                <div>
-                                    <Element comVal={com} />
-                                </div>
-                            </div>
-
-                            <div
-                                className="font-bold"
-                                style={{ marginTop: 20, marginLeft: 10, marginBottom: 10 }}>
-                                가입 신청 승인 대기 목록
-                            </div>
-
-                            <div className="overflow-y-scroll css-scroll hideScrollbar border-gray-700 h-[20vh] w-full rounded-md">
-                                <section className="space-y-5">
-                                    <div className="flex justify-between" style={{ flexDirection: "column" }}>
-                                        {com.followingscReady?.map((item) => (
-                                            <div className="flex justify-between items-center" key={item.id}>
-                                                <div
-                                                    style={{ paddingRight: 300, marginTop: 10, }}
-                                                    onClick={() => {
-                                                        if (Array.isArray(item)) {
-                                                            item.forEach((i) => navigateToProfile(i));
-                                                        } else {
-                                                            navigateToProfile(item.id);
-                                                        }
-                                                        handleFollowingscClick();
-                                                    }}
-                                                    className="flex items-center absolute left-2 justify-between hover:bg-green-700 relative right-5 cursor-pointer"
-                                                >
-                                                    <Avatar alt={item.fullName} src={item.image} loading="lazy" />
-                                                    <div className="ml-2">
-                                                        <p>{item.fullName}</p>
-                                                        <p className="text-sm text-gray-400">
-                                                            {item.email.split(" ").join("_").toLowerCase()}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                {itemsCheck(item) ? (
-                                                    null
-                                                ) : (
-                                                    <AddIcon
-                                                        className="flex hover:bg-green-700 relative right-5 cursor-pointer"
-                                                        onClick={() => {
-                                                            handleAddUserSignup(com.id, item.id);
-                                                        }}
-                                                    ></AddIcon>
-                                                )}
+                                            )}
+                                        </div>
+                                        <div id="element">
+                                            <div>
+                                                <Element comVal={com} />
                                             </div>
-                                        ))}
-                                    </div>
-                                </section>
-                            </div>
+                                        </div>
+                                    </TabPanel>
+                                    <TabPanel value={2}>
+                                        <div className="overflow-y-scroll css-scroll hideScrollbar border-gray-700 h-[20vh] w-full rounded-md">
+                                            <section className="space-y-5">
+                                                <div className="flex justify-between" style={{ flexDirection: "column" }}>
+                                                    {com.followingscReady?.map((item) => (
+                                                        <div className="flex justify-between items-center" key={item.id}>
+                                                            <div
+                                                                style={{ paddingRight: 300, marginTop: 10, }}
+                                                                onClick={() => {
+                                                                    if (Array.isArray(item)) {
+                                                                        item.forEach((i) => navigateToProfile(i));
+                                                                    } else {
+                                                                        navigateToProfile(item.id);
+                                                                    }
+                                                                    handleFollowingscClick();
+                                                                }}
+                                                                className="flex items-center absolute left-2 justify-between hover:bg-green-700 relative right-5 cursor-pointer"
+                                                            >
+                                                                <Avatar alt={item.fullName} src={item.image} loading="lazy" />
+                                                                <div className="ml-2">
+                                                                    <p>{item.fullName}</p>
+                                                                    <p className="text-sm text-gray-400">
+                                                                        {item.email.split(" ").join("_").toLowerCase()}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                            {itemsCheck(item) ? (
+                                                                null
+                                                            ) : (
+                                                                <AddIcon
+                                                                    className="flex hover:bg-green-700 relative right-5 cursor-pointer"
+                                                                    onClick={() => {
+                                                                        handleAddUserSignup(com.id, item.id);
+                                                                    }}
+                                                                ></AddIcon>
+                                                            )}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </section>
+                                        </div>
+                                    </TabPanel>
+                                </TabContext>
+                            </Box>
 
                             <div
                                 className="space-y-3"
@@ -412,9 +431,11 @@ const ComModel2 = ({ com, handleClose, open }) => {
                                             marginTop: 10,
                                             marginRight: 20,
                                         }}
-                                        trackColor={{ false: "#767577", true: "#81b0ff" }}
-                                        thumbColor={formik.values.privateMode ? "#f5dd4b" : "#f4f3f4"}
+                                        trackColor={{ false: "#767577", true: "#36d916" }}
+                                        // thumbColor={formik.values.privateMode ? "#f5dd4b" : "#f4f3f4"}
                                         ios_backgroundColor="#3e3e3e"
+                                        //onValueChange={toggleSwitch}
+                                        //value={isEnabled}
                                         value={formik.values.privateMode}
                                         onValueChange={value => formik.setFieldValue('privateMode', value)}
                                         error={

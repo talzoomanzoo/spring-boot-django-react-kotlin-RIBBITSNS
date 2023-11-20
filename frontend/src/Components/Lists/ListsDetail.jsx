@@ -36,7 +36,7 @@ const ListsDetail = () => {
                     onClick={handleBack}
                 />
                 <h1 className="py-5 text-xl font-bold opacity-90 ml-5 ${}">
-                    <p className="list-css">{`${list.list?.listName}`}</p>
+                    <p>{`${list.list?.listName}`}</p>
                 </h1>
             </section>
             <section>
@@ -44,7 +44,7 @@ const ListsDetail = () => {
                     className="w-[100%] h-[15rem] object-cover"
                     src={
                         list.findUser?.backgroundImage ||
-                        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWTkiI7iurdOiKMCBSGQ2lkBNJWxlGGQM3ZA&usqp=CAU"
+                        "https://png.pngtree.com/thumb_back/fw800/background/20230304/pngtree-green-base-vector-smooth-background-image_1770922.jpg"
                     }
                     alt=""
                     loading="lazy"
