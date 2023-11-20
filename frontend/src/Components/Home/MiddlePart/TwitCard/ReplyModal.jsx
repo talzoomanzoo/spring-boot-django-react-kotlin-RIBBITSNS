@@ -40,9 +40,6 @@ const ReplyModal = ({ handleClose, twitData, open }) => {
     console.log("val", values);
     dispatch(createTweetReply(values));
     actions.resetForm();
-    //setSelectedImage("");
-    // window.location.reload();
-    //setRefreshTwits((prev) => prev + 1);
     handleClose()
   };
 

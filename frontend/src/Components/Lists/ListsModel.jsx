@@ -47,8 +47,6 @@ const ListsModel = ({ changeLists, handleClose, open }) => {
     setBackgroundImage("");
     console.log("listsmodel values", values);
     handleClose();
-    //window.location.reload();
-    //setRefreshLists((prev) => prev + 1);
     changeLists();
   };
 

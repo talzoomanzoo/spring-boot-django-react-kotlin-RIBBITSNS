@@ -31,7 +31,7 @@ const NotificationsPage = () => {
             </section>
         <div id="np" className="space-y-3" style={{ marginTop: 20}}>
             <section
-                className="space-y-5 customeScrollbar overflow-y-scroll css-scroll hideScrollbar border-gray-700 h-[40vh] w-full rounded-md">
+                className="space-y-5 customeScrollbar overflow-y-scroll css-scroll hideScrollbar border-gray-700 w-full rounded-md">
                 {notification.notifications && notification.notifications.length > 0 ? (
                     notification.notifications.map((item) => <NotificationsCard notification={item} key={item.id} />)
                 ) : (

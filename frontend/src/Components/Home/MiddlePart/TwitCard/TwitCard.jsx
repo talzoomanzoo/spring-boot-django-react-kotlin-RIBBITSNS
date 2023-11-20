@@ -24,6 +24,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 // import { ToastContainer, toast } from "react-toastify";
+import GroupsIcon from "@mui/icons-material/Groups";
 import ProgressBar from "@ramonak/react-progress-bar";
 import "react-toastify/dist/ReactToastify.css"; // React Toastify 스타일
 import * as Yup from "yup";
@@ -45,7 +46,6 @@ import { uploadToCloudinary } from "../../../../Utils/UploadToCloudinary";
 import Loading from "../../../Profile/Loading/Loading";
 import "../TwitMap.css";
 import ReplyModal from "./ReplyModal";
-import GroupsIcon from "@mui/icons-material/Groups";
 
 const validationSchema = Yup.object().shape({
   content: Yup.string().required("내용이 없습니다"),
@@ -127,21 +127,10 @@ const TwitCard = ({ twit, changePage }) => {
     }
   }, [isLocationFormOpen, showLocation]);
 
-  const toggleMap = (values) => {
-    console.log("values", values);
-    if (isLocationSaved) {
-      dispatch(updateTweet(values));
-    }
-    setLocationFormOpen(false);
-    setShowLocation(!isLocationSaved);
-    setIsLocationSaved(!isLocationSaved);
-  };
-
   const formikLocation = useFormik({
     initialValues: {
       location: address,
     },
-    onSubmit: toggleMap,
   });
 
   useEffect(() => {
@@ -305,6 +294,7 @@ const TwitCard = ({ twit, changePage }) => {
       map.setCenter(markerPosition); // 클릭한 마커를 중심으로 지도 재설정
       setAddress(place.place_name); // 주소 업데이트
       infowindow.close(); // 마커 클릭 시 인포윈도우 닫기
+      setLocationFormOpen(false);
     });
 
     kakao.maps.event.addListener(marker, "mouseout", function () {
@@ -347,17 +337,9 @@ const TwitCard = ({ twit, changePage }) => {
 
 
   const handleLikeTweet = (num) => {
-    //const TuserId = twit.user.id;
-    // if (!isLiked) {
-    //   dispatch(incrementNotificationCount(TuserId)); // 알림 카운트 증가
-    // }
-    // else {
-    //   dispatch(decreaseNotificationCount(TuserId));
-    // }
     dispatch(likeTweet(twit.id));
     setIsLiked(!isLiked);
     setLikes(likes + num);
-    //window.location.reload();
     changePage();
   };
 
@@ -372,16 +354,13 @@ const TwitCard = ({ twit, changePage }) => {
 
   const handleCreateRetweet = () => {
     if (auth.user.id !== twit.user.id) {
-      //const TuserId = twit.user.id;
-      //dispatch(incrementNotificationCount(TuserId));
       dispatch(createRetweet(twit.id));
       setRetwit(isRetwit ? retwit - 1 : retwit + 1);
       setIsRetwit(!retwit);
-      window.location.reload();
+      changePage();
     } else {
       handleOpenAlertModal();
     }
-    //setRefreshTwits((prev) => prev + 1);
   };
 
   const handleCloseReplyModel = () => setOpenReplyModel(false);
@@ -400,13 +379,10 @@ const TwitCard = ({ twit, changePage }) => {
     try {
       dispatch(deleteTweet(twit.id));
       handleCloseDeleteMenu();
-      //setRefreshTwits((prev) => prev + 1);
-      window.location.reload();
-
+      changePage();
       const currentId = window.location.pathname.replace(/^\/twit\//, "");
       if (location.pathname === `/twit/${currentId}`) {
-        //setRefreshTwits((prev) => prev + 1);
-        window.location.reload();
+        changePage();
       } else {
         navigate(".", { replace: true });
       }
@@ -587,7 +563,10 @@ const TwitCard = ({ twit, changePage }) => {
               </span>
 
               <span className="flex items-center text-gray-500">
-                <p className="text-gray-500"><GroupsIcon sx={{marginRight: "7px"}}/>{twit.comName}</p>
+                <p className="text-gray-500">
+                  <GroupsIcon sx={{ marginRight: "7px" }} />
+                  {twit.comName}
+                </p>
               </span>
 
               {twit.user.verified && (
@@ -700,7 +679,15 @@ const TwitCard = ({ twit, changePage }) => {
                           completed={ethicrateMAX}
                           width="450%"
                           margin="2px 0px 4px 4px"
-                          bgColor={`${ethicrateMAX < 25 ? "hsla(195, 100%, 35%, 0.8)" : ethicrateMAX < 50 ? "hsla(120, 100%, 25%, 0.7)" : ethicrateMAX < 75 ? "hsla(48, 100%, 40%, 0.8)" : "hsla(0, 100%, 55%, 0.8)"}`}
+                          bgColor={`${
+                            ethicrateMAX < 25
+                              ? "hsla(195, 100%, 35%, 0.8)"
+                              : ethicrateMAX < 50
+                              ? "hsla(120, 100%, 25%, 0.7)"
+                              : ethicrateMAX < 75
+                              ? "hsla(48, 100%, 40%, 0.8)"
+                              : "hsla(0, 100%, 55%, 0.8)"
+                          }`}
                         />
                       </div>
                     )}
@@ -711,7 +698,15 @@ const TwitCard = ({ twit, changePage }) => {
                           completed={ethicrateMAX}
                           width="450%"
                           margin="2px 0px 4px 4px"
-                          bgColor={`${ethicrateMAX < 25 ? "hsla(195, 100%, 35%, 0.8)" : ethicrateMAX < 50 ? "hsla(120, 100%, 25%, 0.7)" : ethicrateMAX < 75 ? "hsla(48, 100%, 40%, 0.8)" : "hsla(0, 100%, 55%, 0.8)"}`}
+                          bgColor={`${
+                            ethicrateMAX < 25
+                              ? "hsla(195, 100%, 35%, 0.8)"
+                              : ethicrateMAX < 50
+                              ? "hsla(120, 100%, 25%, 0.7)"
+                              : ethicrateMAX < 75
+                              ? "hsla(48, 100%, 40%, 0.8)"
+                              : "hsla(0, 100%, 55%, 0.8)"
+                          }`}
                         />
                       </div>
                     )}
@@ -722,7 +717,15 @@ const TwitCard = ({ twit, changePage }) => {
                           completed={ethicrateMAX}
                           width="450%"
                           margin="2px 0px 4px 4px"
-                          bgColor={`${ethicrateMAX < 25 ? "hsla(195, 100%, 35%, 0.8)" : ethicrateMAX < 50 ? "hsla(120, 100%, 25%, 0.7)" : ethicrateMAX < 75 ? "hsla(48, 100%, 40%, 0.8)" : "red"}`}
+                          bgColor={`${
+                            ethicrateMAX < 25
+                              ? "hsla(195, 100%, 35%, 0.8)"
+                              : ethicrateMAX < 50
+                              ? "hsla(120, 100%, 25%, 0.7)"
+                              : ethicrateMAX < 75
+                              ? "hsla(48, 100%, 40%, 0.8)"
+                              : "red"
+                          }`}
                         />
                       </div>
                     )}
@@ -733,7 +736,15 @@ const TwitCard = ({ twit, changePage }) => {
                           completed={ethicrateMAX}
                           width="450%"
                           margin="2px 0px 4px 4px"
-                          bgColor={`${ethicrateMAX < 25 ? "hsla(195, 100%, 35%, 0.8)" : ethicrateMAX < 50 ? "hsla(120, 100%, 25%, 0.7)" : ethicrateMAX < 75 ? "hsla(48, 100%, 40%, 0.8)" : "hsla(0, 100%, 55%, 0.8)"}`}
+                          bgColor={`${
+                            ethicrateMAX < 25
+                              ? "hsla(195, 100%, 35%, 0.8)"
+                              : ethicrateMAX < 50
+                              ? "hsla(120, 100%, 25%, 0.7)"
+                              : ethicrateMAX < 75
+                              ? "hsla(48, 100%, 40%, 0.8)"
+                              : "hsla(0, 100%, 55%, 0.8)"
+                          }`}
                         />
                       </div>
                     )}
@@ -790,6 +801,8 @@ const TwitCard = ({ twit, changePage }) => {
                         className="text-[#42c924]"
                         onClick={handleToggleLocationForm}
                       />
+                      {/* <p className="text-gray-500 ml-3">{twit.twits?.location || address}</p> */}
+                      {twit.twits?.location || address}
                     </label>
                     <div className="relative">
                       <TagFacesIcon
@@ -810,81 +823,69 @@ const TwitCard = ({ twit, changePage }) => {
                 )}
               </div>
             </div>
-            {isEditing && isLocationFormOpen && showLocation && (
-              <div>
-                <div className="mt-2 mb-2 space-y-3">
-                  <div className="flex items-center text-gray-500">
-                    <form onSubmit={formikLocation.handleSubmit}>
-                      <Button
-                        type="submit"
-                        onClick={toggleMap}
-                        className="save-location-button"
-                      >
-                        저장
-                      </Button>
-                    </form>
-                    <p className="text-gray-500 ml-3">{address}</p>
-                  </div>
-                </div>
+            <div style={{ marginTop: 20 }}>
+              {isEditing && isLocationFormOpen && showLocation && (
+                <div>
+                  <div className="map_wrap">
+                    <div
+                      id="map"
+                      style={{
+                        width: "70%",
+                        height: "100%",
+                        position: "relative",
+                        overflow: "hidden",
+                      }}
+                    ></div>
+                    <div id="list_wrap" className="bg_white">
+                      <div className="option" style={{ textAlign: "right" }}>
+                        <div>
+                          <form
+                            onSubmit={(e) => {
+                              e.preventDefault();
+                              handleSearch();
+                            }}
+                          >
+                            <input
+                              type="text"
+                              value={searchKeyword}
+                              placeholder="장소·주소 검색"
+                              onChange={(e) => setSearchKeyword(e.target.value)}
+                              id="keyword"
+                              size="15"
+                              className={`${
+                                theme.currentTheme === "light"
+                                  ? ""
+                                  : "text-black"
+                              }`}
+                            />
+                            <Button type="submit">검색하기</Button>
+                          </form>
+                        </div>
+                      </div>
 
-                <div className="map_wrap">
-                  <div
-                    id="map"
-                    style={{
-                      width: "70%",
-                      height: "100%",
-                      position: "relative",
-                      overflow: "hidden",
-                    }}
-                  ></div>
-                  <div id="list_wrap" className="bg_white">
-                    <div className="option" style={{ textAlign: "right" }}>
-                      <div>
-                        <form
-                          onSubmit={(e) => {
-                            e.preventDefault();
-                            handleSearch();
-                          }}
-                        >
-                          <input
-                            type="text"
-                            value={searchKeyword}
-                            placeholder="장소·주소 검색"
-                            onChange={(e) => setSearchKeyword(e.target.value)}
-                            id="keyword"
-                            size="15"
-                            className={`${
-                              theme.currentTheme === "light" ? "" : "text-black"
-                            }`}
-                          />
-                          <Button type="submit">검색하기</Button>
-                        </form>
+                      <ul id="placesList">
+                        {currentItems.map((result, index) =>
+                          createSearchResultItem(result, index)
+                        )}
+                      </ul>
+
+                      <div id="pagination">
+                        <ul className={`page-numbers text-black`}>
+                          {pageNumbers.map((number) => (
+                            <li
+                              key={number}
+                              onClick={() => handlePageClick(number)}
+                            >
+                              {number}
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                     </div>
-                    
-
-                    <ul id="placesList">
-                      {currentItems.map((result, index) =>
-                        createSearchResultItem(result, index)
-                      )}
-                    </ul>
-
-                    <div id="pagination">
-                      <ul className={`page-numbers text-black`}>
-                        {pageNumbers.map((number) => (
-                          <li
-                            key={number}
-                            onClick={() => handlePageClick(number)}
-                          >
-                            {number}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
             <div className="py-5 flex flex-wrap justify-between items-center">
               {!isEditing && (
                 <>
@@ -938,15 +939,15 @@ const TwitCard = ({ twit, changePage }) => {
             </div>
           </div>
           <hr
-                style={{
-                    marginTop: 10,
-                    marginBottom: 1,
-                    background: "hsla(0, 0%, 80%, 1)",
-                    color: 'grey',
-                    borderColor: "hsl(0, 0%, 80%)",
-                    height: '1px',
-                }}
-            />
+            style={{
+              marginTop: 10,
+              marginBottom: 1,
+              background: "hsla(0, 0%, 80%, 1)",
+              color: "grey",
+              borderColor: "hsl(0, 0%, 80%)",
+              height: "1px",
+            }}
+          />
         </div>
       </div>
 
