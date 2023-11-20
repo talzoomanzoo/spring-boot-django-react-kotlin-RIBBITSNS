@@ -557,16 +557,23 @@ const TwitCard = ({ twit, changePage }) => {
                   </p>
                 )}
               </span>
+
+              
               <span className="flex items-center text-gray-500">
                 <LocationOnIcon />
                 <p className="text-gray-500">{twit.location || address}</p>
               </span>
 
               <span className="flex items-center text-gray-500">
-                <p className="text-gray-500">
-                  <GroupsIcon sx={{ marginRight: "7px" }} />
-                  {twit.comName}
-                </p>
+                
+                  {twit.isCom?
+                  <p className="text-gray-500">
+                  (<GroupsIcon sx={{ marginRight: "7px" }} />
+                  {twit.comName})
+                  </p>
+                  : null
+                }
+                
               </span>
 
               {twit.user.verified && (

@@ -6,12 +6,9 @@ import TwitCard from "../Home/MiddlePart/TwitCard/TwitCard";
 const LikeTop = ({sendRefreshPage, changePage}) => {
     const dispatch = useDispatch();
     const { twit } = useSelector(store => store);
-    //const [refreshTwits, setRefreshTwits] = useState(0);
-    //twit.topLikesTwits.sort((a, b) => b.totalLikes - a.totalLikes);
 
     useEffect(() => {
         dispatch(findByTopLikes());
-        //console.log("useEffect test2");
     }, [sendRefreshPage])
 
     return (

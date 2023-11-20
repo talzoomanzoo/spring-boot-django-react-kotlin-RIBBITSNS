@@ -57,12 +57,14 @@ const ComDetail = () => {
       const container = document.getElementById("map");
 
       if (container) {
+        
         const options = {
           center: new kakao.maps.LatLng(37.5662952, 126.9757567),
           level: 3,
         };
 
         if ("geolocation" in navigator) {
+          
           navigator.geolocation.getCurrentPosition((position) => {
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
@@ -72,6 +74,7 @@ const ComDetail = () => {
             setMap(map);
           });
         }
+        
       }
     }
   }, [isLocationFormOpen, showLocation, refreshTwits]);
@@ -85,20 +88,24 @@ const ComDetail = () => {
       setAddress(values.location);
       formikLocation.resetForm();
     },
+    
   });
 
   useEffect(() => {
+
     const container = document.getElementById("map");
     dispatch(findComById(param.id));
     dispatch(findTwitsByComId(param.id));
 
     if (container) {
+      
       const options = {
         center: new kakao.maps.LatLng(37.5662952, 126.9757567),
         level: 3,
       };
 
       if ("geolocation" in navigator) {
+        
         navigator.geolocation.getCurrentPosition((position) => {
           const latitude = position.coords.latitude;
           const longitude = position.coords.longitude;
@@ -106,17 +113,21 @@ const ComDetail = () => {
 
           const map = new kakao.maps.Map(container, options);
           setMap(map);
+          
         });
       }
     }
+    
   }, []);
 
   useEffect(() => {
     if (map) {
+      
       const mapTypeControl = new kakao.maps.MapTypeControl();
       map.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);
       const zoomControl = new kakao.maps.ZoomControl();
       map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+      
     }
   }, [map]);
 
@@ -292,7 +303,9 @@ const ComDetail = () => {
   });
 
   const handleToggleLocationForm = () => {
+    setLoading(true);
     setLocationFormOpen((prev) => !prev);
+    setLoading(false);
   };
 
   console.log("comDetail auth", auth);
@@ -577,6 +590,7 @@ const ComDetail = () => {
             </div>
           </div>
           <div style={{ marginTop: 20 }}>
+          {loading ? <Loading /> : null}
             {isLocationFormOpen && showLocation && (
               <div>
                 <div className="map_wrap">

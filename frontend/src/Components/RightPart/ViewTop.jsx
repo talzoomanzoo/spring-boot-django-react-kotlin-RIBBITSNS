@@ -9,7 +9,6 @@ const ViewTop = ({sendRefreshPage, changePage}) => {
 
     useEffect(() => {
         dispatch(findByTopViews());
-        //console.log("useEffect test1");
     }, [sendRefreshPage])
 
     
