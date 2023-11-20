@@ -26,6 +26,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import ProgressBar from "@ramonak/react-progress-bar";
 import "react-toastify/dist/ReactToastify.css"; // React Toastify 스타일
 import * as Yup from "yup";
+import { API_BASE_URL } from "../../../../Config/apiConfig";
 import {
   decreaseNotificationCount,
   incrementNotificationCount,
@@ -43,7 +44,6 @@ import { uploadToCloudinary } from "../../../../Utils/UploadToCloudinary";
 import Loading from "../../../Profile/Loading/Loading";
 import "../TwitMap.css";
 import ReplyModal from "./ReplyModal";
-import { API_BASE_URL } from "../../../../Config/apiConfig";
 
 const validationSchema = Yup.object().shape({
   content: Yup.string().required("내용이 없습니다"),
@@ -68,7 +68,7 @@ const TwitCard = ({ twit }) => {
 
   const [ethiclabel, setEthiclabel] = useState(twit.ethiclabel);
   const [ethicrateMAX, setEthicrateMAX] = useState(twit.ethicrateMAX); //윤리수치 최대 수치
-  console.log("twit.ethicratemax: ", twit);
+  // console.log("twit.ethicratemax: ", twit);
   //  const [isLoading, setIsLoading] = useState(false); //로딩창의 띄어짐의 유무를 판단한다. default는 true이다.
   const jwtToken = localStorage.getItem("jwt");
   const [isEdited, setIsEdited] = useState(twit.edited);
@@ -95,7 +95,6 @@ const TwitCard = ({ twit }) => {
   const [hoveredMarkerIndex, setHoveredMarkerIndex] = useState(null);
   const [showLocation, setShowLocation] = useState(true);
   const [isLocationSaved, setIsLocationSaved] = useState(false);
-  const [message, setMessage] = useState("");
 
   useEffect(() => {
     if (isLocationFormOpen && showLocation) {
@@ -443,24 +442,21 @@ const TwitCard = ({ twit }) => {
 
   const ethicreveal = async (twitid, twitcontent) => {
     try {
-      const response = await fetch(
-        API_BASE_URL + "/api/ethic/reqsentence",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${jwtToken}`,
-          },
-          body: JSON.stringify({
-            id: twitid,
-            content: twitcontent,
-          }),
-        }
-      );
+      const response = await fetch(API_BASE_URL + "/api/ethic/reqsentence", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwtToken}`,
+        },
+        body: JSON.stringify({
+          id: twitid,
+          content: twitcontent,
+        }),
+      });
       console.log("response.statis: ", response);
       if (response.status === 200) {
         const responseData = await response.json();
-        console.log("responseData: ",response);
+        console.log("responseData: ", response);
         setEthiclabel(responseData.ethiclabel);
         setEthicrateMAX(responseData.ethicrateMAX);
         setRefreshTwits((prev) => prev + 1);
@@ -579,8 +575,6 @@ const TwitCard = ({ twit }) => {
               <span className="flex items-center text-gray-500">
                 <p className="text-gray-500">{twit.comName}</p>
               </span>
-
-              {console.log("twit", twit)}
 
               {twit.user.verified && (
                 <img className="ml-2 w-5 h-5" src="" alt="" loading="lazy" />
@@ -845,7 +839,9 @@ const TwitCard = ({ twit }) => {
                             onChange={(e) => setSearchKeyword(e.target.value)}
                             id="keyword"
                             size="15"
-                            className={`${theme.currentTheme === "light" ? "" : "text-black"}`}
+                            className={`${
+                              theme.currentTheme === "light" ? "" : "text-black"
+                            }`}
                           />
                           <Button type="submit">검색하기</Button>
                         </form>

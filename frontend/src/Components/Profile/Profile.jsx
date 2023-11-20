@@ -5,7 +5,7 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
-import { Avatar, Box, Button, Divider, Modal } from "@mui/material";
+import { Avatar, Box, Button, Modal } from "@mui/material";
 import Tab from "@mui/material/Tab";
 import React, { Suspense, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,9 +20,9 @@ import {
 import TwitCard from "../Home/MiddlePart/TwitCard/TwitCard";
 //import Maplocation from "./Maplocation";
 //import ProfileModel from "./ProfileModel";
+import CloseIcon from "@mui/icons-material/Close";
 import "../RightPart/Scrollbar.css";
 import Loading from "./Loading/Loading";
-import CloseIcon from "@mui/icons-material/Close";
 
 const Maplocation = React.lazy(() => import("./Maplocation"));
 const ProfileModel = React.lazy(() => import("./ProfileModel"));
@@ -167,6 +167,35 @@ const Profile = () => {
     closeFollowingsModal();
   };
 
+  const [totalEthicRateMAX, setTotalEthicRateMAX] = useState(0);
+  const [averageEthicRateMAX, setAverageEthicRateMAX] = useState(0);
+
+  useEffect(() => {
+    // Calculate total ethicrateMAX
+    const totalEthicRateMAXValue = twit.twits.reduce(
+      (sum, tweet) => {
+        // ethiclabel이 4인 경우 0으로 포함하여 합산
+        return sum + (tweet.ethiclabel === 4 ? 0 : tweet.ethicrateMAX || 0);
+      },
+      0
+    );
+
+    // Calculate average ethicrateMAX
+    const averageEthicRateMAXValue =
+    twit.twits.length > 0
+      ? totalEthicRateMAXValue / twit.twits.length
+      : 0;
+
+    // 정수로 변환
+    const roundedAverageEthicRateMAX = Math.floor(averageEthicRateMAXValue);
+
+    // 상태 업데이트
+    setTotalEthicRateMAX(totalEthicRateMAXValue);
+    setAverageEthicRateMAX(roundedAverageEthicRateMAX);
+
+    // ... (다른 코드)
+  }, [twit.twits, auth.user]);
+
   return (
     <div>
       <section
@@ -225,6 +254,7 @@ const Profile = () => {
             </Button>
           )}
         </div>
+        <p>평균 ethicrateMAX: {averageEthicRateMAX}</p>
         <div>
           <div>
             <div className="flex items-center">
