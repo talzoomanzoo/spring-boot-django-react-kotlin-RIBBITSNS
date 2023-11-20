@@ -61,7 +61,7 @@ const Lists = () => {
 
             {/* ListTop */}
             <div
-                className="space-y-3"
+                className="space-y-3 font-bold"
                 style={{
                     marginTop: 10,
                     fontSize: "larger",
@@ -90,7 +90,7 @@ const Lists = () => {
 
             {/* ListBottom */}
             <div
-                className="space-y-3"
+                className="space-y-3 font-bold"
                 style={{
                     marginTop: 60,
                     fontSize: "larger",
