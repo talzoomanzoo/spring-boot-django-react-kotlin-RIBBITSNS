@@ -44,6 +44,7 @@ import Loading from "../../../Profile/Loading/Loading";
 import "../TwitMap.css";
 import ReplyModal from "./ReplyModal";
 import { API_BASE_URL } from "../../../../Config/apiConfig";
+import GroupsIcon from "@mui/icons-material/Groups";
 
 const validationSchema = Yup.object().shape({
   content: Yup.string().required("내용이 없습니다"),
@@ -577,7 +578,7 @@ const TwitCard = ({ twit }) => {
               </span>
 
               <span className="flex items-center text-gray-500">
-                <p className="text-gray-500">{twit.comName}</p>
+                <p className="text-gray-500"><GroupsIcon sx={{marginRight: "7px"}}/>{twit.comName}</p>
               </span>
 
               {console.log("twit", twit)}
