@@ -133,12 +133,10 @@ export const getUserProfile = (jwt) => async (dispatch) => {
     const response = await axios.get(`${API_BASE_URL}/api/users/profile`,{
       headers:{
         "Authorization":`Bearer ${jwt}`,
-
       }
     });
     const user = response.data;
     console.log("login user -: ", user);
-   
     dispatch(getUserProfileSuccess(user));
   } catch (error) {
     dispatch(

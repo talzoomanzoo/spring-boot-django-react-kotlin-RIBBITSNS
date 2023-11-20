@@ -16,7 +16,7 @@ import ComModel3 from "./ComModel3";
 import "../RightPart/Scrollbar.css";
 import CloseIcon from "@mui/icons-material/Close";
 
-const ComCard = ({ com }) => {
+const ComCard = ({ changeComs, com, changePage }) => {
 
     const style = {
         position: "absolute",
@@ -52,8 +52,7 @@ const ComCard = ({ com }) => {
     const handleDelete = async () => {
         try {
             dispatch(deleteCom(com.id));
-            //   handleClose();
-            window.location.reload();
+            changeComs();
         } catch (error) {
             console.error("커뮤니티 삭제 중 오류 발생: ", error);
         }
@@ -94,7 +93,7 @@ const ComCard = ({ com }) => {
     <section className="space-x-5 py-3 rounded-full items-center justify-content">
         <section className="my-5 space-x-5 items-center justify-content mt-5" style={{ marginTop: 3 }}>
             <div className="card">
-            <GroupsIcon className="cursor-pointer" onClick={openMembersModal} />
+            <GroupsIcon className="cursor-pointer" onClick={openMembersModal} style={{marginTop: 3, marginLeft: 10}}/>
 
             <Modal
                 open={openMembers}
@@ -171,6 +170,7 @@ const ComCard = ({ com }) => {
                     com={com}
                     open={openComModel}
                     handleClose={handleCloseComModel}
+                    changeComs={changeComs}
                 />
             </section>
 
@@ -179,6 +179,7 @@ const ComCard = ({ com }) => {
                     com={com}
                     open={openComModel3}
                     handleClose={handleCloseComModel3}
+                    changeComs={changeComs}
                 />
             </section>
 

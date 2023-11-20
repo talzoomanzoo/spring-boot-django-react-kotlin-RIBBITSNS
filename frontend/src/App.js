@@ -37,6 +37,7 @@ setCurrentTheme(localStorage.getItem("theme"))
       <Box sx={{}}>
         {/* <Button variant='content' color='success'>Check Theme</Button> */}
           <Routes>
+        {/* <Route path='/*' element={ auth.user?.fullName? <HomePage/>:<Authentication/>}></Route> */}
         <Route path='/*' element={ auth.user?.fullName? <HomePage/>:<Authentication/>}></Route>
         <Route path='/signin' element={<Authentication/>}></Route>
         <Route path='/signup' element={<Authentication/>}></Route>

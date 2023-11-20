@@ -6,7 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { findTwitsById } from '../../../Store/Tweet/Action';
 import TwitCard from './TwitCard/TwitCard';
 
-const TwitDetail = () => {
+const TwitDetail = ({changePage}) => {
     const param=useParams();
     // twit/83
     const dispatch=useDispatch();
@@ -19,6 +19,7 @@ const TwitDetail = () => {
     // 뒤로가기, 앞으로가기는 navigate(1)
     useEffect(()=>{
         dispatch(findTwitsById(param.id))
+        changePage();
     },[param.id])
 
     console.log("twitdetail twit check", twit);
@@ -40,12 +41,12 @@ const TwitDetail = () => {
           {"리빗"}
         </h1>
       </section>
-       {twit.twit && <TwitCard twit={twit.twit}/>}
+       {twit.twit && <TwitCard twit={twit.twit} changePage={changePage}/>}
        {/* twit.twit가 참이라면 TwitCard 렌더링 됨 */}
        <Divider sx={{margin:"2rem 0rem"}}/>
 
        <div>
-        {twit.twit?.replyTwits.slice().reverse().map((item)=><TwitCard twit={item}/>)}
+        {twit.twit?.replyTwits.slice().reverse().map((item)=><TwitCard twit={item} key={item.id} changePage={changePage}/>)}
         {/* twit.twit notnull 일때 replyTwits 역순 배열 */}
        </div>
     </div>

@@ -41,7 +41,7 @@ const createTweetFailure = (error) => ({
   payload: error,
 });
 
-const HomeSection = () => {
+const HomeSection = ({sendRefreshPage, changePage}) => {
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
@@ -133,6 +133,10 @@ const HomeSection = () => {
       map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
     }
   }, [map]);
+
+  useEffect(() => {
+    dispatch(getAllTweets());
+  }, [refreshTwits, sendRefreshPage]);
 
   function getListItem(index, places) {
     return (
@@ -283,10 +287,6 @@ const HomeSection = () => {
     pageNumbers.push(i);
   }
 
-  useEffect(() => {
-    dispatch(getAllTweets());
-  }, [refreshTwits]);
-
   const handleToggleLocationForm = () => {
     setLocationFormOpen((prev) => !prev);
   };
@@ -303,7 +303,7 @@ const HomeSection = () => {
 
         dispatch(createTweetSuccess(data));
 
-        const response = await ethicreveal(data.id, data.content);
+        await ethicreveal(data.id, data.content);
         handleSendPushNotification();
       } catch (error) {
         dispatch(createTweetFailure(error.message));
@@ -314,23 +314,12 @@ const HomeSection = () => {
   };
 
   const handleSubmit = (values, actions) => {
-    if (values.content.trim() !== "") {
-      // 게시글이 비어있지 않을 때만 실행
-      const tweetData = {
-        content: values.content,
-        image: values.image,
-        video: values.video,
-        location: address, // 저장한 주소값을 사용
-      };
-
-      dispatch(HomeCreateTweet(tweetData));
+      dispatch(HomeCreateTweet(values));
       actions.resetForm();
       setSelectedImage("");
       setSelectedVideo("");
       setAddress(""); // 게시글을 작성하고 나면 주소값 초기화
-    }
     handleCloseEmoji();
-    //window.location.reload();
   };
 
   const ethicreveal = async (twitid, twitcontent) => {
@@ -363,7 +352,7 @@ const HomeSection = () => {
       video: "",
       location: address,
     },
-    validationSchema,
+    //validationSchema,
     onSubmit: handleSubmit,
   });
 
@@ -616,9 +605,10 @@ const HomeSection = () => {
           )}
           {loading ? <Loading /> : null}
           {twit.twits && twit.twits.length > 0 ? (
-            twit.twits.map((item) => <TwitCard twit={item} key={item.id} />)
+            twit.twits.map((item) => <TwitCard twit={item} key={item.id} changePage={changePage}/>)
           ) : (
             <div>게시된 리빗이 없습니다.</div>
+            
           )}
         </div>
       </section>

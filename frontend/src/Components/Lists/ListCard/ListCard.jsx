@@ -1,6 +1,6 @@
 import ListIcon from "@mui/icons-material/List";
 import { Button } from "@mui/material";
-import { memo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux/es/hooks/useSelector";
 import { useNavigate } from "react-router-dom";
@@ -8,17 +8,24 @@ import { deleteList } from "../../../Store/List/Action";
 import ListsModel2 from "../ListsModel2";
 import "./ListCard.css";
 
-const ListCard = ({ list }) => {
+const ListCard = ({ changeLists, list }) => {
+  const [refreshLists, setRefreshLists] = useState(0);
   const navigate = useNavigate();
   const [openListsModel, setOpenListsModel] = useState();
   const handleCloseListsModel = () => setOpenListsModel(false);
   const handleOpenListsModel = () => setOpenListsModel(true);
   const dispatch = useDispatch();
 
-  const handleNavigateToListsDetail = async() => {
+  const handleNavigateToListsDetail = async () => {
     navigate(`/lists/${list.id}`);
   };
 
+  // const changeLists = () => {
+  //   setRefreshLists((prev) => prev + 1);
+  // };
+
+//   useEffect(() => {
+// }, [refreshLists]);
 
   const { auth } = useSelector((store) => store);
   const showDeleteButton = list.user.id === auth.user.id;
@@ -26,15 +33,13 @@ const ListCard = ({ list }) => {
   const handleDelete = async () => {
     try {
       dispatch(deleteList(list.id));
-      //   handleClose();
-      window.location.reload();
     } catch (error) {
       console.error("리스트 삭제 중 오류 발생: ", error);
     }
   };
 
   return (
-    <div class="flex space-x-5">
+    <div class="flex space-x-5 items-center">
       <div
         onClick={handleNavigateToListsDetail}
         className="cursor-pointer"
@@ -45,27 +50,31 @@ const ListCard = ({ list }) => {
             onClick={handleNavigateToListsDetail}
             className="flex cursor-pointer items-center list-card w-full space-x-1"
           >
-            <li style={{listStyleType: "none"}} ><span><ListIcon /> {list.listName}</span></li>
-          </div>
-        </div>
+            <li style={{ listStyleType: "none" }} >
+              <span>
+                <ListIcon style={{ marginBottom: 2, marginLeft: 10, marginRight: 10, size: "lg" }} /> {list.listName}
+              </span>
+            </li>
+            <div>
       </div>
-      {showDeleteButton ? (
+          </div>
+          {showDeleteButton ? (
         <>
-          <section>
+          <section className="inline-block" style={{marginLeft: 10}}>
             <Button
               onClick={handleDelete}
               sx={{ borderRadius: "20px" }}
               variant="outlined"
-              className="rounded-full btn btn-primary btn-ghost btn-close"
+              className="rounded-full btn btn-primary items-center btn-ghost btn-close"
             >
               삭제
             </Button>
           </section>
 
-          <section>
+          <section className="inline-block" style={{marginLeft: 3}}>
             <Button
               onClick={handleOpenListsModel}
-             //handleClose={handleCloseListsModel}
+              //handleClose={handleCloseListsModel}
               sx={{ borderRadius: "20px" }}
               variant="outlined"
               className="rounded-full"
@@ -79,10 +88,24 @@ const ListCard = ({ list }) => {
               list={list}
               open={openListsModel}
               handleClose={handleCloseListsModel}
+              changeLists={changeLists}
             />
           </section>
         </>
-      ): ( <div style={{width: "32.5%"}}></div>)}
+      ) : (<div style={{ width: "32.5%" }}></div>)
+      }
+        </div>
+      </div>
+      < hr
+        style={{
+          marginTop: 10,
+          marginBottom: 1,
+          background: "hsla(0, 0%, 80%, 1)",
+          color: 'grey',
+          borderColor: "hsl(0, 0%, 80%)",
+          height: '1px',
+        }}
+      />
     </div>
   );
 };

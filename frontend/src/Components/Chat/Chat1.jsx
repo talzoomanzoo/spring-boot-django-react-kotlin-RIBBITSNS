@@ -415,7 +415,8 @@ const Chat = () => {
       </section>
       {/* <button onClick={createRoom}>Create Chat Room</button> */}
       {error && <div style={{ color: "red" }}>{error}</div>}
-      <div>
+      <div className="space-y-3"
+          style={{ marginTop: 20}}>
         {chatRooms.length > 0 ? ( //채팅방 목록 출력
           chatRooms.map((room) => (
             <div
@@ -435,7 +436,7 @@ const Chat = () => {
                   //채팅방 입장
                   style={{ cursor: "pointer", fontSize: "larger" }}
                 >
-                  <ChatIcon />
+                  <ChatIcon style={{marginLeft: 10,marginRight: 10}}/>
                   <span style={{ marginLeft: "5px" }}>{room.name}</span>
                 </button>
               </div>

@@ -14,7 +14,7 @@ import ComBottom from "./ComBottom";
 import ComCard from "./ComCard";
 import ComModel from "./ComModel";
 
-const Communities = () => {
+const Communities = ({changePage}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { com, theme } = useSelector((store) => store);
@@ -24,10 +24,15 @@ const Communities = () => {
   const [openComModel, setOpenComModel] = useState();
   const handleCloseComModel = () => setOpenComModel(false);
   const handleOpenComModel = () => setOpenComModel(true);
+  const [refreshComs, setRefreshComs] = useState(0);
+
+  const changeComs = () => {
+    setRefreshComs((prev) => prev + 1);
+}
 
   useEffect(() => {
     dispatch(getAllComs());
-  }, []);
+    }, [refreshComs]);
 
   console.log("comcheck", com);
 
@@ -51,7 +56,7 @@ const Communities = () => {
 
       <div>
         <div
-          className="space-y-3"
+          className="font-bold space-y-3"
           style={{ marginTop: 10, fontSize: "larger" }}
         >
           커뮤니티 찾아보기
@@ -59,8 +64,7 @@ const Communities = () => {
             style={{
               marginTop: 10,
               background: "hsla(0, 0%, 80%, 0.5)",
-              borderColor: "hsl(0, 0%, 80%)",
-              height: "5px",
+              height: "6px",
             }}
           />
         </div>
@@ -74,9 +78,9 @@ const Communities = () => {
             pagination={{ clickable: true }}
             scrollbar={{ draggable: true }}
           >
-            {com.coms.map((item) => (
+            {com.coms?.map((item) => (
               <SwiperSlide>
-                <ComCard style={{ marginTop: 10 }} com={item} />
+                <ComCard style={{ marginTop: 10 }} com={item} changeComs={changeComs}/>
               </SwiperSlide>
 
             ))}
@@ -86,7 +90,7 @@ const Communities = () => {
 
       <section className="space-y-5" style={{ marginTop: 50 }}>
         <div
-          className="space-y-3"
+          className="font-bold space-y-3"
           style={{ marginTop: 10, fontSize: "larger" }}
         >
           내 커뮤니티 리빗 모아보기
@@ -94,19 +98,18 @@ const Communities = () => {
             style={{
               marginTop: 10,
               background: "hsla(0, 0%, 80%, 0.5)",
-              borderColor: "hsl(0, 0%, 80%)",
-              height: "5px",
+              height: "6px",
             }}
           />
         </div>
 
         <div>
-          <ComBottom />
+          <ComBottom changePage={changePage}/>
         </div>
       </section>
 
       <section>
-        <ComModel open={openComModel} handleClose={handleCloseComModel} />
+        <ComModel open={openComModel} handleClose={handleCloseComModel} changeComs={changeComs}/>
       </section>
     </div>
   );

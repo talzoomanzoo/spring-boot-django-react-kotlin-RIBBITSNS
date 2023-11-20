@@ -18,7 +18,6 @@ import { useNavigate } from "react-router-dom";
 import { searchUser } from "../../Store/Auth/Action";
 import {
     addUserActionCom,
-    getUserActionCom,
     updateCom,
     addUserActionSignup,
 } from "../../Store/Community/Action";
@@ -46,19 +45,24 @@ const style = {
     overflow: "scroll-y",
 };
 
-const ComModel2 = ({ com, handleClose, open }) => {
+const ComModel2 = ({ changeComs, com, handleClose, open }) => {
     const [uploading, setUploading] = useState(false);
     const [search, setSearch] = useState("");
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { theme, auth } = useSelector((store) => store);
     const [followingscClicked, setFollowingscClicked] = useState(false);
+    const [refreshComModel, setRefreshComModel] = useState(0);
+
+    const changeComModel = () => {
+        setRefreshComModel((prev) => prev + 1);
+    }
     const [tabValue, setTabValue] = useState(1);
 
     const handleSubmit = (values) => {
         dispatch(updateCom(values));
         handleClose();
-        window.location.reload();
+        changeComs();
     };
 
     const formik = useFormik({
@@ -88,15 +92,7 @@ const ComModel2 = ({ com, handleClose, open }) => {
             backgroundImage: com.backgroundImage || "",
             privateMode: com.privateMode || "",
         });
-
-        if (document.getElementById("element") !== null) {
-            const domNode = document.getElementById("element");
-            const element1 = createRoot(domNode);
-            element1.render(<Element comVal={com} />);
-        } else {
-            console.log("not exists");
-        }
-    }, []);
+    }, [refreshComModel]);
 
     const handleImageChange = async (event) => {
         setUploading(true);
@@ -118,16 +114,16 @@ const ComModel2 = ({ com, handleClose, open }) => {
     };
 
     const handleAddUserCom = (comId, userId) => {
-
         dispatch(addUserActionCom(comId, userId));
         setSearch("");
-        dispatch(getUserActionCom(comId));
+        changeComModel();
+        changeComs();
     };
 
     const handleAddUserSignup = (comId, userId) => {
-
         dispatch(addUserActionSignup(comId, userId));
-        dispatch(getUserActionCom(comId));
+        changeComModel();
+        changeComs();
     }
 
     const handleFollowingscClick = () => {
@@ -142,57 +138,6 @@ const ComModel2 = ({ com, handleClose, open }) => {
 
         }
     }
-
-    const Element = memo(({ comVal }) => {
-        return (
-            <div className="overflow-y-scroll hideScrollbar css-scroll border-gray-700 h-[20vh] w-full rounded-md">
-                <section className="space-y-5">
-                    <div className="flex justify-between" style={{ flexDirection: "column" }}>
-                        {comVal.followingsc?.map((item) => (
-                            <div className="flex justify-between items-center" key={item.id}>
-                                <div
-                                    style={{ paddingRight: 300, marginTop: 10, }}
-                                    onClick={() => {
-                                        if (Array.isArray(item)) {
-                                            item.forEach((i) => navigateToProfile(i));
-                                        } else {
-                                            navigateToProfile(item.id);
-                                        }
-                                        handleFollowingscClick();
-                                    }}
-                                    className="flex items-center absolute left-2 justify-between hover:bg-green-700 relative right-5 cursor-pointer"
-                                >
-                                    <Avatar alt={item.fullName} src={item.image} loading="lazy" />
-                                    <div className="ml-2">
-                                        <p>{item.fullName}</p>
-                                        <p className="text-sm text-gray-400">
-                                            {item.email.split(" ").join("_").toLowerCase()}
-                                        </p>
-                                    </div>
-                                </div>
-                                {itemsCheck(item) ? (
-                                    <RemoveIcon
-                                        style={{ marginLeft: 30 }}
-                                        className="flex hover:bg-green-700 relative right-5 cursor-pointer"
-                                        onClick={() => {
-                                            handleAddUserCom(com.id, item.id);
-                                        }}
-                                    ></RemoveIcon>
-                                ) : (
-                                    <AddIcon
-                                        className="flex hover:bg-green-700 relative right-5 cursor-pointer"
-                                        onClick={() => {
-                                            handleAddUserCom(com.id, item.id);
-                                        }}
-                                    ></AddIcon>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                </section>
-            </div>
-        );
-    });
 
     return (
         <div>
@@ -276,10 +221,10 @@ const ComModel2 = ({ com, handleClose, open }) => {
                                         <TabList
                                             onChange={handleTabChange}
                                             aria-label="lab API tabs example"
-                                            
+
                                         >
-                                            <Tab label="커뮤니티 사용자 검색" value={1} sx={{marginLeft: "11%"}} />
-                                            <Tab label="가입 신청 승인 대기 목록" value={2} sx={{marginLeft: "12%"}}/>
+                                            <Tab label="커뮤니티 사용자 검색" value={1} sx={{ marginLeft: "11%" }} />
+                                            <Tab label="가입 신청 승인 대기 목록" value={2} sx={{ marginLeft: "12%" }} />
                                         </TabList>
                                     </Box>
                                     <TabPanel value={1}>
@@ -359,11 +304,54 @@ const ComModel2 = ({ com, handleClose, open }) => {
                                                 </div>
                                             )}
                                         </div>
-                                        <div id="element">
-                                            <div>
-                                                <Element comVal={com} />
-                                            </div>
+
+                                        <div className="overflow-y-scroll hideScrollbar css-scroll border-gray-700 h-[20vh] w-full rounded-md">
+                                            <section className="space-y-5">
+                                                <div className="flex justify-between" style={{ flexDirection: "column" }}>
+                                                    {com.followingsc?.map((item) => (
+                                                        <div className="flex justify-between items-center" key={item.id}>
+                                                            <div
+                                                                style={{ paddingRight: 300, marginTop: 10, }}
+                                                                onClick={() => {
+                                                                    if (Array.isArray(item)) {
+                                                                        item.forEach((i) => navigateToProfile(i));
+                                                                    } else {
+                                                                        navigateToProfile(item.id);
+                                                                    }
+                                                                    handleFollowingscClick();
+                                                                }}
+                                                                className="flex items-center absolute left-2 justify-between hover:bg-green-700 relative right-5 cursor-pointer"
+                                                            >
+                                                                <Avatar alt={item.fullName} src={item.image} loading="lazy" />
+                                                                <div className="ml-2">
+                                                                    <p>{item.fullName}</p>
+                                                                    <p className="text-sm text-gray-400">
+                                                                        {item.email.split(" ").join("_").toLowerCase()}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                            {itemsCheck(item) ? (
+                                                                <RemoveIcon
+                                                                    style={{ marginLeft: 30 }}
+                                                                    className="flex hover:bg-green-700 relative right-5 cursor-pointer"
+                                                                    onClick={() => {
+                                                                        handleAddUserCom(com.id, item.id);
+                                                                    }}
+                                                                ></RemoveIcon>
+                                                            ) : (
+                                                                <AddIcon
+                                                                    className="flex hover:bg-green-700 relative right-5 cursor-pointer"
+                                                                    onClick={() => {
+                                                                        handleAddUserCom(com.id, item.id);
+                                                                    }}
+                                                                ></AddIcon>
+                                                            )}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </section>
                                         </div>
+
                                     </TabPanel>
                                     <TabPanel value={2}>
                                         <div className="overflow-y-scroll css-scroll hideScrollbar border-gray-700 h-[20vh] w-full rounded-md">
