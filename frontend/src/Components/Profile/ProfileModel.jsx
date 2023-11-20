@@ -39,6 +39,8 @@ const ProfileModel = ({ handleClose, open }) => {
   const dispatch = useDispatch();
   const { auth, theme } = useSelector(store => store);
 
+  // console.log("auth render check", auth);
+
   const fileInputRef = useRef(null);
 
   const handleSubmit = (values) => {

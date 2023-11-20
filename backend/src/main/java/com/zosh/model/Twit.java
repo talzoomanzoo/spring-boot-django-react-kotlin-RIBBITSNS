@@ -20,6 +20,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -28,7 +29,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @RequiredArgsConstructor
-
 public class Twit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,7 +42,7 @@ public class Twit {
     private User user;
     
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade= CascadeType.DETACH)
     @JsonBackReference
     @JoinColumn(name = "com_id") // 외래키를 매핑할 때 사용; name 속성에는 매핑할 외래키 이름 지정
     @JsonIgnoreProperties(value = {"twit", "likes", "user"})

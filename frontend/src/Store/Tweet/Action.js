@@ -309,12 +309,12 @@ export const createRetweet = (twitId) => {
       const response = await api.put(`/api/twits/${twitId}/retwit`);
       dispatch({
         type: RETWEET_CREATE_SUCCESS,
-        payload: response.data, // Assuming the response contains the created retweet data
+        payload: response.data,
       });
     } catch (error) {
       dispatch({
         type: RETWEET_CREATE_FAILURE,
-        payload: error.message, // Or handle the error as required
+        payload: error.message,
       });
     }
   };

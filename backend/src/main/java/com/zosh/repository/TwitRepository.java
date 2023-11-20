@@ -16,7 +16,7 @@ public interface TwitRepository extends JpaRepository<Twit, Long> {
 
 	@Query(value = "SELECT DISTINCT t.* FROM twit t JOIN likes l ON t.id = l.twit_id " +
 			"WHERE t.is_com = false AND t.is_twit = true AND l.twit_id IN " +
-			"(SELECT * FROM (SELECT DISTINCT l2.twit_id FROM likes l2 GROUP BY l2.twit_id ORDER BY COUNT(*) DESC LIMIT 3) AS t2) "
+			"(SELECT * FROM (SELECT DISTINCT l2.twit_id FROM likes l2 GROUP BY l2.twit_id ORDER BY COUNT(*) DESC LIMIT 4) AS t3) "
 			+
 			"ORDER BY (SELECT COUNT(*) FROM likes l3 WHERE l3.twit_id = t.id) DESC", nativeQuery = true)
 	public List<Twit> findTwitsByTopLike();

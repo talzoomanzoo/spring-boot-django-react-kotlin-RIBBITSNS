@@ -16,6 +16,7 @@ import {
   Menu,
   MenuItem,
   TextareaAutosize,
+  Modal,
 } from "@mui/material";
 import EmojiPicker from "emoji-picker-react";
 import { useFormik } from "formik";
@@ -23,6 +24,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 // import { ToastContainer, toast } from "react-toastify";
+import GroupsIcon from "@mui/icons-material/Groups";
 import ProgressBar from "@ramonak/react-progress-bar";
 import "react-toastify/dist/ReactToastify.css"; // React Toastify 스타일
 import * as Yup from "yup";
@@ -43,14 +45,12 @@ import { uploadToCloudinary } from "../../../../Utils/UploadToCloudinary";
 import Loading from "../../../Profile/Loading/Loading";
 import "../TwitMap.css";
 import ReplyModal from "./ReplyModal";
-import { API_BASE_URL } from "../../../../Config/apiConfig";
-import GroupsIcon from "@mui/icons-material/Groups";
 
 const validationSchema = Yup.object().shape({
   content: Yup.string().required("내용이 없습니다"),
 });
 
-const TwitCard = ({ twit }) => {
+const TwitCard = ({ twit, changePage }) => {
   const { com } = useSelector((store) => store);
   const [selectedImage, setSelectedImage] = useState(twit.image);
   const [selectedVideo, setSelectedVideo] = useState(twit.video);
@@ -67,9 +67,10 @@ const TwitCard = ({ twit }) => {
   const [isEditing, setIsEditing] = useState(false); // 편집 상태를 관리하는 상태 변수
   const [editedContent, setEditedContent] = useState(twit.content); // 편집된 내용을 관리하는 상태 변수
 
+
   const [ethiclabel, setEthiclabel] = useState(twit.ethiclabel);
   const [ethicrateMAX, setEthicrateMAX] = useState(twit.ethicrateMAX); //윤리수치 최대 수치
-  // console.log("twit.ethicratemax: ", twit);
+  console.log("twit.ethicratemax: ", twit);
   //  const [isLoading, setIsLoading] = useState(false); //로딩창의 띄어짐의 유무를 판단한다. default는 true이다.
   const jwtToken = localStorage.getItem("jwt");
   const [isEdited, setIsEdited] = useState(twit.edited);
@@ -96,6 +97,10 @@ const TwitCard = ({ twit }) => {
   const [hoveredMarkerIndex, setHoveredMarkerIndex] = useState(null);
   const [showLocation, setShowLocation] = useState(true);
   const [isLocationSaved, setIsLocationSaved] = useState(false);
+  const [message, setMessage] = useState("");
+  const [openAlertModal, setOpenAlertModal] = useState();
+  const handleCloseAlertModal = () => setOpenAlertModal(false);
+  const handleOpenAlertModal = () => setOpenAlertModal(true);
 
   useEffect(() => {
     if (isLocationFormOpen && showLocation) {
@@ -276,8 +281,8 @@ const TwitCard = ({ twit }) => {
       infowindow.close();
       infowindow.setContent(
         '<div style="padding:5px;font-size:12px;color:black;">' +
-          place.place_name +
-          "</div>"
+        place.place_name +
+        "</div>"
       );
       infowindow.open(map, marker);
     });
@@ -329,18 +334,12 @@ const TwitCard = ({ twit }) => {
     setAnchorEl(null);
   };
 
+
   const handleLikeTweet = (num) => {
-    //const TuserId = twit.user.id;
-    // if (!isLiked) {
-    //   dispatch(incrementNotificationCount(TuserId)); // 알림 카운트 증가
-    // }
-    // else {
-    //   dispatch(decreaseNotificationCount(TuserId));
-    // }
     dispatch(likeTweet(twit.id));
     setIsLiked(!isLiked);
     setLikes(likes + num);
-    window.location.reload();
+    changePage();
   };
 
   const handleIncrement = () => {
@@ -354,15 +353,13 @@ const TwitCard = ({ twit }) => {
 
   const handleCreateRetweet = () => {
     if (auth.user.id !== twit.user.id) {
-      const TuserId = twit.user.id;
-      //dispatch(incrementNotificationCount(TuserId));
       dispatch(createRetweet(twit.id));
       setRetwit(isRetwit ? retwit - 1 : retwit + 1);
       setIsRetwit(!retwit);
+      changePage();
     } else {
-      console.log("unable to create reribbit");
+      handleOpenAlertModal();
     }
-    window.location.reload();
   };
 
   const handleCloseReplyModel = () => setOpenReplyModel(false);
@@ -372,7 +369,8 @@ const TwitCard = ({ twit }) => {
     if (!isEditing) {
       navigate(`/twit/${twit.id}`);
       dispatch(viewPlus(twit.id));
-      window.location.reload();
+      setRefreshTwits((prev) => prev + 1);
+      changePage();
     }
   };
 
@@ -380,11 +378,10 @@ const TwitCard = ({ twit }) => {
     try {
       dispatch(deleteTweet(twit.id));
       handleCloseDeleteMenu();
-      window.location.reload();
-
+      changePage();
       const currentId = window.location.pathname.replace(/^\/twit\//, "");
       if (location.pathname === `/twit/${currentId}`) {
-        window.location.reload();
+        changePage();
       } else {
         navigate(".", { replace: true });
       }
@@ -428,7 +425,7 @@ const TwitCard = ({ twit }) => {
       setIsEditing(false);
       setLoading(false);
       handleCloseEditClick();
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const ethicreveal = async (twitid, twitcontent) => {
@@ -519,15 +516,15 @@ const TwitCard = ({ twit }) => {
     <div className="">
       {loading ? <Loading /> : null}
       {auth.findUser?.id !== twit.user?.id &&
-      location.pathname === `/profile/${auth.findUser?.id}` &&
-      twit.retwitUsersId?.length > 0 ? (
+        location.pathname === `/profile/${auth.findUser?.id}` &&
+        twit.retwitUsersId?.length > 0 ? (
         <div className="flex items-center font-semibold text-yellow-500 py-2">
           <RepeatIcon />
           <p className="ml-3">Reribbit</p>
         </div>
       ) : null}
       <div className="flex space-x-5 ">
-        <Avatar
+      <Avatar
           onClick={() => navigate(`/profile/${twit.user?.id}`)}
           alt="Avatar"
           src={
@@ -537,8 +534,9 @@ const TwitCard = ({ twit }) => {
           }
           className="cursor-pointer"
           loading="lazy"
+          style={{marginTop: 13}}
         />
-        <div className="w-full">
+        <div className="w-full" style={{marginTop: 15, marginBottom: 15}}>
           <div className="flex justify-between items-center ">
             <div
               onClick={() => navigate(`/profile/${twit.user.id}`)}
@@ -558,13 +556,23 @@ const TwitCard = ({ twit }) => {
                   </p>
                 )}
               </span>
+
+              
               <span className="flex items-center text-gray-500">
                 <LocationOnIcon />
                 <p className="text-gray-500">{twit.location || address}</p>
               </span>
 
               <span className="flex items-center text-gray-500">
-                <p className="text-gray-500"><GroupsIcon sx={{marginRight: "7px"}}/>{twit.comName}</p>
+                
+                  {twit.isCom?
+                  <p className="text-gray-500">
+                  (<GroupsIcon sx={{ marginRight: "7px" }} />
+                  {twit.comName})
+                  </p>
+                  : null
+                }
+                
               </span>
 
               {twit.user.verified && (
@@ -620,11 +628,10 @@ const TwitCard = ({ twit }) => {
               {isEditing ? (
                 <div>
                   <TextareaAutosize
-                    className={`${
-                      theme.currentTheme === "light"
+                    className={`${theme.currentTheme === "light"
                         ? "bg-white"
                         : "bg-[#151515]"
-                    }`}
+                      }`}
                     minRows={0}
                     maxRows={0}
                     value={editedContent}
@@ -670,47 +677,84 @@ const TwitCard = ({ twit }) => {
                   </p>
 
                   <p>
-                    {ethiclabel === 0 && (
+
+                    {twit.isReply === false && ethiclabel === 0 && (
                       <div className="flex items-center font-bold rounded-md">
                         폭력성
+                        {`${ethicrateMAX < 25 ? "😄" : ethicrateMAX < 50 ? "😅" : ethicrateMAX < 75 ? "☹️" : "🤬"}`}
                         <ProgressBar
                           completed={ethicrateMAX}
                           width="450%"
                           margin="2px 0px 4px 4px"
-                          bgColor={`${ethicrateMAX < 25 ? "hsla(195, 100%, 35%, 0.8)" : ethicrateMAX < 50 ? "hsla(120, 100%, 25%, 0.7)" : ethicrateMAX < 75 ? "hsla(48, 100%, 40%, 0.8)" : "hsla(0, 100%, 55%, 0.8)"}`}
+                          bgColor={`${
+                            ethicrateMAX < 25
+                              ? "hsla(195, 100%, 35%, 0.8)"
+                              : ethicrateMAX < 50
+                              ? "hsla(120, 100%, 25%, 0.7)"
+                              : ethicrateMAX < 75
+                              ? "hsla(48, 100%, 40%, 0.8)"
+                              : "red"
+                          }`}
                         />
                       </div>
                     )}
-                    {ethiclabel === 1 && (
+                    {twit.reply === false && ethiclabel === 1 && (
                       <div className="flex items-center font-bold rounded-md">
                         선정성
+                        {`${ethicrateMAX < 25 ? "😄" : ethicrateMAX < 50 ? "😅" : ethicrateMAX < 75 ? "☹️" : "🤬"}`}
                         <ProgressBar
                           completed={ethicrateMAX}
                           width="450%"
                           margin="2px 0px 4px 4px"
-                          bgColor={`${ethicrateMAX < 25 ? "hsla(195, 100%, 35%, 0.8)" : ethicrateMAX < 50 ? "hsla(120, 100%, 25%, 0.7)" : ethicrateMAX < 75 ? "hsla(48, 100%, 40%, 0.8)" : "hsla(0, 100%, 55%, 0.8)"}`}
+                          bgColor={`${
+                            ethicrateMAX < 25
+                              ? "hsla(195, 100%, 35%, 0.8)"
+                              : ethicrateMAX < 50
+                              ? "hsla(120, 100%, 25%, 0.7)"
+                              : ethicrateMAX < 75
+                              ? "hsla(48, 100%, 40%, 0.8)"
+                              : "red"
+                          }`}
                         />
                       </div>
                     )}
-                    {ethiclabel === 2 && (
+                    {twit.reply === false && ethiclabel === 2 && (
                       <div className="flex items-center font-bold rounded-md">
                         욕설
+                        {`${ethicrateMAX < 25 ? "😄" : ethicrateMAX < 50 ? "😅" : ethicrateMAX < 75 ? "☹️" : "🤬"}`}
                         <ProgressBar
                           completed={ethicrateMAX}
                           width="450%"
                           margin="2px 0px 4px 4px"
-                          bgColor={`${ethicrateMAX < 25 ? "hsla(195, 100%, 35%, 0.8)" : ethicrateMAX < 50 ? "hsla(120, 100%, 25%, 0.7)" : ethicrateMAX < 75 ? "hsla(48, 100%, 40%, 0.8)" : "red"}`}
+                          bgColor={`${
+                            ethicrateMAX < 25
+                              ? "hsla(195, 100%, 35%, 0.8)"
+                              : ethicrateMAX < 50
+                              ? "hsla(120, 100%, 25%, 0.7)"
+                              : ethicrateMAX < 75
+                              ? "hsla(48, 100%, 40%, 0.8)"
+                              : "red"
+                          }`}
                         />
                       </div>
                     )}
-                    {ethiclabel === 3 && (
+                    {twit.reply === false && ethiclabel === 3 && (
                       <div className="flex items-center font-bold rounded-md">
                         차별성
+                        {`${ethicrateMAX < 25 ? "😄" : ethicrateMAX < 50 ? "😅" : ethicrateMAX < 75 ? "☹️" : "🤬"}`}
                         <ProgressBar
                           completed={ethicrateMAX}
                           width="450%"
                           margin="2px 0px 4px 4px"
-                          bgColor={`${ethicrateMAX < 25 ? "hsla(195, 100%, 35%, 0.8)" : ethicrateMAX < 50 ? "hsla(120, 100%, 25%, 0.7)" : ethicrateMAX < 75 ? "hsla(48, 100%, 40%, 0.8)" : "hsla(0, 100%, 55%, 0.8)"}`}
+                          bgColor={`${
+                            ethicrateMAX < 25
+                              ? "hsla(195, 100%, 35%, 0.8)"
+                              : ethicrateMAX < 50
+                              ? "hsla(120, 100%, 25%, 0.7)"
+                              : ethicrateMAX < 75
+                              ? "hsla(48, 100%, 40%, 0.8)"
+                              : "red"
+                          }`}
                         />
                       </div>
                     )}
@@ -767,7 +811,8 @@ const TwitCard = ({ twit }) => {
                         className="text-[#42c924]"
                         onClick={handleToggleLocationForm}
                       />
-                      <p className="text-gray-500 ml-3">{twit.twits?.location || address}</p>
+                      {/* <p className="text-gray-500 ml-3">{twit.twits?.location || address}</p> */}
+                      {twit.twits?.location || address}
                     </label>
                     <div className="relative">
                       <TagFacesIcon
@@ -788,66 +833,69 @@ const TwitCard = ({ twit }) => {
                 )}
               </div>
             </div>
-            {isEditing && isLocationFormOpen && showLocation && (
-              <div>
-                <div className="map_wrap">
-                  <div
-                    id="map"
-                    style={{
-                      width: "70%",
-                      height: "100%",
-                      position: "relative",
-                      overflow: "hidden",
-                    }}
-                  ></div>
-                  <div id="list_wrap" className="bg_white">
-                    <div className="option" style={{ textAlign: "right" }}>
-                      <div>
-                        <form
-                          onSubmit={(e) => {
-                            e.preventDefault();
-                            handleSearch();
-                          }}
-                        >
-                          <input
-                            type="text"
-                            value={searchKeyword}
-                            placeholder="장소·주소 검색"
-                            onChange={(e) => setSearchKeyword(e.target.value)}
-                            id="keyword"
-                            size="15"
-                            className={`${
-                              theme.currentTheme === "light" ? "" : "text-black"
-                            }`}
-                          />
-                          <Button type="submit">검색하기</Button>
-                        </form>
-                      </div>
-                    </div>
-                    
-
-                    <ul id="placesList">
-                      {currentItems.map((result, index) =>
-                        createSearchResultItem(result, index)
-                      )}
-                    </ul>
-
-                    <div id="pagination">
-                      <ul className={`page-numbers text-black`}>
-                        {pageNumbers.map((number) => (
-                          <li
-                            key={number}
-                            onClick={() => handlePageClick(number)}
+            <div style={{ marginTop: 20 }}>
+              {isEditing && isLocationFormOpen && showLocation && (
+                <div>
+                  <div className="map_wrap">
+                    <div
+                      id="map"
+                      style={{
+                        width: "70%",
+                        height: "100%",
+                        position: "relative",
+                        overflow: "hidden",
+                      }}
+                    ></div>
+                    <div id="list_wrap" className="bg_white">
+                      <div className="option" style={{ textAlign: "right" }}>
+                        <div>
+                          <form
+                            onSubmit={(e) => {
+                              e.preventDefault();
+                              handleSearch();
+                            }}
                           >
-                            {number}
-                          </li>
-                        ))}
+                            <input
+                              type="text"
+                              value={searchKeyword}
+                              placeholder="장소·주소 검색"
+                              onChange={(e) => setSearchKeyword(e.target.value)}
+                              id="keyword"
+                              size="15"
+                              className={`${
+                                theme.currentTheme === "light"
+                                  ? ""
+                                  : "text-black"
+                              }`}
+                            />
+                            <Button type="submit">검색하기</Button>
+                          </form>
+                        </div>
+                      </div>
+
+                      <ul id="placesList">
+                        {currentItems.map((result, index) =>
+                          createSearchResultItem(result, index)
+                        )}
                       </ul>
+
+                      <div id="pagination">
+                        <ul className={`page-numbers text-black`}>
+                          {pageNumbers.map((number) => (
+                            <li
+                              key={number}
+                              onClick={() => handlePageClick(number)}
+                            >
+                              {number}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
             <div className="py-5 flex flex-wrap justify-between items-center">
               {!isEditing && (
                 <>
@@ -860,20 +908,18 @@ const TwitCard = ({ twit }) => {
                     {/* twit 객체의 totalReplies 속성 값이 0보다 큰 경우에만 해당 값을 포함하는 <p> 태그로 래핑 시도*/}
                   </div>
                   <div
-                    className={`${
-                      isRetwit ? "text-yellow-500" : "text-gray-600"
-                    } space-x-3 flex items-center`}
+                    className={`${isRetwit ? "text-yellow-500" : "text-gray-600"
+                      } space-x-3 flex items-center`}
                   >
                     <RepeatIcon
-                      className={` cursor-pointer`}
-                      onClick={handleCreateRetweet}
+                      className={`cursor-pointer`}
+                      onClick={() => { handleCreateRetweet() }}
                     />
                     {retwit > 0 && <p>{retwit}</p>}
                   </div>
                   <div
-                    className={`${
-                      isLiked ? "text-yellow-500" : "text-gray-600"
-                    } space-x-3 flex items-center `}
+                    className={`${isLiked ? "text-yellow-500" : "text-gray-600"
+                      } space-x-3 flex items-center `}
                   >
                     {isLiked ? (
                       <FavoriteIcon
@@ -903,15 +949,15 @@ const TwitCard = ({ twit }) => {
             </div>
           </div>
           <hr
-                style={{
-                    marginTop: 10,
-                    marginBottom: 1,
-                    background: "hsla(0, 0%, 80%, 1)",
-                    color: 'grey',
-                    borderColor: "hsl(0, 0%, 80%)",
-                    height: '1px',
-                }}
-            />
+            style={{
+              marginTop: 10,
+              marginBottom: 1,
+              background: "hsla(0, 0%, 80%, 1)",
+              color: "grey",
+              borderColor: "hsl(0, 0%, 80%)",
+              height: "1px",
+            }}
+          />
         </div>
       </div>
 
@@ -919,9 +965,28 @@ const TwitCard = ({ twit }) => {
         twitData={twit}
         open={openReplyModel}
         handleClose={handleCloseReplyModel}
+        changePage={changePage}
       />
 
       <section>{loading ? <Loading /> : null}</section>
+
+      <section>
+        <Modal
+          open={openAlertModal}
+          handleClose={handleCloseAlertModal}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}>
+          <div className={`withdrawal-modal outline-none ${theme.currentTheme === "light" ? "bg-gray-200" : "bg-stone-950"}`} style={{ padding: "20px", borderRadius: "8px" }}>
+            <p id="description">
+              자신의 게시글은 리빗할 수 없습니다.
+            </p>
+            <Button style={{ marginLeft: "195px" }} onClick={handleCloseAlertModal}>확인</Button>
+          </div>
+        </Modal>
+      </section>
     </div>
   );
 };

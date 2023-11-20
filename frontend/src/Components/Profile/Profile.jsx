@@ -23,11 +23,12 @@ import TwitCard from "../Home/MiddlePart/TwitCard/TwitCard";
 import CloseIcon from "@mui/icons-material/Close";
 import "../RightPart/Scrollbar.css";
 import Loading from "./Loading/Loading";
+import ProgressBar from "@ramonak/react-progress-bar";
 
 const Maplocation = React.lazy(() => import("./Maplocation"));
 const ProfileModel = React.lazy(() => import("./ProfileModel"));
 
-const Profile = () => {
+const Profile = ({sendRefreshPage, changePage}) => {
   const style = {
     position: "absolute",
     top: "50%",
@@ -78,15 +79,15 @@ const Profile = () => {
 
   useEffect(() => {
     dispatch(getUsersTweets(param.id));
-  }, [param.id, twit.retwit]);
+  }, [param.id, twit.retwit, sendRefreshPage]);
 
   useEffect(() => {
     dispatch(findUserById(param.id));
-  }, [param.id, auth.user]);
+  }, [param.id, auth.user, sendRefreshPage]);
 
   useEffect(() => {
     setOpenSnackBar(auth.updateUser);
-  }, [auth.updateUser]);
+  }, [auth.updateUser, sendRefreshPage]);
 
   const handleCloseProfileModel = () => setOpenProfileModel(false);
 
@@ -133,11 +134,12 @@ const Profile = () => {
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
-  }, [auth.user]);
+  }, [auth.user, sendRefreshPage]);
 
   const handleMapLocation = (newAddress) => {
     setAddress(newAddress);
   };
+  
   const [openFollowings, setOpenFollowings] = useState(false);
   const [openFollowers, setOpenFollowers] = useState(false);
 
@@ -194,14 +196,12 @@ const Profile = () => {
     setAverageEthicRateMAX(roundedAverageEthicRateMAX);
 
     // ... (다른 코드)
-  }, [twit.twits, auth.user]);
+  }, [twit.twits, auth.user, sendRefreshPage]);
 
   return (
     <div>
       <section
-        className={`z-50 flex items-center sticky top-0 ${
-          theme.currentTheme === "light" ? "light" : "dark"
-        } bg-opacity-95`}
+        className={`z-50 flex items-center sticky top-0 ${theme.currentTheme==="dark"?" bg-[#0D0D0D]":"bg-white"}`}
       >
         <KeyboardBackspaceIcon
           className="cursor-pointer"
@@ -238,7 +238,7 @@ const Profile = () => {
           {auth.findUser?.req_user ? (
             <Button
               onClick={handleOpenProfileModel}
-              sx={{ borderRadius: "20px" }}
+              sx={{ borderRadius: "20px", fontFamily: 'ChosunGu' }}
               variant="outlined"
             >
               프로필 변경
@@ -254,7 +254,13 @@ const Profile = () => {
             </Button>
           )}
         </div>
-        <p>평균 ethicrateMAX: {averageEthicRateMAX}</p>
+        <p className="flex items-center text-gray-500">{`${averageEthicRateMAX < 25 ? "😄" : averageEthicRateMAX < 50 ? "😅" : averageEthicRateMAX < 75 ? "☹️" : "🤬"}`}
+        <ProgressBar
+                          completed={averageEthicRateMAX}
+                          width="165px"
+                          margin="2px 0px 4px 4px"
+                          bgColor={`${averageEthicRateMAX < 25 ? "hsla(195, 100%, 35%, 0.8)" : averageEthicRateMAX < 50 ? "hsla(120, 100%, 25%, 0.7)" : averageEthicRateMAX < 75 ? "hsla(48, 100%, 40%, 0.8)" : "red"}`}
+                        /></p>
         <div>
           <div>
             <div className="flex items-center">
@@ -328,7 +334,7 @@ const Profile = () => {
             </div>
             <div className="flex items-center space-x-5">
               <div className="flex items-center space-x-1 font-semibold">
-                <span onClick={openFollowingsModal} className="text-gray-500">
+                <span onClick={openFollowingsModal} className="text-gray-500 cursor-pointer">
                   {auth.findUser?.followings?.length} followings
                 </span>
                 <Modal open={openFollowings} onClose={closeFollowingsModal}>
@@ -390,7 +396,7 @@ const Profile = () => {
                 </Modal>
               </div>
               <div className="flex items-center space-x-1 font-semibold">
-                <span onClick={openFollowersModal} className="text-gray-500">
+                <span onClick={openFollowersModal} className="text-gray-500 cursor-pointer">
                   {auth.findUser?.followers?.length} followers
                 </span>
                 <Modal open={openFollowers} onClose={closeFollowersModal}>
@@ -477,7 +483,7 @@ const Profile = () => {
             <TabPanel value="1">
               {twit.twits?.map((item) => (
                 <div>
-                  <TwitCard twit={item} />
+                  <TwitCard twit={item} key={item.id} changePage={changePage}/>
                   {/* <Divider sx={{ margin: "2rem 0rem" }} /> */}
                 </div>
               ))}
@@ -485,7 +491,7 @@ const Profile = () => {
             <TabPanel value="2">
               {twit.twits?.map((item) => (
                 <div>
-                  <TwitCard twit={item} />
+                  <TwitCard twit={item} key={item.id} changePage={changePage}/>
                   {/* <Divider sx={{ margin: "2rem 0rem" }} /> */}
                 </div>
               ))}
@@ -495,14 +501,16 @@ const Profile = () => {
                 .filter((item) => item.image || item.video)
                 .map((item) => (
                   <div>
-                    <TwitCard twit={item} />
+                    <TwitCard twit={item} key={item.id} changePage={changePage}/>
                     {/* <Divider sx={{ margin: "2rem 0rem" }} /> */}
                   </div>
                 ))}
             </TabPanel>
             <TabPanel value="4">
               {twit.likedTwits?.map((item) => (
-                <TwitCard twit={item} />
+                <div>
+                <TwitCard twit={item} key={item.id} changePage={changePage}/>
+                </div>
               ))}
             </TabPanel>
           </TabContext>

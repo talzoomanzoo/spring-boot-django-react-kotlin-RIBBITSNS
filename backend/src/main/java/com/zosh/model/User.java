@@ -72,7 +72,7 @@ public class User {
     
     @JsonIgnore // 특정 필드 위에 사용하면 해당 필드는 JSON 직렬화 과정에서 무시되어 출력되지 않음
     @JsonManagedReference
-    @OneToMany(cascade = CascadeType.ALL) //mappedBy = "user",
+    @OneToMany(cascade = CascadeType.ALL)
     @JsonIgnoreProperties(value = {"twit", "likes", "user"})
     private List<Twit> twit = new ArrayList<>();
     

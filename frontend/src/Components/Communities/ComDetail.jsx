@@ -25,7 +25,7 @@ import "../Home/MiddlePart/TwitMap.css";
 // const Maplocation = React.lazy(() => import("../Profile/Maplocation"));
 const Loading = React.lazy(() => import("../Profile/Loading/Loading"));
 
-const ComDetail = () => {
+const ComDetail = ({changePage, sendRefreshPage}) => {
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
@@ -53,52 +53,18 @@ const ComDetail = () => {
   const [showLocation, setShowLocation] = useState(true);
 
   useEffect(() => {
-    const container = document.getElementById("map");
-    dispatch(findComById(param.id));
-    console.log("log");
-    dispatch(findTwitsByComId(param.id));
-
-    if (container) {
-      const options = {
-        center: new kakao.maps.LatLng(37.5662952, 126.9757567),
-        level: 3,
-      };
-
-      if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition((position) => {
-          const latitude = position.coords.latitude;
-          const longitude = position.coords.longitude;
-          options.center = new kakao.maps.LatLng(latitude, longitude);
-
-          const map = new kakao.maps.Map(container, options);
-          setMap(map);
-        });
-      }
-    }
-
     if (isLocationFormOpen && showLocation) {
-
-      console.log("Address Updated:", address); // 주소 확인
-      formikLocation.setValues({
-        location: address,
-      });
-
-      if (map) {
-        const mapTypeControl = new kakao.maps.MapTypeControl();
-        map.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);
-        const zoomControl = new kakao.maps.ZoomControl();
-        map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
-      }
-
       const container = document.getElementById("map");
 
       if (container) {
+        
         const options = {
           center: new kakao.maps.LatLng(37.5662952, 126.9757567),
           level: 3,
         };
 
         if ("geolocation" in navigator) {
+          
           navigator.geolocation.getCurrentPosition((position) => {
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
@@ -108,16 +74,10 @@ const ComDetail = () => {
             setMap(map);
           });
         }
+        
       }
     }
-  }, [isLocationFormOpen, showLocation, address, map]);
-
-
-  const toggleMap = () => {
-    // 주소값만 저장하고 상태 업데이트
-    setAddress(formikLocation.values.location);
-    setLocationFormOpen(false); // 주소 저장 후 폼을 닫음
-  };
+  }, [isLocationFormOpen, showLocation, refreshTwits]);
 
   const formikLocation = useFormik({
     initialValues: {
@@ -128,7 +88,48 @@ const ComDetail = () => {
       setAddress(values.location);
       formikLocation.resetForm();
     },
+    
   });
+
+  useEffect(() => {
+
+    const container = document.getElementById("map");
+    dispatch(findComById(param.id));
+    dispatch(findTwitsByComId(param.id));
+
+    if (container) {
+      
+      const options = {
+        center: new kakao.maps.LatLng(37.5662952, 126.9757567),
+        level: 3,
+      };
+
+      if ("geolocation" in navigator) {
+        
+        navigator.geolocation.getCurrentPosition((position) => {
+          const latitude = position.coords.latitude;
+          const longitude = position.coords.longitude;
+          options.center = new kakao.maps.LatLng(latitude, longitude);
+
+          const map = new kakao.maps.Map(container, options);
+          setMap(map);
+          
+        });
+      }
+    }
+    
+  }, [sendRefreshPage]);
+
+  useEffect(() => {
+    if (map) {
+      
+      const mapTypeControl = new kakao.maps.MapTypeControl();
+      map.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);
+      const zoomControl = new kakao.maps.ZoomControl();
+      map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+      
+    }
+  }, [map]);
 
   function getListItem(index, places) {
     return (
@@ -241,8 +242,8 @@ const ComDetail = () => {
       infowindow.close();
       infowindow.setContent(
         '<div style="padding:5px;font-size:12px;color:black;">' +
-        place.place_name +
-        "</div>"
+          place.place_name +
+          "</div>"
       );
       infowindow.open(map, marker);
     });
@@ -253,6 +254,7 @@ const ComDetail = () => {
       map.setCenter(markerPosition); // 클릭한 마커를 중심으로 지도 재설정
       setAddress(place.place_name); // 주소 업데이트
       infowindow.close(); // 마커 클릭 시 인포윈도우 닫기
+      setLocationFormOpen(false);
     });
 
     kakao.maps.event.addListener(marker, "mouseout", function () {
@@ -300,23 +302,22 @@ const ComDetail = () => {
     payload: error,
   });
 
-
-
   const handleToggleLocationForm = () => {
+    setLoading(true);
     setLocationFormOpen((prev) => !prev);
+    setLoading(false);
   };
 
   console.log("comDetail auth", auth);
   console.log("comDetail com", com);
 
-
   const authCheck = (com) => {
-      for (let i=0; i< com.com?.followingsc.length; i++) {
-          if(com.com?.followingsc[i].id === auth.user.id) {
-              return true;
-          }
+    for (let i = 0; i < com.com?.followingsc?.length; i++) {
+      if (com.com?.followingsc[i].id === auth.user.id) {
+        return true;
       }
-  }
+    }
+  };
 
   const ComCreateTweet = (tweetData) => {
     return async (dispatch) => {
@@ -358,7 +359,6 @@ const ComDetail = () => {
       setAddress(""); // 게시글을 작성하고 나면 주소값 초기화
     }
     handleCloseEmoji();
-    //window.location.reload();
   };
 
   const ethicreveal = async (twitid, twitcontent) => {
@@ -445,7 +445,7 @@ const ComDetail = () => {
     <div>
       <section
         className={`z-50 flex items-center sticky top-0 ${theme.currentTheme === "light" ? "light" : "dark"
-          } bg-opacity-95`}
+          } ${theme.currentTheme==="dark"?" bg-[#0D0D0D]":"bg-white"}`}
       >
         <KeyboardBackspaceIcon
           className="cursor-pointer"
@@ -461,7 +461,7 @@ const ComDetail = () => {
           className="w-[100%] h-[15rem] object-cover"
           src={
             com.com?.backgroundImage ||
-            "https://t1.daumcdn.net/cfile/tistory/174FF7354E6ACC7606"
+            "https://png.pngtree.com/thumb_back/fw800/background/20230304/pngtree-green-base-vector-smooth-background-image_1770922.jpg"
           }
           alt=""
           loading="lazy"
@@ -588,84 +588,73 @@ const ComDetail = () => {
               </form>
             </div>
           </div>
-          {isLocationFormOpen && showLocation && (
-            <div>
-              <div className="mt-2 mb-2 space-y-3">
-                <div className="flex items-center text-gray-500">
-                  <form onSubmit={formikLocation.handleSubmit}>
-                    <Button
-                      type="submit"
-                      onClick={toggleMap}
-                      className="save-location-button"
-                    >
-                      저장
-                    </Button>
-                  </form>
-                  <p className="text-gray-500 ml-3">{address}</p>
-                </div>
-              </div>
+          <div style={{ marginTop: 20 }}>
+          {loading ? <Loading /> : null}
+            {isLocationFormOpen && showLocation && (
+              <div>
+                <div className="map_wrap">
+                  <div
+                    id="map"
+                    style={{
+                      width: "70%",
+                      height: "100%",
+                      position: "relative",
+                      overflow: "hidden",
+                    }}
+                  ></div>
+                  <div id="list_wrap" className="bg_white">
+                    <div className="option" style={{ textAlign: "right" }}>
+                      <div>
+                        <form
+                          onSubmit={(e) => {
+                            e.preventDefault();
+                            handleSearch();
+                          }}
+                        >
+                          <input
+                            type="text"
+                            value={searchKeyword}
+                            placeholder="장소·주소 검색"
+                            onChange={(e) => setSearchKeyword(e.target.value)}
+                            id="keyword"
+                            size="15"
+                          />
+                          <Button type="submit">검색하기</Button>
+                        </form>
+                      </div>
+                    </div>
+                    <hr />
 
-              <div className="map_wrap">
-                <div
-                  id="map"
-                  style={{
-                    width: "70%",
-                    height: "100%",
-                    position: "relative",
-                    overflow: "hidden",
-                  }}
-                ></div>
-                <div id="list_wrap" className="bg_white">
-                  <div className="option" style={{ textAlign: "right" }}>
-                    <div>
-                      <form
-                        onSubmit={(e) => {
-                          e.preventDefault();
-                          handleSearch();
-                        }}
-                      >
-                        <input
-                          type="text"
-                          value={searchKeyword}
-                          placeholder="장소·주소 검색"
-                          onChange={(e) => setSearchKeyword(e.target.value)}
-                          id="keyword"
-                          size="15"
-                        />
-                        <Button type="submit">검색하기</Button>
-                      </form>
+                    <ul id="placesList">
+                      {currentItems.map((result, index) =>
+                        createSearchResultItem(result, index)
+                      )}
+                    </ul>
+
+                    <div id="pagination">
+                      <ul className={`page-numbers text-black`}>
+                        {pageNumbers.map((number) => (
+                          <li
+                            key={number}
+                            onClick={() => handlePageClick(number)}
+                          >
+                            {number}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   </div>
-                  <hr />
-
-                  <ul id="placesList">
-                    {currentItems.map((result, index) =>
-                      createSearchResultItem(result, index)
-                    )}
-                  </ul>
-
-                  <div id="pagination">
-                    <ul className={`page-numbers text-black`}>
-                      {pageNumbers.map((number) => (
-                        <li key={number} onClick={() => handlePageClick(number)}>
-                          {number}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </section>
       ) : null}
-
-
 
       <div style={{ marginTop: 20 }}>
         {loading ? <Loading /> : null}
         {twit.twits && twit.twits.length > 0 ? (
-          twit.twits.map((item) => <TwitCard twit={item} key={item.id} />)
+          twit.twits.map((item) => <TwitCard twit={item} key={item.id} changePage={changePage}/>)
         ) : (
           <div>게시된 리빗이 없습니다.</div>
         )}

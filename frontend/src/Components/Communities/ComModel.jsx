@@ -30,7 +30,7 @@ const style = {
     overflow: "scroll-y",
 };
 
-const ComModel = ({ handleClose, open }) => {
+const ComModel = ({ changeComs, handleClose, open }) => {
     const [uploading, setUploading] = useState(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -47,7 +47,7 @@ const ComModel = ({ handleClose, open }) => {
         setBackgroundImage("");
         console.log("listsmodel values", values);
         handleClose();
-        window.location.reload();
+        changeComs();
     };
 
 

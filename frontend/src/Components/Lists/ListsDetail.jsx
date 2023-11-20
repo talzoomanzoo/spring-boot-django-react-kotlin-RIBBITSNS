@@ -7,7 +7,7 @@ import { useParams, useNavigate } from "react-router";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import { Divider } from "@mui/material";
 
-const ListsDetail = () => {
+const ListsDetail = ({changePage, sendRefreshPage}) => {
     const param = useParams();
     const dispatch = useDispatch();
     const { list, twit, theme } = useSelector(store => store);
@@ -20,7 +20,7 @@ const ListsDetail = () => {
     useEffect(() => {
         dispatch(findListById(param.id))
         dispatch(findTwitsByListId(param.id))
-    }, [param.id])
+    }, [param.id, sendRefreshPage])
 
     console.log("listname check", list);
 
@@ -28,8 +28,7 @@ const ListsDetail = () => {
     return (
         <div>
             <section
-                className={`z-50 flex items-center sticky top-0 ${theme.currentTheme === "light" ? "light" : "dark"
-                    } bg-opacity-95`}
+                className={`z-50 flex items-center sticky top-0 ${theme.currentTheme==="dark"?" bg-[#0D0D0D]":"bg-white"}`}
             >
                 <KeyboardBackspaceIcon
                     className="cursor-pointer"
@@ -53,7 +52,7 @@ const ListsDetail = () => {
             <div style={{ marginTop: 20 }}>
                 {twit.twits && twit.twits.length > 0 ?
                     (
-                        twit.twits.map((item) => <TwitCard twit={item} key={item.id} />)
+                        twit.twits.map((item) => <TwitCard twit={item} key={item.id} changePage={changePage}/>)
                     ) :
                     (
                         <div>게시된 리빗이 없습니다.</div>
