@@ -26,7 +26,11 @@ import "../Home/MiddlePart/TwitMap.css";
 // const Maplocation = React.lazy(() => import("../Profile/Maplocation"));
 const Loading = React.lazy(() => import("../Profile/Loading/Loading"));
 
+<<<<<<< HEAD
 const ComDetail = ({ changePage }) => {
+=======
+const ComDetail = ({changePage, sendRefreshPage}) => {
+>>>>>>> 1f9597c6ce5e969f08b0a77bdb7f1060ba520701
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
@@ -110,7 +114,12 @@ const ComDetail = ({ changePage }) => {
         });
       }
     }
+<<<<<<< HEAD
   }, []);
+=======
+    
+  }, [sendRefreshPage]);
+>>>>>>> 1f9597c6ce5e969f08b0a77bdb7f1060ba520701
 
   useEffect(() => {
     if (map) {
@@ -506,7 +515,7 @@ const ComDetail = ({ changePage }) => {
           className="w-[100%] h-[15rem] object-cover"
           src={
             com.com?.backgroundImage ||
-            "https://t1.daumcdn.net/cfile/tistory/174FF7354E6ACC7606"
+            "https://png.pngtree.com/thumb_back/fw800/background/20230304/pngtree-green-base-vector-smooth-background-image_1770922.jpg"
           }
           alt=""
           loading="lazy"

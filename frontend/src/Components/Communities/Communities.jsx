@@ -14,7 +14,7 @@ import ComBottom from "./ComBottom";
 import ComCard from "./ComCard";
 import ComModel from "./ComModel";
 
-const Communities = ({changePage}) => {
+const Communities = ({changePage, sendRefreshPage}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { com, theme } = useSelector((store) => store);
@@ -32,7 +32,7 @@ const Communities = ({changePage}) => {
 
   useEffect(() => {
     dispatch(getAllComs());
-    }, [refreshComs]);
+    }, [refreshComs, sendRefreshPage]);
 
   console.log("comcheck", com);
 
@@ -104,7 +104,7 @@ const Communities = ({changePage}) => {
         </div>
 
         <div>
-          <ComBottom changePage={changePage}/>
+          <ComBottom changePage={changePage} sendRefreshPage= {sendRefreshPage}/>
         </div>
       </section>
 

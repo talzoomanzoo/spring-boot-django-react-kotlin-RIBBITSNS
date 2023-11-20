@@ -28,6 +28,8 @@ public interface TwitService {
 	
 	public void deleteTwitById(Long twitId,Long userId) throws TwitException, UserException;
 	
+	public void deleteTwitByComId(Long comId) throws TwitException;
+	
 	public Twit removeFromRetwit(Long twitId, User user) throws TwitException, UserException;
 	
 	public Twit createReply(TwitReplyRequest req,User user) throws TwitException;

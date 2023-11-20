@@ -28,7 +28,11 @@ import Loading from "./Loading/Loading";
 const Maplocation = React.lazy(() => import("./Maplocation"));
 const ProfileModel = React.lazy(() => import("./ProfileModel"));
 
+<<<<<<< HEAD
 const Profile = ({ changePage }) => {
+=======
+const Profile = ({sendRefreshPage, changePage}) => {
+>>>>>>> 1f9597c6ce5e969f08b0a77bdb7f1060ba520701
   const style = {
     position: "absolute",
     top: "50%",
@@ -84,15 +88,15 @@ const Profile = ({ changePage }) => {
 
   useEffect(() => {
     dispatch(getUsersTweets(param.id));
-  }, [param.id, twit.retwit]);
+  }, [param.id, twit.retwit, sendRefreshPage]);
 
   useEffect(() => {
     dispatch(findUserById(param.id));
-  }, [param.id, auth.user]);
+  }, [param.id, auth.user, sendRefreshPage]);
 
   useEffect(() => {
     setOpenSnackBar(auth.updateUser);
-  }, [auth.updateUser]);
+  }, [auth.updateUser, sendRefreshPage]);
 
   const handleCloseProfileModel = () => setOpenProfileModel(false);
 
@@ -139,7 +143,7 @@ const Profile = ({ changePage }) => {
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
-  }, [auth.user]);
+  }, [auth.user, sendRefreshPage]);
 
   const handleMapLocation = (newAddress) => {
     setAddress(newAddress);
@@ -182,6 +186,7 @@ const Profile = ({ changePage }) => {
     if (isLobitTab) {
       const totalEthicRateMAXValue = twit.twits.reduce((sum, tweet) => {
         return sum + (tweet.ethiclabel === 4 ? 0 : tweet.ethicrateMAX || 0);
+<<<<<<< HEAD
       }, 0);
   
       const averageEthicRateMAXValue =
@@ -193,6 +198,27 @@ const Profile = ({ changePage }) => {
       setAverageEthicRateMAX(roundedAverageEthicRateMAX);
     }
   }, [twit.twits, isLobitTab, auth.user]);
+=======
+      },
+      0
+    );
+
+    // Calculate average ethicrateMAX
+    const averageEthicRateMAXValue =
+    twit.twits.length > 0
+      ? totalEthicRateMAXValue / twit.twits.length
+      : 0;
+
+    // 정수로 변환
+    const roundedAverageEthicRateMAX = Math.floor(averageEthicRateMAXValue);
+
+    // 상태 업데이트
+    setTotalEthicRateMAX(totalEthicRateMAXValue);
+    setAverageEthicRateMAX(roundedAverageEthicRateMAX);
+
+    // ... (다른 코드)
+  }, [twit.twits, auth.user, sendRefreshPage]);
+>>>>>>> 1f9597c6ce5e969f08b0a77bdb7f1060ba520701
 
   return (
     <div>
@@ -236,7 +262,7 @@ const Profile = ({ changePage }) => {
           {auth.findUser?.req_user ? (
             <Button
               onClick={handleOpenProfileModel}
-              sx={{ borderRadius: "20px" }}
+              sx={{ borderRadius: "20px", fontFamily: 'ChosunGu' }}
               variant="outlined"
             >
               프로필 변경
@@ -252,6 +278,7 @@ const Profile = ({ changePage }) => {
             </Button>
           )}
         </div>
+<<<<<<< HEAD
         <p className="flex items-center text-gray-500">
           {`${
             averageEthicRateMAX < 25
@@ -277,6 +304,15 @@ const Profile = ({ changePage }) => {
             }`}
           />
         </p>
+=======
+        <p className="flex items-center text-gray-500">{`${averageEthicRateMAX < 25 ? "😄" : averageEthicRateMAX < 50 ? "😅" : averageEthicRateMAX < 75 ? "☹️" : "🤬"}`}
+        <ProgressBar
+                          completed={averageEthicRateMAX}
+                          width="165px"
+                          margin="2px 0px 4px 4px"
+                          bgColor={`${averageEthicRateMAX < 25 ? "hsla(195, 100%, 35%, 0.8)" : averageEthicRateMAX < 50 ? "hsla(120, 100%, 25%, 0.7)" : averageEthicRateMAX < 75 ? "hsla(48, 100%, 40%, 0.8)" : "red"}`}
+                        /></p>
+>>>>>>> 1f9597c6ce5e969f08b0a77bdb7f1060ba520701
         <div>
           <div>
             <div className="flex items-center">
@@ -350,7 +386,7 @@ const Profile = ({ changePage }) => {
             </div>
             <div className="flex items-center space-x-5">
               <div className="flex items-center space-x-1 font-semibold">
-                <span onClick={openFollowingsModal} className="text-gray-500">
+                <span onClick={openFollowingsModal} className="text-gray-500 cursor-pointer">
                   {auth.findUser?.followings?.length} followings
                 </span>
                 <Modal open={openFollowings} onClose={closeFollowingsModal}>
@@ -423,7 +459,7 @@ const Profile = ({ changePage }) => {
                 </Modal>
               </div>
               <div className="flex items-center space-x-1 font-semibold">
-                <span onClick={openFollowersModal} className="text-gray-500">
+                <span onClick={openFollowersModal} className="text-gray-500 cursor-pointer">
                   {auth.findUser?.followers?.length} followers
                 </span>
                 <Modal open={openFollowers} onClose={closeFollowersModal}>
@@ -550,7 +586,13 @@ const Profile = ({ changePage }) => {
             </TabPanel>
             <TabPanel value="4">
               {twit.likedTwits?.map((item) => (
+<<<<<<< HEAD
                 <TwitCard twit={item} changePage={changePage} />
+=======
+                <div>
+                <TwitCard twit={item} key={item.id} changePage={changePage}/>
+                </div>
+>>>>>>> 1f9597c6ce5e969f08b0a77bdb7f1060ba520701
               ))}
             </TabPanel>
           </TabContext>

@@ -19,11 +19,14 @@ import com.zosh.dto.mapper.ComDtoMapper1;
 import com.zosh.dto.mapper.UserDtoMapper;
 import com.zosh.exception.ComException;
 import com.zosh.exception.ListException;
+import com.zosh.exception.TwitException;
 import com.zosh.exception.UserException;
 import com.zosh.model.Community;
+import com.zosh.model.Twit;
 import com.zosh.model.User;
 import com.zosh.response.ApiResponse;
 import com.zosh.service.ComService;
+import com.zosh.service.TwitService;
 import com.zosh.service.UserService;
 
 @RestController
@@ -32,10 +35,12 @@ public class ComController {
 
 private ComService comService;
 private UserService userService;
+private TwitService twitService;
 
-	public ComController(ComService comService, UserService userService) {
+	public ComController(ComService comService, UserService userService, TwitService twitService) {
 		this.comService=comService;
 		this.userService=userService;
+		this.twitService=twitService;
 	}
 	
 	@PostMapping("/create")
@@ -118,8 +123,15 @@ private UserService userService;
 	
 	@DeleteMapping("/{comId}")
 	public ResponseEntity<ApiResponse> deleteComById(@PathVariable Long comId,
-			@RequestHeader("Authorization") String jwt) throws ComException, UserException {
+			@RequestHeader("Authorization") String jwt) throws ComException, UserException, TwitException {
+		
+		//List<Twit> twit = twitService.findTwitsByComId(comId);
+		twitService.deleteTwitByComId(comId);
+		
 		User user = userService.findUserProfileByJwt(jwt);
+		
+		comService.deleteComWithUsers(comId);
+		
 		comService.deleteComById(comId, user.getId());
 		
 		ApiResponse res = new ApiResponse();

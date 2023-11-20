@@ -6,7 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { findTwitsById } from '../../../Store/Tweet/Action';
 import TwitCard from './TwitCard/TwitCard';
 
-const TwitDetail = ({changePage}) => {
+const TwitDetail = ({changePage, sendRefreshPage}) => {
     const param=useParams();
     // twit/83
     const dispatch=useDispatch();
@@ -20,7 +20,7 @@ const TwitDetail = ({changePage}) => {
     useEffect(()=>{
         dispatch(findTwitsById(param.id))
         changePage();
-    },[param.id])
+    },[param.id, sendRefreshPage])
 
     console.log("twitdetail twit check", twit);
   return (

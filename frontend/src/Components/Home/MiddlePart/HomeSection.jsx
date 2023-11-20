@@ -337,6 +337,7 @@ const HomeSection = ({ sendRefreshPage, changePage }) => {
       });
       console.log("response.status: ", response);
       if (response.status === 200) {
+        console.log("response: ",response.json());
         setLoading(false);
         setRefreshTwits((prev) => prev + 1);
       }
@@ -552,6 +553,7 @@ const HomeSection = ({ sendRefreshPage, changePage }) => {
                       paddingY: "8px",
                       paddingX: "20px",
                       color: "white",
+                      fontFamily: 'ChosunGu'
                     }}
                   >
                     Ribbit
