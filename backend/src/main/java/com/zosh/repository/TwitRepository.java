@@ -3,6 +3,7 @@ package com.zosh.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +16,7 @@ public interface TwitRepository extends JpaRepository<Twit, Long> {
 
 	@Query(value = "SELECT DISTINCT t.* FROM twit t JOIN likes l ON t.id = l.twit_id " +
 			"WHERE t.is_com = false AND t.is_twit = true AND l.twit_id IN " +
-			"(SELECT * FROM (SELECT DISTINCT l2.twit_id FROM likes l2 GROUP BY l2.twit_id ORDER BY COUNT(*) DESC LIMIT 3) AS t2) "
+			"(SELECT * FROM (SELECT DISTINCT l2.twit_id FROM likes l2 GROUP BY l2.twit_id ORDER BY COUNT(*) DESC LIMIT 4) AS t3) "
 			+
 			"ORDER BY (SELECT COUNT(*) FROM likes l3 WHERE l3.twit_id = t.id) DESC", nativeQuery = true)
 	public List<Twit> findTwitsByTopLike();
@@ -70,5 +71,10 @@ public interface TwitRepository extends JpaRepository<Twit, Long> {
 	@Transactional
 	@Query("SELECT t FROM Twit t JOIN t.community c WHERE c.id = :comId ORDER BY t.createdAt desc")
 	public List<Twit> searchComFollowedTwit(Long comId);
+	
+	@Transactional
+	@Modifying
+    @Query("DELETE FROM Twit t WHERE t.community.id = :comId")
+    void deleteByCommunityId(@Param("comId") Long comId);
 
 }

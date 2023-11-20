@@ -5,7 +5,7 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
-import { Avatar, Box, Button, Divider, Modal } from "@mui/material";
+import { Avatar, Box, Button, Modal } from "@mui/material";
 import Tab from "@mui/material/Tab";
 import React, { Suspense, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,14 +20,15 @@ import {
 import TwitCard from "../Home/MiddlePart/TwitCard/TwitCard";
 //import Maplocation from "./Maplocation";
 //import ProfileModel from "./ProfileModel";
+import CloseIcon from "@mui/icons-material/Close";
+import ProgressBar from "@ramonak/react-progress-bar";
 import "../RightPart/Scrollbar.css";
 import Loading from "./Loading/Loading";
-import CloseIcon from "@mui/icons-material/Close";
 
 const Maplocation = React.lazy(() => import("./Maplocation"));
 const ProfileModel = React.lazy(() => import("./ProfileModel"));
 
-const Profile = () => {
+const Profile = ({sendRefreshPage, changePage}) => {
   const style = {
     position: "absolute",
     top: "50%",
@@ -56,6 +57,7 @@ const Profile = () => {
   const param = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [isLobitTab, setIsLobitTab] = useState(true);
 
   const handleToggleLocationForm = () => {
     setLocationFormOpen((prev) => !prev);
@@ -67,6 +69,10 @@ const Profile = () => {
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
+    
+    // 리빗 탭 여부 확인
+    setIsLobitTab(newValue === "1");
+  
     if (newValue === "4") {
       dispatch(findTwitsByLikesContainUser(param.id));
     } else if (newValue === "1") {
@@ -78,15 +84,15 @@ const Profile = () => {
 
   useEffect(() => {
     dispatch(getUsersTweets(param.id));
-  }, [param.id, twit.retwit]);
+  }, [param.id, twit.retwit, sendRefreshPage]);
 
   useEffect(() => {
     dispatch(findUserById(param.id));
-  }, [param.id, auth.user]);
+  }, [param.id, auth.user, sendRefreshPage]);
 
   useEffect(() => {
     setOpenSnackBar(auth.updateUser);
-  }, [auth.updateUser]);
+  }, [auth.updateUser, sendRefreshPage]);
 
   const handleCloseProfileModel = () => setOpenProfileModel(false);
 
@@ -133,11 +139,12 @@ const Profile = () => {
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
-  }, [auth.user]);
+  }, [auth.user, sendRefreshPage]);
 
   const handleMapLocation = (newAddress) => {
     setAddress(newAddress);
   };
+
   const [openFollowings, setOpenFollowings] = useState(false);
   const [openFollowers, setOpenFollowers] = useState(false);
 
@@ -167,12 +174,40 @@ const Profile = () => {
     closeFollowingsModal();
   };
 
+  const [totalEthicRateMAX, setTotalEthicRateMAX] = useState(0);
+  const [averageEthicRateMAX, setAverageEthicRateMAX] = useState(0);
+
+  useEffect(() => {
+    // 리빗 탭에서만 totalEthicRateMAX, averageEthicRateMAX 계산
+    if (isLobitTab) {
+      const totalEthicRateMAXValue = twit.twits.reduce((sum, tweet) => {
+        return sum + (tweet.ethiclabel === 4 ? 0 : tweet.ethicrateMAX || 0);
+      },
+      0
+    );
+
+    // Calculate average ethicrateMAX
+    const averageEthicRateMAXValue =
+    twit.twits.length > 0
+      ? totalEthicRateMAXValue / twit.twits.length
+      : 0;
+
+    // 정수로 변환
+    const roundedAverageEthicRateMAX = Math.floor(averageEthicRateMAXValue);
+
+    // 상태 업데이트
+    setTotalEthicRateMAX(totalEthicRateMAXValue);
+    setAverageEthicRateMAX(roundedAverageEthicRateMAX);
+    }
+    // ... (다른 코드)
+  }, [twit.twits, auth.user, sendRefreshPage]);
+
   return (
     <div>
       <section
         className={`z-50 flex items-center sticky top-0 ${
-          theme.currentTheme === "light" ? "light" : "dark"
-        } bg-opacity-95`}
+          theme.currentTheme === "dark" ? " bg-[#0D0D0D]" : "bg-white"
+        }`}
       >
         <KeyboardBackspaceIcon
           className="cursor-pointer"
@@ -209,7 +244,7 @@ const Profile = () => {
           {auth.findUser?.req_user ? (
             <Button
               onClick={handleOpenProfileModel}
-              sx={{ borderRadius: "20px" }}
+              sx={{ borderRadius: "20px", fontFamily: 'ChosunGu' }}
               variant="outlined"
             >
               프로필 변경
@@ -225,6 +260,31 @@ const Profile = () => {
             </Button>
           )}
         </div>
+        <p className="flex items-center text-gray-500">
+          {`${
+            averageEthicRateMAX < 25
+              ? "😄"
+              : averageEthicRateMAX < 50
+              ? "😅"
+              : averageEthicRateMAX < 75
+              ? "☹️"
+              : "🤬"
+          }`}
+          <ProgressBar
+            completed={averageEthicRateMAX}
+            width="165px"
+            margin="2px 0px 4px 4px"
+            bgColor={`${
+              averageEthicRateMAX < 25
+                ? "hsla(195, 100%, 35%, 0.8)"
+                : averageEthicRateMAX < 50
+                ? "hsla(120, 100%, 25%, 0.7)"
+                : averageEthicRateMAX < 75
+                ? "hsla(48, 100%, 40%, 0.8)"
+                : "red"
+            }`}
+          />
+        </p>
         <div>
           <div>
             <div className="flex items-center">
@@ -298,7 +358,7 @@ const Profile = () => {
             </div>
             <div className="flex items-center space-x-5">
               <div className="flex items-center space-x-1 font-semibold">
-                <span onClick={openFollowingsModal} className="text-gray-500">
+                <span onClick={openFollowingsModal} className="text-gray-500 cursor-pointer">
                   {auth.findUser?.followings?.length} followings
                 </span>
                 <Modal open={openFollowings} onClose={closeFollowingsModal}>
@@ -319,7 +379,18 @@ const Profile = () => {
                     >
                       followers
                     </Button>
-                    <button style={{marginLeft: "12.7%"}} onClick={() => closeFollowingsModal()}><CloseIcon className={`${theme.currentTheme === "light" ? "text-black" : "text-white"}`} /></button>
+                    <button
+                      style={{ marginLeft: "12.7%" }}
+                      onClick={() => closeFollowingsModal()}
+                    >
+                      <CloseIcon
+                        className={`${
+                          theme.currentTheme === "light"
+                            ? "text-black"
+                            : "text-white"
+                        }`}
+                      />
+                    </button>
                     <div
                       ref={followersListRef}
                       className={`customeScrollbar overflow-y-scroll css-scroll hideScrollbar h-[40vh]`}
@@ -360,7 +431,7 @@ const Profile = () => {
                 </Modal>
               </div>
               <div className="flex items-center space-x-1 font-semibold">
-                <span onClick={openFollowersModal} className="text-gray-500">
+                <span onClick={openFollowersModal} className="text-gray-500 cursor-pointer">
                   {auth.findUser?.followers?.length} followers
                 </span>
                 <Modal open={openFollowers} onClose={closeFollowersModal}>
@@ -381,7 +452,18 @@ const Profile = () => {
                     >
                       followers
                     </Button>
-                    <button style={{marginLeft: "10%"}} onClick={() => closeFollowersModal()}><CloseIcon className={`${theme.currentTheme === "light" ? "text-black" : "text-white"}`} /></button>
+                    <button
+                      style={{ marginLeft: "10%" }}
+                      onClick={() => closeFollowersModal()}
+                    >
+                      <CloseIcon
+                        className={`${
+                          theme.currentTheme === "light"
+                            ? "text-black"
+                            : "text-white"
+                        }`}
+                      />
+                    </button>
                     <div
                       ref={followersListRef}
                       className={`customeScrollbar overflow-y-scroll css-scroll hideScrollbar h-[40vh] `}
@@ -447,7 +529,7 @@ const Profile = () => {
             <TabPanel value="1">
               {twit.twits?.map((item) => (
                 <div>
-                  <TwitCard twit={item} />
+                  <TwitCard twit={item} key={item.id} changePage={changePage} />
                   {/* <Divider sx={{ margin: "2rem 0rem" }} /> */}
                 </div>
               ))}
@@ -455,7 +537,7 @@ const Profile = () => {
             <TabPanel value="2">
               {twit.twits?.map((item) => (
                 <div>
-                  <TwitCard twit={item} />
+                  <TwitCard twit={item} key={item.id} changePage={changePage} />
                   {/* <Divider sx={{ margin: "2rem 0rem" }} /> */}
                 </div>
               ))}
@@ -465,14 +547,20 @@ const Profile = () => {
                 .filter((item) => item.image || item.video)
                 .map((item) => (
                   <div>
-                    <TwitCard twit={item} />
+                    <TwitCard
+                      twit={item}
+                      key={item.id}
+                      changePage={changePage}
+                    />
                     {/* <Divider sx={{ margin: "2rem 0rem" }} /> */}
                   </div>
                 ))}
             </TabPanel>
             <TabPanel value="4">
               {twit.likedTwits?.map((item) => (
-                <TwitCard twit={item} />
+                <div>
+                <TwitCard twit={item} key={item.id} changePage={changePage}/>
+                </div>
               ))}
             </TabPanel>
           </TabContext>

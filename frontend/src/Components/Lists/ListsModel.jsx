@@ -29,7 +29,7 @@ const style = {
   overflow: "scroll-y",
 };
 
-const ListsModel = ({ handleClose, open }) => {
+const ListsModel = ({ changeLists, handleClose, open }) => {
   const [uploading, setUploading] = useState(false);
   const dispatch = useDispatch();
   const [search, setSearch] = useState("");
@@ -47,7 +47,7 @@ const ListsModel = ({ handleClose, open }) => {
     setBackgroundImage("");
     console.log("listsmodel values", values);
     handleClose();
-    window.location.reload();
+    changeLists();
   };
 
 
@@ -124,6 +124,7 @@ const ListsModel = ({ handleClose, open }) => {
 
               <div className="space-y-3">
                 <TextField
+                style={{ fontFamily: 'ChosunGu' }}
                   fullWidth
                   id="listName"
                   label="리스트 이름"
@@ -137,6 +138,7 @@ const ListsModel = ({ handleClose, open }) => {
                   inputProps={{ maxLength: 20}}
                 />
                 <TextField
+                style={{ fontFamily: 'ChosunGu' }}
                   fullWidth
                   multiline
                   rows={4}
@@ -175,10 +177,7 @@ const ListsModel = ({ handleClose, open }) => {
                       marginRight: 20,
                     }}
                     trackColor={{ false: "#767577", true: "#36d916" }}
-                    //thumbColor={formik.values.privateMode ? "#f5dd4b" : "#f4f3f4"}
                     ios_backgroundColor="#3e3e3e"
-                    //onValueChange={toggleSwitch}
-                    //value={isEnabled}
                     value={formik.values.privateMode}
                     onValueChange={value => formik.setFieldValue('privateMode', value)}
                     error={

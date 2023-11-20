@@ -52,6 +52,7 @@ def translation(text):
         response_body = response.read()
         result=json.loads(response_body.decode('utf-8'))
         translated = result['message']['result']['translatedText']
+        print("translated: ",translated)
         return translated
     else:
         print("Error Code:" + rescode)
@@ -61,6 +62,7 @@ def making_image(request):
     # 이미지 URL을 따로 저장할 변수 추가
     if request.method == "GET":
         prompt = request.GET.get("keyword")
+        print("prompt: ",prompt)
         translated_prompt = translation(prompt)
         negative_prompt = "sleeping cat, dog, human, ugly face, cropped"
         response = t2i(translated_prompt, negative_prompt)
@@ -189,6 +191,7 @@ def nlp(request):
             
             dataset = load_and_cache_examples(args, tokenizer, mode="predict", line=text)
             result = predict(args, model, dataset, global_step="06000")
+            print("nlp result: ",result)
 
             return JsonResponse({'result':result})
         else:

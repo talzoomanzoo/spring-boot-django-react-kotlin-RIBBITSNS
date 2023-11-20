@@ -57,13 +57,14 @@ const Navigation = () => {
   return (
     <div className="h-screen sticky top-0 ">
       <div>
-        <div className="cursor-pointer py-5">
+        <div className="cursor-pointer py-2">
           <img
-            className="w-10 hover:w-12"
+            className="w-10 hover:w-20"
             src="https://cdn.pixabay.com/photo/2023/10/26/06/44/frog-8341850_1280.png"
             alt=""
             onClick={()=> navigate(`/`)}
             loading="lazy"
+            style={{ transition: "all 0.5s ease"}}
           />
         </div>
         <div className="space-y-6">
@@ -83,6 +84,7 @@ const Navigation = () => {
               borderRadius: "29px",
               py: "15px",
               bgcolor: "#42c924",
+              fontFamily: 'ChosunGu',
             }}
             variant="contained"
             size="large"
@@ -124,8 +126,8 @@ const Navigation = () => {
           'aria-labelledby': 'basic-button',
         }}
       >
-        <MenuItem onClick={handleLogout}>로그아웃</MenuItem>
-        <MenuItem onClick={handleopenwithdrawl}>회원탈퇴</MenuItem>
+        <MenuItem style={{ fontFamily: 'ChosunGu' }} onClick={handleLogout}>로그아웃</MenuItem>
+        <MenuItem style={{ fontFamily: 'ChosunGu' }} onClick={handleopenwithdrawl}>회원탈퇴</MenuItem>
       </Menu>
     
      </div>

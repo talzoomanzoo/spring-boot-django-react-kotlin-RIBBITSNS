@@ -147,6 +147,12 @@ public class TwitServiceImplementation implements TwitService {
 		twitRepository.deleteById(twit.getId());
 
 	}
+	
+	@Override
+	public void deleteTwitByComId(Long comId) throws TwitException {
+		// TODO Auto-generated method stub
+		twitRepository.deleteByCommunityId(comId);
+	}
 
 	@Override
 	public Twit removeFromRetwit(Long twitId, User user) throws TwitException, UserException {
@@ -288,4 +294,5 @@ public class TwitServiceImplementation implements TwitService {
 		// TODO Auto-generated method stub
 		return twitRepository.searchTwitsByAllComs(user.getId());
 	}
+
 }

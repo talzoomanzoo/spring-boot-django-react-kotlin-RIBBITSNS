@@ -15,6 +15,7 @@ import Loading from "../../Profile/Loading/Loading";
 import TwitCard from "./TwitCard/TwitCard";
 import "./TwitMap.css";
 
+import ProgressBar from "@ramonak/react-progress-bar";
 import {
   TWEET_CREATE_FAILURE,
   TWEET_CREATE_REQUEST,
@@ -40,7 +41,7 @@ const createTweetFailure = (error) => ({
   payload: error,
 });
 
-const HomeSection = () => {
+const HomeSection = ({ sendRefreshPage, changePage }) => {
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
@@ -91,12 +92,6 @@ const HomeSection = () => {
     }
   }, [isLocationFormOpen, showLocation]);
 
-  const toggleMap = () => {
-    // 주소값만 저장하고 상태 업데이트
-    setAddress(formikLocation.values.location);
-    setLocationFormOpen(false); // 주소 저장 후 폼을 닫음
-  };
-
   const formikLocation = useFormik({
     initialValues: {
       location: address,
@@ -107,13 +102,6 @@ const HomeSection = () => {
       formikLocation.resetForm();
     },
   });
-
-  // useEffect(() => {
-  //   console.log("Address Updated:", address); // 주소 확인
-  //   formikLocation.setValues({
-  //     location: address,
-  //   });
-  // }, [address]);
 
   useEffect(() => {
     const container = document.getElementById("map");
@@ -145,6 +133,10 @@ const HomeSection = () => {
       map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
     }
   }, [map]);
+
+  useEffect(() => {
+    dispatch(getAllTweets());
+  }, [refreshTwits, sendRefreshPage]);
 
   function getListItem(index, places) {
     return (
@@ -269,6 +261,7 @@ const HomeSection = () => {
       map.setCenter(markerPosition); // 클릭한 마커를 중심으로 지도 재설정
       setAddress(place.place_name); // 주소 업데이트
       infowindow.close(); // 마커 클릭 시 인포윈도우 닫기
+      setLocationFormOpen(false);
     });
 
     kakao.maps.event.addListener(marker, "mouseout", function () {
@@ -294,10 +287,6 @@ const HomeSection = () => {
     pageNumbers.push(i);
   }
 
-  useEffect(() => {
-    dispatch(getAllTweets());
-  }, [refreshTwits]);
-
   const handleToggleLocationForm = () => {
     setLocationFormOpen((prev) => !prev);
   };
@@ -308,13 +297,13 @@ const HomeSection = () => {
       dispatch(createTweetRequest());
       try {
         const { data } = await api.post(
-          API_BASE_URL+ "/api/twits/create",
+          API_BASE_URL + "/api/twits/create",
           tweetData
         );
 
         dispatch(createTweetSuccess(data));
 
-        const response = await ethicreveal(data.id, data.content);
+        await ethicreveal(data.id, data.content);
         handleSendPushNotification();
       } catch (error) {
         dispatch(createTweetFailure(error.message));
@@ -325,43 +314,30 @@ const HomeSection = () => {
   };
 
   const handleSubmit = (values, actions) => {
-    if (values.content.trim() !== "") {
-      // 게시글이 비어있지 않을 때만 실행
-      const tweetData = {
-        content: values.content,
-        image: values.image,
-        video: values.video,
-        location: address, // 저장한 주소값을 사용
-      };
-
-      dispatch(HomeCreateTweet(tweetData));
-      actions.resetForm();
-      setSelectedImage("");
-      setSelectedVideo("");
-      setAddress(""); // 게시글을 작성하고 나면 주소값 초기화
-    }
+    dispatch(HomeCreateTweet(values));
+    actions.resetForm();
+    setSelectedImage("");
+    setSelectedVideo("");
+    setAddress(""); // 게시글을 작성하고 나면 주소값 초기화
     handleCloseEmoji();
-    //window.location.reload();
   };
 
   const ethicreveal = async (twitid, twitcontent) => {
     try {
-      const response = await fetch(
-        API_BASE_URL + "/api/ethic/reqsentence",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${jwtToken}`,
-          },
-          body: JSON.stringify({
-            id: twitid,
-            content: twitcontent,
-          }),
-        }
-      );
-      console.log("response.status: ",response);
+      const response = await fetch(API_BASE_URL + "/api/ethic/reqsentence", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwtToken}`,
+        },
+        body: JSON.stringify({
+          id: twitid,
+          content: twitcontent,
+        }),
+      });
+      console.log("response.status: ", response);
       if (response.status === 200) {
+        console.log("response: ",response.json());
         setLoading(false);
         setRefreshTwits((prev) => prev + 1);
       }
@@ -377,7 +353,7 @@ const HomeSection = () => {
       video: "",
       location: address,
     },
-    validationSchema,
+    //validationSchema,
     onSubmit: handleSubmit,
   });
 
@@ -420,10 +396,66 @@ const HomeSection = () => {
     }
   };
 
+  const [totalEthicRateMAX, setTotalEthicRateMAX] = useState(0);
+  const [averageEthicRateMAX, setAverageEthicRateMAX] = useState(0);
+
+  useEffect(() => {
+    // Calculate total ethicrateMAX
+    const totalEthicRateMAXValue = twit.twits.reduce((sum, tweet) => {
+      // ethiclabel이 4인 경우 0으로 포함하여 합산
+      return sum + (tweet.ethiclabel === 4 ? 0 : tweet.ethicrateMAX || 0);
+    }, 0);
+
+    // Calculate average ethicrateMAX
+    const averageEthicRateMAXValue =
+      twit.twits.length > 0 ? totalEthicRateMAXValue / twit.twits.length : 0;
+
+    // 정수로 변환
+    const roundedAverageEthicRateMAX = Math.floor(averageEthicRateMAXValue);
+
+    // 상태 업데이트
+    setTotalEthicRateMAX(totalEthicRateMAXValue);
+    setAverageEthicRateMAX(roundedAverageEthicRateMAX);
+
+    // ... (다른 코드)
+  }, [twit.twits, auth.user]);
+
   return (
     <div className="space-y-5">
-      <section className="sticky top-0">
-        <h1 className="py-5 text-xl font-bold opacity-90 ml-5">홈</h1>
+      <section
+        className={`sticky top-0 ${
+          theme.currentTheme === "dark" ? " bg-[#0D0D0D]" : "bg-white"
+        }`}
+        style={{ zIndex: "100" }}
+      >
+        <h1 className="py-5 text-xl font-bold opacity-90 ml-5 flex">
+          홈
+          <p className="flex" style={{ marginLeft: "70%" }}>
+            {`${
+              averageEthicRateMAX < 25
+                ? "😄"
+                : averageEthicRateMAX < 50
+                ? "😅"
+                : averageEthicRateMAX < 75
+                ? "☹️"
+                : "🤬"
+            }`}
+            <ProgressBar
+              completed={averageEthicRateMAX}
+              width="165px"
+              margin="2px 0px 4px 4px"
+              bgColor={`${
+                averageEthicRateMAX < 25
+                  ? "hsla(195, 100%, 35%, 0.8)"
+                  : averageEthicRateMAX < 50
+                  ? "hsla(120, 100%, 25%, 0.7)"
+                  : averageEthicRateMAX < 75
+                  ? "hsla(48, 100%, 40%, 0.8)"
+                  : "red"
+              }`}
+            />
+          </p>
+        </h1>
       </section>
       <section className="pb-10">
         {/* ${theme.currentTheme==="dark"?" bg-[#151515] p-10 rounded-md mb-10":""} */}
@@ -521,6 +553,7 @@ const HomeSection = () => {
                       paddingY: "8px",
                       paddingX: "20px",
                       color: "white",
+                      fontFamily: 'ChosunGu'
                     }}
                   >
                     Ribbit
@@ -531,91 +564,78 @@ const HomeSection = () => {
           </div>
         </div>
         <div style={{ marginTop: 20 }}>
-        {isLocationFormOpen && showLocation && (
-              <div>
-                <div className="mt-2 mb-2 space-y-3">
-                  <div className="flex items-center text-gray-500">
-                    <form onSubmit={formikLocation.handleSubmit}>
-                      <Button
-                        type="submit"
-                        onClick={toggleMap}
-                        className="save-location-button"
+          {isLocationFormOpen && showLocation && (
+            <div>
+              <div className="map_wrap">
+                <div
+                  id="map"
+                  style={{
+                    width: "70%",
+                    height: "100%",
+                    position: "relative",
+                    overflow: "hidden",
+                  }}
+                ></div>
+                <div id="list_wrap" className="bg_white">
+                  <div className="option" style={{ textAlign: "right" }}>
+                    <div>
+                      <form
+                        onSubmit={(e) => {
+                          e.preventDefault();
+                          handleSearch();
+                        }}
                       >
-                        저장
-                      </Button>
-                    </form>
-                    <p className="text-gray-500 ml-3">{address}</p>
+                        <input
+                          type="text"
+                          value={searchKeyword}
+                          placeholder="장소·주소 검색"
+                          onChange={(e) => setSearchKeyword(e.target.value)}
+                          id="keyword"
+                          size="15"
+                          className={`${
+                            theme.currentTheme === "light" ? "" : "text-black"
+                          }`}
+                        />
+                        <Button type="submit">검색하기</Button>
+                      </form>
+                    </div>
                   </div>
-                </div>
+                  <hr />
 
-                <div className="map_wrap">
-                  <div
-                    id="map"
-                    style={{
-                      width: "70%",
-                      height: "100%",
-                      position: "relative",
-                      overflow: "hidden",
-                    }}
-                  ></div>
-                  <div id="list_wrap" className="bg_white">
-                    <div className="option" style={{ textAlign: "right" }}>
-                      <div>
-                        <form
-                          onSubmit={(e) => {
-                            e.preventDefault();
-                            handleSearch();
-                          }}
+                  <ul id="placesList">
+                    {currentItems.map((result, index) =>
+                      createSearchResultItem(result, index)
+                    )}
+                  </ul>
+
+                  <div id="pagination">
+                    <ul className={`page-numbers text-black`}>
+                      {pageNumbers.map((number) => (
+                        <li
+                          key={number}
+                          onClick={() => handlePageClick(number)}
                         >
-                          <input
-                            type="text"
-                            value={searchKeyword}
-                            placeholder="장소·주소 검색"
-                            onChange={(e) => setSearchKeyword(e.target.value)}
-                            id="keyword"
-                            size="15"
-                            className={`${theme.currentTheme === "light" ? "" : "text-black"}`}
-                          />
-                          <Button type="submit">검색하기</Button>
-                        </form>
-                      </div>
-                    </div>
-                    <hr />
-
-                    <ul id="placesList">
-                      {currentItems.map((result, index) =>
-                        createSearchResultItem(result, index)
-                      )}
+                          {number}
+                        </li>
+                      ))}
                     </ul>
-
-                    <div id="pagination">
-                      <ul className={`page-numbers text-black`}>
-                        {pageNumbers.map((number) => (
-                          <li
-                            key={number}
-                            onClick={() => handlePageClick(number)}
-                          >
-                            {number}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
                   </div>
                 </div>
               </div>
-            )}
+            </div>
+          )}
           {loading ? <Loading /> : null}
           {twit.twits && twit.twits.length > 0 ? (
-            twit.twits.map((item) => <TwitCard twit={item} key={item.id} />)
+            twit.twits.map((item) => (
+              <TwitCard twit={item} key={item.id} changePage={changePage} sendRefreshPage={sendRefreshPage}/>
+            ))
           ) : (
             <div>게시된 리빗이 없습니다.</div>
           )}
         </div>
       </section>
-      <section>
-        {uploadingImage ? <Loading/> : null}
-      </section>
-      <ScrollToTop/>
+      <section>{uploadingImage ? <Loading /> : null}</section>
+      <ScrollToTop />
     </div>
   );
 };

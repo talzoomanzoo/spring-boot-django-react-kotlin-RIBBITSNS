@@ -37,15 +37,13 @@ public class Community {
 	@JsonBackReference
 	@JoinColumn(name = "user_id")
 	@JsonIgnoreProperties(value = {"twit", "likes", "user"})
-	//@JoinColumn(name = "user_id")
 	private User user;
 	
 	//private Long userId;
 	
 	@JsonIgnore
-	@OneToMany(cascade = {CascadeType.ALL, CascadeType.REMOVE})
+	@OneToMany(cascade = CascadeType.DETACH)
 	@JsonManagedReference
-    //@JoinColumn(name = "twit_id")
 	@JsonIgnoreProperties(value = {"twit", "likes", "user"})
     private List<Twit> comTwits = new ArrayList<>();
 	

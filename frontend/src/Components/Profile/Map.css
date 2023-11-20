@@ -67,7 +67,7 @@
   }
 
   .save-location-button {
-    background-color: #007BFF; /* 배경 색상 */
+    background-color: #42C924; /* 배경 색상 */
     color: #fff; /* 텍스트 색상 */
     padding: 5px 10px; /* 안쪽 여백 */
     border: none; /* 테두리 없음 */
@@ -77,7 +77,7 @@
   }
   
   .save-location-button:hover {
-    background-color: #0056b3; /* 마우스를 올릴 때 배경 색상 변경 */
+    background-color: #008000; /* 마우스를 올릴 때 배경 색상 변경 */
   }
 
   .map_wrap {
@@ -86,12 +86,14 @@
   
   #map {
     width: 70%; /* 지도 창의 너비를 조정 (원하는 너비로 설정) */
+    height: 100%;
+    position: relative;
+    overflow: hidden;
   }
   
   #list_wrap {
     width: 30%; /* 목록 창의 너비를 조정 (원하는 너비로 설정) */
     overflow-y: auto; /* 목록이 내용을 벗어날 경우 스크롤바 표시 */
-
   }
 
   #list_wrap::-webkit-scrollbar {

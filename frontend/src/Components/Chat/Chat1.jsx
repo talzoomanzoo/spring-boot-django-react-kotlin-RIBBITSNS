@@ -390,7 +390,7 @@ const Chat = () => {
 
   return (
     <div>
-      <section className={`z-50 flex items-center sticky top-0 bg-opacity-95`}>
+      <section className={`z-50 flex items-center sticky top-0 bg-opacity-95 ${theme.currentTheme==="dark"?" bg-[#0D0D0D]":"bg-white"}`}>
         <div className="z-50 flex items-center sticky top-0 space-x-5">
           <KeyboardBackspaceIcon
             className="cursor-pointer"
@@ -415,7 +415,8 @@ const Chat = () => {
       </section>
       {/* <button onClick={createRoom}>Create Chat Room</button> */}
       {error && <div style={{ color: "red" }}>{error}</div>}
-      <div>
+      <div className="space-y-3"
+          style={{ marginTop: 20}}>
         {chatRooms.length > 0 ? ( //채팅방 목록 출력
           chatRooms.map((room) => (
             <div
@@ -435,21 +436,21 @@ const Chat = () => {
                   //채팅방 입장
                   style={{ cursor: "pointer", fontSize: "larger" }}
                 >
-                  <ChatIcon />
-                  <span style={{ marginLeft: "5px" }}>{room.name}</span>
+                  <ChatIcon style={{marginLeft: 10,marginRight: 10}}/>
+                  <span style={{ marginLeft: "5px", }}>{room.name}</span>
                 </button>
               </div>
               <div>
                 <Button
                   onClick={() => openEditModal(room.roomId, room.name)} //채팅방 정보 수정
-                  style={{ cursor: "pointer", marginRight: "5px" }}
+                  style={{ cursor: "pointer", marginRight: "5px", fontFamily: 'ChosunGu' }}
                 >
                   이름 변경
                 </Button>
                 /
                 <Button
                   onClick={() => deleteUserInRoom(room.roomId)} //채팅방 나가기
-                  style={{ cursor: "pointer" }}
+                  style={{ cursor: "pointer", fontFamily: 'ChosunGu' }}
                 >
                   나가기
                 </Button>
@@ -492,6 +493,9 @@ const Chat = () => {
               className={`py-2 rounded-full outline-none text-gray-500 pl-12 ${theme.currentTheme === "light" ? "bg-stone-300" : "bg-[#080808]"
                 }`}
             />
+                      <span className="absolute top-16 left-4 pl-3 pt-3">
+            <SearchIcon className="text-gray-400" />
+          </span>
             <IconButton
               onClick={openUserModal} // Toggle showUserList
               aria-label="list"
@@ -549,7 +553,7 @@ const Chat = () => {
           {showUserList && (
             <Modal open={showUserList} onClose={closeUserModal}>
               <Box sx={userStyle}>
-                <div className={`p-4 rounded-md customeScrollbar overflow-y-scroll css-scroll hideScrollbar h-[19vh] ${theme.currentTheme === "light" ? "bg-white" : "bg-stone-900"}`}>
+                <div className={`p-4 rounded-md customeScrollbar overflow-y-scroll css-scroll hideScrollbar h-[19vh] ${theme.currentTheme === "light" ? "bg-white" : "bg-[#0D0D0D]"}`}>
                   <div className="flex items-center justify-between mb-4">
                     <h3 className={`text-lg font-bold ${theme.currentTheme === "light" ? "text-black" : "text-white"}`}>참여 중인 멤버</h3>
                     <button onClick={() => closeUserModal()}><CloseIcon className={`${theme.currentTheme === "light" ? "text-black" : "text-white"}`} /></button>
