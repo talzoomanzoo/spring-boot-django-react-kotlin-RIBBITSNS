@@ -16,7 +16,7 @@ import ComModel3 from "./ComModel3";
 import "../RightPart/Scrollbar.css";
 import CloseIcon from "@mui/icons-material/Close";
 
-const ComCard = ({ changeComs, com }) => {
+const ComCard = ({ changeComs, com, changePage }) => {
 
     const style = {
         position: "absolute",
