@@ -45,6 +45,7 @@ import { uploadToCloudinary } from "../../../../Utils/UploadToCloudinary";
 import Loading from "../../../Profile/Loading/Loading";
 import "../TwitMap.css";
 import ReplyModal from "./ReplyModal";
+import { API_BASE_URL } from "../../../../Config/apiConfig";
 
 const validationSchema = Yup.object().shape({
   content: Yup.string().required("내용이 없습니다"),

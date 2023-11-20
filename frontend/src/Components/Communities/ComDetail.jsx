@@ -77,7 +77,7 @@ const ComDetail = ({changePage, sendRefreshPage}) => {
         
       }
     }
-  }, [isLocationFormOpen, showLocation, refreshTwits]);
+  }, [isLocationFormOpen, showLocation]);
 
   const formikLocation = useFormik({
     initialValues: {
@@ -118,7 +118,7 @@ const ComDetail = ({changePage, sendRefreshPage}) => {
       }
     }
     
-  }, [sendRefreshPage]);
+  }, [refreshTwits, sendRefreshPage]);
 
   useEffect(() => {
     if (map) {
