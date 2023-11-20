@@ -105,7 +105,7 @@ const ComModel = ({ changeComs, handleClose, open }) => {
                                         <img
                                             src={
                                                 formik.values?.backgroundImage ||
-                                                "https://t1.daumcdn.net/cfile/tistory/174FF7354E6ACC7606"
+                                                "https://png.pngtree.com/thumb_back/fw800/background/20230304/pngtree-green-base-vector-smooth-background-image_1770922.jpg"
                                             }
                                             alt="Img"
                                             className="w-full h-[12rem] object-cover object-center"
@@ -133,6 +133,8 @@ const ComModel = ({ changeComs, handleClose, open }) => {
                                         formik.touched.comName && Boolean(formik.errors.comName)
                                     }
                                     helperText=""
+                                    placeholder="20자 이내로 작성하세요"
+                                    inputProps={{ maxLength: 20}}
                                 />
                                 <TextField
                                     fullWidth

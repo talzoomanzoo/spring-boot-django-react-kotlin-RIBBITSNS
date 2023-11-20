@@ -16,7 +16,7 @@ import LikeTop from "./LikeTop";
 import ViewTop from "./ViewTop";
 import "./Scrollbar.css";
 
-const RightPart = (changeThemeAll, sendRefreshPage) => {
+const RightPart = ({changeThemeAll, sendRefreshPage, changePage}) => {
   const { theme, auth } = useSelector((store) => store);
   const [search, setSearch] = useState("");
   const dispatch = useDispatch();
@@ -182,7 +182,7 @@ const RightPart = (changeThemeAll, sendRefreshPage) => {
           </div>
 
           <div>
-            <LikeTop sendRefreshPage={sendRefreshPage}/>
+            <LikeTop sendRefreshPage={sendRefreshPage} changePage={changePage}/>
           </div>
 
           <div>
@@ -190,7 +190,7 @@ const RightPart = (changeThemeAll, sendRefreshPage) => {
           </div>
 
           <div>
-            <ViewTop sendRefreshPage={sendRefreshPage}/>
+            <ViewTop sendRefreshPage={sendRefreshPage} changePage={changePage}/>
           </div>
 
         </section>

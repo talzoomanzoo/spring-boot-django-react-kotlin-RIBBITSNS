@@ -254,7 +254,7 @@ fun MainDropDownMenu(
         )
         DropdownMenuItem(
             onClick = {
-                navController.navigate(RibbitScreen.ChatScreen.name)
+                navController.navigate(RibbitScreen.ChatRoomListScreen.name)
                 isDropDownMenuExpanded = false
             },
             text = {

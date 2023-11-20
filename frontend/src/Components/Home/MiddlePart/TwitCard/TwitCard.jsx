@@ -27,6 +27,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import ProgressBar from "@ramonak/react-progress-bar";
 import "react-toastify/dist/ReactToastify.css"; // React Toastify 스타일
 import * as Yup from "yup";
+import { API_BASE_URL } from "../../../../Config/apiConfig";
 import {
   decreaseNotificationCount,
   incrementNotificationCount,
@@ -44,13 +45,13 @@ import { uploadToCloudinary } from "../../../../Utils/UploadToCloudinary";
 import Loading from "../../../Profile/Loading/Loading";
 import "../TwitMap.css";
 import ReplyModal from "./ReplyModal";
-import { API_BASE_URL } from "../../../../Config/apiConfig";
+import GroupsIcon from "@mui/icons-material/Groups";
 
 const validationSchema = Yup.object().shape({
   content: Yup.string().required("내용이 없습니다"),
 });
 
-const TwitCard = ({ twit }, props) => {
+const TwitCard = ({ twit, changePage }) => {
   const { com } = useSelector((store) => store);
   const [selectedImage, setSelectedImage] = useState(twit.image);
   const [selectedVideo, setSelectedVideo] = useState(twit.video);
@@ -357,7 +358,7 @@ const TwitCard = ({ twit }, props) => {
     setIsLiked(!isLiked);
     setLikes(likes + num);
     //window.location.reload();
-    props.changePage();
+    changePage();
   };
 
   const handleIncrement = () => {
@@ -391,6 +392,7 @@ const TwitCard = ({ twit }, props) => {
       navigate(`/twit/${twit.id}`);
       dispatch(viewPlus(twit.id));
       setRefreshTwits((prev) => prev + 1);
+      changePage();
     }
   };
 
@@ -453,20 +455,17 @@ const TwitCard = ({ twit }, props) => {
 
   const ethicreveal = async (twitid, twitcontent) => {
     try {
-      const response = await fetch(
-        API_BASE_URL + "/api/ethic/reqsentence",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${jwtToken}`,
-          },
-          body: JSON.stringify({
-            id: twitid,
-            content: twitcontent,
-          }),
-        }
-      );
+      const response = await fetch(API_BASE_URL + "/api/ethic/reqsentence", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwtToken}`,
+        },
+        body: JSON.stringify({
+          id: twitid,
+          content: twitcontent,
+        }),
+      });
       console.log("response.statis: ", response);
       if (response.status === 200) {
         const responseData = await response.json();
@@ -588,10 +587,8 @@ const TwitCard = ({ twit }, props) => {
               </span>
 
               <span className="flex items-center text-gray-500">
-                <p className="text-gray-500">{twit.comName}</p>
+                <p className="text-gray-500"><GroupsIcon sx={{marginRight: "7px"}}/>{twit.comName}</p>
               </span>
-
-              {console.log("twit", twit)}
 
               {twit.user.verified && (
                 <img className="ml-2 w-5 h-5" src="" alt="" loading="lazy" />
@@ -856,7 +853,9 @@ const TwitCard = ({ twit }, props) => {
                             onChange={(e) => setSearchKeyword(e.target.value)}
                             id="keyword"
                             size="15"
-                            className={`${theme.currentTheme === "light" ? "" : "text-black"}`}
+                            className={`${
+                              theme.currentTheme === "light" ? "" : "text-black"
+                            }`}
                           />
                           <Button type="submit">검색하기</Button>
                         </form>

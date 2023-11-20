@@ -102,8 +102,8 @@ const ComCard = ({ changeComs, com }) => {
                 <Box
                     sx={style}
                 >
-                    <Button sx={{ fontSize: "105%", textDecoration: "underline", left: "32%" }}>Members of {com.comName}</Button>
-                    <button style={{marginLeft: "63%"}} onClick={() => closeMembersModal()}><CloseIcon className={`${theme.currentTheme === "light" ? "text-black" : "text-white"}`} /></button>
+                    <Button sx={{ maxWidth: "200px", fontSize: "105%", textDecoration: "underline", left: "137px" }}>Members of {com.comName}</Button>
+                    <button style={{ position: "fixed", top: "25px", right: "30px"}} onClick={() => closeMembersModal()}><CloseIcon className={`${theme.currentTheme === "light" ? "text-black" : "text-white"}`} /></button>
                     <div
                         ref={MembersListRef}
                         className={`overflow-y-scroll css-scroll hideScrollbar h-[40vh]`}>

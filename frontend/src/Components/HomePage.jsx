@@ -23,12 +23,12 @@ const HomePage = () => {
   const [sendTheme, setSendTheme] = useState(theme);
   const [sendRefreshPage, setSendRefreshPage] = useState(0);
 
-  const changeThemeAll = (sendTheme) => {
-    setSendTheme(sendTheme);
+  const changeThemeAllFunc = (newTheme) => {
+    setSendTheme(newTheme);
   }
 
-  const changePage = (sendRefreshPage) => {
-    setSendRefreshPage(sendRefreshPage);
+  const changePageFunc = () => {
+    setSendRefreshPage((prev) => prev + 1);
   }
 
 
@@ -49,7 +49,7 @@ const HomePage = () => {
       >
         <Routes>
           <Route path="/" element={
-              <HomeSection changePage={changePage}/>
+              <HomeSection sendRefreshPage= {sendRefreshPage} changePage={changePageFunc}/>
           }></Route>
           <Route path="/profile/:id" element={
             <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
@@ -90,7 +90,7 @@ const HomePage = () => {
         </Routes>
       </Grid>
       <Grid item xs={0} lg={3} className="hidden lg:block">
-        <RightPart changeThemeAll={changeThemeAll} sendRefreshPage={sendRefreshPage}/>
+        <RightPart changeThemeAll={changeThemeAllFunc} sendRefreshPage={sendRefreshPage} changePage={changePageFunc}/>
       </Grid>
     </Grid>
   );
