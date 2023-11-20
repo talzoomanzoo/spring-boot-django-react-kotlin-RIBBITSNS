@@ -3,6 +3,7 @@ package com.zosh.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,5 +71,10 @@ public interface TwitRepository extends JpaRepository<Twit, Long> {
 	@Transactional
 	@Query("SELECT t FROM Twit t JOIN t.community c WHERE c.id = :comId ORDER BY t.createdAt desc")
 	public List<Twit> searchComFollowedTwit(Long comId);
+	
+	@Transactional
+	@Modifying
+    @Query("DELETE FROM Twit t WHERE t.community.id = :comId")
+    void deleteByCommunityId(@Param("comId") Long comId);
 
 }
