@@ -21,13 +21,10 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.Data;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 @Entity
-@Getter
-@Setter
+@Data
 @RequiredArgsConstructor
 public class Community {
 
@@ -45,7 +42,7 @@ public class Community {
 	//private Long userId;
 	
 	@JsonIgnore
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval=true)
+	@OneToMany(cascade = CascadeType.DETACH)
 	@JsonManagedReference
 	@JsonIgnoreProperties(value = {"twit", "likes", "user"})
     private List<Twit> comTwits = new ArrayList<>();
