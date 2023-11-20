@@ -45,10 +45,6 @@ import { uploadToCloudinary } from "../../../../Utils/UploadToCloudinary";
 import Loading from "../../../Profile/Loading/Loading";
 import "../TwitMap.css";
 import ReplyModal from "./ReplyModal";
-<<<<<<< HEAD
-import GroupsIcon from "@mui/icons-material/Groups";
-=======
->>>>>>> 150b79cbe08b670e4795055957821df746296e0f
 
 const validationSchema = Yup.object().shape({
   content: Yup.string().required("내용이 없습니다"),
@@ -692,7 +688,7 @@ const TwitCard = ({ twit }) => {
                               ? "hsla(120, 100%, 25%, 0.7)"
                               : ethicrateMAX < 75
                               ? "hsla(48, 100%, 40%, 0.8)"
-                              : "hsla(0, 100%, 55%, 0.8)"
+                              : "red"
                           }`}
                         />
                       </div>
@@ -712,7 +708,7 @@ const TwitCard = ({ twit }) => {
                               ? "hsla(120, 100%, 25%, 0.7)"
                               : ethicrateMAX < 75
                               ? "hsla(48, 100%, 40%, 0.8)"
-                              : "hsla(0, 100%, 55%, 0.8)"
+                              : "red"
                           }`}
                         />
                       </div>
@@ -752,7 +748,7 @@ const TwitCard = ({ twit }) => {
                               ? "hsla(120, 100%, 25%, 0.7)"
                               : ethicrateMAX < 75
                               ? "hsla(48, 100%, 40%, 0.8)"
-                              : "hsla(0, 100%, 55%, 0.8)"
+                              : "red"
                           }`}
                         />
                       </div>

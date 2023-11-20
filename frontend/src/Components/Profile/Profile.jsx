@@ -253,12 +253,12 @@ const Profile = () => {
             </Button>
           )}
         </div>
-        <p className="flex items-center text-gray-500">{auth.findUser?.fullName}님의 평균:
+        <p className="flex items-center text-gray-500">{`${averageEthicRateMAX < 25 ? "😄" : averageEthicRateMAX < 50 ? "😅" : averageEthicRateMAX < 75 ? "☹️" : "🤬"}`}:
         <ProgressBar
                           completed={averageEthicRateMAX}
-                          width="400%"
+                          width="165px"
                           margin="2px 0px 4px 4px"
-                          bgColor={`${averageEthicRateMAX < 25 ? "hsla(195, 100%, 35%, 0.8)" : averageEthicRateMAX < 50 ? "hsla(120, 100%, 25%, 0.7)" : averageEthicRateMAX < 75 ? "hsla(48, 100%, 40%, 0.8)" : "hsla(0, 100%, 55%, 0.8)"}`}
+                          bgColor={`${averageEthicRateMAX < 25 ? "hsla(195, 100%, 35%, 0.8)" : averageEthicRateMAX < 50 ? "hsla(120, 100%, 25%, 0.7)" : averageEthicRateMAX < 75 ? "hsla(48, 100%, 40%, 0.8)" : "red"}`}
                         /></p>
         <div>
           <div>
