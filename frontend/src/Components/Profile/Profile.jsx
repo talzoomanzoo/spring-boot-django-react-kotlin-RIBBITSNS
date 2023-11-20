@@ -21,9 +21,9 @@ import TwitCard from "../Home/MiddlePart/TwitCard/TwitCard";
 //import Maplocation from "./Maplocation";
 //import ProfileModel from "./ProfileModel";
 import CloseIcon from "@mui/icons-material/Close";
+import ProgressBar from "@ramonak/react-progress-bar";
 import "../RightPart/Scrollbar.css";
 import Loading from "./Loading/Loading";
-import ProgressBar from "@ramonak/react-progress-bar";
 
 const Maplocation = React.lazy(() => import("./Maplocation"));
 const ProfileModel = React.lazy(() => import("./ProfileModel"));
@@ -57,6 +57,7 @@ const Profile = ({sendRefreshPage, changePage}) => {
   const param = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [isLobitTab, setIsLobitTab] = useState(true);
 
   const handleToggleLocationForm = () => {
     setLocationFormOpen((prev) => !prev);
@@ -68,6 +69,10 @@ const Profile = ({sendRefreshPage, changePage}) => {
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
+    
+    // 리빗 탭 여부 확인
+    setIsLobitTab(newValue === "1");
+  
     if (newValue === "4") {
       dispatch(findTwitsByLikesContainUser(param.id));
     } else if (newValue === "1") {
@@ -139,7 +144,7 @@ const Profile = ({sendRefreshPage, changePage}) => {
   const handleMapLocation = (newAddress) => {
     setAddress(newAddress);
   };
-  
+
   const [openFollowings, setOpenFollowings] = useState(false);
   const [openFollowers, setOpenFollowers] = useState(false);
 
@@ -173,10 +178,9 @@ const Profile = ({sendRefreshPage, changePage}) => {
   const [averageEthicRateMAX, setAverageEthicRateMAX] = useState(0);
 
   useEffect(() => {
-    // Calculate total ethicrateMAX
-    const totalEthicRateMAXValue = twit.twits.reduce(
-      (sum, tweet) => {
-        // ethiclabel이 4인 경우 0으로 포함하여 합산
+    // 리빗 탭에서만 totalEthicRateMAX, averageEthicRateMAX 계산
+    if (isLobitTab) {
+      const totalEthicRateMAXValue = twit.twits.reduce((sum, tweet) => {
         return sum + (tweet.ethiclabel === 4 ? 0 : tweet.ethicrateMAX || 0);
       },
       0
@@ -194,14 +198,16 @@ const Profile = ({sendRefreshPage, changePage}) => {
     // 상태 업데이트
     setTotalEthicRateMAX(totalEthicRateMAXValue);
     setAverageEthicRateMAX(roundedAverageEthicRateMAX);
-
+    }
     // ... (다른 코드)
   }, [twit.twits, auth.user, sendRefreshPage]);
 
   return (
     <div>
       <section
-        className={`z-50 flex items-center sticky top-0 ${theme.currentTheme==="dark"?" bg-[#0D0D0D]":"bg-white"}`}
+        className={`z-50 flex items-center sticky top-0 ${
+          theme.currentTheme === "dark" ? " bg-[#0D0D0D]" : "bg-white"
+        }`}
       >
         <KeyboardBackspaceIcon
           className="cursor-pointer"
@@ -254,13 +260,31 @@ const Profile = ({sendRefreshPage, changePage}) => {
             </Button>
           )}
         </div>
-        <p className="flex items-center text-gray-500">{`${averageEthicRateMAX < 25 ? "😄" : averageEthicRateMAX < 50 ? "😅" : averageEthicRateMAX < 75 ? "☹️" : "🤬"}`}
-        <ProgressBar
-                          completed={averageEthicRateMAX}
-                          width="165px"
-                          margin="2px 0px 4px 4px"
-                          bgColor={`${averageEthicRateMAX < 25 ? "hsla(195, 100%, 35%, 0.8)" : averageEthicRateMAX < 50 ? "hsla(120, 100%, 25%, 0.7)" : averageEthicRateMAX < 75 ? "hsla(48, 100%, 40%, 0.8)" : "red"}`}
-                        /></p>
+        <p className="flex items-center text-gray-500">
+          {`${
+            averageEthicRateMAX < 25
+              ? "😄"
+              : averageEthicRateMAX < 50
+              ? "😅"
+              : averageEthicRateMAX < 75
+              ? "☹️"
+              : "🤬"
+          }`}
+          <ProgressBar
+            completed={averageEthicRateMAX}
+            width="165px"
+            margin="2px 0px 4px 4px"
+            bgColor={`${
+              averageEthicRateMAX < 25
+                ? "hsla(195, 100%, 35%, 0.8)"
+                : averageEthicRateMAX < 50
+                ? "hsla(120, 100%, 25%, 0.7)"
+                : averageEthicRateMAX < 75
+                ? "hsla(48, 100%, 40%, 0.8)"
+                : "red"
+            }`}
+          />
+        </p>
         <div>
           <div>
             <div className="flex items-center">
@@ -355,7 +379,18 @@ const Profile = ({sendRefreshPage, changePage}) => {
                     >
                       followers
                     </Button>
-                    <button style={{marginLeft: "12.7%"}} onClick={() => closeFollowingsModal()}><CloseIcon className={`${theme.currentTheme === "light" ? "text-black" : "text-white"}`} /></button>
+                    <button
+                      style={{ marginLeft: "12.7%" }}
+                      onClick={() => closeFollowingsModal()}
+                    >
+                      <CloseIcon
+                        className={`${
+                          theme.currentTheme === "light"
+                            ? "text-black"
+                            : "text-white"
+                        }`}
+                      />
+                    </button>
                     <div
                       ref={followersListRef}
                       className={`customeScrollbar overflow-y-scroll css-scroll hideScrollbar h-[40vh]`}
@@ -417,7 +452,18 @@ const Profile = ({sendRefreshPage, changePage}) => {
                     >
                       followers
                     </Button>
-                    <button style={{marginLeft: "10%"}} onClick={() => closeFollowersModal()}><CloseIcon className={`${theme.currentTheme === "light" ? "text-black" : "text-white"}`} /></button>
+                    <button
+                      style={{ marginLeft: "10%" }}
+                      onClick={() => closeFollowersModal()}
+                    >
+                      <CloseIcon
+                        className={`${
+                          theme.currentTheme === "light"
+                            ? "text-black"
+                            : "text-white"
+                        }`}
+                      />
+                    </button>
                     <div
                       ref={followersListRef}
                       className={`customeScrollbar overflow-y-scroll css-scroll hideScrollbar h-[40vh] `}
@@ -483,7 +529,7 @@ const Profile = ({sendRefreshPage, changePage}) => {
             <TabPanel value="1">
               {twit.twits?.map((item) => (
                 <div>
-                  <TwitCard twit={item} key={item.id} changePage={changePage}/>
+                  <TwitCard twit={item} key={item.id} changePage={changePage} />
                   {/* <Divider sx={{ margin: "2rem 0rem" }} /> */}
                 </div>
               ))}
@@ -491,7 +537,7 @@ const Profile = ({sendRefreshPage, changePage}) => {
             <TabPanel value="2">
               {twit.twits?.map((item) => (
                 <div>
-                  <TwitCard twit={item} key={item.id} changePage={changePage}/>
+                  <TwitCard twit={item} key={item.id} changePage={changePage} />
                   {/* <Divider sx={{ margin: "2rem 0rem" }} /> */}
                 </div>
               ))}
@@ -501,7 +547,11 @@ const Profile = ({sendRefreshPage, changePage}) => {
                 .filter((item) => item.image || item.video)
                 .map((item) => (
                   <div>
-                    <TwitCard twit={item} key={item.id} changePage={changePage}/>
+                    <TwitCard
+                      twit={item}
+                      key={item.id}
+                      changePage={changePage}
+                    />
                     {/* <Divider sx={{ margin: "2rem 0rem" }} /> */}
                   </div>
                 ))}
