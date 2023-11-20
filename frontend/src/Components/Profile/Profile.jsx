@@ -21,9 +21,9 @@ import TwitCard from "../Home/MiddlePart/TwitCard/TwitCard";
 //import Maplocation from "./Maplocation";
 //import ProfileModel from "./ProfileModel";
 import CloseIcon from "@mui/icons-material/Close";
+import ProgressBar from "@ramonak/react-progress-bar";
 import "../RightPart/Scrollbar.css";
 import Loading from "./Loading/Loading";
-import ProgressBar from "@ramonak/react-progress-bar";
 
 const Maplocation = React.lazy(() => import("./Maplocation"));
 const ProfileModel = React.lazy(() => import("./ProfileModel"));
@@ -139,7 +139,7 @@ const Profile = () => {
   const handleMapLocation = (newAddress) => {
     setAddress(newAddress);
   };
-  
+
   const [openFollowings, setOpenFollowings] = useState(false);
   const [openFollowers, setOpenFollowers] = useState(false);
 
@@ -174,19 +174,14 @@ const Profile = () => {
 
   useEffect(() => {
     // Calculate total ethicrateMAX
-    const totalEthicRateMAXValue = twit.twits.reduce(
-      (sum, tweet) => {
-        // ethiclabel이 4인 경우 0으로 포함하여 합산
-        return sum + (tweet.ethiclabel === 4 ? 0 : tweet.ethicrateMAX || 0);
-      },
-      0
-    );
+    const totalEthicRateMAXValue = twit.twits.reduce((sum, tweet) => {
+      // ethiclabel이 4인 경우 0으로 포함하여 합산
+      return sum + (tweet.ethiclabel === 4 ? 0 : tweet.ethicrateMAX || 0);
+    }, 0);
 
     // Calculate average ethicrateMAX
     const averageEthicRateMAXValue =
-    twit.twits.length > 0
-      ? totalEthicRateMAXValue / twit.twits.length
-      : 0;
+      twit.twits.length > 0 ? totalEthicRateMAXValue / twit.twits.length : 0;
 
     // 정수로 변환
     const roundedAverageEthicRateMAX = Math.floor(averageEthicRateMAXValue);
@@ -201,7 +196,9 @@ const Profile = () => {
   return (
     <div>
       <section
-        className={`z-50 flex items-center sticky top-0 ${theme.currentTheme==="dark"?" bg-[#0D0D0D]":"bg-white"}`}
+        className={`z-50 flex items-center sticky top-0 ${
+          theme.currentTheme === "dark" ? " bg-[#0D0D0D]" : "bg-white"
+        }`}
       >
         <KeyboardBackspaceIcon
           className="cursor-pointer"
@@ -254,13 +251,23 @@ const Profile = () => {
             </Button>
           )}
         </div>
-        <p className="flex items-center text-gray-500">{auth.findUser?.fullName}님의 평균:
-        <ProgressBar
-                          completed={averageEthicRateMAX}
-                          width="400%"
-                          margin="2px 0px 4px 4px"
-                          bgColor={`${averageEthicRateMAX < 25 ? "hsla(195, 100%, 35%, 0.8)" : averageEthicRateMAX < 50 ? "hsla(120, 100%, 25%, 0.7)" : averageEthicRateMAX < 75 ? "hsla(48, 100%, 40%, 0.8)" : "hsla(0, 100%, 55%, 0.8)"}`}
-                        /></p>
+        <p className="flex items-center text-gray-500">
+          {auth.findUser?.fullName}님의 평균:
+          <ProgressBar
+            completed={averageEthicRateMAX}
+            width="400%"
+            margin="2px 0px 4px 4px"
+            bgColor={`${
+              averageEthicRateMAX < 25
+                ? "hsla(195, 100%, 35%, 0.8)"
+                : averageEthicRateMAX < 50
+                ? "hsla(120, 100%, 25%, 0.7)"
+                : averageEthicRateMAX < 75
+                ? "hsla(48, 100%, 40%, 0.8)"
+                : "hsla(0, 100%, 55%, 0.8)"
+            }`}
+          />
+        </p>
         <div>
           <div>
             <div className="flex items-center">
@@ -355,7 +362,18 @@ const Profile = () => {
                     >
                       followers
                     </Button>
-                    <button style={{marginLeft: "12.7%"}} onClick={() => closeFollowingsModal()}><CloseIcon className={`${theme.currentTheme === "light" ? "text-black" : "text-white"}`} /></button>
+                    <button
+                      style={{ marginLeft: "12.7%" }}
+                      onClick={() => closeFollowingsModal()}
+                    >
+                      <CloseIcon
+                        className={`${
+                          theme.currentTheme === "light"
+                            ? "text-black"
+                            : "text-white"
+                        }`}
+                      />
+                    </button>
                     <div
                       ref={followersListRef}
                       className={`customeScrollbar overflow-y-scroll css-scroll hideScrollbar h-[40vh]`}
@@ -417,7 +435,18 @@ const Profile = () => {
                     >
                       followers
                     </Button>
-                    <button style={{marginLeft: "10%"}} onClick={() => closeFollowersModal()}><CloseIcon className={`${theme.currentTheme === "light" ? "text-black" : "text-white"}`} /></button>
+                    <button
+                      style={{ marginLeft: "10%" }}
+                      onClick={() => closeFollowersModal()}
+                    >
+                      <CloseIcon
+                        className={`${
+                          theme.currentTheme === "light"
+                            ? "text-black"
+                            : "text-white"
+                        }`}
+                      />
+                    </button>
                     <div
                       ref={followersListRef}
                       className={`customeScrollbar overflow-y-scroll css-scroll hideScrollbar h-[40vh] `}
