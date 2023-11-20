@@ -26,4 +26,6 @@ public interface ComService {
 	public Community signoutUser(Long comId, User user) throws ComException, UserException;
 
 	public void deleteComById(Long comId, Long id) throws ComException, UserException;
+	
+	public void deleteComWithUsers(Long comId) throws ComException;
 }

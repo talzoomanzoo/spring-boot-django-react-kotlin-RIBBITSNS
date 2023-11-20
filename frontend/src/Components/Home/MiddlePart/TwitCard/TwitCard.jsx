@@ -26,7 +26,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import ProgressBar from "@ramonak/react-progress-bar";
 import "react-toastify/dist/ReactToastify.css"; // React Toastify 스타일
 import * as Yup from "yup";
-import { API_BASE_URL } from "../../../../Config/apiConfig";
 import {
   decreaseNotificationCount,
   incrementNotificationCount,

@@ -143,4 +143,22 @@ public class ComServiceImplementation implements ComService{
 		Community community = findById(comId);
 		comRepository.deleteById(community.getId());
 	}
+
+	@Override
+	public void deleteComWithUsers(Long comId) throws ComException {
+		// TODO Auto-generated method stub
+		Community community = findById(comId);
+		List<User> users = community.getFollowingsc();
+		
+		for (User user : users) {
+			user.getFollowedComs().remove(community);
+		}
+		
+		community.getFollowingsc().clear();
+		community.getFollowingscReady().clear();
+		
+		comRepository.save(community);
+	}
+	
+
 }
