@@ -390,7 +390,7 @@ const Chat = () => {
 
   return (
     <div>
-      <section className={`z-50 flex items-center sticky top-0 bg-opacity-95`}>
+      <section className={`z-50 flex items-center sticky top-0 bg-opacity-95 ${theme.currentTheme==="dark"?" bg-[#0D0D0D]":"bg-white"}`}>
         <div className="z-50 flex items-center sticky top-0 space-x-5">
           <KeyboardBackspaceIcon
             className="cursor-pointer"

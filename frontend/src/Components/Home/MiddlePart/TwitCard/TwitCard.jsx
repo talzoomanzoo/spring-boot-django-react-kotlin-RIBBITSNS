@@ -44,7 +44,6 @@ import { uploadToCloudinary } from "../../../../Utils/UploadToCloudinary";
 import Loading from "../../../Profile/Loading/Loading";
 import "../TwitMap.css";
 import ReplyModal from "./ReplyModal";
-import { API_BASE_URL } from "../../../../Config/apiConfig";
 import GroupsIcon from "@mui/icons-material/Groups";
 
 const validationSchema = Yup.object().shape({
@@ -684,6 +683,7 @@ const TwitCard = ({ twit }) => {
                     {ethiclabel === 0 && (
                       <div className="flex items-center font-bold rounded-md">
                         폭력성
+                        {`${ethicrateMAX < 25 ? "😄" : ethicrateMAX < 50 ? "😅" : ethicrateMAX < 75 ? "☹️" : "🤬"}`}
                         <ProgressBar
                           completed={ethicrateMAX}
                           width="450%"
@@ -695,6 +695,7 @@ const TwitCard = ({ twit }) => {
                     {ethiclabel === 1 && (
                       <div className="flex items-center font-bold rounded-md">
                         선정성
+                        {`${ethicrateMAX < 25 ? "😄" : ethicrateMAX < 50 ? "😅" : ethicrateMAX < 75 ? "☹️" : "🤬"}`}
                         <ProgressBar
                           completed={ethicrateMAX}
                           width="450%"
@@ -706,6 +707,7 @@ const TwitCard = ({ twit }) => {
                     {ethiclabel === 2 && (
                       <div className="flex items-center font-bold rounded-md">
                         욕설
+                        {`${ethicrateMAX < 25 ? "😄" : ethicrateMAX < 50 ? "😅" : ethicrateMAX < 75 ? "☹️" : "🤬"}`}
                         <ProgressBar
                           completed={ethicrateMAX}
                           width="450%"
@@ -717,6 +719,7 @@ const TwitCard = ({ twit }) => {
                     {ethiclabel === 3 && (
                       <div className="flex items-center font-bold rounded-md">
                         차별성
+                        {`${ethicrateMAX < 25 ? "😄" : ethicrateMAX < 50 ? "😅" : ethicrateMAX < 75 ? "☹️" : "🤬"}`}
                         <ProgressBar
                           completed={ethicrateMAX}
                           width="450%"
