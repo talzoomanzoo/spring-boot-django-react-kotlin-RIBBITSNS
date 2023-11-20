@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,8 +44,6 @@ fun ProfileScreen(
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
-    listViewModel: ListViewModel,
-    commuViewModel: CommuViewModel,
     myId: Int,
     modifier: Modifier
 ) {
@@ -68,8 +67,6 @@ fun ProfileScreen(
                 authViewModel = authViewModel,
                 tokenViewModel = tokenViewModel,
                 userViewModel = userViewModel,
-                listViewModel = listViewModel,
-                commuViewModel = commuViewModel,
 //                scrollBehavior = scrollBehavior,
                 navController = navController,
                 myId = myId,
@@ -88,8 +85,6 @@ fun ProfileSuccessScreen(
     tokenViewModel: TokenViewModel,
     authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
-    listViewModel: ListViewModel,
-    commuViewModel: CommuViewModel,
 //    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
     myId: Int,
@@ -101,43 +96,23 @@ fun ProfileSuccessScreen(
         posts = (getCardViewModel.getUserIdPostsUiState as GetUserIdPostsUiState.Success).posts
     }
     if (getCardViewModel.userIdClassificationUiState is UserIdClassificationUiState.Media) {    // useridClassificationUiState 가 Media 인 경우 아래의 필터 적용
-        posts = posts.filter { (it.image != null) or (it.video != null) }   // image 나 video 가 null 이 아닌 경우만 뽑아서 리스트로 만든다.
+        posts =
+            posts.filter { (it.image != null) or (it.video != null) }   // image 나 video 가 null 이 아닌 경우만 뽑아서 리스트로 만든다.
     }
-    Scaffold(
-        modifier = modifier,
-//        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        // scrollBehavior 에 따라 리컴포지션이 트리거되는 것으로 추측, 해결할 방법을 찾아야 함.
-        // navigation 위(RibbitApp)에 있던 scrollBehavior 을 navigation 하위에 있는 HomeScreen 으로 옮겨서 해결.
-        topBar = {
-            RibbitTopAppBar(
-                getCardViewModel = getCardViewModel,
-                tokenViewModel = tokenViewModel,
-                authViewModel = authViewModel,
-                userViewModel = userViewModel,
-                listViewModel = listViewModel,
-                commuViewModel = commuViewModel,
-//                scrollBehavior = scrollBehavior,
-                navController = navController,
-                modifier = modifier
-            )
-        }
+    Surface(
+        modifier = modifier
+            .fillMaxSize()
     ) {
-        Surface(
+        ProfilePostsGrid(
+            posts = posts,
+            getCardViewModel = getCardViewModel,
+            postingViewModel = postingViewModel,
+            userViewModel = userViewModel,
+            authViewModel = authViewModel,
+            tokenViewModel = tokenViewModel,
+            myId = myId,
+            navController = navController,
             modifier = modifier
-                .fillMaxSize()
-                .padding(it)
-        ) {
-            ProfilePostsGrid(
-                posts = posts,
-                getCardViewModel = getCardViewModel,
-                postingViewModel = postingViewModel,
-                userViewModel = userViewModel,
-                authViewModel = authViewModel,
-                tokenViewModel = tokenViewModel,
-                myId = myId,
-                navController = navController,
-                modifier = modifier
-            )
-        }
+        )
     }
 }

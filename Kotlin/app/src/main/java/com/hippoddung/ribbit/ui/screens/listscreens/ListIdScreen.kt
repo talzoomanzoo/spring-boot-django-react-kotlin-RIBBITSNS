@@ -46,11 +46,8 @@ fun ListIdScreen(
     navController: NavHostController,
     getCardViewModel: GetCardViewModel,
     postingViewModel: PostingViewModel,
-    tokenViewModel: TokenViewModel,
-    authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
     listViewModel: ListViewModel,
-    commuViewModel: CommuViewModel,
     myId: Int,
     modifier: Modifier
 ) {
@@ -85,11 +82,8 @@ fun ListIdScreen(
                     ListIdSuccessScreen(
                         getCardViewModel = getCardViewModel,
                         postingViewModel = postingViewModel,
-                        authViewModel = authViewModel,
-                        tokenViewModel = tokenViewModel,
                         userViewModel = userViewModel,
                         listViewModel = listViewModel,
-                        commuViewModel = commuViewModel,
                         navController = navController,
                         myId = myId,
                         modifier = modifier
@@ -106,11 +100,8 @@ fun ListIdScreen(
 fun ListIdSuccessScreen(
     getCardViewModel: GetCardViewModel,
     postingViewModel: PostingViewModel,
-    tokenViewModel: TokenViewModel,
-    authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
     listViewModel: ListViewModel,
-    commuViewModel: CommuViewModel,
     navController: NavHostController,
     myId: Int,
     modifier: Modifier
@@ -123,18 +114,6 @@ fun ListIdSuccessScreen(
 
     Scaffold(
         modifier = modifier,
-        topBar = {
-            RibbitTopAppBar(
-                getCardViewModel = getCardViewModel,
-                tokenViewModel = tokenViewModel,
-                authViewModel = authViewModel,
-                userViewModel = userViewModel,
-                navController = navController,
-                listViewModel = listViewModel,
-                commuViewModel = commuViewModel,
-                modifier = modifier
-            )
-        },
         floatingActionButton = {
             if ((listViewModel.listIdUiState as ListIdUiState.Success).listItem.user?.id == myId) {
                 FloatingActionButton(
@@ -155,7 +134,6 @@ fun ListIdSuccessScreen(
         Surface(
             modifier = modifier
                 .fillMaxSize()
-                .padding(it)
         ) {
             if((listViewModel.listIdUiState as ListIdUiState.Success).listItem.followingsl.isNullOrEmpty()){
                 Text(

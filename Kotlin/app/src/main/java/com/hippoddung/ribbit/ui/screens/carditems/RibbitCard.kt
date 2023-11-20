@@ -82,6 +82,7 @@ fun RibbitCard(
             .padding(start = 16.dp, top = 16.dp, end = 16.dp)
     ) {
         Column(modifier = modifier) {
+            // 프로필 페이지의 경우, 본인의 글이 아닐 경우 Rebbit 된 것을 표시
             if (currentScreen == RibbitScreen.ProfileScreen) {
                 if (getCardViewModel.userIdClassificationUiState is UserIdClassificationUiState.Ribbit) {
                     if (userViewModel.profileUiState is ProfileUiState.Exist) {
@@ -137,7 +138,7 @@ fun RibbitCard(
                     modifier = modifier
                 )
             }
-            if ((post.ethicrateMAX != null) and (post.ethicrateMAX != 0)) {
+            if ((post.ethicrateMAX != null) and (post.ethicrateMAX != 0) and (post.ethiclabel != 4)) {   // 값이 없거나 정상이 아닐 때만 출력
                 Row(modifier = modifier) {
                     // EthicLabel 0: '폭력',1: '선정',2: '욕설',3: '차별',4: '정상'
                     when (post.ethiclabel) {
@@ -156,14 +157,10 @@ fun RibbitCard(
                         3 -> {
                             Text("차별성", modifier = modifier)
                         }
-
-                        4 -> {
-                            Text("정상", modifier = modifier)
-                        }
                     }
                     Row(
                         modifier = modifier
-                        .fillMaxWidth()
+                            .fillMaxWidth()
                     ) {
                         LinearProgressIndicator(
                             progress = 1f,
@@ -178,11 +175,13 @@ fun RibbitCard(
 
                 }
             } else {
-                Text(
-                    text = "Your text is being analyzed",
-                    modifier = modifier
-                        .align(Alignment.CenterHorizontally)
-                )
+                if (post.ethiclabel != 4) {
+                    Text(
+                        text = "Your text is being analyzed",
+                        modifier = modifier
+                            .align(Alignment.CenterHorizontally)
+                    )
+                }
             }
             CardBottomBar(
                 myId = myId,
@@ -197,7 +196,6 @@ fun RibbitCard(
                         start = Offset(0.dp.toPx(), 0.dp.toPx()),
                         end = Offset(400.dp.toPx(), 0.dp.toPx()),
                         strokeWidth = 1.dp.toPx(),
-//                        cap = StrokeCap.Round
                     )
                 }
             )

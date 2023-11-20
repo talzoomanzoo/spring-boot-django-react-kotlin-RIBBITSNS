@@ -126,7 +126,7 @@ fun ProfilePostsGrid(
                             error = painterResource(R.drawable.ic_broken_image),
                             alignment = Alignment.TopStart,
                             contentScale = ContentScale.Crop
-                            )
+                        )
                     }
                     // withdrawal button
                     if (profileUser.id == userViewModel.myProfile.value?.id) {
@@ -154,7 +154,7 @@ fun ProfilePostsGrid(
                         // profile image
                         if (profileUser.image == null) {
                             Image(
-                                painter = painterResource(id = R.drawable.pngwing_com),
+                                painter = painterResource(id = R.drawable.frog_8341850_1280),
                                 contentDescription = "default image",
                                 contentScale = ContentScale.Crop,
                                 modifier = modifier
@@ -194,10 +194,6 @@ fun ProfilePostsGrid(
                                     text = "${
                                         profileUser.joinedAt?.substring(0, 10)
                                     } 에 가입",
-                                    modifier = modifier
-                                )
-                                Text(
-                                    text = profileUser.email,
                                     modifier = modifier
                                 )
                             }
@@ -255,6 +251,18 @@ fun ProfilePostsGrid(
                         }
 
                     }
+                }
+                Row(modifier = modifier) {
+                    Text(
+                        text = profileUser.fullName,
+                        modifier = modifier
+                            .padding(horizontal = 12.dp)
+                    )
+                    Text(
+                        text = profileUser.email,
+                        modifier = modifier
+                            .padding(horizontal = 12.dp)
+                    )
                 }
                 Row(
                     modifier = modifier
@@ -472,6 +480,7 @@ fun ProfilePostsGrid(
                 if (!profileUser.followings.isNullOrEmpty()) {
                     profileUser.followings?.forEach { user ->
                         SearchedUserCard(
+                            isExpanded = mutableStateOf(true),
                             user = user!!,  // 위에서 null check 함
                             getCardViewModel = getCardViewModel,
                             navController = navController,
@@ -500,6 +509,7 @@ fun ProfilePostsGrid(
                 if (!profileUser.followers.isNullOrEmpty()) {
                     profileUser.followers?.forEach { user ->
                         SearchedUserCard(
+                            isExpanded = mutableStateOf(true),
                             user = user!!,
                             getCardViewModel = getCardViewModel,
                             navController = navController,

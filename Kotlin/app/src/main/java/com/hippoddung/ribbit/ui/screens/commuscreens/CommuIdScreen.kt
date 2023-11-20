@@ -46,10 +46,7 @@ fun CommuIdScreen(
 //    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
     getCardViewModel: GetCardViewModel,
-    tokenViewModel: TokenViewModel,
-    authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
-    listViewModel: ListViewModel,
     commuViewModel: CommuViewModel,
     postingViewModel: PostingViewModel,
     myId: Int,
@@ -86,10 +83,7 @@ fun CommuIdScreen(
                     Log.d("HippoLog, CommuIdScreen", "getCommuIdPostsUiState Success")
                     CommuIdSuccessScreen(
                         getCardViewModel = getCardViewModel,
-                        authViewModel = authViewModel,
-                        tokenViewModel = tokenViewModel,
                         userViewModel = userViewModel,
-                        listViewModel = listViewModel,
                         commuViewModel = commuViewModel,
                         postingViewModel = postingViewModel,
                         navController = navController,
@@ -107,10 +101,7 @@ fun CommuIdScreen(
 @Composable
 fun CommuIdSuccessScreen(
     getCardViewModel: GetCardViewModel,
-    tokenViewModel: TokenViewModel,
-    authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
-    listViewModel: ListViewModel,
     commuViewModel: CommuViewModel,
     postingViewModel: PostingViewModel,
     navController: NavHostController,
@@ -130,18 +121,6 @@ fun CommuIdSuccessScreen(
 //    navigation시 backStack으로 이동하면서 다른 경로를 저장하는 것을 확인 onClick으로 이동
     Scaffold(
         modifier = modifier,
-        topBar = {
-            RibbitTopAppBar(
-                getCardViewModel = getCardViewModel,
-                tokenViewModel = tokenViewModel,
-                authViewModel = authViewModel,
-                userViewModel = userViewModel,
-                listViewModel = listViewModel,
-                commuViewModel = commuViewModel,
-                navController = navController,
-                modifier = modifier
-            )
-        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
@@ -164,7 +143,6 @@ fun CommuIdSuccessScreen(
         Surface(
             modifier = modifier
                 .fillMaxSize()
-                .padding(it)
         ) {
             if((commuViewModel.commuIdUiState as CommuIdUiState.Success).commuItem.followingsc.isEmpty()){
                 Text(

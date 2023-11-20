@@ -20,24 +20,31 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SupervisorAccount
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -65,18 +72,19 @@ import com.hippoddung.ribbit.ui.viewmodel.ListViewModel
 import com.hippoddung.ribbit.ui.viewmodel.MyProfileUiState
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RibbitTopAppBar(
+    drawerState: DrawerState,
+    scope: CoroutineScope,
     getCardViewModel: GetCardViewModel,
-    authViewModel: AuthViewModel,
-    tokenViewModel: TokenViewModel,
     userViewModel: UserViewModel,
-    listViewModel: ListViewModel,
-    commuViewModel: CommuViewModel,
 //    scrollBehavior: TopAppBarScrollBehavior,
     navController: NavHostController,
     modifier: Modifier = Modifier
@@ -104,13 +112,10 @@ fun RibbitTopAppBar(
                 }
             },
             navigationIcon = {
-                MainDropDownMenu(
+                MainSideBarMenu(
+                    drawerState = drawerState,
+                    scope = scope,
                     navController = navController,
-                    tokenViewModel = tokenViewModel,
-                    authViewModel = authViewModel,
-                    getCardViewModel = getCardViewModel,
-                    userViewModel = userViewModel,
-                    commuViewModel = commuViewModel,
                     modifier = modifier
                 )
             },
@@ -119,7 +124,6 @@ fun RibbitTopAppBar(
                     navController = navController,
                     userViewModel = userViewModel,
                     getCardViewModel = getCardViewModel,
-                    listViewModel = listViewModel,
                     modifier = modifier
                 )
             },
@@ -142,133 +146,119 @@ fun RibbitTopAppBar(
 }
 
 @Composable
-fun MainDropDownMenu(
+fun MainSideBarMenu(
+    drawerState: DrawerState,
+    scope: CoroutineScope,
     navController: NavHostController,
-    tokenViewModel: TokenViewModel,
-    authViewModel: AuthViewModel,
-    getCardViewModel: GetCardViewModel,
-    userViewModel: UserViewModel,
-    commuViewModel: CommuViewModel,
     modifier: Modifier
 ) {
-    var isDropDownMenuExpanded by remember { mutableStateOf(false) }
 
+//    var isDropDownMenuExpanded by remember {mutableStateOf(false)}
     Row(
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
     ) {
-        OutlinedButton(
-            onClick = { isDropDownMenuExpanded = true },
-            modifier = modifier
-        ) {
-            Text(
-                text = "Menu",
-                color = Color(0xFF006400),
-                modifier = modifier
-            )
-        }
         IconButton(
             onClick = {
-                getCardViewModel.getAllCommuPosts()
-                commuViewModel.commuClassificationUiState = CommuClassificationUiState.AllCommuPosts
-                commuViewModel.getCommus()
-                Log.d("HippoLog, RibbitTopAppBar", "api/users/profile, myProfileUiState: ${(userViewModel.myProfileUiState as MyProfileUiState.Exist).myProfile}")
-                Log.d("HippoLog, RibbitTopAppBar", "api/users/profile, myProfile: ${userViewModel.myProfile.value}")
-                navController.navigate(RibbitScreen.CommuScreen.name)
+                scope.launch(Dispatchers.IO) {
+                    drawerState.apply {
+                        if (isClosed) open() else close()
+                    }
+                }
             },
             modifier = modifier.padding(4.dp)
         ) {
             Icon(
-                imageVector = Icons.Default.SupervisorAccount,
-                contentDescription = "Commu",
+                imageVector = Icons.Default.Menu,
+                contentDescription = "Menu",
                 tint = Color(0xFF006400),
                 modifier = modifier
             )
         }
     }
 
-    DropdownMenu(
-        expanded = isDropDownMenuExpanded,
-        onDismissRequest = { isDropDownMenuExpanded = false },
-        modifier = modifier
-            .wrapContentSize()
-            .padding(4.dp)
-    ) {
-        DropdownMenuItem(
-            onClick = {
-                navController.navigate(RibbitScreen.HomeScreen.name)
-                isDropDownMenuExpanded = false
-            },
-            text = {
-                Text(
-                    text = "Home",
-                    color = Color(0xFF006400),
-                    fontSize = 14.sp,
-                    style = MaterialTheme.typography.labelSmall,
-                    modifier = modifier
-                )
-            },
-            modifier = modifier
-        )
-        DropdownMenuItem(
-            onClick = {
-                userViewModel.myProfile.value?.id?.let {
-                    getCardViewModel.getUserIdPosts(userId = it)
-                    userViewModel.getProfile(userId = it)
-                }   // userViewModel 의 user 가 없는 경우 접근 자체가 불가능
-                navController.navigate(RibbitScreen.ProfileScreen.name)
-                isDropDownMenuExpanded = false
-            },
-            text = {
-                Text(
-                    text = "My Profile",
-                    color = Color(0xFF006400),
-                    fontSize = 14.sp,
-                    style = MaterialTheme.typography.labelSmall,
-                    modifier = modifier
-                )
-            },
-            modifier = modifier
-        )
-        DropdownMenuItem(
-            onClick = {
-                runBlocking {
-                    Log.d("HippoLog, HomeTopAppBar", "LogOut")
-                    userViewModel.resetMyProfile()   // 유저 정보 리셋
-                    authViewModel.deleteLoginInfo() // 로그인 정보 삭제
-                    tokenViewModel.deleteToken()    // 토큰 정보 삭제. token 을 먼저 지우면 다시 로그인 됨
-                }
-                isDropDownMenuExpanded = false
-            },
-            text = {
-                Text(
-                    text = "Log out",
-                    color = Color(0xFF006400),
-                    fontSize = 14.sp,
-                    style = MaterialTheme.typography.labelSmall,
-                    modifier = modifier
-                )
-            },
-            modifier = modifier
-        )
-        DropdownMenuItem(
-            onClick = {
-                navController.navigate(RibbitScreen.ChatRoomListScreen.name)
-                isDropDownMenuExpanded = false
-            },
-            text = {
-                Text(
-                    text = "Chat",
-                    color = Color(0xFF006400),
-                    fontSize = 14.sp,
-                    style = MaterialTheme.typography.labelSmall,
-                    modifier = modifier
-                )
-            },
-            modifier = modifier
-        )
-    }
+//    DropdownMenu(
+//        expanded = isDropDownMenuExpanded,
+//        onDismissRequest = { isDropDownMenuExpanded = false },
+//        modifier = modifier
+//            .wrapContentSize()
+//            .padding(4.dp)
+//    ) {
+//        DropdownMenuItem(
+//            onClick = {
+//                navController.navigate(RibbitScreen.HomeScreen.name)
+//                isDropDownMenuExpanded = false
+//            },
+//            text = {
+//                Text(
+//                    text = "Home",
+//                    color = Color(0xFF006400),
+//                    fontSize = 14.sp,
+//                    style = MaterialTheme.typography.labelSmall,
+//                    modifier = modifier
+//                )
+//            },
+//            modifier = modifier
+//        )
+//        DropdownMenuItem(
+//            onClick = {
+//                userViewModel.myProfile.value?.id?.let {
+//                    getCardViewModel.getUserIdPosts(userId = it)
+//                    userViewModel.getProfile(userId = it)
+//                }   // userViewModel 의 user 가 없는 경우 접근 자체가 불가능
+//                navController.navigate(RibbitScreen.ProfileScreen.name)
+//                isDropDownMenuExpanded = false
+//            },
+//            text = {
+//                Text(
+//                    text = "My Profile",
+//                    color = Color(0xFF006400),
+//                    fontSize = 14.sp,
+//                    style = MaterialTheme.typography.labelSmall,
+//                    modifier = modifier
+//                )
+//            },
+//            modifier = modifier
+//        )
+//        DropdownMenuItem(
+//            onClick = {
+//                runBlocking {
+//                    Log.d("HippoLog, HomeTopAppBar", "LogOut")
+//                    userViewModel.resetMyProfile()   // 유저 정보 리셋
+//                    authViewModel.deleteLoginInfo() // 로그인 정보 삭제
+//                    tokenViewModel.deleteToken()    // 토큰 정보 삭제. token 을 먼저 지우면 다시 로그인 됨
+//                }
+//                isDropDownMenuExpanded = false
+//            },
+//            text = {
+//                Text(
+//                    text = "Log out",
+//                    color = Color(0xFF006400),
+//                    fontSize = 14.sp,
+//                    style = MaterialTheme.typography.labelSmall,
+//                    modifier = modifier
+//                )
+//            },
+//            modifier = modifier
+//        )
+//        DropdownMenuItem(
+//            onClick = {
+//                navController.navigate(RibbitScreen.ChatRoomListScreen.name)
+//                isDropDownMenuExpanded = false
+//            },
+//            text = {
+//                Text(
+//                    text = "Chat",
+//                    color = Color(0xFF006400),
+//                    fontSize = 14.sp,
+//                    style = MaterialTheme.typography.labelSmall,
+//                    modifier = modifier
+//                )
+//            },
+//            modifier = modifier
+//        )
+//    }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -277,10 +267,9 @@ fun RibbitSearchBar(
     navController: NavHostController,
     userViewModel: UserViewModel,
     getCardViewModel: GetCardViewModel,
-    listViewModel: ListViewModel,
     modifier: Modifier
 ) {
-    var isExpanded by remember { mutableStateOf(false) }
+    var isExpanded = remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf(TextFieldValue()) }
     var isSearched by remember { mutableStateOf(false) }
     val usersSearchData by userViewModel.usersSearchData.collectAsState()
@@ -293,21 +282,7 @@ fun RibbitSearchBar(
     ) {
         IconButton(
             onClick = {
-                listViewModel.getLists()
-                navController.navigate(RibbitScreen.ListScreen.name)
-            },
-            modifier = modifier.padding(4.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.List,
-                contentDescription = "List",
-                tint = Color(0xFF006400),
-                modifier = modifier
-            )
-        }
-        IconButton(
-            onClick = {
-                isExpanded = !isExpanded
+                isExpanded.value = !isExpanded.value
             },
             modifier = modifier.padding(4.dp)
         ) {
@@ -321,8 +296,8 @@ fun RibbitSearchBar(
     }
 
     DropdownMenu(
-        expanded = isExpanded,
-        onDismissRequest = { isExpanded = false },
+        expanded = isExpanded.value,
+        onDismissRequest = { isExpanded.value = false },
 //        offset = DpOffset(0.dp, 0.dp),
         modifier = modifier
             .animateContentSize(
@@ -382,7 +357,7 @@ fun RibbitSearchBar(
 //                    }
                     IconButton(
                         onClick = {
-                            isExpanded = !isExpanded
+                            isExpanded.value = !isExpanded.value
                         },
                         modifier = modifier.padding(4.dp)
                     ) {
@@ -411,6 +386,7 @@ fun RibbitSearchBar(
                     .sizeIn(maxWidth = Dp.Infinity, maxHeight = Dp.Infinity)
             ) {
                 SearchedGrid(
+                    isExpanded = isExpanded,
                     sortedUsersSearch = sortedUsersSearch,
                     sortedPostsSearch = sortedPostsSearch,
                     getCardViewModel = getCardViewModel,

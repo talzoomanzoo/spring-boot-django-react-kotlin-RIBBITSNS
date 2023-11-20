@@ -1,5 +1,6 @@
 package com.hippoddung.ribbit.ui.screens.chatscreens
 
+import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
@@ -27,32 +28,27 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.network.bodys.User
 import com.hippoddung.ribbit.ui.RibbitScreen
+import com.hippoddung.ribbit.ui.screens.RibbitTopAppBar
+import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
 import com.hippoddung.ribbit.ui.viewmodel.ChatViewModel
+import com.hippoddung.ribbit.ui.viewmodel.CommuViewModel
+import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
+import com.hippoddung.ribbit.ui.viewmodel.ListViewModel
+import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
+import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ChatRoomListScreen(
     navController: NavHostController,
     chatViewModel: ChatViewModel,
-    myProfile: User,
     modifier: Modifier
 ) {
     val chatRooms by chatViewModel.chatRooms.collectAsState()
 
     Scaffold(
         modifier = modifier,
-//        topBar = {
-//            RibbitTopAppBar(
-//                getCardViewModel = getCardViewModel,
-//                tokenViewModel = tokenViewModel,
-//                authViewModel = authViewModel,
-//                userViewModel = userViewModel,
-//                listViewModel = listViewModel,
-//                commuViewModel = commuViewModel,
-//                navController = navController,
-//                modifier = modifier
-//            )
-//        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { navController.navigate(RibbitScreen.CreateChatRoomScreen.name) },
@@ -71,7 +67,6 @@ fun ChatRoomListScreen(
         Surface(
             modifier = modifier
                 .fillMaxSize()
-                .padding(it)
         ) {
             LaunchedEffect(chatViewModel) {
                 // Retrieve chat rooms when the screen is launched

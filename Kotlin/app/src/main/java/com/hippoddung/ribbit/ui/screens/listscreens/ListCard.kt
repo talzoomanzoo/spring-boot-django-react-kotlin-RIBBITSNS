@@ -6,6 +6,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -77,33 +78,36 @@ fun ListCard(
             }
         }
         if(listItem.user?.id == myId) {
-            OutlinedButton(
-                onClick = {
-                    listViewModel.editingListUiState = EditingListUiState.Ready(listItem)
-                    navController.navigate(RibbitScreen.EditingListScreen.name)
-                },
-                modifier = modifier
-            ) {
-                Text(
-                    text = "Edit",
-                    color = Color(0xFF006400),
-                    fontSize = 14.sp,
+            Row(modifier = modifier) {
+                OutlinedButton(
+                    onClick = {
+                        listViewModel.editingListUiState = EditingListUiState.Ready(listItem)
+                        navController.navigate(RibbitScreen.EditingListScreen.name)
+                    },
                     modifier = modifier
-                )
-            }
-            OutlinedButton(
-                onClick = {
-                    listViewModel.deleteListIdState = listItem.id
-                    listViewModel.deleteListClickedUiState = true
-                },
-                modifier = modifier
-            ) {
-                Text(
-                    text = "Delete",
-                    color = Color(0xFF006400),
-                    fontSize = 14.sp,
+                ) {
+                    Text(
+                        text = "Edit",
+                        color = Color(0xFF006400),
+                        fontSize = 14.sp,
+                        modifier = modifier
+                    )
+                }
+                Spacer(modifier = modifier.padding(horizontal = 4.dp))
+                OutlinedButton(
+                    onClick = {
+                        listViewModel.deleteListIdState = listItem.id
+                        listViewModel.deleteListClickedUiState = true
+                    },
                     modifier = modifier
-                )
+                ) {
+                    Text(
+                        text = "Delete",
+                        color = Color(0xFF006400),
+                        fontSize = 14.sp,
+                        modifier = modifier
+                    )
+                }
             }
         }
     }

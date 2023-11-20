@@ -326,7 +326,7 @@ fun EditProfileReadyScreen(
                                 )
                             } else {
                                 Image(
-                                    painter = painterResource(id = R.drawable.pngwing_com),
+                                    painter = painterResource(id = R.drawable.frog_8341850_1280),
                                     contentDescription = "default profile image",
                                     modifier = modifier
                                         .size(100.dp)

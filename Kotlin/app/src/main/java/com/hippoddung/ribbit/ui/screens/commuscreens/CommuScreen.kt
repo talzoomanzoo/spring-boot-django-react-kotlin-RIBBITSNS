@@ -20,6 +20,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,6 +43,7 @@ import com.hippoddung.ribbit.ui.viewmodel.CommuUiState
 import com.hippoddung.ribbit.ui.viewmodel.CommuViewModel
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.ListViewModel
+import com.hippoddung.ribbit.ui.viewmodel.MyProfileUiState
 import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
@@ -53,13 +55,23 @@ fun CommuScreen(
     navController: NavHostController,
     getCardViewModel: GetCardViewModel,
     postingViewModel: PostingViewModel,
-    tokenViewModel: TokenViewModel,
-    authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
-    listViewModel: ListViewModel,
     commuViewModel: CommuViewModel,
     modifier: Modifier = Modifier
 ) {
+    LaunchedEffect(true) {
+        getCardViewModel.getAllCommuPosts()
+        commuViewModel.commuClassificationUiState = CommuClassificationUiState.AllCommuPosts
+        commuViewModel.getCommus()
+        Log.d(
+            "HippoLog, RibbitTopAppBar",
+            "api/users/profile, myProfileUiState: ${(userViewModel.myProfileUiState as MyProfileUiState.Exist).myProfile}"
+        )
+        Log.d(
+            "HippoLog, RibbitTopAppBar",
+            "api/users/profile, myProfile: ${userViewModel.myProfile.value}"
+        )
+    }
     when (commuViewModel.commuUiState) {
         is CommuUiState.Loading -> {
             Log.d("HippoLog, CommuScreen", "Loading")
@@ -71,10 +83,7 @@ fun CommuScreen(
             CommuSuccessScreen(
                 getCardViewModel = getCardViewModel,
                 postingViewModel = postingViewModel,
-                authViewModel = authViewModel,
-                tokenViewModel = tokenViewModel,
                 userViewModel = userViewModel,
-                listViewModel = listViewModel,
                 commuViewModel = commuViewModel,
                 navController = navController,
                 commuItems = commuItems,
@@ -94,10 +103,7 @@ fun CommuScreen(
 fun CommuSuccessScreen(
     getCardViewModel: GetCardViewModel,
     postingViewModel: PostingViewModel,
-    tokenViewModel: TokenViewModel,
-    authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
-    listViewModel: ListViewModel,
     commuViewModel: CommuViewModel,
     navController: NavHostController,
     commuItems: List<RibbitCommuItem>,
@@ -114,18 +120,6 @@ fun CommuSuccessScreen(
     val myId by remember { mutableStateOf(userViewModel.myProfile.value?.id!!) }    // 로그인시 저장한 정보기 때문에 반드시 값이 존재함.
     Scaffold(
         modifier = modifier,
-        topBar = {
-            RibbitTopAppBar(
-                getCardViewModel = getCardViewModel,
-                tokenViewModel = tokenViewModel,
-                authViewModel = authViewModel,
-                userViewModel = userViewModel,
-                listViewModel = listViewModel,
-                commuViewModel = commuViewModel,
-                navController = navController,
-                modifier = modifier
-            )
-        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { navController.navigate(RibbitScreen.CreatingCommuScreen.name) },
@@ -144,7 +138,6 @@ fun CommuSuccessScreen(
         Surface(
             modifier = modifier
                 .fillMaxSize()
-                .padding(it)
         ) {
             Box(modifier = modifier) {
                 CommuGrid(
