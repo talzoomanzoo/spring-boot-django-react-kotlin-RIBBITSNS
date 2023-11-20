@@ -122,21 +122,10 @@ const TwitCard = ({ twit }) => {
     }
   }, [isLocationFormOpen, showLocation]);
 
-  const toggleMap = (values) => {
-    console.log("values", values);
-    if (isLocationSaved) {
-      dispatch(updateTweet(values));
-    }
-    setLocationFormOpen(false);
-    setShowLocation(!isLocationSaved);
-    setIsLocationSaved(!isLocationSaved);
-  };
-
   const formikLocation = useFormik({
     initialValues: {
       location: address,
     },
-    onSubmit: toggleMap,
   });
 
   useEffect(() => {
@@ -300,6 +289,7 @@ const TwitCard = ({ twit }) => {
       map.setCenter(markerPosition); // 클릭한 마커를 중심으로 지도 재설정
       setAddress(place.place_name); // 주소 업데이트
       infowindow.close(); // 마커 클릭 시 인포윈도우 닫기
+      setLocationFormOpen(false);
     });
 
     kakao.maps.event.addListener(marker, "mouseout", function () {
@@ -778,6 +768,7 @@ const TwitCard = ({ twit }) => {
                         className="text-[#42c924]"
                         onClick={handleToggleLocationForm}
                       />
+                      <p className="text-gray-500 ml-3">{twit.twits?.location || address}</p>
                     </label>
                     <div className="relative">
                       <TagFacesIcon
@@ -800,21 +791,6 @@ const TwitCard = ({ twit }) => {
             </div>
             {isEditing && isLocationFormOpen && showLocation && (
               <div>
-                <div className="mt-2 mb-2 space-y-3">
-                  <div className="flex items-center text-gray-500">
-                    <form onSubmit={formikLocation.handleSubmit}>
-                      <Button
-                        type="submit"
-                        onClick={toggleMap}
-                        className="save-location-button"
-                      >
-                        저장
-                      </Button>
-                    </form>
-                    <p className="text-gray-500 ml-3">{address}</p>
-                  </div>
-                </div>
-
                 <div className="map_wrap">
                   <div
                     id="map"
