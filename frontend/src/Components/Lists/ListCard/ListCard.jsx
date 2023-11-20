@@ -52,7 +52,7 @@ const ListCard = ({ changeLists, list }) => {
           >
             <li style={{ listStyleType: "none" }} >
               <span>
-                <ListIcon style={{ marginBottom: 2, marginLeft: 10, marginRight: 10, size: "lg" }} /> {list.listName}
+                <ListIcon style={{ marginBottom: 2, marginLeft: 10, marginRight: 10, }} /> {list.listName}
               </span>
             </li>
             <div>

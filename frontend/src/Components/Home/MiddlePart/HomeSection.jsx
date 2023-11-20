@@ -533,6 +533,7 @@ const HomeSection = ({sendRefreshPage, changePage}) => {
                       paddingY: "8px",
                       paddingX: "20px",
                       color: "white",
+                      fontFamily: 'ChosunGu'
                     }}
                   >
                     Ribbit
