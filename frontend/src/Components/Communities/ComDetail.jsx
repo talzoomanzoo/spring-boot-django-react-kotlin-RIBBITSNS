@@ -74,7 +74,7 @@ const ComDetail = () => {
         }
       }
     }
-  }, [isLocationFormOpen, showLocation]);
+  }, [isLocationFormOpen, showLocation, refreshTwits]);
 
   const formikLocation = useFormik({
     initialValues: {
