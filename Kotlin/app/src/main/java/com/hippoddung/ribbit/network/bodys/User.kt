@@ -12,7 +12,7 @@ data class User(
     val followed: Boolean =false,
     val followers: List<User?>? = null,
     val followings: List<User?>? = null,
-    val fullName: String? = null,
+    val fullName: String = "",
     val hasFollowedLists: Boolean = false,
     val id: Int? = null,
     var image: String? = null,
