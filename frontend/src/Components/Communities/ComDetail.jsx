@@ -110,7 +110,8 @@ const ComDetail = ({changePage, sendRefreshPage}) => {
         });
       }
     }
-  }, [refreshTwits, sendRefreshPage]);
+  
+  }, [sendRefreshPage, refreshTwits]);
 
   useEffect(() => {
     if (map) {
