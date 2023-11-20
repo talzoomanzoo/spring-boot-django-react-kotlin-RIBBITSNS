@@ -694,7 +694,7 @@ const TwitCard = ({ twit, changePage }) => {
                               ? "hsla(120, 100%, 25%, 0.7)"
                               : ethicrateMAX < 75
                               ? "hsla(48, 100%, 40%, 0.8)"
-                              : "hsla(0, 100%, 55%, 0.8)"
+                              : "red"
                           }`}
                         />
                       </div>
@@ -714,7 +714,7 @@ const TwitCard = ({ twit, changePage }) => {
                               ? "hsla(120, 100%, 25%, 0.7)"
                               : ethicrateMAX < 75
                               ? "hsla(48, 100%, 40%, 0.8)"
-                              : "hsla(0, 100%, 55%, 0.8)"
+                              : "red"
                           }`}
                         />
                       </div>
@@ -754,7 +754,7 @@ const TwitCard = ({ twit, changePage }) => {
                               ? "hsla(120, 100%, 25%, 0.7)"
                               : ethicrateMAX < 75
                               ? "hsla(48, 100%, 40%, 0.8)"
-                              : "hsla(0, 100%, 55%, 0.8)"
+                              : "red"
                           }`}
                         />
                       </div>

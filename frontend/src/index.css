@@ -6,10 +6,17 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
+div {
+  font-family: 'ChosunGu';
+}
 p{
   margin: 0;
   padding: 0;
+  font-family: 'ChosunGu';
+}
+
+Button {
+  font-family: 'ChosunGu';
 }
 
 code {
@@ -17,7 +24,12 @@ code {
     monospace;
 }
 
-
+@font-face {
+  font-family: 'ChosunGu';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/ChosunGu.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

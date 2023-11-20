@@ -14,7 +14,7 @@ import ComBottom from "./ComBottom";
 import ComCard from "./ComCard";
 import ComModel from "./ComModel";
 
-const Communities = () => {
+const Communities = ({changePage}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { com, theme } = useSelector((store) => store);
@@ -104,7 +104,7 @@ const Communities = () => {
         </div>
 
         <div>
-          <ComBottom />
+          <ComBottom changePage={changePage}/>
         </div>
       </section>
 

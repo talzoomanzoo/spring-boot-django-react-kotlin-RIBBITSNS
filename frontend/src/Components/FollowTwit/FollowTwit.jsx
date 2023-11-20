@@ -5,7 +5,7 @@ import { useNavigate } from "react-router";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import TwitCard from "../Home/MiddlePart/TwitCard/TwitCard";
 import { useParams } from "react-router";
-const FollowTwit = () => {
+const FollowTwit = ({changePage}) => {
   const dispatch = useDispatch();
   const { auth, twit, theme } = useSelector((store) => store);
   const navigate = useNavigate();
@@ -34,7 +34,7 @@ const FollowTwit = () => {
         className={`${theme.currentTheme === "dark" ? "pt-14" : ""} space-y-5`}
       >
         {twit.twits?.map((item) => (
-          <TwitCard twit={item} />
+          <TwitCard twit={item} changePage={changePage}/>
         ))}
       </section>
     </div>

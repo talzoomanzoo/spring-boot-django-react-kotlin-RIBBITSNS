@@ -53,11 +53,11 @@ const HomePage = () => {
           }></Route>
           <Route path="/profile/:id" element={
             <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
-              <Profile sendTheme={sendTheme}/>
+              <Profile sendTheme={sendTheme} changePage={changePageFunc}/>
             </Suspense>}></Route>
           <Route path="/followtwit" element={
             <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
-              <FollowTwitEnc sendTheme={sendTheme}/>
+              <FollowTwitEnc sendTheme={sendTheme} changePage={changePageFunc}/>
             </Suspense>}></Route>
           <Route path="/messages" element={
             <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
@@ -69,19 +69,19 @@ const HomePage = () => {
             </Suspense>}></Route>
           <Route path="/communities" element={
             <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
-              <Communities sendTheme={sendTheme}/>
+              <Communities sendTheme={sendTheme} changePage={changePageFunc}/>
             </Suspense>}></Route>
           <Route path="/twit/:id" element={
             <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
-              <TwitDetail sendTheme={sendTheme}/>
+              <TwitDetail sendTheme={sendTheme} changePage={changePageFunc}/>
             </Suspense>}></Route>
           <Route path="/lists/:id" element={
             <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
-              <ListsDetail sendTheme={sendTheme} />
+              <ListsDetail sendTheme={sendTheme} changePage={changePageFunc}/>
             </Suspense>}></Route>
             <Route path="/communities/:id" element={
             <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
-              <ComDetail sendTheme={sendTheme}/>
+              <ComDetail sendTheme={sendTheme} changePage={changePageFunc}/>
             </Suspense>}></Route>
             <Route path="/notifications" element={
             <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>

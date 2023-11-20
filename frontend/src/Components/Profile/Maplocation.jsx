@@ -255,7 +255,7 @@ const Maplocation = (onLocationChange) => {
           <div className="mt-2 mb-2 space-y-3">
             <div className="flex items-center text-gray-500">
               <form onSubmit={formik.handleSubmit}>
-                <Button type="submit" onClick={toggleMap} className="save-location-button">
+                <Button type="submit" onClick={toggleMap}>
                   저장
                 </Button>
               </form>

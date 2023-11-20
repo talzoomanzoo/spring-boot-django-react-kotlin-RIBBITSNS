@@ -7,7 +7,7 @@ import { useParams, useNavigate } from "react-router";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import { Divider } from "@mui/material";
 
-const ListsDetail = () => {
+const ListsDetail = ({changePage}) => {
     const param = useParams();
     const dispatch = useDispatch();
     const { list, twit, theme } = useSelector(store => store);
@@ -52,7 +52,7 @@ const ListsDetail = () => {
             <div style={{ marginTop: 20 }}>
                 {twit.twits && twit.twits.length > 0 ?
                     (
-                        twit.twits.map((item) => <TwitCard twit={item} key={item.id} />)
+                        twit.twits.map((item) => <TwitCard twit={item} key={item.id} changePage={changePage}/>)
                     ) :
                     (
                         <div>게시된 리빗이 없습니다.</div>

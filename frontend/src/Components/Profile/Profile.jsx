@@ -28,7 +28,7 @@ import Loading from "./Loading/Loading";
 const Maplocation = React.lazy(() => import("./Maplocation"));
 const ProfileModel = React.lazy(() => import("./ProfileModel"));
 
-const Profile = () => {
+const Profile = ({ changePage }) => {
   const style = {
     position: "absolute",
     top: "50%",
@@ -252,10 +252,19 @@ const Profile = () => {
           )}
         </div>
         <p className="flex items-center text-gray-500">
-          {auth.findUser?.fullName}님의 평균:
+          {`${
+            averageEthicRateMAX < 25
+              ? "😄"
+              : averageEthicRateMAX < 50
+              ? "😅"
+              : averageEthicRateMAX < 75
+              ? "☹️"
+              : "🤬"
+          }`}
+          :
           <ProgressBar
             completed={averageEthicRateMAX}
-            width="400%"
+            width="165px"
             margin="2px 0px 4px 4px"
             bgColor={`${
               averageEthicRateMAX < 25
@@ -264,7 +273,7 @@ const Profile = () => {
                 ? "hsla(120, 100%, 25%, 0.7)"
                 : averageEthicRateMAX < 75
                 ? "hsla(48, 100%, 40%, 0.8)"
-                : "hsla(0, 100%, 55%, 0.8)"
+                : "red"
             }`}
           />
         </p>
@@ -512,7 +521,7 @@ const Profile = () => {
             <TabPanel value="1">
               {twit.twits?.map((item) => (
                 <div>
-                  <TwitCard twit={item} />
+                  <TwitCard twit={item} key={item.id} changePage={changePage} />
                   {/* <Divider sx={{ margin: "2rem 0rem" }} /> */}
                 </div>
               ))}
@@ -520,7 +529,7 @@ const Profile = () => {
             <TabPanel value="2">
               {twit.twits?.map((item) => (
                 <div>
-                  <TwitCard twit={item} />
+                  <TwitCard twit={item} key={item.id} changePage={changePage} />
                   {/* <Divider sx={{ margin: "2rem 0rem" }} /> */}
                 </div>
               ))}
@@ -530,14 +539,18 @@ const Profile = () => {
                 .filter((item) => item.image || item.video)
                 .map((item) => (
                   <div>
-                    <TwitCard twit={item} />
+                    <TwitCard
+                      twit={item}
+                      key={item.id}
+                      changePage={changePage}
+                    />
                     {/* <Divider sx={{ margin: "2rem 0rem" }} /> */}
                   </div>
                 ))}
             </TabPanel>
             <TabPanel value="4">
               {twit.likedTwits?.map((item) => (
-                <TwitCard twit={item} />
+                <TwitCard twit={item} changePage={changePage} />
               ))}
             </TabPanel>
           </TabContext>

@@ -25,7 +25,7 @@ import "../Home/MiddlePart/TwitMap.css";
 // const Maplocation = React.lazy(() => import("../Profile/Maplocation"));
 const Loading = React.lazy(() => import("../Profile/Loading/Loading"));
 
-const ComDetail = () => {
+const ComDetail = ({changePage}) => {
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
@@ -444,9 +444,8 @@ const ComDetail = () => {
   return (
     <div>
       <section
-        className={`z-50 flex items-center sticky top-0 ${
-          theme.currentTheme === "light" ? "light" : "dark"
-        } bg-opacity-95`}
+        className={`z-50 flex items-center sticky top-0 ${theme.currentTheme === "light" ? "light" : "dark"
+          } ${theme.currentTheme==="dark"?" bg-[#0D0D0D]":"bg-white"}`}
       >
         <KeyboardBackspaceIcon
           className="cursor-pointer"
@@ -655,7 +654,7 @@ const ComDetail = () => {
       <div style={{ marginTop: 20 }}>
         {loading ? <Loading /> : null}
         {twit.twits && twit.twits.length > 0 ? (
-          twit.twits.map((item) => <TwitCard twit={item} key={item.id} />)
+          twit.twits.map((item) => <TwitCard twit={item} key={item.id} changePage={changePage}/>)
         ) : (
           <div>게시된 리빗이 없습니다.</div>
         )}
