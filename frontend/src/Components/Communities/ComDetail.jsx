@@ -4,6 +4,7 @@ import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import SlideshowIcon from "@mui/icons-material/Slideshow";
 import TagFacesIcon from "@mui/icons-material/TagFaces";
 import { Avatar, Button } from "@mui/material";
+import ProgressBar from "@ramonak/react-progress-bar";
 import EmojiPicker from "emoji-picker-react";
 import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
@@ -25,7 +26,11 @@ import "../Home/MiddlePart/TwitMap.css";
 // const Maplocation = React.lazy(() => import("../Profile/Maplocation"));
 const Loading = React.lazy(() => import("../Profile/Loading/Loading"));
 
+<<<<<<< HEAD
+const ComDetail = ({ changePage }) => {
+=======
 const ComDetail = ({changePage, sendRefreshPage}) => {
+>>>>>>> 1f9597c6ce5e969f08b0a77bdb7f1060ba520701
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
@@ -57,14 +62,12 @@ const ComDetail = ({changePage, sendRefreshPage}) => {
       const container = document.getElementById("map");
 
       if (container) {
-        
         const options = {
           center: new kakao.maps.LatLng(37.5662952, 126.9757567),
           level: 3,
         };
 
         if ("geolocation" in navigator) {
-          
           navigator.geolocation.getCurrentPosition((position) => {
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
@@ -74,7 +77,6 @@ const ComDetail = ({changePage, sendRefreshPage}) => {
             setMap(map);
           });
         }
-        
       }
     }
   }, [isLocationFormOpen, showLocation, refreshTwits]);
@@ -88,24 +90,20 @@ const ComDetail = ({changePage, sendRefreshPage}) => {
       setAddress(values.location);
       formikLocation.resetForm();
     },
-    
   });
 
   useEffect(() => {
-
     const container = document.getElementById("map");
     dispatch(findComById(param.id));
     dispatch(findTwitsByComId(param.id));
 
     if (container) {
-      
       const options = {
         center: new kakao.maps.LatLng(37.5662952, 126.9757567),
         level: 3,
       };
 
       if ("geolocation" in navigator) {
-        
         navigator.geolocation.getCurrentPosition((position) => {
           const latitude = position.coords.latitude;
           const longitude = position.coords.longitude;
@@ -113,21 +111,22 @@ const ComDetail = ({changePage, sendRefreshPage}) => {
 
           const map = new kakao.maps.Map(container, options);
           setMap(map);
-          
         });
       }
     }
+<<<<<<< HEAD
+  }, []);
+=======
     
   }, [sendRefreshPage]);
+>>>>>>> 1f9597c6ce5e969f08b0a77bdb7f1060ba520701
 
   useEffect(() => {
     if (map) {
-      
       const mapTypeControl = new kakao.maps.MapTypeControl();
       map.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);
       const zoomControl = new kakao.maps.ZoomControl();
       map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
-      
     }
   }, [map]);
 
@@ -441,20 +440,75 @@ const ComDetail = ({changePage, sendRefreshPage}) => {
     }
   };
 
+  const [totalEthicRateMAX, setTotalEthicRateMAX] = useState(0);
+  const [averageEthicRateMAX, setAverageEthicRateMAX] = useState(0);
+
+  useEffect(() => {
+    // Calculate total ethicrateMAX
+    const totalEthicRateMAXValue = twit.twits.reduce((sum, tweet) => {
+      // ethiclabel이 4인 경우 0으로 포함하여 합산
+      return sum + (tweet.ethiclabel === 4 ? 0 : tweet.ethicrateMAX || 0);
+    }, 0);
+
+    // Calculate average ethicrateMAX
+    const averageEthicRateMAXValue =
+      twit.twits.length > 0 ? totalEthicRateMAXValue / twit.twits.length : 0;
+
+    // 정수로 변환
+    const roundedAverageEthicRateMAX = Math.floor(averageEthicRateMAXValue);
+
+    // 상태 업데이트
+    setTotalEthicRateMAX(totalEthicRateMAXValue);
+    setAverageEthicRateMAX(roundedAverageEthicRateMAX);
+
+    // ... (다른 코드)
+  }, [twit.twits, auth.user]);
+
   return (
     <div>
-      <section
-        className={`z-50 flex items-center sticky top-0 ${theme.currentTheme === "light" ? "light" : "dark"
-          } ${theme.currentTheme==="dark"?" bg-[#0D0D0D]":"bg-white"}`}
-      >
-        <KeyboardBackspaceIcon
-          className="cursor-pointer"
-          onClick={handleBack}
-        />
-        <h1 className="py-5 text-xl font-bold opacity-90 ml-5 ${}">
-          {`${com.com?.comName}`}
-        </h1>
-      </section>
+      <div className="flex">
+        <section
+          className={`z-50 flex items-center sticky top-0 ${
+            theme.currentTheme === "light" ? "light" : "dark"
+          } ${theme.currentTheme === "dark" ? " bg-[#0D0D0D]" : "bg-white"}`}
+        >
+          <KeyboardBackspaceIcon
+            className="cursor-pointer"
+            onClick={handleBack}
+          />
+          <div className="ml-5 flex" style={{ minWidth: "200px", flex: 1 }}>
+            <h1 className="py-5 text-xl font-bold opacity-90 overflow-hidden">
+              {com.com?.comName}
+            </h1>
+          </div>
+        </section>
+
+        <div className="flex mt-5 ml-auto" style={{ width: "200px" }}>
+          {`${
+            averageEthicRateMAX < 25
+              ? "😄"
+              : averageEthicRateMAX < 50
+              ? "😅"
+              : averageEthicRateMAX < 75
+              ? "☹️"
+              : "🤬"
+          }`}
+          <ProgressBar
+            completed={averageEthicRateMAX}
+            width="165px" // Set the fixed width for ProgressBar
+            margin="2px 4px 4px 0" // Margin to right-align the ProgressBar
+            bgColor={`${
+              averageEthicRateMAX < 25
+                ? "hsla(195, 100%, 35%, 0.8)"
+                : averageEthicRateMAX < 50
+                ? "hsla(120, 100%, 25%, 0.7)"
+                : averageEthicRateMAX < 75
+                ? "hsla(48, 100%, 40%, 0.8)"
+                : "red"
+            }`}
+          />
+        </div>
+      </div>
 
       <section>
         <img
@@ -589,7 +643,7 @@ const ComDetail = ({changePage, sendRefreshPage}) => {
             </div>
           </div>
           <div style={{ marginTop: 20 }}>
-          {loading ? <Loading /> : null}
+            {loading ? <Loading /> : null}
             {isLocationFormOpen && showLocation && (
               <div>
                 <div className="map_wrap">
@@ -654,7 +708,9 @@ const ComDetail = ({changePage, sendRefreshPage}) => {
       <div style={{ marginTop: 20 }}>
         {loading ? <Loading /> : null}
         {twit.twits && twit.twits.length > 0 ? (
-          twit.twits.map((item) => <TwitCard twit={item} key={item.id} changePage={changePage}/>)
+          twit.twits.map((item) => (
+            <TwitCard twit={item} key={item.id} changePage={changePage} />
+          ))
         ) : (
           <div>게시된 리빗이 없습니다.</div>
         )}

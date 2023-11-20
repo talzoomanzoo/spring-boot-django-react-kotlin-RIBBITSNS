@@ -15,13 +15,13 @@ import Loading from "../../Profile/Loading/Loading";
 import TwitCard from "./TwitCard/TwitCard";
 import "./TwitMap.css";
 
+import ProgressBar from "@ramonak/react-progress-bar";
 import {
   TWEET_CREATE_FAILURE,
   TWEET_CREATE_REQUEST,
   TWEET_CREATE_SUCCESS,
 } from "../../../Store/Tweet/ActionType";
 import ScrollToTop from "./ScrollToTop";
-import ProgressBar from "@ramonak/react-progress-bar";
 
 const validationSchema = Yup.object().shape({
   content: Yup.string().required("내용이 없습니다"),
@@ -41,7 +41,7 @@ const createTweetFailure = (error) => ({
   payload: error,
 });
 
-const HomeSection = ({sendRefreshPage, changePage}) => {
+const HomeSection = ({ sendRefreshPage, changePage }) => {
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
@@ -314,11 +314,11 @@ const HomeSection = ({sendRefreshPage, changePage}) => {
   };
 
   const handleSubmit = (values, actions) => {
-      dispatch(HomeCreateTweet(values));
-      actions.resetForm();
-      setSelectedImage("");
-      setSelectedVideo("");
-      setAddress(""); // 게시글을 작성하고 나면 주소값 초기화
+    dispatch(HomeCreateTweet(values));
+    actions.resetForm();
+    setSelectedImage("");
+    setSelectedVideo("");
+    setAddress(""); // 게시글을 작성하고 나면 주소값 초기화
     handleCloseEmoji();
   };
 
@@ -401,19 +401,14 @@ const HomeSection = ({sendRefreshPage, changePage}) => {
 
   useEffect(() => {
     // Calculate total ethicrateMAX
-    const totalEthicRateMAXValue = twit.twits.reduce(
-      (sum, tweet) => {
-        // ethiclabel이 4인 경우 0으로 포함하여 합산
-        return sum + (tweet.ethiclabel === 4 ? 0 : tweet.ethicrateMAX || 0);
-      },
-      0
-    );
+    const totalEthicRateMAXValue = twit.twits.reduce((sum, tweet) => {
+      // ethiclabel이 4인 경우 0으로 포함하여 합산
+      return sum + (tweet.ethiclabel === 4 ? 0 : tweet.ethicrateMAX || 0);
+    }, 0);
 
     // Calculate average ethicrateMAX
     const averageEthicRateMAXValue =
-    twit.twits.length > 0
-      ? totalEthicRateMAXValue / twit.twits.length
-      : 0;
+      twit.twits.length > 0 ? totalEthicRateMAXValue / twit.twits.length : 0;
 
     // 정수로 변환
     const roundedAverageEthicRateMAX = Math.floor(averageEthicRateMAXValue);
@@ -427,16 +422,40 @@ const HomeSection = ({sendRefreshPage, changePage}) => {
 
   return (
     <div className="space-y-5">
-      <section className={`sticky top-0 ${theme.currentTheme==="dark"?" bg-[#0D0D0D]":"bg-white"}`} style={{zIndex: "100"}}>
-        <h1 className="py-5 text-xl font-bold opacity-90 ml-5 flex">홈
-        <p className="flex" style={{ marginLeft: "70%",}}>{`${averageEthicRateMAX < 25 ? "😄" : averageEthicRateMAX < 50 ? "😅" : averageEthicRateMAX < 75 ? "☹️" : "🤬"}`}
-        <ProgressBar
-                          completed={averageEthicRateMAX}
-                          width="165px"
-                          margin="2px 0px 4px 4px"
-                          bgColor={`${averageEthicRateMAX < 25 ? "hsla(195, 100%, 35%, 0.8)" : averageEthicRateMAX < 50 ? "hsla(120, 100%, 25%, 0.7)" : averageEthicRateMAX < 75 ? "hsla(48, 100%, 40%, 0.8)" : "red"}`}
-                        /></p>
-                        </h1>
+      <section
+        className={`sticky top-0 ${
+          theme.currentTheme === "dark" ? " bg-[#0D0D0D]" : "bg-white"
+        }`}
+        style={{ zIndex: "100" }}
+      >
+        <h1 className="py-5 text-xl font-bold opacity-90 ml-5 flex">
+          홈
+          <p className="flex" style={{ marginLeft: "70%" }}>
+            {`${
+              averageEthicRateMAX < 25
+                ? "😄"
+                : averageEthicRateMAX < 50
+                ? "😅"
+                : averageEthicRateMAX < 75
+                ? "☹️"
+                : "🤬"
+            }`}
+            <ProgressBar
+              completed={averageEthicRateMAX}
+              width="165px"
+              margin="2px 0px 4px 4px"
+              bgColor={`${
+                averageEthicRateMAX < 25
+                  ? "hsla(195, 100%, 35%, 0.8)"
+                  : averageEthicRateMAX < 50
+                  ? "hsla(120, 100%, 25%, 0.7)"
+                  : averageEthicRateMAX < 75
+                  ? "hsla(48, 100%, 40%, 0.8)"
+                  : "red"
+              }`}
+            />
+          </p>
+        </h1>
       </section>
       <section className="pb-10">
         {/* ${theme.currentTheme==="dark"?" bg-[#151515] p-10 rounded-md mb-10":""} */}
@@ -607,10 +626,11 @@ const HomeSection = ({sendRefreshPage, changePage}) => {
           )}
           {loading ? <Loading /> : null}
           {twit.twits && twit.twits.length > 0 ? (
-            twit.twits.map((item) => <TwitCard twit={item} key={item.id} changePage={changePage}/>)
+            twit.twits.map((item) => (
+              <TwitCard twit={item} key={item.id} changePage={changePage} />
+            ))
           ) : (
             <div>게시된 리빗이 없습니다.</div>
-            
           )}
         </div>
       </section>
