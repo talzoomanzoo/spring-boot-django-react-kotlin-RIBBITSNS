@@ -57,6 +57,7 @@ const Profile = ({ changePage }) => {
   const param = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [isLobitTab, setIsLobitTab] = useState(true);
 
   const handleToggleLocationForm = () => {
     setLocationFormOpen((prev) => !prev);
@@ -68,6 +69,10 @@ const Profile = ({ changePage }) => {
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
+    
+    // 리빗 탭 여부 확인
+    setIsLobitTab(newValue === "1");
+  
     if (newValue === "4") {
       dispatch(findTwitsByLikesContainUser(param.id));
     } else if (newValue === "1") {
@@ -173,25 +178,21 @@ const Profile = ({ changePage }) => {
   const [averageEthicRateMAX, setAverageEthicRateMAX] = useState(0);
 
   useEffect(() => {
-    // Calculate total ethicrateMAX
-    const totalEthicRateMAXValue = twit.twits.reduce((sum, tweet) => {
-      // ethiclabel이 4인 경우 0으로 포함하여 합산
-      return sum + (tweet.ethiclabel === 4 ? 0 : tweet.ethicrateMAX || 0);
-    }, 0);
-
-    // Calculate average ethicrateMAX
-    const averageEthicRateMAXValue =
-      twit.twits.length > 0 ? totalEthicRateMAXValue / twit.twits.length : 0;
-
-    // 정수로 변환
-    const roundedAverageEthicRateMAX = Math.floor(averageEthicRateMAXValue);
-
-    // 상태 업데이트
-    setTotalEthicRateMAX(totalEthicRateMAXValue);
-    setAverageEthicRateMAX(roundedAverageEthicRateMAX);
-
-    // ... (다른 코드)
-  }, [twit.twits, auth.user]);
+    // 리빗 탭에서만 totalEthicRateMAX, averageEthicRateMAX 계산
+    if (isLobitTab) {
+      const totalEthicRateMAXValue = twit.twits.reduce((sum, tweet) => {
+        return sum + (tweet.ethiclabel === 4 ? 0 : tweet.ethicrateMAX || 0);
+      }, 0);
+  
+      const averageEthicRateMAXValue =
+        twit.twits.length > 0 ? totalEthicRateMAXValue / twit.twits.length : 0;
+  
+      const roundedAverageEthicRateMAX = Math.floor(averageEthicRateMAXValue);
+  
+      setTotalEthicRateMAX(totalEthicRateMAXValue);
+      setAverageEthicRateMAX(roundedAverageEthicRateMAX);
+    }
+  }, [twit.twits, isLobitTab, auth.user]);
 
   return (
     <div>
@@ -261,7 +262,6 @@ const Profile = ({ changePage }) => {
               ? "☹️"
               : "🤬"
           }`}
-          :
           <ProgressBar
             completed={averageEthicRateMAX}
             width="165px"
