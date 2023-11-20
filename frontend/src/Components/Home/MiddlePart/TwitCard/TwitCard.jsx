@@ -51,7 +51,7 @@ const validationSchema = Yup.object().shape({
   content: Yup.string().required("내용이 없습니다"),
 });
 
-const TwitCard = ({ twit, changePage }) => {
+const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
   const { com } = useSelector((store) => store);
   const [selectedImage, setSelectedImage] = useState(twit.image);
   const [selectedVideo, setSelectedVideo] = useState(twit.video);
@@ -103,6 +103,14 @@ const TwitCard = ({ twit, changePage }) => {
   const handleCloseAlertModal = () => setOpenAlertModal(false);
   const handleOpenAlertModal = () => setOpenAlertModal(true);
 
+  // const authCheck = (auth) => {
+  //   for (let i = 0; i < twit.retwitUsersId?.length; i++) {
+  //     if (auth.findUser?.id === twit.retwitUsersId) {
+  //       return true;
+  //     }
+  //   }
+  // };
+
   useEffect(() => {
     if (isLocationFormOpen && showLocation) {
       const container = document.getElementById("map");
@@ -125,7 +133,7 @@ const TwitCard = ({ twit, changePage }) => {
         }
       }
     }
-  }, [isLocationFormOpen, showLocation]);
+  }, [isLocationFormOpen, showLocation, sendRefreshPage]);
 
   const formikLocation = useFormik({
     initialValues: {
@@ -337,10 +345,11 @@ const TwitCard = ({ twit, changePage }) => {
 
 
   const handleLikeTweet = (num) => {
-    dispatch(likeTweet(twit.id));
+    changePage();
     setIsLiked(!isLiked);
     setLikes(likes + num);
-    changePage();
+    dispatch(likeTweet(twit.id));
+    
   };
 
   const handleIncrement = () => {
@@ -521,7 +530,8 @@ const TwitCard = ({ twit, changePage }) => {
         twit.retwitUsersId?.length > 0 ? (
         <div className="flex items-center font-semibold text-yellow-500 py-2">
           <RepeatIcon />
-          <p className="ml-3">Reribbit</p>
+         
+          (<p className="ml-3">Reribbit</p>)
         </div>
       ) : null}
       <div className="flex space-x-5 ">
