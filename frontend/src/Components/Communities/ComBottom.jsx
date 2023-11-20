@@ -2,14 +2,14 @@ import TwitCard from "../Home/MiddlePart/TwitCard/TwitCard";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { findTwitsByAllComs } from "../../Store/Tweet/Action";
-const ComBottom = ({changePage}) => {
+const ComBottom = ({changePage, sendRefreshPage}) => {
     const dispatch = useDispatch();
     const { twit } = useSelector(store => store);
 
     useEffect(() => {
         dispatch(findTwitsByAllComs());
 
-    }, [])
+    }, [sendRefreshPage])
 
     return (
         <div>

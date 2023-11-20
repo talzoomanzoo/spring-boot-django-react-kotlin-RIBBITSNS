@@ -26,10 +26,9 @@ const style = {
   overflow: "scroll-y",
 };
 
-const ReplyModal = ({ handleClose, twitData, open }) => {
+const ReplyModal = ({ handleClose, twitData, open, changePage }) => {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
-  const [refreshTwits, setRefreshTwits] = useState(0);
   const dispatch = useDispatch();
   
   const { auth, theme } = useSelector((store) => store);
@@ -40,7 +39,8 @@ const ReplyModal = ({ handleClose, twitData, open }) => {
     console.log("val", values);
     dispatch(createTweetReply(values));
     actions.resetForm();
-    handleClose()
+    handleClose();
+    changePage();
   };
 
   const formik = useFormik({

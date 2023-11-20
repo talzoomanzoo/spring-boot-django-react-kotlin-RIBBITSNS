@@ -25,7 +25,7 @@ import "../Home/MiddlePart/TwitMap.css";
 // const Maplocation = React.lazy(() => import("../Profile/Maplocation"));
 const Loading = React.lazy(() => import("../Profile/Loading/Loading"));
 
-const ComDetail = ({changePage}) => {
+const ComDetail = ({changePage, sendRefreshPage}) => {
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
@@ -118,7 +118,7 @@ const ComDetail = ({changePage}) => {
       }
     }
     
-  }, []);
+  }, [sendRefreshPage]);
 
   useEffect(() => {
     if (map) {

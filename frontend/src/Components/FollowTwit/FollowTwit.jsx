@@ -5,7 +5,7 @@ import { useNavigate } from "react-router";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import TwitCard from "../Home/MiddlePart/TwitCard/TwitCard";
 import { useParams } from "react-router";
-const FollowTwit = ({changePage}) => {
+const FollowTwit = ({changePage, sendRefreshPage}) => {
   const dispatch = useDispatch();
   const { auth, twit, theme } = useSelector((store) => store);
   const navigate = useNavigate();
@@ -13,7 +13,7 @@ const FollowTwit = ({changePage}) => {
   const handleBack = () => navigate(-1);
   useEffect(() => {
     dispatch(followTwit(param.id));
-  }, []); 
+  }, [sendRefreshPage]); 
   console.log("followTwittwit", twit);
   return (
     <div>
