@@ -9,7 +9,7 @@ import ListsModel from "./ListsModel";
 import "../RightPart/Scrollbar.css";
 
 const Lists = () => {
-    
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { list } = useSelector((store) => store);
@@ -19,10 +19,15 @@ const Lists = () => {
     const [openListsModel, setOpenListsModel] = useState();
     const handleCloseListsModel = () => setOpenListsModel(false);
     const handleOpenListsModel = () => setOpenListsModel(true);
+    const [refreshLists, setRefreshLists] = useState(0);
+
+    const changeLists = () => {
+        setRefreshLists((prev) => prev + 1);
+    }
 
     useEffect(() => {
         dispatch(getAllLists());
-    }, []);
+    }, [refreshLists, list.privateMode]);
 
     return (
         <div id="lists" className="space-y-5">
@@ -50,6 +55,7 @@ const Lists = () => {
                 <ListsModel
                     open={openListsModel}
                     handleClose={handleCloseListsModel}
+                    changeLists={changeLists}
                 />
             </section>
 
@@ -62,16 +68,23 @@ const Lists = () => {
                 }}>
                 공개 리스트
                 <hr
-            style={{
-              marginTop: 10,
-              background: "hsla(0, 0%, 80%, 0.5)",
-              borderColor: "hsl(0, 0%, 80%)",
-              height: "5px",
-            }}
-          />
+                    style={{
+                        marginTop: 10,
+                        marginBottom: 15,
+                        background: "hsla(0, 0%, 80%, 0.5)",
+                        height: "5px",
+                    }}
+                />
+            </div>
+            <div
+                className="space-y-3"
+                style={{
+                    marginTop: 10,
+                    fontSize: "larger",
+                }}>
                 <section
                     className="space-y-5 customeScrollbar overflow-y-scroll css-scroll hideScrollbar border-gray-700 h-[40vh] w-full rounded-md">
-                    {list.lists.map((item) => (!item.privateMode ? (<ListCard style={{ marginTop: 10 }} list={item} />) : null))}
+                    {list.lists.map((item) => (!item.privateMode ? (<ListCard style={{ marginTop: 10 }} list={item} changeLists={changeLists}/>) : null))}
                 </section>
             </div>
 
@@ -84,18 +97,18 @@ const Lists = () => {
                 }}>
                 비공개 리스트
                 <hr
-            style={{
-              marginTop: 10,
-              background: "hsla(0, 0%, 80%, 0.5)",
-              borderColor: "hsl(0, 0%, 80%)",
-              height: "5px",
-            }}
-          />
+                    style={{
+                        marginTop: 10,
+                        marginBottom: 15,
+                        background: "hsla(0, 0%, 80%, 0.5)",
+                        height: "5px",
+                    }}
+                />
                 <section
                     className="space-y-5 customeScrollbar overflow-y-scroll css-scroll hideScrollbar border-gray-700 h-[40vh] w-full rounded-md">
                     {/* {list.lists && list.lists.length > 0 ?
                         ( */}
-                    {list.lists.map((item) => (item.privateMode ? (<ListCard style={{ marginTop: 10 }} list={item} />) : null))}
+                    {list.lists.map((item) => (item.privateMode ? (<ListCard style={{ marginTop: 10 }} list={item} changeLists={changeLists}/>) : null))}
                     {/* )) :
                         (
                             <div>게시된 리스트가 없습니다.</div>

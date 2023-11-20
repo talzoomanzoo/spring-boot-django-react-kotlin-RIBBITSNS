@@ -40,19 +40,16 @@ const ComModel3 = ({ com, handleClose, open }) => {
     const handleSubmit = (values) => {
         dispatch(updateCom(values));
         handleClose();
-        window.location.reload();
     };
 
     const handleSignup = (comId) => {
         dispatch(addReady(comId));
         handleClose();
-        window.location.reload();
     };
 
     const handleSignout = (comId) => {
         dispatch(removeFollow(comId));
         handleClose();
-        window.location.reload();
     }
 
     const formik = useFormik({

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { findByTopViews } from "../../Store/Tweet/Action";
 import TwitCard from "../Home/MiddlePart/TwitCard/TwitCard";
 
-const ViewTop = () => {
+const ViewTop = (sendRefreshPage) => {
     const dispatch = useDispatch();
     const { twit } = useSelector(store => store);
 

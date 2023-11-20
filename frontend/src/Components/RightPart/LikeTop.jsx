@@ -2,9 +2,8 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { findByTopLikes } from "../../Store/Tweet/Action";
 import TwitCard from "../Home/MiddlePart/TwitCard/TwitCard";
-import { useState } from "react";
 
-const LikeTop = () => {
+const LikeTop = (sendRefreshPage) => {
     const dispatch = useDispatch();
     const { twit } = useSelector(store => store);
     //const [refreshTwits, setRefreshTwits] = useState(0);

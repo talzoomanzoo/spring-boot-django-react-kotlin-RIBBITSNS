@@ -50,7 +50,7 @@ const validationSchema = Yup.object().shape({
   content: Yup.string().required("내용이 없습니다"),
 });
 
-const TwitCard = ({ twit }) => {
+const TwitCard = ({ twit }, props) => {
   const { com } = useSelector((store) => store);
   const [selectedImage, setSelectedImage] = useState(twit.image);
   const [selectedVideo, setSelectedVideo] = useState(twit.video);
@@ -344,6 +344,7 @@ const TwitCard = ({ twit }) => {
     setAnchorEl(null);
   };
 
+
   const handleLikeTweet = (num) => {
     //const TuserId = twit.user.id;
     // if (!isLiked) {
@@ -355,7 +356,8 @@ const TwitCard = ({ twit }) => {
     dispatch(likeTweet(twit.id));
     setIsLiked(!isLiked);
     setLikes(likes + num);
-    window.location.reload();
+    //window.location.reload();
+    props.changePage();
   };
 
   const handleIncrement = () => {
@@ -548,7 +550,7 @@ const TwitCard = ({ twit }) => {
         </div>
       ) : null}
       <div className="flex space-x-5 ">
-        <Avatar
+      <Avatar
           onClick={() => navigate(`/profile/${twit.user?.id}`)}
           alt="Avatar"
           src={
@@ -558,8 +560,9 @@ const TwitCard = ({ twit }) => {
           }
           className="cursor-pointer"
           loading="lazy"
+          style={{marginTop: 13}}
         />
-        <div className="w-full">
+        <div className="w-full" style={{marginTop: 15, marginBottom: 15}}>
           <div className="flex justify-between items-center ">
             <div
               onClick={() => navigate(`/profile/${twit.user.id}`)}

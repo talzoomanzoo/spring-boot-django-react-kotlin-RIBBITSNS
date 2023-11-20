@@ -18,8 +18,20 @@ const ComDetail = React.lazy(() => import("./Communities/ComDetail"));
 const NotificationsPage = React.lazy(() => import("./Notifications/NotificationsPage"));
 
 const HomePage = () => {
-  const { theme } = useSelector((store) => store);
+  const { theme, list } = useSelector((store) => store);
   const [uploading, setUploading] = useState(false);
+  const [sendTheme, setSendTheme] = useState(theme);
+  const [sendRefreshPage, setSendRefreshPage] = useState(0);
+
+  const changeThemeAll = (sendTheme) => {
+    setSendTheme(sendTheme);
+  }
+
+  const changePage = (sendRefreshPage) => {
+    setSendRefreshPage(sendRefreshPage);
+  }
+
+
   return (
     <Grid container className="px-5 lg:px-36 justify-between" xs={12}>
       <Grid item xs={0} lg={2.5} className="hidden lg:block  w-full relative">
@@ -29,55 +41,56 @@ const HomePage = () => {
         item
         xs={12}
         lg={6}
-        className={`px-5 lg:px-9 border ${
+        className={`px-5 lg:px-9 border 
+        ${
           theme.currentTheme === "dark" ? "border-gray-800" : ""
-        } `}
+        } 
+        `}
       >
         <Routes>
           <Route path="/" element={
-              <HomeSection />
+              <HomeSection changePage={changePage}/>
           }></Route>
           <Route path="/profile/:id" element={
             <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
-              <Profile />
+              <Profile sendTheme={sendTheme}/>
             </Suspense>}></Route>
           <Route path="/followtwit" element={
             <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
-              <FollowTwitEnc />
+              <FollowTwitEnc sendTheme={sendTheme}/>
             </Suspense>}></Route>
           <Route path="/messages" element={
             <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
-              <Chatroom />
+              <Chatroom sendTheme={sendTheme}/>
             </Suspense>}></Route>
           <Route path="/lists" element={
             <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
-              <Lists />
+              <Lists sendTheme={sendTheme}/>
             </Suspense>}></Route>
           <Route path="/communities" element={
             <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
-              <Communities />
+              <Communities sendTheme={sendTheme}/>
             </Suspense>}></Route>
           <Route path="/twit/:id" element={
             <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
-              <TwitDetail />
+              <TwitDetail sendTheme={sendTheme}/>
             </Suspense>}></Route>
           <Route path="/lists/:id" element={
             <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
-              <ListsDetail />
+              <ListsDetail sendTheme={sendTheme} />
             </Suspense>}></Route>
             <Route path="/communities/:id" element={
             <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
-              <ComDetail />
+              <ComDetail sendTheme={sendTheme}/>
             </Suspense>}></Route>
             <Route path="/notifications" element={
             <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
-              <NotificationsPage />
+              <NotificationsPage sendTheme={sendTheme}/>
             </Suspense>}></Route>
-            
         </Routes>
       </Grid>
       <Grid item xs={0} lg={3} className="hidden lg:block">
-        <RightPart />
+        <RightPart changeThemeAll={changeThemeAll} sendRefreshPage={sendRefreshPage}/>
       </Grid>
     </Grid>
   );

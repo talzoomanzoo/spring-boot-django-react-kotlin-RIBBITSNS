@@ -110,7 +110,7 @@ const ComDetail = () => {
         }
       }
     }
-  }, [isLocationFormOpen, showLocation, address, map]);
+  }, [isLocationFormOpen, showLocation, address, map, refreshTwits]);
 
 
   const toggleMap = () => {

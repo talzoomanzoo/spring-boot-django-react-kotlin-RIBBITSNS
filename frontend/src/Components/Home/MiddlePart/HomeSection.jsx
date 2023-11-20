@@ -40,7 +40,7 @@ const createTweetFailure = (error) => ({
   payload: error,
 });
 
-const HomeSection = () => {
+const HomeSection = (props) => {
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
@@ -616,7 +616,7 @@ const HomeSection = () => {
             )}
           {loading ? <Loading /> : null}
           {twit.twits && twit.twits.length > 0 ? (
-            twit.twits.map((item) => <TwitCard twit={item} key={item.id} />)
+            twit.twits.map((item) => <TwitCard twit={item} key={item.id} changePage={props.changePage}/>)
           ) : (
             <div>게시된 리빗이 없습니다.</div>
           )}
