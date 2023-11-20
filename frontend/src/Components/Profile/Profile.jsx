@@ -28,7 +28,7 @@ import ProgressBar from "@ramonak/react-progress-bar";
 const Maplocation = React.lazy(() => import("./Maplocation"));
 const ProfileModel = React.lazy(() => import("./ProfileModel"));
 
-const Profile = ({changePage}) => {
+const Profile = ({sendRefreshPage, changePage}) => {
   const style = {
     position: "absolute",
     top: "50%",
@@ -79,15 +79,15 @@ const Profile = ({changePage}) => {
 
   useEffect(() => {
     dispatch(getUsersTweets(param.id));
-  }, [param.id, twit.retwit]);
+  }, [param.id, twit.retwit, sendRefreshPage]);
 
   useEffect(() => {
     dispatch(findUserById(param.id));
-  }, [param.id, auth.user]);
+  }, [param.id, auth.user, sendRefreshPage]);
 
   useEffect(() => {
     setOpenSnackBar(auth.updateUser);
-  }, [auth.updateUser]);
+  }, [auth.updateUser, sendRefreshPage]);
 
   const handleCloseProfileModel = () => setOpenProfileModel(false);
 
@@ -134,7 +134,7 @@ const Profile = ({changePage}) => {
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
-  }, [auth.user]);
+  }, [auth.user, sendRefreshPage]);
 
   const handleMapLocation = (newAddress) => {
     setAddress(newAddress);
@@ -196,7 +196,7 @@ const Profile = ({changePage}) => {
     setAverageEthicRateMAX(roundedAverageEthicRateMAX);
 
     // ... (다른 코드)
-  }, [twit.twits, auth.user]);
+  }, [twit.twits, auth.user, sendRefreshPage]);
 
   return (
     <div>
@@ -508,7 +508,9 @@ const Profile = ({changePage}) => {
             </TabPanel>
             <TabPanel value="4">
               {twit.likedTwits?.map((item) => (
-                <TwitCard twit={item} changePage={changePage}/>
+                <div>
+                <TwitCard twit={item} key={item.id} changePage={changePage}/>
+                </div>
               ))}
             </TabPanel>
           </TabContext>

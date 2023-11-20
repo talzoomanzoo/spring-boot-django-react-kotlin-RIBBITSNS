@@ -966,6 +966,7 @@ const TwitCard = ({ twit, changePage }) => {
         twitData={twit}
         open={openReplyModel}
         handleClose={handleCloseReplyModel}
+        changePage={changePage}
       />
 
       <section>{loading ? <Loading /> : null}</section>

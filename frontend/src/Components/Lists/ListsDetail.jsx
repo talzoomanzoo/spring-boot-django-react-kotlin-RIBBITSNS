@@ -7,7 +7,7 @@ import { useParams, useNavigate } from "react-router";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import { Divider } from "@mui/material";
 
-const ListsDetail = ({changePage}) => {
+const ListsDetail = ({changePage, sendRefreshPage}) => {
     const param = useParams();
     const dispatch = useDispatch();
     const { list, twit, theme } = useSelector(store => store);
@@ -20,7 +20,7 @@ const ListsDetail = ({changePage}) => {
     useEffect(() => {
         dispatch(findListById(param.id))
         dispatch(findTwitsByListId(param.id))
-    }, [param.id])
+    }, [param.id, sendRefreshPage])
 
     console.log("listname check", list);
 
