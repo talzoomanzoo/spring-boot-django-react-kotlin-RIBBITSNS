@@ -415,16 +415,19 @@ const HomeSection = () => {
 
   useEffect(() => {
     // Calculate total ethicrateMAX
-    const totalEthicRateMAXValue = twit.twits
-      .filter((tweet) => tweet.ethiclabel !== 4) // ethiclabel이 4인 경우 필터링
-      .reduce((sum, tweet) => sum + (tweet.ethicrateMAX || 0), 0);
+    const totalEthicRateMAXValue = twit.twits.reduce(
+      (sum, tweet) => {
+        // ethiclabel이 4인 경우 0으로 포함하여 합산
+        return sum + (tweet.ethiclabel === 4 ? 0 : tweet.ethicrateMAX || 0);
+      },
+      0
+    );
 
     // Calculate average ethicrateMAX
-    const filteredTwits = twit.twits.filter((tweet) => tweet.ethiclabel !== 4);
     const averageEthicRateMAXValue =
-      filteredTwits.length > 0
-        ? totalEthicRateMAXValue / filteredTwits.length
-        : 0;
+    twit.twits.length > 0
+      ? totalEthicRateMAXValue / twit.twits.length
+      : 0;
 
     // 정수로 변환
     const roundedAverageEthicRateMAX = Math.floor(averageEthicRateMAXValue);

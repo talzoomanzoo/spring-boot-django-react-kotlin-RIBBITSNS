@@ -5,7 +5,7 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
-import { Avatar, Box, Button, Divider, Modal } from "@mui/material";
+import { Avatar, Box, Button, Modal } from "@mui/material";
 import Tab from "@mui/material/Tab";
 import React, { Suspense, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -172,16 +172,19 @@ const Profile = () => {
 
   useEffect(() => {
     // Calculate total ethicrateMAX
-    const totalEthicRateMAXValue = twit.twits
-      .filter((tweet) => tweet.ethiclabel !== 4) // ethiclabel이 4인 경우 필터링
-      .reduce((sum, tweet) => sum + (tweet.ethicrateMAX || 0), 0);
+    const totalEthicRateMAXValue = twit.twits.reduce(
+      (sum, tweet) => {
+        // ethiclabel이 4인 경우 0으로 포함하여 합산
+        return sum + (tweet.ethiclabel === 4 ? 0 : tweet.ethicrateMAX || 0);
+      },
+      0
+    );
 
     // Calculate average ethicrateMAX
-    const filteredTwits = twit.twits.filter((tweet) => tweet.ethiclabel !== 4);
     const averageEthicRateMAXValue =
-      filteredTwits.length > 0
-        ? totalEthicRateMAXValue / filteredTwits.length
-        : 0;
+    twit.twits.length > 0
+      ? totalEthicRateMAXValue / twit.twits.length
+      : 0;
 
     // 정수로 변환
     const roundedAverageEthicRateMAX = Math.floor(averageEthicRateMAXValue);
@@ -475,7 +478,7 @@ const Profile = () => {
               {twit.twits?.map((item) => (
                 <div>
                   <TwitCard twit={item} />
-                  <Divider sx={{ margin: "2rem 0rem" }} />
+                  {/* <Divider sx={{ margin: "2rem 0rem" }} /> */}
                 </div>
               ))}
             </TabPanel>
@@ -483,7 +486,7 @@ const Profile = () => {
               {twit.twits?.map((item) => (
                 <div>
                   <TwitCard twit={item} />
-                  <Divider sx={{ margin: "2rem 0rem" }} />
+                  {/* <Divider sx={{ margin: "2rem 0rem" }} /> */}
                 </div>
               ))}
             </TabPanel>
@@ -493,7 +496,7 @@ const Profile = () => {
                 .map((item) => (
                   <div>
                     <TwitCard twit={item} />
-                    <Divider sx={{ margin: "2rem 0rem" }} />
+                    {/* <Divider sx={{ margin: "2rem 0rem" }} /> */}
                   </div>
                 ))}
             </TabPanel>

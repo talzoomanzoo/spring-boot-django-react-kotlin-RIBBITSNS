@@ -3,8 +3,12 @@ import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import "swiper/css";
-import "swiper/css/effect-coverflow";
+import { Navigation, Pagination } from 'swiper';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+import 'swiper/css/scrollbar';
+import { Swiper, SwiperSlide } from 'swiper/react';
 import { getAllComs } from "../../Store/Community/Action";
 import ComBottom from "./ComBottom";
 import ComCard from "./ComCard";
@@ -45,28 +49,40 @@ const Communities = () => {
         </div>
       </section>
 
-            <div>
-                <div
-                    className="space-y-3"
-                    style={{ marginTop: 10, fontSize: "larger", }}>
-                    커뮤니티 찾아보기
-                    <hr
-                        style={{
-                            marginTop: 10,
-                            background: 'grey',
-                            color: 'grey',
-                            borderColor: 'grey',
-                            height: '1px',
-                        }}
-                    />
-                
+      <div>
+        <div
+          className="space-y-3"
+          style={{ marginTop: 10, fontSize: "larger" }}
+        >
+          커뮤니티 찾아보기
+          <hr
+            style={{
+              marginTop: 10,
+              background: "hsla(0, 0%, 80%, 0.5)",
+              borderColor: "hsl(0, 0%, 80%)",
+              height: "5px",
+            }}
+          />
+        </div>
 
-                <section className="space-y-5 customeScrollbar overflow-y-scroll css-scroll hideScrollbar border-gray-700 h-[40vh] w-full rounded-md">
-                            {com.coms.map((item) => (<ComCard style={{ marginTop: 10 }} com={item} />))}
-                            {/* com.privateMode? && auth.user.id == */}
-                </section>
-                </div>
-            </div>
+        <div>
+          <Swiper
+            modules={[Navigation, Pagination]}
+            spaceBetween={-50}
+            slidesPerView={2}
+            navigation
+            pagination={{ clickable: true }}
+            scrollbar={{ draggable: true }}
+          >
+            {com.coms.map((item) => (
+              <SwiperSlide>
+                <ComCard style={{ marginTop: 10 }} com={item} />
+              </SwiperSlide>
+
+            ))}
+          </Swiper>
+        </div>
+      </div>
 
       <section className="space-y-5" style={{ marginTop: 50 }}>
         <div
@@ -77,10 +93,9 @@ const Communities = () => {
           <hr
             style={{
               marginTop: 10,
-              background: "grey",
-              color: "grey",
-              borderColor: "grey",
-              height: "1px",
+              background: "hsla(0, 0%, 80%, 0.5)",
+              borderColor: "hsl(0, 0%, 80%)",
+              height: "5px",
             }}
           />
         </div>
