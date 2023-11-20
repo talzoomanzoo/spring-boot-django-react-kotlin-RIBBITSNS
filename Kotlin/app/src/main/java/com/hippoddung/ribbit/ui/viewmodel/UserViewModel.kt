@@ -189,7 +189,7 @@ class UserViewModel @Inject constructor(
     }
 
     fun editProfile(
-        inputFullName: String?,
+        inputFullName: String = "",
         inputBio: String?,
         inputWebsite: String?,
         inputEducation: String?,

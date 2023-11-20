@@ -1,5 +1,6 @@
 package com.hippoddung.ribbit.network
 
+import com.hippoddung.ribbit.BASE_URL
 import com.hippoddung.ribbit.data.local.TokenManager
 import com.hippoddung.ribbit.network.bodys.responsebody.AuthResponse
 import kotlinx.coroutines.flow.first

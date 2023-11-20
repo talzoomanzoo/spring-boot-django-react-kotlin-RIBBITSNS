@@ -1,7 +1,9 @@
 package com.hippoddung.ribbit.network.bodys.chatbodys
 
-data class ChatRoom(
-    val name: String,
+data class ChatRoomDto(
+    val id: Long? = null,
+    val roomId: String = "",
+    val name: String = "",
     val creator: String,
     val creatorEmail: String
 )
