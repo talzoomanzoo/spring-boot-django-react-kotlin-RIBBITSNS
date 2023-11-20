@@ -346,7 +346,6 @@ const ComDetail = () => {
       setAddress(""); // 게시글을 작성하고 나면 주소값 초기화
     }
     handleCloseEmoji();
-    //window.location.reload();
   };
 
   const ethicreveal = async (twitid, twitcontent) => {

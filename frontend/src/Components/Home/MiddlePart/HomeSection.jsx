@@ -21,6 +21,7 @@ import {
   TWEET_CREATE_SUCCESS,
 } from "../../../Store/Tweet/ActionType";
 import ScrollToTop from "./ScrollToTop";
+import ProgressBar from "@ramonak/react-progress-bar";
 
 const validationSchema = Yup.object().shape({
   content: Yup.string().required("내용이 없습니다"),
@@ -40,7 +41,7 @@ const createTweetFailure = (error) => ({
   payload: error,
 });
 
-const HomeSection = () => {
+const HomeSection = ({sendRefreshPage, changePage}) => {
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
@@ -132,6 +133,10 @@ const HomeSection = () => {
       map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
     }
   }, [map]);
+
+  useEffect(() => {
+    dispatch(getAllTweets());
+  }, [refreshTwits, sendRefreshPage]);
 
   function getListItem(index, places) {
     return (
@@ -282,10 +287,6 @@ const HomeSection = () => {
     pageNumbers.push(i);
   }
 
-  useEffect(() => {
-    dispatch(getAllTweets());
-  }, [refreshTwits]);
-
   const handleToggleLocationForm = () => {
     setLocationFormOpen((prev) => !prev);
   };
@@ -302,7 +303,7 @@ const HomeSection = () => {
 
         dispatch(createTweetSuccess(data));
 
-        const response = await ethicreveal(data.id, data.content);
+        await ethicreveal(data.id, data.content);
         handleSendPushNotification();
       } catch (error) {
         dispatch(createTweetFailure(error.message));
@@ -313,23 +314,12 @@ const HomeSection = () => {
   };
 
   const handleSubmit = (values, actions) => {
-    if (values.content.trim() !== "") {
-      // 게시글이 비어있지 않을 때만 실행
-      const tweetData = {
-        content: values.content,
-        image: values.image,
-        video: values.video,
-        location: address, // 저장한 주소값을 사용
-      };
-
-      dispatch(HomeCreateTweet(tweetData));
+      dispatch(HomeCreateTweet(values));
       actions.resetForm();
       setSelectedImage("");
       setSelectedVideo("");
       setAddress(""); // 게시글을 작성하고 나면 주소값 초기화
-    }
     handleCloseEmoji();
-    //window.location.reload();
   };
 
   const ethicreveal = async (twitid, twitcontent) => {
@@ -362,7 +352,7 @@ const HomeSection = () => {
       video: "",
       location: address,
     },
-    validationSchema,
+    //validationSchema,
     onSubmit: handleSubmit,
   });
 
@@ -436,9 +426,16 @@ const HomeSection = () => {
 
   return (
     <div className="space-y-5">
-      <section className="sticky top-0">
-        <h1 className="py-5 text-xl font-bold opacity-90 ml-5">홈</h1>
-        <p>평균 ethicrateMAX: {averageEthicRateMAX}</p>
+      <section className={`sticky top-0 ${theme.currentTheme==="dark"?" bg-[#0D0D0D]":"bg-white"}`} style={{zIndex: "100"}}>
+        <h1 className="py-5 text-xl font-bold opacity-90 ml-5 flex">홈
+        <p className="flex" style={{ marginLeft: "70%",}}>{`${averageEthicRateMAX < 25 ? "😄" : averageEthicRateMAX < 50 ? "😅" : averageEthicRateMAX < 75 ? "☹️" : "🤬"}`}
+        <ProgressBar
+                          completed={averageEthicRateMAX}
+                          width="400%"
+                          margin="2px 0px 4px 4px"
+                          bgColor={`${averageEthicRateMAX < 25 ? "hsla(195, 100%, 35%, 0.8)" : averageEthicRateMAX < 50 ? "hsla(120, 100%, 25%, 0.7)" : averageEthicRateMAX < 75 ? "hsla(48, 100%, 40%, 0.8)" : "hsla(0, 100%, 55%, 0.8)"}`}
+                        /></p>
+                        </h1>
       </section>
       <section className="pb-10">
         {/* ${theme.currentTheme==="dark"?" bg-[#151515] p-10 rounded-md mb-10":""} */}
@@ -608,9 +605,10 @@ const HomeSection = () => {
           )}
           {loading ? <Loading /> : null}
           {twit.twits && twit.twits.length > 0 ? (
-            twit.twits.map((item) => <TwitCard twit={item} key={item.id} />)
+            twit.twits.map((item) => <TwitCard twit={item} key={item.id} changePage={changePage}/>)
           ) : (
             <div>게시된 리빗이 없습니다.</div>
+            
           )}
         </div>
       </section>

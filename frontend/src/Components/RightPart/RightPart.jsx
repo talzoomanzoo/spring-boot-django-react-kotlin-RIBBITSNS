@@ -16,7 +16,7 @@ import LikeTop from "./LikeTop";
 import ViewTop from "./ViewTop";
 import "./Scrollbar.css";
 
-const RightPart = () => {
+const RightPart = ({changeThemeAll, sendRefreshPage, changePage}) => {
   const { theme, auth } = useSelector((store) => store);
   const [search, setSearch] = useState("");
   const dispatch = useDispatch();
@@ -49,7 +49,6 @@ const RightPart = () => {
   //     pg: 
   //   })
   // }
-  const [refreshTwits, setRefreshTwits] = useState(0);
 
 
   const handleNavigateToTwit = (i) => {
@@ -58,10 +57,8 @@ const RightPart = () => {
   };
 
   const handleChangeTheme = () => {
-    // setRefreshTwits((prev) => prev + 1);
     dispatch(changeTheme(theme.currentTheme === "light" ? "dark" : "light"));
-    window.location.reload();
-    //setRefreshTwits((prev) => prev + 1);  
+    changeThemeAll(theme);
   };
 
   // const handleSearchUser = (event) => {
@@ -172,17 +169,6 @@ const RightPart = () => {
           
         </section> */}
 
-<hr
-                style={{
-                    marginTop: 10,
-                    marginBottom: 1,
-                    background: "hsla(0, 0%, 80%, 1)",
-                    color: 'grey',
-                    borderColor: "hsl(0, 0%, 80%)",
-                    height: '2px',
-                }}
-            />
-
         <section
           className={`mt-5 space-y-5 `}
         // ${
@@ -196,7 +182,7 @@ const RightPart = () => {
           </div>
 
           <div>
-            <LikeTop />
+            <LikeTop sendRefreshPage={sendRefreshPage} changePage={changePage}/>
           </div>
 
           <div>
@@ -204,7 +190,7 @@ const RightPart = () => {
           </div>
 
           <div>
-            <ViewTop />
+            <ViewTop sendRefreshPage={sendRefreshPage} changePage={changePage}/>
           </div>
 
         </section>

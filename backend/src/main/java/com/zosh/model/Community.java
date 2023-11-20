@@ -21,10 +21,13 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Data
+@Getter
+@Setter
 @RequiredArgsConstructor
 public class Community {
 
@@ -37,15 +40,13 @@ public class Community {
 	@JsonBackReference
 	@JoinColumn(name = "user_id")
 	@JsonIgnoreProperties(value = {"twit", "likes", "user"})
-	//@JoinColumn(name = "user_id")
 	private User user;
 	
 	//private Long userId;
 	
 	@JsonIgnore
-	@OneToMany(cascade = {CascadeType.ALL, CascadeType.REMOVE})
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval=true)
 	@JsonManagedReference
-    //@JoinColumn(name = "twit_id")
 	@JsonIgnoreProperties(value = {"twit", "likes", "user"})
     private List<Twit> comTwits = new ArrayList<>();
 	

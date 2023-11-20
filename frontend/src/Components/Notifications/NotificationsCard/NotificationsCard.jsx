@@ -13,11 +13,11 @@ const NotificationsCard = ({ notification }) => {
     const navigate = useNavigate();
 
     const handleNavigateToTwitDetial = () => {
-          navigate(`/twit/${notification.twit.id}`);
-          dispatch(viewPlus(notification.twit.id));
-          window.location.reload();
-          dispatch(decreaseNotificationCount(notification.id));
-      };
+        navigate(`/twit/${notification.twit.id}`);
+        dispatch(viewPlus(notification.twit.id));
+        window.location.reload();
+        dispatch(decreaseNotificationCount(notification.id));
+    };
     return (
         <div class="flex space-x-5">
             <div
@@ -28,27 +28,29 @@ const NotificationsCard = ({ notification }) => {
                     <div
                         className="flex cursor-pointer items-center space-x-1"
                     ><Avatar
-                    onClick={() => navigate(`/profile/${notification.user?.id}`)}
-                    alt="Avatar"
-                    src={
-                        notification.user?.image
-                          ? notification.user.image
-                          : "https://cdn.pixabay.com/photo/2023/10/24/01/42/art-8337199_1280.png"
-                      }
-                      loading="lazy"
-                      style={{float:"left"}}
-                    />
-                        <div style={{width: "800px"}} onClick={handleNavigateToTwitDetial} ><li style={{listStyleType: 'none'}}><div style={{padding:"5px",float:"left"}}><span style={{padding:"5px",float:"left"}}>{notification.user.fullName}이(가)</span><span style={{padding:"5px",float:"left"}}>당신의 리빗을  좋아합니다.</span></div></li></div>
+                            onClick={() => navigate(`/profile/${notification.user?.id}`)}
+                            alt="Avatar"
+                            src={
+                                notification.user?.image
+                                    ? notification.user.image
+                                    : "https://cdn.pixabay.com/photo/2023/10/24/01/42/art-8337199_1280.png"
+                            }
+                            loading="lazy"
+                            style={{ float: "left" }}
+                        />
+                        <div style={{ width: "800px" }} onClick={handleNavigateToTwitDetial} ><li style={{ listStyleType: 'none' }}><div style={{ padding: "5px", float: "left" }}><span style={{ padding: "5px", float: "left" }}>{notification.user.fullName}이(가)</span><span style={{ padding: "5px", float: "left" }}>당신의 리빗을  좋아합니다.</span></div></li></div>
                     </div>
                 </div>
                 <hr
-            style={{
-              marginTop: 10,
-              background: "hsla(0, 0%, 80%, 0.5)",
-              borderColor: "hsl(0, 0%, 80%)",
-              height: "5px",
-            }}
-          />
+                style={{
+                    marginTop: 10,
+                    marginBottom: 1,
+                    background: "hsla(0, 0%, 80%, 1)",
+                    color: 'grey',
+                    borderColor: "hsl(0, 0%, 80%)",
+                    height: '1px',
+                }}
+            />
             </div>
         </div>
     );

@@ -18,8 +18,6 @@ import { useNavigate } from "react-router-dom";
 import { searchUser } from "../../Store/Auth/Action";
 import {
   addUserAction,
-  getUserAction,
-  setPrivate,
   updateListModel,
 } from "../../Store/List/Action";
 import { uploadToCloudinary } from "../../Utils/UploadToCloudinary";
@@ -41,18 +39,24 @@ const style = {
   overflow: "scroll-y",
 };
 
-const ListsModel2 = ({ list, handleClose, open }) => {
+const ListsModel2 = ({ changeLists, list, handleClose, open }) => {
   const [uploading, setUploading] = useState(false);
   const [search, setSearch] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { theme, auth } = useSelector((store) => store);
   const [followings1Clicked, setFollowings1Clicked] = useState(false);
+  const [refreshModel, setRefreshModel] = useState(0);
+
+  const changeModels = () => {
+    setRefreshModel((prev) => prev + 1);
+  };
 
   const handleSubmit = (values) => {
     dispatch(updateListModel(values));
     handleClose();
-    window.location.reload();
+    changeLists();
+    changeModels();
   };
 
   const formik = useFormik({
@@ -61,7 +65,7 @@ const ListsModel2 = ({ list, handleClose, open }) => {
       listName: "",
       description: "",
       backgroundImage: "",
-      // privateMode: false,
+      privateMode: false,
     },
     onSubmit: handleSubmit,
   });
@@ -80,20 +84,10 @@ const ListsModel2 = ({ list, handleClose, open }) => {
       listName: list.listName || "",
       description: list.description || "",
       backgroundImage: list.backgroundImage || "",
-      //privateMode: list.privateMode || "",
-    });
-    
-    if (document.getElementById("element") !== null) {
-      const domNode = document.getElementById("element");
-      const element1 = createRoot(domNode);
-      element1.render(<Element listVal={list} />);
-    } else {
-      console.log("not exists");
-    }
+      privateMode: list.privateMode || false,
+    }, []);
 
-    dispatch(getUserAction(list.id));
-//list.followings, list.hasFollowedLists
-  }, []);
+  }, [refreshModel]);
 
   console.log("들어오는 리스트", list);
 
@@ -120,73 +114,14 @@ const ListsModel2 = ({ list, handleClose, open }) => {
 
     dispatch(addUserAction(listId, userId));
     setSearch("");
-    dispatch(getUserAction(listId));
+    changeLists();
+    changeModels();
+
   };
 
   const handleFollowingslClick = () => {
     setFollowings1Clicked(!followings1Clicked);
   };
-
-  const [isEnabled, setIsEnabled] = useState(list.privateMode);
-
-  const toggleSwitch = async(listId) => {
-    setIsEnabled(previousState => !previousState);
-    dispatch(setPrivate(listId));
-  };
-
-  const Element = memo(({ listVal }) => {
-    return (
-      <div className="customeScrollbar overflow-y-scroll hideScrollbar css-scroll border-gray-700 h-[20vh] w-full rounded-md">
-        <section className="space-y-5">
-          <div
-            className="flex justify-between"
-            style={{ flexDirection: "column" }}
-          >
-            {listVal.followings?.map((item) => (
-              <div className="flex justify-between items-center" key={item.id}>
-                <div
-                  style={{ paddingRight: 300, marginTop: 10 }}
-                  onClick={() => {
-                    if (Array.isArray(item)) {
-                      item.forEach((i) => navigateToProfile(i));
-                    } else {
-                      navigateToProfile(item.id);
-                    }
-                    handleFollowingslClick();
-                  }}
-                  className="flex items-center absolute left-2 justify-between hover:bg-green-700 relative right-5 cursor-pointer"
-                >
-                  <Avatar alt={item.fullName} src={item.image} loading="lazy" />
-                  <div className="ml-2">
-                    <p>{item.fullName}</p>
-                    <p className="text-sm text-gray-400">
-                      {item.email.split(" ").join("_").toLowerCase()}
-                    </p>
-                  </div>
-                </div>
-                {itemsCheck(item) ? (
-                  <RemoveIcon
-                    style={{ marginLeft: 30 }}
-                    className="flex hover:bg-green-700 relative right-5 cursor-pointer"
-                    onClick={() => {
-                      handleAddUser(list.id, item.id, list);
-                    }}
-                  ></RemoveIcon>
-                ) : (
-                  <AddIcon
-                    className="flex hover:bg-green-700 relative right-5 cursor-pointer"
-                    onClick={() => {
-                      handleAddUser(list.id, item.id, list);
-                    }}
-                  ></AddIcon>
-                )}
-              </div>
-            ))}
-          </div>
-        </section>
-      </div>
-    );
-  });
 
   return (
     <div>
@@ -206,7 +141,6 @@ const ListsModel2 = ({ list, handleClose, open }) => {
                 <p>리스트 수정</p>
               </div>
               <div>
-                {/* {showDeleteButton && <Button type="submit">저장</Button>} */}
                 <Button type="submit">저장</Button>
               </div>
             </div>
@@ -274,37 +208,25 @@ const ListsModel2 = ({ list, handleClose, open }) => {
                   onChange={handleSearchUser}
                   type="text"
                   placeholder="사용자를 검색하여 추가하거나 삭제할 수 있습니다."
-                  className={`py-3 rounded-full outline-none text-gray-500 w-full pl-12 ${
-                    theme.currentTheme === "light"
+                  className={`py-3 rounded-full outline-none text-gray-500 w-full pl-12 ${theme.currentTheme === "light"
                       ? "bg-stone-300"
                       : "bg-[#151515]"
-                  }`}
+                    }`}
                 />
                 <span className="absolute top-0 left-0 pl-3 pt-3">
                   <SearchIcon className="text-gray-500" />
                 </span>
                 {search && (
                   <div
-                    className={`overflow-y-scroll hideScrollbar absolute z-50 top-14  border-gray-700 h-[40vh] w-full rounded-md ${
-                      theme.currentTheme === "light"
+                    className={`overflow-y-scroll hideScrollbar absolute z-50 top-14  border-gray-700 h-[40vh] w-full rounded-md ${theme.currentTheme === "light"
                         ? "bg-white"
                         : "bg-[#151515] border"
-                    }`}
+                      }`}
                   >
                     {auth.userSearchResult &&
                       auth.userSearchResult.map((item) => (
                         <div
                           className={` flex float items-center `}
-                          // ${
-                          //   theme.currentTheme === "light"
-                          //     ? "hover:bg-[#008000]"
-                          //     : "hover:bg-[#dbd9d9]"
-                          // } 
-                          //   ${
-                          //     theme.currentTheme === "light"
-                          //       ? "text-black hover:text-white"
-                          //       : "text-white  hover:text-black"
-                          //   }
                         >
                           <div
                             style={{ paddingRight: 300 }}
@@ -353,10 +275,54 @@ const ListsModel2 = ({ list, handleClose, open }) => {
                 )}
               </div>
 
-              <div id="element">
-                <div>
-                  <Element listVal={list} />
-                </div>
+              <div className="customeScrollbar overflow-y-scroll hideScrollbar css-scroll border-gray-700 h-[20vh] w-full rounded-md">
+                <section className="space-y-5">
+                  <div
+                    className="flex justify-between"
+                    style={{ flexDirection: "column" }}
+                  >
+                    {list.followingsl?.map((item) => (
+                      <div className="flex justify-between items-center" key={item.id}>
+                        <div
+                          style={{ paddingRight: 300, marginTop: 10 }}
+                          onClick={() => {
+                            if (Array.isArray(item)) {
+                              item.forEach((i) => navigateToProfile(i));
+                            } else {
+                              navigateToProfile(item.id);
+                            }
+                            handleFollowingslClick();
+                          }}
+                          className="flex items-center absolute left-2 justify-between hover:bg-green-700 relative right-5 cursor-pointer"
+                        >
+                          <Avatar alt={item.fullName} src={item.image} loading="lazy" />
+                          <div className="ml-2">
+                            <p>{item.fullName}</p>
+                            <p className="text-sm text-gray-400">
+                              {item.email.split(" ").join("_").toLowerCase()}
+                            </p>
+                          </div>
+                        </div>
+                        {itemsCheck(item) ? (
+                          <RemoveIcon
+                            style={{ marginLeft: 30 }}
+                            className="flex hover:bg-green-700 relative right-5 cursor-pointer"
+                            onClick={() => {
+                              handleAddUser(list.id, item.id, list);
+                            }}
+                          ></RemoveIcon>
+                        ) : (
+                          <AddIcon
+                            className="flex hover:bg-green-700 relative right-5 cursor-pointer"
+                            onClick={() => {
+                              handleAddUser(list.id, item.id, list);
+                            }}
+                          ></AddIcon>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </section>
               </div>
 
               <div
@@ -375,15 +341,22 @@ const ListsModel2 = ({ list, handleClose, open }) => {
                 <div className="flex items-center justify-between font-xl">
                   비공개 활성화
                   <Switch
+                    name="privateMode"
                     style={{
-                      marginTop: 1,
+                      marginTop: 10,
                       marginRight: 20,
                     }}
-                    //trackColor={{ false: "#767577", true: "#36d916" }}
-                    thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
+                    trackColor={{ false: "#767577", true: "#36d916" }}
                     ios_backgroundColor="#3e3e3e"
-                    onValueChange={() => toggleSwitch(list.id)}
-                    value={isEnabled}
+                    value={formik.values.privateMode}
+                    onValueChange={value => formik.setFieldValue('privateMode', value)}
+                    error={
+                      formik.touched.description &&
+                      Boolean(formik.errors.description)
+                    }
+                    helperText={
+                      formik.touched.description && formik.errors.description
+                    }
                   />
                 </div>
 
@@ -400,7 +373,7 @@ const ListsModel2 = ({ list, handleClose, open }) => {
               </div>
 
             </div>
-            {uploading ? <Loading/> : null} 
+            {uploading ? <Loading /> : null}
           </form>
         </Box>
       </Modal>
