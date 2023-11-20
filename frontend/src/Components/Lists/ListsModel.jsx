@@ -124,6 +124,7 @@ const ListsModel = ({ changeLists, handleClose, open }) => {
 
               <div className="space-y-3">
                 <TextField
+                style={{ fontFamily: 'ChosunGu' }}
                   fullWidth
                   id="listName"
                   label="리스트 이름"
@@ -137,6 +138,7 @@ const ListsModel = ({ changeLists, handleClose, open }) => {
                   inputProps={{ maxLength: 20}}
                 />
                 <TextField
+                style={{ fontFamily: 'ChosunGu' }}
                   fullWidth
                   multiline
                   rows={4}

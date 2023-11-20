@@ -238,7 +238,7 @@ const Profile = ({sendRefreshPage, changePage}) => {
           {auth.findUser?.req_user ? (
             <Button
               onClick={handleOpenProfileModel}
-              sx={{ borderRadius: "20px" }}
+              sx={{ borderRadius: "20px", fontFamily: 'ChosunGu' }}
               variant="outlined"
             >
               프로필 변경
@@ -254,7 +254,7 @@ const Profile = ({sendRefreshPage, changePage}) => {
             </Button>
           )}
         </div>
-        <p className="flex items-center text-gray-500">{`${averageEthicRateMAX < 25 ? "😄" : averageEthicRateMAX < 50 ? "😅" : averageEthicRateMAX < 75 ? "☹️" : "🤬"}`}:
+        <p className="flex items-center text-gray-500">{`${averageEthicRateMAX < 25 ? "😄" : averageEthicRateMAX < 50 ? "😅" : averageEthicRateMAX < 75 ? "☹️" : "🤬"}`}
         <ProgressBar
                           completed={averageEthicRateMAX}
                           width="165px"
@@ -334,7 +334,7 @@ const Profile = ({sendRefreshPage, changePage}) => {
             </div>
             <div className="flex items-center space-x-5">
               <div className="flex items-center space-x-1 font-semibold">
-                <span onClick={openFollowingsModal} className="text-gray-500">
+                <span onClick={openFollowingsModal} className="text-gray-500 cursor-pointer">
                   {auth.findUser?.followings?.length} followings
                 </span>
                 <Modal open={openFollowings} onClose={closeFollowingsModal}>
@@ -396,7 +396,7 @@ const Profile = ({sendRefreshPage, changePage}) => {
                 </Modal>
               </div>
               <div className="flex items-center space-x-1 font-semibold">
-                <span onClick={openFollowersModal} className="text-gray-500">
+                <span onClick={openFollowersModal} className="text-gray-500 cursor-pointer">
                   {auth.findUser?.followers?.length} followers
                 </span>
                 <Modal open={openFollowers} onClose={closeFollowersModal}>
