@@ -431,9 +431,14 @@ const ComDetail = () => {
   return (
     <div>
       <section
+<<<<<<< HEAD
+        className={`z-50 flex items-center sticky top-0 ${theme.currentTheme === "light" ? "light" : "dark"
+          } ${theme.currentTheme==="dark"?" bg-[#0D0D0D]":"bg-white"}`}
+=======
         className={`z-50 flex items-center sticky top-0 ${
           theme.currentTheme === "light" ? "light" : "dark"
         } bg-opacity-95`}
+>>>>>>> 150b79cbe08b670e4795055957821df746296e0f
       >
         <KeyboardBackspaceIcon
           className="cursor-pointer"

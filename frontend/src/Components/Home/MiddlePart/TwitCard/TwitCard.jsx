@@ -46,6 +46,10 @@ import { uploadToCloudinary } from "../../../../Utils/UploadToCloudinary";
 import Loading from "../../../Profile/Loading/Loading";
 import "../TwitMap.css";
 import ReplyModal from "./ReplyModal";
+<<<<<<< HEAD
+import GroupsIcon from "@mui/icons-material/Groups";
+=======
+>>>>>>> 150b79cbe08b670e4795055957821df746296e0f
 
 const validationSchema = Yup.object().shape({
   content: Yup.string().required("내용이 없습니다"),
@@ -675,6 +679,7 @@ const TwitCard = ({ twit, changePage }) => {
                     {twit.isReply === false && ethiclabel === 0 && (
                       <div className="flex items-center font-bold rounded-md">
                         폭력성
+                        {`${ethicrateMAX < 25 ? "😄" : ethicrateMAX < 50 ? "😅" : ethicrateMAX < 75 ? "☹️" : "🤬"}`}
                         <ProgressBar
                           completed={ethicrateMAX}
                           width="450%"
@@ -694,6 +699,7 @@ const TwitCard = ({ twit, changePage }) => {
                     {twit.reply === false && ethiclabel === 1 && (
                       <div className="flex items-center font-bold rounded-md">
                         선정성
+                        {`${ethicrateMAX < 25 ? "😄" : ethicrateMAX < 50 ? "😅" : ethicrateMAX < 75 ? "☹️" : "🤬"}`}
                         <ProgressBar
                           completed={ethicrateMAX}
                           width="450%"
@@ -713,6 +719,7 @@ const TwitCard = ({ twit, changePage }) => {
                     {twit.reply === false && ethiclabel === 2 && (
                       <div className="flex items-center font-bold rounded-md">
                         욕설
+                        {`${ethicrateMAX < 25 ? "😄" : ethicrateMAX < 50 ? "😅" : ethicrateMAX < 75 ? "☹️" : "🤬"}`}
                         <ProgressBar
                           completed={ethicrateMAX}
                           width="450%"
@@ -732,6 +739,7 @@ const TwitCard = ({ twit, changePage }) => {
                     {twit.reply === false && ethiclabel === 3 && (
                       <div className="flex items-center font-bold rounded-md">
                         차별성
+                        {`${ethicrateMAX < 25 ? "😄" : ethicrateMAX < 50 ? "😅" : ethicrateMAX < 75 ? "☹️" : "🤬"}`}
                         <ProgressBar
                           completed={ethicrateMAX}
                           width="450%"

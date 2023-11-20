@@ -21,6 +21,7 @@ import {
   TWEET_CREATE_SUCCESS,
 } from "../../../Store/Tweet/ActionType";
 import ScrollToTop from "./ScrollToTop";
+import ProgressBar from "@ramonak/react-progress-bar";
 
 const validationSchema = Yup.object().shape({
   content: Yup.string().required("내용이 없습니다"),
@@ -425,9 +426,16 @@ const HomeSection = ({sendRefreshPage, changePage}) => {
 
   return (
     <div className="space-y-5">
-      <section className="sticky top-0">
-        <h1 className="py-5 text-xl font-bold opacity-90 ml-5">홈</h1>
-        <p>평균 ethicrateMAX: {averageEthicRateMAX}</p>
+      <section className={`sticky top-0 ${theme.currentTheme==="dark"?" bg-[#0D0D0D]":"bg-white"}`} style={{zIndex: "100"}}>
+        <h1 className="py-5 text-xl font-bold opacity-90 ml-5 flex">홈
+        <p className="flex" style={{ marginLeft: "70%",}}>{`${averageEthicRateMAX < 25 ? "😄" : averageEthicRateMAX < 50 ? "😅" : averageEthicRateMAX < 75 ? "☹️" : "🤬"}`}
+        <ProgressBar
+                          completed={averageEthicRateMAX}
+                          width="400%"
+                          margin="2px 0px 4px 4px"
+                          bgColor={`${averageEthicRateMAX < 25 ? "hsla(195, 100%, 35%, 0.8)" : averageEthicRateMAX < 50 ? "hsla(120, 100%, 25%, 0.7)" : averageEthicRateMAX < 75 ? "hsla(48, 100%, 40%, 0.8)" : "hsla(0, 100%, 55%, 0.8)"}`}
+                        /></p>
+                        </h1>
       </section>
       <section className="pb-10">
         {/* ${theme.currentTheme==="dark"?" bg-[#151515] p-10 rounded-md mb-10":""} */}
