@@ -53,43 +53,7 @@ const ComDetail = () => {
   const [showLocation, setShowLocation] = useState(true);
 
   useEffect(() => {
-    const container = document.getElementById("map");
-    dispatch(findComById(param.id));
-    console.log("log");
-    dispatch(findTwitsByComId(param.id));
-
-    if (container) {
-      const options = {
-        center: new kakao.maps.LatLng(37.5662952, 126.9757567),
-        level: 3,
-      };
-
-      if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition((position) => {
-          const latitude = position.coords.latitude;
-          const longitude = position.coords.longitude;
-          options.center = new kakao.maps.LatLng(latitude, longitude);
-
-          const map = new kakao.maps.Map(container, options);
-          setMap(map);
-        });
-      }
-    }
-
     if (isLocationFormOpen && showLocation) {
-
-      console.log("Address Updated:", address); // 주소 확인
-      formikLocation.setValues({
-        location: address,
-      });
-
-      if (map) {
-        const mapTypeControl = new kakao.maps.MapTypeControl();
-        map.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);
-        const zoomControl = new kakao.maps.ZoomControl();
-        map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
-      }
-
       const container = document.getElementById("map");
 
       if (container) {
@@ -110,14 +74,7 @@ const ComDetail = () => {
         }
       }
     }
-  }, [isLocationFormOpen, showLocation, address, map]);
-
-
-  const toggleMap = () => {
-    // 주소값만 저장하고 상태 업데이트
-    setAddress(formikLocation.values.location);
-    setLocationFormOpen(false); // 주소 저장 후 폼을 닫음
-  };
+  }, [isLocationFormOpen, showLocation]);
 
   const formikLocation = useFormik({
     initialValues: {
@@ -129,6 +86,39 @@ const ComDetail = () => {
       formikLocation.resetForm();
     },
   });
+
+  useEffect(() => {
+    const container = document.getElementById("map");
+    dispatch(findComById(param.id));
+    dispatch(findTwitsByComId(param.id));
+
+    if (container) {
+      const options = {
+        center: new kakao.maps.LatLng(37.5662952, 126.9757567),
+        level: 3,
+      };
+
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          const latitude = position.coords.latitude;
+          const longitude = position.coords.longitude;
+          options.center = new kakao.maps.LatLng(latitude, longitude);
+
+          const map = new kakao.maps.Map(container, options);
+          setMap(map);
+        });
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (map) {
+      const mapTypeControl = new kakao.maps.MapTypeControl();
+      map.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT);
+      const zoomControl = new kakao.maps.ZoomControl();
+      map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+    }
+  }, [map]);
 
   function getListItem(index, places) {
     return (
@@ -241,8 +231,8 @@ const ComDetail = () => {
       infowindow.close();
       infowindow.setContent(
         '<div style="padding:5px;font-size:12px;color:black;">' +
-        place.place_name +
-        "</div>"
+          place.place_name +
+          "</div>"
       );
       infowindow.open(map, marker);
     });
@@ -253,6 +243,7 @@ const ComDetail = () => {
       map.setCenter(markerPosition); // 클릭한 마커를 중심으로 지도 재설정
       setAddress(place.place_name); // 주소 업데이트
       infowindow.close(); // 마커 클릭 시 인포윈도우 닫기
+      setLocationFormOpen(false);
     });
 
     kakao.maps.event.addListener(marker, "mouseout", function () {
@@ -300,8 +291,6 @@ const ComDetail = () => {
     payload: error,
   });
 
-
-
   const handleToggleLocationForm = () => {
     setLocationFormOpen((prev) => !prev);
   };
@@ -309,14 +298,13 @@ const ComDetail = () => {
   console.log("comDetail auth", auth);
   console.log("comDetail com", com);
 
-
   const authCheck = (com) => {
-      for (let i=0; i< com.com?.followingsc.length; i++) {
-          if(com.com?.followingsc[i].id === auth.user.id) {
-              return true;
-          }
+    for (let i = 0; i < com.com?.followingsc?.length; i++) {
+      if (com.com?.followingsc[i].id === auth.user.id) {
+        return true;
       }
-  }
+    }
+  };
 
   const ComCreateTweet = (tweetData) => {
     return async (dispatch) => {
@@ -444,8 +432,9 @@ const ComDetail = () => {
   return (
     <div>
       <section
-        className={`z-50 flex items-center sticky top-0 ${theme.currentTheme === "light" ? "light" : "dark"
-          } bg-opacity-95`}
+        className={`z-50 flex items-center sticky top-0 ${
+          theme.currentTheme === "light" ? "light" : "dark"
+        } bg-opacity-95`}
       >
         <KeyboardBackspaceIcon
           className="cursor-pointer"
@@ -588,79 +577,67 @@ const ComDetail = () => {
               </form>
             </div>
           </div>
-          {isLocationFormOpen && showLocation && (
-            <div>
-              <div className="mt-2 mb-2 space-y-3">
-                <div className="flex items-center text-gray-500">
-                  <form onSubmit={formikLocation.handleSubmit}>
-                    <Button
-                      type="submit"
-                      onClick={toggleMap}
-                      className="save-location-button"
-                    >
-                      저장
-                    </Button>
-                  </form>
-                  <p className="text-gray-500 ml-3">{address}</p>
-                </div>
-              </div>
+          <div style={{ marginTop: 20 }}>
+            {isLocationFormOpen && showLocation && (
+              <div>
+                <div className="map_wrap">
+                  <div
+                    id="map"
+                    style={{
+                      width: "70%",
+                      height: "100%",
+                      position: "relative",
+                      overflow: "hidden",
+                    }}
+                  ></div>
+                  <div id="list_wrap" className="bg_white">
+                    <div className="option" style={{ textAlign: "right" }}>
+                      <div>
+                        <form
+                          onSubmit={(e) => {
+                            e.preventDefault();
+                            handleSearch();
+                          }}
+                        >
+                          <input
+                            type="text"
+                            value={searchKeyword}
+                            placeholder="장소·주소 검색"
+                            onChange={(e) => setSearchKeyword(e.target.value)}
+                            id="keyword"
+                            size="15"
+                          />
+                          <Button type="submit">검색하기</Button>
+                        </form>
+                      </div>
+                    </div>
+                    <hr />
 
-              <div className="map_wrap">
-                <div
-                  id="map"
-                  style={{
-                    width: "70%",
-                    height: "100%",
-                    position: "relative",
-                    overflow: "hidden",
-                  }}
-                ></div>
-                <div id="list_wrap" className="bg_white">
-                  <div className="option" style={{ textAlign: "right" }}>
-                    <div>
-                      <form
-                        onSubmit={(e) => {
-                          e.preventDefault();
-                          handleSearch();
-                        }}
-                      >
-                        <input
-                          type="text"
-                          value={searchKeyword}
-                          placeholder="장소·주소 검색"
-                          onChange={(e) => setSearchKeyword(e.target.value)}
-                          id="keyword"
-                          size="15"
-                        />
-                        <Button type="submit">검색하기</Button>
-                      </form>
+                    <ul id="placesList">
+                      {currentItems.map((result, index) =>
+                        createSearchResultItem(result, index)
+                      )}
+                    </ul>
+
+                    <div id="pagination">
+                      <ul className={`page-numbers text-black`}>
+                        {pageNumbers.map((number) => (
+                          <li
+                            key={number}
+                            onClick={() => handlePageClick(number)}
+                          >
+                            {number}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   </div>
-                  <hr />
-
-                  <ul id="placesList">
-                    {currentItems.map((result, index) =>
-                      createSearchResultItem(result, index)
-                    )}
-                  </ul>
-
-                  <div id="pagination">
-                    <ul className={`page-numbers text-black`}>
-                      {pageNumbers.map((number) => (
-                        <li key={number} onClick={() => handlePageClick(number)}>
-                          {number}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </section>
       ) : null}
-
-
 
       <div style={{ marginTop: 20 }}>
         {loading ? <Loading /> : null}
