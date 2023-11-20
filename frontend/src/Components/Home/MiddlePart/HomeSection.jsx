@@ -91,12 +91,6 @@ const HomeSection = () => {
     }
   }, [isLocationFormOpen, showLocation]);
 
-  const toggleMap = () => {
-    // 주소값만 저장하고 상태 업데이트
-    setAddress(formikLocation.values.location);
-    setLocationFormOpen(false); // 주소 저장 후 폼을 닫음
-  };
-
   const formikLocation = useFormik({
     initialValues: {
       location: address,
@@ -262,6 +256,7 @@ const HomeSection = () => {
       map.setCenter(markerPosition); // 클릭한 마커를 중심으로 지도 재설정
       setAddress(place.place_name); // 주소 업데이트
       infowindow.close(); // 마커 클릭 시 인포윈도우 닫기
+      setLocationFormOpen(false);
     });
 
     kakao.maps.event.addListener(marker, "mouseout", function () {
@@ -553,21 +548,6 @@ const HomeSection = () => {
         <div style={{ marginTop: 20 }}>
           {isLocationFormOpen && showLocation && (
             <div>
-              <div className="mt-2 mb-2 space-y-3">
-                <div className="flex items-center text-gray-500">
-                  <form onSubmit={formikLocation.handleSubmit}>
-                    <Button
-                      type="submit"
-                      onClick={toggleMap}
-                      className="save-location-button"
-                    >
-                      저장
-                    </Button>
-                  </form>
-                  <p className="text-gray-500 ml-3">{address}</p>
-                </div>
-              </div>
-
               <div className="map_wrap">
                 <div
                   id="map"
