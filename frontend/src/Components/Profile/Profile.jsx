@@ -195,7 +195,7 @@ const Profile = ({sendRefreshPage, changePage}) => {
     // 상태 업데이트
     setTotalEthicRateMAX(totalEthicRateMAXValue);
     setAverageEthicRateMAX(roundedAverageEthicRateMAX);
-    }
+    
     }
     // ... (다른 코드)
   }, [twit.twits, auth.user, sendRefreshPage]);
