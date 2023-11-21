@@ -26,11 +26,7 @@ import "../Home/MiddlePart/TwitMap.css";
 // const Maplocation = React.lazy(() => import("../Profile/Maplocation"));
 const Loading = React.lazy(() => import("../Profile/Loading/Loading"));
 
-<<<<<<< HEAD
-const ComDetail = ({ changePage }) => {
-=======
 const ComDetail = ({changePage, sendRefreshPage}) => {
->>>>>>> 1f9597c6ce5e969f08b0a77bdb7f1060ba520701
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
@@ -79,7 +75,7 @@ const ComDetail = ({changePage, sendRefreshPage}) => {
         }
       }
     }
-  }, [isLocationFormOpen, showLocation, refreshTwits]);
+  }, [isLocationFormOpen, showLocation]);
 
   const formikLocation = useFormik({
     initialValues: {
@@ -114,12 +110,8 @@ const ComDetail = ({changePage, sendRefreshPage}) => {
         });
       }
     }
-<<<<<<< HEAD
-  }, []);
-=======
     
-  }, [sendRefreshPage]);
->>>>>>> 1f9597c6ce5e969f08b0a77bdb7f1060ba520701
+  }, [refreshTwits, sendRefreshPage]);
 
   useEffect(() => {
     if (map) {

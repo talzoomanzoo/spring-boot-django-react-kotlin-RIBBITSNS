@@ -15,8 +15,8 @@ import {
   Button,
   Menu,
   MenuItem,
-  TextareaAutosize,
   Modal,
+  TextareaAutosize,
 } from "@mui/material";
 import EmojiPicker from "emoji-picker-react";
 import { useFormik } from "formik";
@@ -28,6 +28,7 @@ import GroupsIcon from "@mui/icons-material/Groups";
 import ProgressBar from "@ramonak/react-progress-bar";
 import "react-toastify/dist/ReactToastify.css"; // React Toastify 스타일
 import * as Yup from "yup";
+import { API_BASE_URL } from "../../../../Config/apiConfig";
 import {
   decreaseNotificationCount,
   incrementNotificationCount,
@@ -129,6 +130,11 @@ const TwitCard = ({ twit, changePage }) => {
   const formikLocation = useFormik({
     initialValues: {
       location: address,
+    },
+    onSubmit: (values) => {
+      // 주소값만 저장하고 formikLocation reset
+      setAddress(values.location);
+      formikLocation.resetForm();
     },
   });
 
@@ -565,11 +571,11 @@ const TwitCard = ({ twit, changePage }) => {
 
               <span className="flex items-center text-gray-500">
                 
-                  {twit.isCom?
-                  <p className="text-gray-500">
-                  (<GroupsIcon sx={{ marginRight: "7px" }} />
-                  {twit.comName})
-                  </p>
+                  {twit.com?
+                  (<p className="text-gray-500">
+                  <GroupsIcon sx={{ marginRight: "7px" }} />
+                  {twit.comName}
+                  </p>)
                   : null
                 }
                 

@@ -7,26 +7,10 @@ import { findListById } from "../../Store/List/Action";
 import { findTwitsByListId } from "../../Store/Tweet/Action";
 import TwitCard from "../Home/MiddlePart/TwitCard/TwitCard";
 
-<<<<<<< HEAD
-const ListsDetail = ({ changePage }) => {
-  const param = useParams();
-  const dispatch = useDispatch();
-  const { list, twit, theme, auth } = useSelector((store) => store);
-  // useSelector로 twit과 theme이라는 모듈의 상태값을 가져오도록 한 후, twit과 theme의 상태를 변경해서 궁극적으로 스토어의 상태를 변경
-  // twit: twitReducer, theme: themeReducer
-  // console.log("reply detail", twit.twit?.replyTwits.slice().reverse());
-  const navigate = useNavigate();
-  const handleBack = () => navigate(-1);
-  // 뒤로가기, 앞으로가기는 navigate(1)
-  useEffect(() => {
-    dispatch(findListById(param.id));
-    dispatch(findTwitsByListId(param.id));
-  }, [param.id]);
-=======
 const ListsDetail = ({changePage, sendRefreshPage}) => {
     const param = useParams();
     const dispatch = useDispatch();
-    const { list, twit, theme } = useSelector(store => store);
+    const { list, twit, theme, auth } = useSelector(store => store);
     // useSelector로 twit과 theme이라는 모듈의 상태값을 가져오도록 한 후, twit과 theme의 상태를 변경해서 궁극적으로 스토어의 상태를 변경
     // twit: twitReducer, theme: themeReducer
     // console.log("reply detail", twit.twit?.replyTwits.slice().reverse());
@@ -37,7 +21,6 @@ const ListsDetail = ({changePage, sendRefreshPage}) => {
         dispatch(findListById(param.id))
         dispatch(findTwitsByListId(param.id))
     }, [param.id, sendRefreshPage])
->>>>>>> 1f9597c6ce5e969f08b0a77bdb7f1060ba520701
 
   console.log("listname check", list);
 

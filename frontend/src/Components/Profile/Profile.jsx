@@ -28,11 +28,7 @@ import Loading from "./Loading/Loading";
 const Maplocation = React.lazy(() => import("./Maplocation"));
 const ProfileModel = React.lazy(() => import("./ProfileModel"));
 
-<<<<<<< HEAD
-const Profile = ({ changePage }) => {
-=======
 const Profile = ({sendRefreshPage, changePage}) => {
->>>>>>> 1f9597c6ce5e969f08b0a77bdb7f1060ba520701
   const style = {
     position: "absolute",
     top: "50%",
@@ -186,22 +182,7 @@ const Profile = ({sendRefreshPage, changePage}) => {
     if (isLobitTab) {
       const totalEthicRateMAXValue = twit.twits.reduce((sum, tweet) => {
         return sum + (tweet.ethiclabel === 4 ? 0 : tweet.ethicrateMAX || 0);
-<<<<<<< HEAD
-      }, 0);
-  
-      const averageEthicRateMAXValue =
-        twit.twits.length > 0 ? totalEthicRateMAXValue / twit.twits.length : 0;
-  
-      const roundedAverageEthicRateMAX = Math.floor(averageEthicRateMAXValue);
-  
-      setTotalEthicRateMAX(totalEthicRateMAXValue);
-      setAverageEthicRateMAX(roundedAverageEthicRateMAX);
-    }
-  }, [twit.twits, isLobitTab, auth.user]);
-=======
-      },
-      0
-    );
+      },0);
 
     // Calculate average ethicrateMAX
     const averageEthicRateMAXValue =
@@ -215,10 +196,9 @@ const Profile = ({sendRefreshPage, changePage}) => {
     // 상태 업데이트
     setTotalEthicRateMAX(totalEthicRateMAXValue);
     setAverageEthicRateMAX(roundedAverageEthicRateMAX);
-
+    }
     // ... (다른 코드)
   }, [twit.twits, auth.user, sendRefreshPage]);
->>>>>>> 1f9597c6ce5e969f08b0a77bdb7f1060ba520701
 
   return (
     <div>
@@ -278,7 +258,6 @@ const Profile = ({sendRefreshPage, changePage}) => {
             </Button>
           )}
         </div>
-<<<<<<< HEAD
         <p className="flex items-center text-gray-500">
           {`${
             averageEthicRateMAX < 25
@@ -304,15 +283,6 @@ const Profile = ({sendRefreshPage, changePage}) => {
             }`}
           />
         </p>
-=======
-        <p className="flex items-center text-gray-500">{`${averageEthicRateMAX < 25 ? "😄" : averageEthicRateMAX < 50 ? "😅" : averageEthicRateMAX < 75 ? "☹️" : "🤬"}`}
-        <ProgressBar
-                          completed={averageEthicRateMAX}
-                          width="165px"
-                          margin="2px 0px 4px 4px"
-                          bgColor={`${averageEthicRateMAX < 25 ? "hsla(195, 100%, 35%, 0.8)" : averageEthicRateMAX < 50 ? "hsla(120, 100%, 25%, 0.7)" : averageEthicRateMAX < 75 ? "hsla(48, 100%, 40%, 0.8)" : "red"}`}
-                        /></p>
->>>>>>> 1f9597c6ce5e969f08b0a77bdb7f1060ba520701
         <div>
           <div>
             <div className="flex items-center">
@@ -586,13 +556,9 @@ const Profile = ({sendRefreshPage, changePage}) => {
             </TabPanel>
             <TabPanel value="4">
               {twit.likedTwits?.map((item) => (
-<<<<<<< HEAD
-                <TwitCard twit={item} changePage={changePage} />
-=======
                 <div>
                 <TwitCard twit={item} key={item.id} changePage={changePage}/>
                 </div>
->>>>>>> 1f9597c6ce5e969f08b0a77bdb7f1060ba520701
               ))}
             </TabPanel>
           </TabContext>
