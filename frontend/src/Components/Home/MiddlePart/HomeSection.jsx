@@ -641,7 +641,7 @@ const HomeSection = ({ sendRefreshPage, changePage }) => {
           {loading ? <Loading /> : null}
           {twit.twits && twit.twits.length > 0 ? (
             twit.twits.map((item) => (
-              <TwitCard twit={item} key={item.id} changePage={changePage} />
+              <TwitCard twit={item} key={item.id} changePage={changePage} sendRefreshPage={sendRefreshPage}/>
             ))
           ) : (
             <div>게시된 리빗이 없습니다.</div>

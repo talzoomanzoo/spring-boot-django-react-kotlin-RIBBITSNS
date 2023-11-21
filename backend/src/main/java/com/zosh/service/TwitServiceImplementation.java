@@ -196,9 +196,10 @@ public class TwitServiceImplementation implements TwitService {
 		twit.setVideo(req.getVideo());
 		twit.setLocation(req.getLocation());
 		twit.setEdited(req.isEdited());
-		twit.setEditedAt(req.getEditedAt());
-		System.out.println(twit.isEdited());
-		System.out.println(twit.getEditedAt());
+		twit.setEditedAt(LocalDateTime.now());
+		//twit.setEditedAt(req.getEditedAt());
+		//System.out.println(twit.isEdited());
+		//System.out.println(twit.getEditedAt());
 		twitRepository.save(twit);
 		return twit;
 	}

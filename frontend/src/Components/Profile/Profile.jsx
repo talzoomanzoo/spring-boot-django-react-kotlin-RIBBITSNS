@@ -69,13 +69,12 @@ const Profile = ({sendRefreshPage, changePage}) => {
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
-    
-    // 리빗 탭 여부 확인
+
     setIsLobitTab(newValue === "1");
-  
+
     if (newValue === "4") {
       dispatch(findTwitsByLikesContainUser(param.id));
-    } else if (newValue === "1") {
+    } else if (newValue === "1" || "3") {
       dispatch(getUsersTweets(param.id));
     } else if (newValue === "2") {
       dispatch(getUsersReplies(param.id));
@@ -196,6 +195,7 @@ const Profile = ({sendRefreshPage, changePage}) => {
     // 상태 업데이트
     setTotalEthicRateMAX(totalEthicRateMAXValue);
     setAverageEthicRateMAX(roundedAverageEthicRateMAX);
+    }
     }
     // ... (다른 코드)
   }, [twit.twits, auth.user, sendRefreshPage]);

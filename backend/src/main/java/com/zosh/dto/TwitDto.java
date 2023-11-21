@@ -28,7 +28,7 @@ public class TwitDto {
 	
 	private LocalDateTime createdAt;
 	
-	private String editedAt;
+	private LocalDateTime editedAt;
 	
 	private int totalLikes;
 	
