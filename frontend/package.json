@@ -41,6 +41,7 @@
     "react-dom": "^18.2.0",
     "react-items-carousel": "^2.8.0",
     "react-kakao-maps-sdk": "^1.1.21",
+    "react-linkify": "^1.0.0-alpha",
     "react-modal": "^3.16.1",
     "react-native": "^0.72.6",
     "react-native-infinite-scroll": "^1.0.6",

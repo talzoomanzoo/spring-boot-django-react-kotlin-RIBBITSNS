@@ -1,4 +1,6 @@
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
+import { Tooltip } from "@mui/material";
 import ProgressBar from "@ramonak/react-progress-bar";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,20 +9,21 @@ import { findListById } from "../../Store/List/Action";
 import { findTwitsByListId } from "../../Store/Tweet/Action";
 import TwitCard from "../Home/MiddlePart/TwitCard/TwitCard";
 
-const ListsDetail = ({changePage, sendRefreshPage}) => {
-    const param = useParams();
-    const dispatch = useDispatch();
-    const { list, twit, theme, auth } = useSelector(store => store);
-    // useSelector로 twit과 theme이라는 모듈의 상태값을 가져오도록 한 후, twit과 theme의 상태를 변경해서 궁극적으로 스토어의 상태를 변경
-    // twit: twitReducer, theme: themeReducer
-    // console.log("reply detail", twit.twit?.replyTwits.slice().reverse());
-    const navigate = useNavigate();
-    const handleBack = () => navigate(-1)
-    // 뒤로가기, 앞으로가기는 navigate(1)
-    useEffect(() => {
-        dispatch(findListById(param.id))
-        dispatch(findTwitsByListId(param.id))
-    }, [param.id, sendRefreshPage])
+const ListsDetail = ({ changePage, sendRefreshPage }) => {
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+  const param = useParams();
+  const dispatch = useDispatch();
+  const { list, twit, theme, auth } = useSelector((store) => store);
+  // useSelector로 twit과 theme이라는 모듈의 상태값을 가져오도록 한 후, twit과 theme의 상태를 변경해서 궁극적으로 스토어의 상태를 변경
+  // twit: twitReducer, theme: themeReducer
+  // console.log("reply detail", twit.twit?.replyTwits.slice().reverse());
+  const navigate = useNavigate();
+  const handleBack = () => navigate(-1);
+  // 뒤로가기, 앞으로가기는 navigate(1)
+  useEffect(() => {
+    dispatch(findListById(param.id));
+    dispatch(findTwitsByListId(param.id));
+  }, [param.id, sendRefreshPage]);
 
   console.log("listname check", list);
 
@@ -50,7 +53,7 @@ const ListsDetail = ({changePage, sendRefreshPage}) => {
 
   return (
     <div>
-       <div className="flex">
+      <div className="flex">
         <section
           className={`z-50 flex items-center sticky top-0 ${
             theme.currentTheme === "light" ? "light" : "dark"
@@ -68,6 +71,18 @@ const ListsDetail = ({changePage, sendRefreshPage}) => {
         </section>
 
         <div className="flex mt-5 ml-auto" style={{ width: "200px" }}>
+          <Tooltip
+            title="게시글의 윤리수치를 분석해 그래프로 보여줍니다"
+            open={tooltipOpen}
+            onClose={() => setTooltipOpen(false)}
+            arrow
+          >
+            <InfoOutlinedIcon
+              fontSize="small"
+              style={{ cursor: "pointer" }}
+              onClick={() => setTooltipOpen(!tooltipOpen)}
+            />
+          </Tooltip>
           {`${
             averageEthicRateMAX < 25
               ? "😄"
