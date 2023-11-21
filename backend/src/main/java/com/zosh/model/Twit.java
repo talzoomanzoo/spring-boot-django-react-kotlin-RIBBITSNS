@@ -91,7 +91,9 @@ public class Twit {
     @Column(nullable = false)
     private LocalDateTime createdAt;
     private LocalDateTime retwitAt;
-    private String editedAt; 
+    
+    @Column(nullable = false)
+    private LocalDateTime editedAt;
     
     @Column(nullable = false)
     private int viewCount;
