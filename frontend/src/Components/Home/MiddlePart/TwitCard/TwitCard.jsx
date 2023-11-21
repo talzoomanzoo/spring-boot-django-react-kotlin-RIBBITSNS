@@ -349,7 +349,7 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
     setIsLiked(!isLiked);
     setLikes(likes + num);
     dispatch(likeTweet(twit.id));
-    
+
   };
 
   const handleIncrement = () => {
@@ -414,20 +414,20 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
     setLocationFormOpen(false);
 
     try {
-      const currentTime = new Date();
+      //const currentTime = new Date();
       setEditedContent(editedContent);
       setSelectedImage(selectedImage);
       setSelectedVideo(selectedVideo);
       setSelectedLocation(address);
       setIsEdited(true);
-      setEdittimes(currentTime);
+      //setEdittimes(currentTime);
 
       twit.content = editedContent;
       twit.location = address;
       twit.image = selectedImage;
       twit.video = selectedVideo;
       twit.edited = true;
-      twit.editedAt = currentTime;
+      //twit.editedAt = currentTime;
 
       await ethicreveal(twit.id, twit.content);
       await dispatch(updateTweet(twit));
@@ -530,12 +530,12 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
         twit.retwitUsersId?.length > 0 ? (
         <div className="flex items-center font-semibold text-yellow-500 py-2">
           <RepeatIcon />
-         
+
           <p className="ml-3">Reribbit</p>
         </div>
       ) : null}
       <div className="flex space-x-5 ">
-      <Avatar
+        <Avatar
           onClick={() => navigate(`/profile/${twit.user?.id}`)}
           alt="Avatar"
           src={
@@ -545,9 +545,9 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
           }
           className="cursor-pointer"
           loading="lazy"
-          style={{marginTop: 13}}
+          style={{ marginTop: 13 }}
         />
-        <div className="w-full" style={{marginTop: 15, marginBottom: 15}}>
+        <div className="w-full" style={{ marginTop: 15, marginBottom: 15 }}>
           <div className="flex justify-between items-center ">
             <div
               onClick={() => navigate(`/profile/${twit.user.id}`)}
@@ -568,22 +568,22 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
                 )}
               </span>
 
-              
+
               <span className="flex items-center text-gray-500">
                 <LocationOnIcon />
                 <p className="text-gray-500">{twit.location || address}</p>
               </span>
 
               <span className="flex items-center text-gray-500">
-                
-                  {twit.isCom?
+
+                {twit.isCom ?
                   <p className="text-gray-500">
-                  (<GroupsIcon sx={{ marginRight: "7px" }} />
-                  {twit.comName})
+                    (<GroupsIcon sx={{ marginRight: "7px" }} />
+                    {twit.comName})
                   </p>
                   : null
                 }
-                
+
               </span>
 
               {twit.user.verified && (
@@ -640,8 +640,8 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
                 <div>
                   <TextareaAutosize
                     className={`${theme.currentTheme === "light"
-                        ? "bg-white"
-                        : "bg-[#151515]"
+                      ? "bg-white"
+                      : "bg-[#151515]"
                       }`}
                     minRows={0}
                     maxRows={0}
@@ -697,15 +697,14 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
                           completed={ethicrateMAX}
                           width="450%"
                           margin="2px 0px 4px 4px"
-                          bgColor={`${
-                            ethicrateMAX < 25
+                          bgColor={`${ethicrateMAX < 25
                               ? "hsla(195, 100%, 35%, 0.8)"
                               : ethicrateMAX < 50
-                              ? "hsla(120, 100%, 25%, 0.7)"
-                              : ethicrateMAX < 75
-                              ? "hsla(48, 100%, 40%, 0.8)"
-                              : "red"
-                          }`}
+                                ? "hsla(120, 100%, 25%, 0.7)"
+                                : ethicrateMAX < 75
+                                  ? "hsla(48, 100%, 40%, 0.8)"
+                                  : "red"
+                            }`}
                         />
                       </div>
                     )}
@@ -717,15 +716,14 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
                           completed={ethicrateMAX}
                           width="450%"
                           margin="2px 0px 4px 4px"
-                          bgColor={`${
-                            ethicrateMAX < 25
+                          bgColor={`${ethicrateMAX < 25
                               ? "hsla(195, 100%, 35%, 0.8)"
                               : ethicrateMAX < 50
-                              ? "hsla(120, 100%, 25%, 0.7)"
-                              : ethicrateMAX < 75
-                              ? "hsla(48, 100%, 40%, 0.8)"
-                              : "red"
-                          }`}
+                                ? "hsla(120, 100%, 25%, 0.7)"
+                                : ethicrateMAX < 75
+                                  ? "hsla(48, 100%, 40%, 0.8)"
+                                  : "red"
+                            }`}
                         />
                       </div>
                     )}
@@ -737,15 +735,14 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
                           completed={ethicrateMAX}
                           width="450%"
                           margin="2px 0px 4px 4px"
-                          bgColor={`${
-                            ethicrateMAX < 25
+                          bgColor={`${ethicrateMAX < 25
                               ? "hsla(195, 100%, 35%, 0.8)"
                               : ethicrateMAX < 50
-                              ? "hsla(120, 100%, 25%, 0.7)"
-                              : ethicrateMAX < 75
-                              ? "hsla(48, 100%, 40%, 0.8)"
-                              : "red"
-                          }`}
+                                ? "hsla(120, 100%, 25%, 0.7)"
+                                : ethicrateMAX < 75
+                                  ? "hsla(48, 100%, 40%, 0.8)"
+                                  : "red"
+                            }`}
                         />
                       </div>
                     )}
@@ -757,15 +754,14 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
                           completed={ethicrateMAX}
                           width="450%"
                           margin="2px 0px 4px 4px"
-                          bgColor={`${
-                            ethicrateMAX < 25
+                          bgColor={`${ethicrateMAX < 25
                               ? "hsla(195, 100%, 35%, 0.8)"
                               : ethicrateMAX < 50
-                              ? "hsla(120, 100%, 25%, 0.7)"
-                              : ethicrateMAX < 75
-                              ? "hsla(48, 100%, 40%, 0.8)"
-                              : "red"
-                          }`}
+                                ? "hsla(120, 100%, 25%, 0.7)"
+                                : ethicrateMAX < 75
+                                  ? "hsla(48, 100%, 40%, 0.8)"
+                                  : "red"
+                            }`}
                         />
                       </div>
                     )}
@@ -873,11 +869,10 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
                               onChange={(e) => setSearchKeyword(e.target.value)}
                               id="keyword"
                               size="15"
-                              className={`${
-                                theme.currentTheme === "light"
+                              className={`${theme.currentTheme === "light"
                                   ? ""
                                   : "text-black"
-                              }`}
+                                }`}
                             />
                             <Button type="submit">검색하기</Button>
                           </form>
