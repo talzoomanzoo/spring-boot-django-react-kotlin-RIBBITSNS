@@ -36,6 +36,7 @@ fun ChatRoomItem(
             .padding(start = 16.dp, top = 16.dp, end = 16.dp),
         onClick = {
             chatViewModel.selectedRoomIdState = chatRoom.roomId
+            chatViewModel.selectedRoomNameState = chatRoom.name
             chatViewModel.subscribeRoom(chatRoom.roomId)
             navController.navigate(RibbitScreen.ChatScreen.name)
         }

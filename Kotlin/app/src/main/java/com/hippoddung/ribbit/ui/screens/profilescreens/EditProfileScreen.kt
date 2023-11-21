@@ -653,7 +653,12 @@ fun EditProfileReadyScreen(
                         when (userViewModel.getAiImageUiState) {
                             is GetAiImageUrlUiState.Error -> {}
                             is GetAiImageUrlUiState.Loading -> {
-                                Column(modifier = modifier) {
+                                Column(
+                                    modifier = modifier
+                                    .background(Color.White, shape = RoundedCornerShape(16.dp)),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center
+                                ) {
                                     Text(text = "Loading your AI Image", modifier = modifier)
                                     Image(
                                         modifier = modifier.size(200.dp),

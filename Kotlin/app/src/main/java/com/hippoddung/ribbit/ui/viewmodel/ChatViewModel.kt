@@ -38,6 +38,7 @@ class ChatViewModel @Inject constructor(
     private var subscribedRooms: MutableMap<String, Disposable> = mutableMapOf()
 
     var selectedRoomIdState: String by mutableStateOf("")
+    var selectedRoomNameState: String by mutableStateOf("")
 
     private var _chatRooms = MutableStateFlow<List<ChatRoomDto>>(emptyList())
     val chatRooms: StateFlow<List<ChatRoomDto>> = _chatRooms.asStateFlow()

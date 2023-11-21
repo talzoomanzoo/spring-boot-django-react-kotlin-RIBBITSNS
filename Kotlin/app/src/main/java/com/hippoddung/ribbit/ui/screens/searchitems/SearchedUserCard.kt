@@ -91,7 +91,7 @@ fun SearchedUserCard(
 //                                ?: "https://img.animalplanet.co.kr/news/2020/01/13/700/sfu2275cc174s39hi89k.jpg"
                         )
                         .crossfade(true).build(),
-                    error = painterResource(R.drawable.ic_broken_image),
+                    error = painterResource(R.drawable.frog_8341850_1280),
                     placeholder = painterResource(R.drawable.loading_img),
                     contentDescription = stringResource(R.string.user_image),
                     contentScale = ContentScale.Crop,

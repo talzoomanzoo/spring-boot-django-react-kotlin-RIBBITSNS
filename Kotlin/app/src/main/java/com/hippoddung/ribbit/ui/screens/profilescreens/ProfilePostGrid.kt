@@ -135,7 +135,7 @@ fun ProfilePostsGrid(
                                 .fillMaxWidth()
                                 .height(100.dp),
                             placeholder = painterResource(R.drawable.loading_img),
-                            error = painterResource(R.drawable.ic_broken_image),
+                            error = painterResource(R.drawable.pond),
                             alignment = Alignment.TopStart,
                             contentScale = ContentScale.Crop
                         )
@@ -186,7 +186,7 @@ fun ProfilePostsGrid(
                                     .size(100.dp)
                                     .clip(CircleShape),
                                 placeholder = painterResource(R.drawable.loading_img),
-                                error = painterResource(R.drawable.ic_broken_image),
+                                error = painterResource(R.drawable.frog_8341850_1280),
                                 contentScale = ContentScale.Crop,
                             )
                         }

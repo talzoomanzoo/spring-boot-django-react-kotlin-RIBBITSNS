@@ -50,6 +50,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -134,31 +135,29 @@ fun ChatScreen(
     var isAddUserButtonClicked by remember { mutableStateOf(false) }
 
     Scaffold(
-        modifier = modifier
+        modifier = modifier,
+        topBar = {
+            Row(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = chatViewModel.selectedRoomNameState)
+                TextButton(onClick = { isAddUserButtonClicked = true }) {
+                    Text(text = "Add User")
+                }
+            }
+        }
     ) {
         Surface(
             modifier = modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .padding(it),
             color = MaterialTheme.colorScheme.tertiary
         ) {
             Box(modifier = modifier) {
-                Box(
-                    modifier = modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
-                    contentAlignment = Alignment.TopEnd
-                ) {
-                    FloatingActionButton(
-                        onClick = {
-                            isAddUserButtonClicked = true
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = "Floating action button."
-                        )
-                    }
-                }
 
                 DropdownMenu(
                     expanded = isAddUserButtonClicked,
@@ -375,13 +374,6 @@ fun ChatScreen(
                                             )
                                         }
                                     }
-                                    Image(
-                                        painter = painterResource(id = R.drawable.frog_8341850_1280),
-                                        contentDescription = "default image",
-                                        contentScale = ContentScale.Crop,
-                                        modifier = modifier
-                                            .size(40.dp)
-                                    )
                                 }
                             }
 //                            Canvas(

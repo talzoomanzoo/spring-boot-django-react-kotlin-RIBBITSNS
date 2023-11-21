@@ -84,7 +84,7 @@ fun ChatRoomListScreen(
 
                 // Display the list of chat rooms
                 LazyColumn(modifier = modifier) {
-                    items(chatRooms) { chatRoom ->
+                    items(chatRooms.reversed()) { chatRoom ->
                         ChatRoomItem(
                             navController = navController,
                             chatViewModel = chatViewModel,
