@@ -1,10 +1,8 @@
-import Brightness4Icon from "@mui/icons-material/Brightness4";
 import NightsStayIcon from '@mui/icons-material/NightsStay';
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import SearchIcon from "@mui/icons-material/Search";
-import { Avatar, Button } from "@mui/material";
 import NotesIcon from '@mui/icons-material/Notes';
-import React, { useEffect, useState } from "react";
+import SearchIcon from "@mui/icons-material/Search";
+import { Avatar } from "@mui/material";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { changeTheme } from "../../Store/Theme/Action";
 import SubscriptionModel from "./SubscriptionModel";
@@ -13,8 +11,8 @@ import { useNavigate } from "react-router-dom";
 import { searchAll } from "../../Store/Auth/Action";
 import { viewPlus } from "../../Store/Tweet/Action";
 import LikeTop from "./LikeTop";
-import ViewTop from "./ViewTop";
 import "./Scrollbar.css";
+import ViewTop from "./ViewTop";
 
 const RightPart = ({changeThemeAll, sendRefreshPage, changePage}) => {
   const { theme, auth } = useSelector((store) => store);

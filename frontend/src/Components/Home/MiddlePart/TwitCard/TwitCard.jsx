@@ -15,12 +15,13 @@ import {
   Button,
   Menu,
   MenuItem,
-  TextareaAutosize,
   Modal,
+  TextareaAutosize,
 } from "@mui/material";
 import EmojiPicker from "emoji-picker-react";
 import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
+import Linkify from "react-linkify";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 // import { ToastContainer, toast } from "react-toastify";
@@ -28,6 +29,7 @@ import GroupsIcon from "@mui/icons-material/Groups";
 import ProgressBar from "@ramonak/react-progress-bar";
 import "react-toastify/dist/ReactToastify.css"; // React Toastify 스타일
 import * as Yup from "yup";
+import { API_BASE_URL } from "../../../../Config/apiConfig";
 import {
   decreaseNotificationCount,
   incrementNotificationCount,
@@ -45,7 +47,6 @@ import { uploadToCloudinary } from "../../../../Utils/UploadToCloudinary";
 import Loading from "../../../Profile/Loading/Loading";
 import "../TwitMap.css";
 import ReplyModal from "./ReplyModal";
-import { API_BASE_URL } from "../../../../Config/apiConfig";
 
 const validationSchema = Yup.object().shape({
   content: Yup.string().required("내용이 없습니다"),
@@ -67,7 +68,6 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
   const [likes, setLikes] = useState(twit.totalLikes);
   const [isEditing, setIsEditing] = useState(false); // 편집 상태를 관리하는 상태 변수
   const [editedContent, setEditedContent] = useState(twit.content); // 편집된 내용을 관리하는 상태 변수
-
 
   const [ethiclabel, setEthiclabel] = useState(twit.ethiclabel);
   const [ethicrateMAX, setEthicrateMAX] = useState(twit.ethicrateMAX); //윤리수치 최대 수치
@@ -138,6 +138,11 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
   const formikLocation = useFormik({
     initialValues: {
       location: address,
+    },
+    onSubmit: (values) => {
+      // 주소값만 저장하고 formikLocation reset
+      setAddress(values.location);
+      formikLocation.resetForm();
     },
   });
 
@@ -290,8 +295,8 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
       infowindow.close();
       infowindow.setContent(
         '<div style="padding:5px;font-size:12px;color:black;">' +
-        place.place_name +
-        "</div>"
+          place.place_name +
+          "</div>"
       );
       infowindow.open(map, marker);
     });
@@ -343,13 +348,11 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
     setAnchorEl(null);
   };
 
-
   const handleLikeTweet = (num) => {
     changePage();
     setIsLiked(!isLiked);
     setLikes(likes + num);
     dispatch(likeTweet(twit.id));
-    
   };
 
   const handleIncrement = () => {
@@ -414,20 +417,20 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
     setLocationFormOpen(false);
 
     try {
-      const currentTime = new Date();
+      //const currentTime = new Date();
       setEditedContent(editedContent);
       setSelectedImage(selectedImage);
       setSelectedVideo(selectedVideo);
       setSelectedLocation(address);
       setIsEdited(true);
-      setEdittimes(currentTime);
+      //setEdittimes(currentTime);
 
       twit.content = editedContent;
       twit.location = address;
       twit.image = selectedImage;
       twit.video = selectedVideo;
       twit.edited = true;
-      twit.editedAt = currentTime;
+      //twit.editedAt = currentTime;
 
       await ethicreveal(twit.id, twit.content);
       await dispatch(updateTweet(twit));
@@ -435,7 +438,7 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
       setIsEditing(false);
       setLoading(false);
       handleCloseEditClick();
-    } catch (error) { }
+    } catch (error) {}
   };
 
   const ethicreveal = async (twitid, twitcontent) => {
@@ -526,16 +529,16 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
     <div className="">
       {loading ? <Loading /> : null}
       {auth.findUser?.id !== twit.user?.id &&
-        location.pathname === `/profile/${auth.findUser?.id}` &&
-        twit.retwitUsersId?.length > 0 ? (
+      location.pathname === `/profile/${auth.findUser?.id}` &&
+      twit.retwitUsersId?.length > 0 ? (
         <div className="flex items-center font-semibold text-yellow-500 py-2">
           <RepeatIcon />
-         
+
           <p className="ml-3">Reribbit</p>
         </div>
       ) : null}
       <div className="flex space-x-5 ">
-      <Avatar
+        <Avatar
           onClick={() => navigate(`/profile/${twit.user?.id}`)}
           alt="Avatar"
           src={
@@ -545,9 +548,9 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
           }
           className="cursor-pointer"
           loading="lazy"
-          style={{marginTop: 13}}
+          style={{ marginTop: 13 }}
         />
-        <div className="w-full" style={{marginTop: 15, marginBottom: 15}}>
+        <div className="w-full" style={{ marginTop: 15, marginBottom: 15 }}>
           <div className="flex justify-between items-center ">
             <div
               onClick={() => navigate(`/profile/${twit.user.id}`)}
@@ -568,22 +571,18 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
                 )}
               </span>
 
-              
               <span className="flex items-center text-gray-500">
                 <LocationOnIcon />
                 <p className="text-gray-500">{twit.location || address}</p>
               </span>
 
               <span className="flex items-center text-gray-500">
-                
-                  {twit.isCom?
+                {twit.com ? (
                   <p className="text-gray-500">
-                  (<GroupsIcon sx={{ marginRight: "7px" }} />
-                  {twit.comName})
+                    <GroupsIcon sx={{ marginRight: "7px" }} />
+                    {twit.comName}
                   </p>
-                  : null
-                }
-                
+                ) : null}
               </span>
 
               {twit.user.verified && (
@@ -622,7 +621,12 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
                     {twit.user.id === auth.user.id && (
                       <MenuItem onClick={handleEditClick}>수정</MenuItem>
                     )}
-                    <MenuItem onClick={handleNavigateToTwitDetial}>
+                    <MenuItem
+                      onClick={() => {
+                        handleNavigateToTwitDetial();
+                        handleCloseDeleteMenu(); // "자세히" 클릭 시 메뉴 닫기
+                      }}
+                    >
                       자세히
                     </MenuItem>
                   </div>
@@ -639,10 +643,11 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
               {isEditing ? (
                 <div>
                   <TextareaAutosize
-                    className={`${theme.currentTheme === "light"
+                    className={`${
+                      theme.currentTheme === "light"
                         ? "bg-white"
                         : "bg-[#151515]"
-                      }`}
+                    }`}
                     minRows={0}
                     maxRows={0}
                     value={editedContent}
@@ -684,15 +689,40 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
               ) : (
                 <div>
                   <p className="mb-2 p-0 ">
-                    {isEditing ? editedContent : twit.content}
+                    <Linkify
+                      componentDecorator={(
+                        decoratedHref,
+                        decoratedText,
+                        key
+                      ) => (
+                        <a
+                          key={key}
+                          href={decoratedHref}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ color: "blue", textDecoration: "underline" }}
+                        >
+                          {decoratedText}
+                        </a>
+                      )}
+                    >
+                      {isEditing ? editedContent : twit.content}
+                    </Linkify>
                   </p>
 
                   <p>
-
                     {twit.isReply === false && ethiclabel === 0 && (
                       <div className="flex items-center font-bold rounded-md">
                         폭력성
-                        {`${ethicrateMAX < 25 ? "😄" : ethicrateMAX < 50 ? "😅" : ethicrateMAX < 75 ? "☹️" : "🤬"}`}
+                        {`${
+                          ethicrateMAX < 25
+                            ? "😄"
+                            : ethicrateMAX < 50
+                            ? "😅"
+                            : ethicrateMAX < 75
+                            ? "☹️"
+                            : "🤬"
+                        }`}
                         <ProgressBar
                           completed={ethicrateMAX}
                           width="450%"
@@ -712,7 +742,15 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
                     {twit.reply === false && ethiclabel === 1 && (
                       <div className="flex items-center font-bold rounded-md">
                         선정성
-                        {`${ethicrateMAX < 25 ? "😄" : ethicrateMAX < 50 ? "😅" : ethicrateMAX < 75 ? "☹️" : "🤬"}`}
+                        {`${
+                          ethicrateMAX < 25
+                            ? "😄"
+                            : ethicrateMAX < 50
+                            ? "😅"
+                            : ethicrateMAX < 75
+                            ? "☹️"
+                            : "🤬"
+                        }`}
                         <ProgressBar
                           completed={ethicrateMAX}
                           width="450%"
@@ -732,7 +770,15 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
                     {twit.reply === false && ethiclabel === 2 && (
                       <div className="flex items-center font-bold rounded-md">
                         욕설
-                        {`${ethicrateMAX < 25 ? "😄" : ethicrateMAX < 50 ? "😅" : ethicrateMAX < 75 ? "☹️" : "🤬"}`}
+                        {`${
+                          ethicrateMAX < 25
+                            ? "😄"
+                            : ethicrateMAX < 50
+                            ? "😅"
+                            : ethicrateMAX < 75
+                            ? "☹️"
+                            : "🤬"
+                        }`}
                         <ProgressBar
                           completed={ethicrateMAX}
                           width="450%"
@@ -752,7 +798,15 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
                     {twit.reply === false && ethiclabel === 3 && (
                       <div className="flex items-center font-bold rounded-md">
                         차별성
-                        {`${ethicrateMAX < 25 ? "😄" : ethicrateMAX < 50 ? "😅" : ethicrateMAX < 75 ? "☹️" : "🤬"}`}
+                        {`${
+                          ethicrateMAX < 25
+                            ? "😄"
+                            : ethicrateMAX < 50
+                            ? "😅"
+                            : ethicrateMAX < 75
+                            ? "☹️"
+                            : "🤬"
+                        }`}
                         <ProgressBar
                           completed={ethicrateMAX}
                           width="450%"
@@ -919,18 +973,22 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
                     {/* twit 객체의 totalReplies 속성 값이 0보다 큰 경우에만 해당 값을 포함하는 <p> 태그로 래핑 시도*/}
                   </div>
                   <div
-                    className={`${isRetwit ? "text-yellow-500" : "text-gray-600"
-                      } space-x-3 flex items-center`}
+                    className={`${
+                      isRetwit ? "text-yellow-500" : "text-gray-600"
+                    } space-x-3 flex items-center`}
                   >
                     <RepeatIcon
                       className={`cursor-pointer`}
-                      onClick={() => { handleCreateRetweet() }}
+                      onClick={() => {
+                        handleCreateRetweet();
+                      }}
                     />
                     {retwit > 0 && <p>{retwit}</p>}
                   </div>
                   <div
-                    className={`${isLiked ? "text-yellow-500" : "text-gray-600"
-                      } space-x-3 flex items-center `}
+                    className={`${
+                      isLiked ? "text-yellow-500" : "text-gray-600"
+                    } space-x-3 flex items-center `}
                   >
                     {isLiked ? (
                       <FavoriteIcon
@@ -989,12 +1047,21 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-          }}>
-          <div className={`withdrawal-modal outline-none ${theme.currentTheme === "light" ? "bg-gray-200" : "bg-stone-950"}`} style={{ padding: "20px", borderRadius: "8px" }}>
-            <p id="description">
-              자신의 게시글은 리빗할 수 없습니다.
-            </p>
-            <Button style={{ marginLeft: "195px" }} onClick={handleCloseAlertModal}>확인</Button>
+          }}
+        >
+          <div
+            className={`withdrawal-modal outline-none ${
+              theme.currentTheme === "light" ? "bg-gray-200" : "bg-stone-950"
+            }`}
+            style={{ padding: "20px", borderRadius: "8px" }}
+          >
+            <p id="description">자신의 게시글은 리빗할 수 없습니다.</p>
+            <Button
+              style={{ marginLeft: "195px" }}
+              onClick={handleCloseAlertModal}
+            >
+              확인
+            </Button>
           </div>
         </Modal>
       </section>
