@@ -177,7 +177,7 @@ fun InputCommuScreen(
             }
 
             val image = if (privateMode) Icons.Filled.Lock else Icons.Filled.LockOpen
-            val description = if (privateMode) "Locked" else "Unlocked"
+            val description = if (privateMode) "Private" else "Public"
 
             Button(
                 onClick = { privateMode = !privateMode },

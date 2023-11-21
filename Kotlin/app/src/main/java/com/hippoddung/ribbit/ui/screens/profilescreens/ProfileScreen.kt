@@ -97,7 +97,7 @@ fun ProfileSuccessScreen(
     }
     if (getCardViewModel.userIdClassificationUiState is UserIdClassificationUiState.Media) {    // useridClassificationUiState 가 Media 인 경우 아래의 필터 적용
         posts =
-            posts.filter { (it.image != null) or (it.video != null) }   // image 나 video 가 null 이 아닌 경우만 뽑아서 리스트로 만든다.
+            posts.filter { (!it.image.isNullOrBlank()) or (!it.video.isNullOrBlank()) }   // image 나 video 가 null 이 아닌 경우만 뽑아서 리스트로 만든다.
     }
     Surface(
         modifier = modifier

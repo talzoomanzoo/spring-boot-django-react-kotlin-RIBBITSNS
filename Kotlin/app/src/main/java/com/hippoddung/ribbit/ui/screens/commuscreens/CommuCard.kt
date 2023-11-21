@@ -54,7 +54,10 @@ fun CommuCard(
                 navController.navigate(RibbitScreen.CommuIdScreen.name)
             }
     ) {
-        Row(modifier = modifier) {
+        Row(
+            modifier = modifier
+                .weight(2f)
+        ) {
             Icon(
                 imageVector = Icons.Default.List,
                 contentDescription = "RibbitCommu",
@@ -89,6 +92,7 @@ fun CommuCard(
                     navController.navigate(RibbitScreen.ManageCommuScreen.name)
                 },
                 modifier = modifier
+                    .weight(1f)
             ) {
                 Text(
                     text = stringResource(R.string.manage),
@@ -119,6 +123,7 @@ fun CommuCard(
                         commuViewModel.signoutCommuClickedUiState = true
                     },
                     modifier = modifier
+                        .weight(1f)
                 ) {
                     Text(
                         text = "Signout",
@@ -134,6 +139,7 @@ fun CommuCard(
                         commuViewModel.signupCommuClickedUiState = true
                     },
                     modifier = modifier
+                        .weight(1f)
                 ) {
                     Text(
                         text = "Signup",

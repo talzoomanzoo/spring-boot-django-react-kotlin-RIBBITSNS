@@ -112,6 +112,7 @@ fun PostIdSuccessScreen(
                 )
             } else {    // lazyColumn 이 차지하는 리소스를 줄이기 위해 댓글이 없는 경우 바로 보여주는 방식 채택
                 RibbitCard(
+                    index = 0,
                     post = post,
                     getCardViewModel = getCardViewModel,
                     postingViewModel = postingViewModel,

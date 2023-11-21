@@ -1,5 +1,6 @@
 package com.hippoddung.ribbit.ui.screens.profilescreens
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
@@ -116,6 +117,7 @@ fun EditProfileScreen(
     }
 }
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun EditProfileReadyScreen(
     navController: NavHostController,
@@ -127,7 +129,7 @@ fun EditProfileReadyScreen(
     if (userViewModel.profileUiState is ProfileUiState.Exist) {   // navigation 으로 이동시 현재 스크린을 backStack 으로 보내면서 재실행, state casting 오류가 발생, state check 삽입
         myProfile = (userViewModel.profileUiState as ProfileUiState.Exist).user
     }
-    var inputFullName by remember { mutableStateOf(myProfile.fullName ?: "") }
+    var inputFullName by remember { mutableStateOf(myProfile.fullName) }
     var inputBio by remember { mutableStateOf(myProfile.bio ?: "") }
     var inputWebsite by remember { mutableStateOf(myProfile.website ?: "") }
     var inputEducation by remember { mutableStateOf(myProfile.education ?: "") }
@@ -635,6 +637,7 @@ fun EditProfileReadyScreen(
                                 Button(
                                     onClick = {
                                         profileImageLauncher.launch("image/*")
+                                        profileImageIsClicked = false
                                     },
                                     modifier = modifier
                                 ) {

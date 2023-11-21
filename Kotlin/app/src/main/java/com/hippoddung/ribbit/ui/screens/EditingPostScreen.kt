@@ -83,7 +83,7 @@ fun EditingPostScreen(
             Log.d("HippoLog, EditingPostScreen", "Success, ${postingViewModel.editingPostUiState}")
             getCardViewModel.getRibbitPosts()
             navController.navigate(RibbitScreen.HomeScreen.name)
-            postingViewModel.editingPostUiState = EditingPostUiState.Ready(RibbitPost())
+            postingViewModel.editingPostUiState = EditingPostUiState.Ready(RibbitPost(), 0)
         }
 
         is EditingPostUiState.Loading -> {

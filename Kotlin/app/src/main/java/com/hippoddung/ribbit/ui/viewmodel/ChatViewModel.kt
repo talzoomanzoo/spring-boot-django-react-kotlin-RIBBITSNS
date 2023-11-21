@@ -24,6 +24,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import ua.naiksoftware.stomp.Stomp
+import ua.naiksoftware.stomp.StompClient
 import ua.naiksoftware.stomp.dto.LifecycleEvent
 import ua.naiksoftware.stomp.dto.StompHeader
 import javax.inject.Inject
@@ -32,9 +33,9 @@ import javax.inject.Inject
 class ChatViewModel @Inject constructor(
     private val chatRepository: ChatRepository
 ) : ViewModel() {
-    val stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, WS_URL)
+    private val stompClient: StompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, WS_URL)
 
-    var subscribedRooms: MutableMap<String, Disposable> = mutableMapOf()
+    private var subscribedRooms: MutableMap<String, Disposable> = mutableMapOf()
 
     var selectedRoomIdState: String by mutableStateOf("")
 

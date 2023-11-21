@@ -37,6 +37,7 @@ import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CardTopBar(
+    index: Int,
     post: RibbitPost,
     getCardViewModel: GetCardViewModel,
     postingViewModel: PostingViewModel,
@@ -130,6 +131,7 @@ fun CardTopBar(
             }
         }
         RibbitDropDownMenu(
+            index = index,
             post = post,
             getCardViewModel = getCardViewModel,
             postingViewModel = postingViewModel,

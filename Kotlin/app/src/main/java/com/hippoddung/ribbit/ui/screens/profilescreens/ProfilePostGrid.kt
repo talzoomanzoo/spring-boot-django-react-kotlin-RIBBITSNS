@@ -17,16 +17,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,6 +56,7 @@ import com.hippoddung.ribbit.network.bodys.User
 import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.screens.carditems.RibbitCard
 import com.hippoddung.ribbit.ui.screens.searchitems.SearchedUserCard
+import com.hippoddung.ribbit.ui.viewmodel.AnalyzingPostEthicUiState
 import com.hippoddung.ribbit.ui.viewmodel.AuthViewModel
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
@@ -79,15 +84,22 @@ fun ProfilePostsGrid(
     val sortedRibbitPost = remember(posts, comparator) {
         posts.sortedWith(comparator)
     }   // LazyColumn items 에 List 를 바로 주는 것이 아니라 Comparator 로 정렬하여 remember 로 기억시켜서 recomposition 을 방지하여 성능을 올린다.
-    val profileUser by remember {
+    var profileUser by remember {
         if (userViewModel.profileUiState is ProfileUiState.Exist) {
             // navigation 중 backstack 으로 보내면서 재실행, state casting 이 정상적으로 되지 않아 fatal error 가 발생
             // state check 를 넣음
-            mutableStateOf((userViewModel.profileUiState as ProfileUiState.Exist).user)
+            mutableStateOf(((userViewModel.profileUiState as ProfileUiState.Exist).user))
         } else {
             mutableStateOf(User())
         }
     }
+
+    LaunchedEffect(userViewModel.profileUiState) {
+        if (userViewModel.profileUiState is ProfileUiState.Exist) {
+            profileUser = (userViewModel.profileUiState as ProfileUiState.Exist).user
+        }
+    }
+
     var withdrawalIsClicked by remember { mutableStateOf(false) }
     var followingsIsClicked by remember { mutableStateOf(false) }
     var followersIsClicked by remember { mutableStateOf(false) }
@@ -190,12 +202,14 @@ fun ProfilePostsGrid(
                                     .padding(8.dp),
                             ) {
                                 Log.d("HippoLog, ProfilePostGrid", "${profileUser.joinedAt}")
-                                Text(
-                                    text = "${
-                                        profileUser.joinedAt?.substring(0, 10)
-                                    } 에 가입",
-                                    modifier = modifier
-                                )
+                                if (profileUser.joinedAt != null) {
+                                    Text(
+                                        text = "${
+                                            profileUser.joinedAt?.substring(0, 10)
+                                        } 에 가입",
+                                        modifier = modifier
+                                    )
+                                }
                             }
                             // 접근 Id와 프로필 Id가 일치할 경우 프로필수정버튼 활성화
                             if (profileUser.id == userViewModel.myProfile.value?.id) {
@@ -218,7 +232,14 @@ fun ProfilePostsGrid(
                                 if (!followed) {
                                     OutlinedButton(
                                         onClick = {
-                                            profileUser.id?.let { userViewModel.putUserIdFollow(it) }
+                                            runBlocking {
+                                                profileUser.id?.let {
+                                                    userViewModel.putUserIdFollow(
+                                                        it
+                                                    )
+                                                }
+                                            }
+                                            profileUser.id?.let { userViewModel.getProfile(userId = it) }
                                             followed = true
                                         },
                                         modifier = modifier.align(Alignment.BottomEnd)
@@ -233,7 +254,14 @@ fun ProfilePostsGrid(
                                 } else {
                                     OutlinedButton(
                                         onClick = {
-                                            profileUser.id?.let { userViewModel.putUserIdFollow(it) }
+                                            runBlocking {
+                                                profileUser.id?.let {
+                                                    userViewModel.putUserIdFollow(
+                                                        it
+                                                    )
+                                                }
+                                            }
+                                            profileUser.id?.let { userViewModel.getProfile(userId = it) }
                                             followed = false
                                         },
                                         modifier = modifier.align(Alignment.BottomEnd)
@@ -293,11 +321,11 @@ fun ProfilePostsGrid(
                 ) {
                     TextButton(
                         onClick = {
-                            userViewModel.myProfile.value?.id?.let {
+                            profileUser.id?.let {
                                 getCardViewModel.getUserIdPosts(
                                     userId = it
                                 )
-                            }   // userViewModel 의 user 가 없는 경우 접근 자체가 불가능
+                            }
                         },
                         colors = ButtonDefaults.textButtonColors(
                             containerColor = if (getCardViewModel.userIdClassificationUiState is UserIdClassificationUiState.Ribbit) {
@@ -317,7 +345,7 @@ fun ProfilePostsGrid(
                     }
                     TextButton(
                         onClick = {
-                            userViewModel.myProfile.value?.id?.let {
+                            profileUser.id?.let {
                                 getCardViewModel.getUserIdReplies(
                                     userId = it
                                 )
@@ -341,7 +369,7 @@ fun ProfilePostsGrid(
                     }
                     TextButton(
                         onClick = {
-                            userViewModel.myProfile.value?.id?.let {
+                            profileUser.id?.let {
                                 getCardViewModel.getUserIdMedias(
                                     userId = it
                                 )
@@ -368,7 +396,7 @@ fun ProfilePostsGrid(
                     }
                     TextButton(
                         onClick = {
-                            userViewModel.myProfile.value?.id?.let {
+                            profileUser.id?.let {
                                 getCardViewModel.getUserIdLikes(
                                     userId = it
                                 )
@@ -406,6 +434,7 @@ fun ProfilePostsGrid(
         }
         items(items = sortedRibbitPost, key = { post -> post.id }) {
             RibbitCard(
+                index = it.id,
                 post = it,
                 getCardViewModel = getCardViewModel,
                 postingViewModel = postingViewModel,
@@ -473,11 +502,16 @@ fun ProfilePostsGrid(
         ) {
             Column(
                 modifier = modifier
-                    .fillMaxSize()
-                    .background(Color.White),
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .background(
+                        color = Color.White,
+                        shape = RoundedCornerShape(8.dp)
+                    ),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 if (!profileUser.followings.isNullOrEmpty()) {
+                    Text(text = "Following users", modifier = modifier.padding(24.dp))
                     profileUser.followings?.forEach { user ->
                         SearchedUserCard(
                             isExpanded = mutableStateOf(true),
@@ -489,7 +523,7 @@ fun ProfilePostsGrid(
                         )
                     }
                 } else {
-                    Text(text = "There is no followings", modifier = modifier)
+                    Text(text = "There is no followings", modifier = modifier.padding(24.dp))
                 }
             }
         }
@@ -502,11 +536,16 @@ fun ProfilePostsGrid(
         ) {
             Column(
                 modifier = modifier
-                    .fillMaxSize()
-                    .background(Color.White),
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .background(
+                        color = Color.White,
+                        shape = RoundedCornerShape(8.dp)
+                    ),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 if (!profileUser.followers.isNullOrEmpty()) {
+                    Text(text = "Followers", modifier = modifier.padding(24.dp))
                     profileUser.followers?.forEach { user ->
                         SearchedUserCard(
                             isExpanded = mutableStateOf(true),
@@ -518,7 +557,7 @@ fun ProfilePostsGrid(
                         )
                     }
                 } else {
-                    Text(text = "There is no followers", modifier = modifier)
+                    Text(text = "There is no followers", modifier = modifier.padding(24.dp))
                 }
             }
         }

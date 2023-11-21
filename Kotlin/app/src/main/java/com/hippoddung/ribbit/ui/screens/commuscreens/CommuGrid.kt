@@ -184,6 +184,7 @@ fun CommuGrid(
             Log.d("HippoLog, CommuGrid", "AllCommuPosts: $sortedRibbitPost")
             itemsIndexed(items = sortedRibbitPost) { index, post ->
                 RibbitCard(
+                    index = index,
                     post = post,
                     getCardViewModel = getCardViewModel,
                     postingViewModel = postingViewModel,
