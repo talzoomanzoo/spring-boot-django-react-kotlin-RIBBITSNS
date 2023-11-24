@@ -77,9 +77,6 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
   const [datetime, setDatetimes] = useState(twit.createdAt);
   const [edittime, setEdittimes] = useState(twit.editedAt);
   const [retwit, setRetwit] = useState(twit.totalRetweets);
-  const [isRetwit, setIsRetwit] = useState(
-    twit.retwitUsersId?.includes(auth.user.id)
-  );
   const [openReplyModel, setOpenReplyModel] = useState();
   const location = useLocation();
   const navigate = useNavigate();
@@ -104,6 +101,23 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
   const [openAlertModal, setOpenAlertModal] = useState();
   const handleCloseAlertModal = () => setOpenAlertModal(false);
   const handleOpenAlertModal = () => setOpenAlertModal(true);
+  const [isRetwit, setIsRetwit] = useState(
+    twit.retwitUsersId?.includes(auth.user.id)
+  );
+
+  // const retweetCheck = (twit1) => {
+  //   for (let i = 0; i < twit1.retwitUsersId?.length; i++) {
+  //     if (twit1.retwitUsersId[i].id === auth.user.id) {
+  //       return true;
+  //     }
+  //   }
+  // };
+
+  const retweetCheck = (twit1) => {
+    if (twit.retwitUsersId?.includes(auth.user.id)) {
+      return true;
+    }
+  }
 
 
   useEffect(() => {
@@ -351,11 +365,6 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
     dispatch(incrementNotificationCount(twitId));
   };
 
-  const handleDecrease = () => {
-    const TuserId = twit.user.id;
-    dispatch(decreaseNotificationCount(TuserId));
-  };
-
   const handleCreateRetweet = () => {
     if (auth.user.id !== twit.user.id) {
       dispatch(createRetweet(twit.id));
@@ -376,7 +385,7 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
     if (!isEditing) {
       navigate(`/twit/${twit.id}`);
       dispatch(viewPlus(twit.id));
-      setRefreshTwits((prev) => prev + 1);
+      //setRefreshTwits((prev) => prev + 1);
       changePage();
     }
   };
@@ -411,20 +420,17 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
     setLocationFormOpen(false);
 
     try {
-      //const currentTime = new Date();
       setEditedContent(editedContent);
       setSelectedImage(selectedImage);
       setSelectedVideo(selectedVideo);
       setSelectedLocation(address);
       setIsEdited(true);
-      //setEdittimes(currentTime);
 
       twit.content = editedContent;
       twit.location = address;
       twit.image = selectedImage;
       twit.video = selectedVideo;
       twit.edited = true;
-      //twit.editedAt = currentTime;
 
       await ethicreveal(twit.id, twit.content);
       await dispatch(updateTweet(twit));
@@ -432,7 +438,8 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
       setIsEditing(false);
       setLoading(false);
       handleCloseEditClick();
-
+      setRefreshTwits((prev) => prev + 1);
+      changePage();
     } catch (error) {}
   };
 
@@ -969,17 +976,26 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
                   </div>
 
                   <div
-                    className={`${
-                      isRetwit ? "text-yellow-500" : "text-gray-600"
-                    } space-x-3 flex items-center`}
+                    className={`space-x-3 flex items-center`}
                   >
+                    {retweetCheck(twit) ? (
                     <RepeatIcon
-                      className={`cursor-pointer`}
+                      className={`text-yellow-500 cursor-pointer`}
                       onClick={() => {
                         handleCreateRetweet();
                       }}
                     />
-                    {retwit > 0 && <p>{retwit}</p>}
+                    ) : (
+                    <RepeatIcon
+                      className={`text-gray-600 cursor-pointer`}
+                      onClick={() => {
+                        handleCreateRetweet();
+                      }}
+                    />
+                    )}
+
+                    {twit.totalRetweets > 0 && retweetCheck(twit) ? <p className="text-yellow-500">{twit.totalRetweets}</p> : <p className="text-gray-600">{twit.totalRetweets}</p>}
+
                   </div>
                   
                   <div
@@ -1001,7 +1017,7 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
                         }}
                       />
                     )}
-                    {likes > 0 && <p>{twit.totalLikes}</p>}
+                    {likes > 0 && twit.liked? <p className={`text-yellow-500`}>{twit.totalLikes}</p> : <p className={`text-gray-600`}>{twit.totalLikes}</p>}
                   </div>
 
                   <div className="space-x-3 flex items-center text-gray-600">

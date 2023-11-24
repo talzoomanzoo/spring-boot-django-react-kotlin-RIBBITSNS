@@ -19,7 +19,6 @@ const TwitDetail = ({changePage, sendRefreshPage}) => {
     // 뒤로가기, 앞으로가기는 navigate(1)
     useEffect(()=>{
         dispatch(findTwitsById(param.id))
-        changePage();
     },[param.id, sendRefreshPage])
 
   return (

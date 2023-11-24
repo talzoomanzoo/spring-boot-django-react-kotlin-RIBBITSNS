@@ -14,7 +14,7 @@ import LikeTop from "./LikeTop";
 import "./Scrollbar.css";
 import ViewTop from "./ViewTop";
 
-const RightPart = ({changeThemeAll, sendRefreshPage, changePage}) => {
+const RightPart = ({changeThemeAll, sendRefreshPage, changePage }) => {
   const [search, setSearch] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -144,30 +144,8 @@ const RightPart = ({changeThemeAll, sendRefreshPage, changePage}) => {
           />
         </div>
 
-        {/* <section
-          className={`my-5`}
-        // ${
-        //   theme.currentTheme === "dark" ? " bg-[#151515] p-5 rounded-md" : ""
-        // }
-        >
-          <h1 className="text-xl font-bold" >그린체크</h1>
-          <h1 className="font-bold my-2">구독 후 사용해보세요!</h1>
-          <Button
-            onClick={handleOpenSubscriptionModal}
-            variant="contained"
-            sx={{ padding: "10px", paddingX: "20px", borderRadius: "25px" }}
-          >
-            {" "}
-            체크 구독
-          </Button>
-          
-        </section> */}
-
         <section
           className={`mt-5 space-y-5 `}
-        // ${
-        //   theme.currentTheme === "dark" ? " bg-[#151515] p-5 rounded-md" : ""
-        // }
         >
           <h1 className="font-bold text-xl py-1">인기글</h1>
 
@@ -176,7 +154,7 @@ const RightPart = ({changeThemeAll, sendRefreshPage, changePage}) => {
           </div>
 
           <div>
-            <LikeTop sendRefreshPage={sendRefreshPage} changePage={changePage}/>
+            <LikeTop sendRefreshPage={sendRefreshPage} changePage={changePage} />
           </div>
 
           <div>
@@ -184,7 +162,7 @@ const RightPart = ({changeThemeAll, sendRefreshPage, changePage}) => {
           </div>
 
           <div>
-            <ViewTop sendRefreshPage={sendRefreshPage} changePage={changePage}/>
+            <ViewTop sendRefreshPage={sendRefreshPage} changePage={changePage} />
           </div>
 
         </section>
