@@ -36,6 +36,7 @@ import kotlinx.coroutines.runBlocking
 
 @Composable
 fun RibbitDropDownMenu(
+    index: Int,
     post: RibbitPost,
     getCardViewModel: GetCardViewModel,
     postingViewModel: PostingViewModel,
@@ -90,7 +91,7 @@ fun RibbitDropDownMenu(
                     )
                     DropdownMenuItem(
                         onClick = {
-                            postingViewModel.editingPostUiState = EditingPostUiState.Ready(post)
+                            postingViewModel.editingPostUiState = EditingPostUiState.Ready(post, index)
                             navController.navigate(RibbitScreen.EditingPostScreen.name)
                             isDropDownMenuExpanded = false
                         },

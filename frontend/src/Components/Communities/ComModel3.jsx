@@ -32,7 +32,7 @@ const style = {
     overflow: "scroll-y",
 };
 
-const ComModel3 = ({ com, handleClose, open }) => {
+const ComModel3 = ({ com, handleClose, open, changeComs }) => {
     const [uploading, setUploading] = useState(false);
     const dispatch = useDispatch();
     const { auth } = useSelector((store) => store);
@@ -45,11 +45,13 @@ const ComModel3 = ({ com, handleClose, open }) => {
     const handleSignup = (comId) => {
         dispatch(addReady(comId));
         handleClose();
+        changeComs();
     };
 
     const handleSignout = (comId) => {
         dispatch(removeFollow(comId));
         handleClose();
+        changeComs();
     }
 
     const formik = useFormik({

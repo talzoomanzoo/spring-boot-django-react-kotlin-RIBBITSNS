@@ -57,6 +57,7 @@ fun PostIdPostsGrid(
     LazyColumn(modifier = modifier) {
         item {
             RibbitCard(
+                index = 0,
                 post = post,
                 getCardViewModel = getCardViewModel,
                 postingViewModel = postingViewModel,
@@ -70,6 +71,7 @@ fun PostIdPostsGrid(
             Row(modifier = modifier) {
                 Spacer(modifier = modifier.width(28.dp))
                 RibbitCard(
+                    index = index,
                     post = post,
                     getCardViewModel = getCardViewModel,
                     postingViewModel = postingViewModel,

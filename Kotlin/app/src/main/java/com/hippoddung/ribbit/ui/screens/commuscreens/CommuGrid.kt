@@ -2,6 +2,7 @@ package com.hippoddung.ribbit.ui.screens.commuscreens
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
@@ -30,6 +31,8 @@ import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.network.bodys.RibbitCommuItem
 import com.hippoddung.ribbit.network.bodys.RibbitPost
 import com.hippoddung.ribbit.ui.screens.carditems.RibbitCard
+import com.hippoddung.ribbit.ui.screens.statescreens.ErrorScreen
+import com.hippoddung.ribbit.ui.screens.statescreens.LoadingScreen
 import com.hippoddung.ribbit.ui.viewmodel.AnalyzingPostEthicUiState
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.CommuClassificationUiState
@@ -52,8 +55,20 @@ fun CommuGrid(
     modifier: Modifier = Modifier
 ) {
     var posts by remember { mutableStateOf(listOf<RibbitPost>()) }
-    if (getCardViewModel.getAllCommuPostsUiState is GetAllCommuPostsUiState.Success) {   // 원래 state 에 따라 넘어오기 때문에 확인할 필요가 없으나 state 에 무관하게 내려오는 문제가 있어 여기서 재확인
-        posts = (getCardViewModel.getAllCommuPostsUiState as GetAllCommuPostsUiState.Success).posts
+    when (getCardViewModel.getAllCommuPostsUiState) {
+        is GetAllCommuPostsUiState.Success -> {
+            posts =
+                (getCardViewModel.getAllCommuPostsUiState as GetAllCommuPostsUiState.Success).posts
+            Log.d("HippoLog, CommuGrid", "posts: $posts")
+        }
+
+        is GetAllCommuPostsUiState.Loading -> {
+            LoadingScreen(modifier = modifier)
+        }
+
+        is GetAllCommuPostsUiState.Error -> {
+            ErrorScreen(modifier = modifier)
+        }
     }
     val postsComparator = compareByDescending<RibbitPost> { it.id }
 
@@ -65,10 +80,12 @@ fun CommuGrid(
     LaunchedEffect(postingViewModel.analyzingPostEthicUiState, Unit) {
         if (postingViewModel.analyzingPostEthicUiState is AnalyzingPostEthicUiState.Success) {
             sortedRibbitPost = sortedRibbitPost.toMutableList().apply {
-                this[0] = this[0].copy(
-                    ethiclabel = (postingViewModel.analyzingPostEthicUiState as AnalyzingPostEthicUiState.Success).post.ethiclabel,
-                    ethicrateMAX = (postingViewModel.analyzingPostEthicUiState as AnalyzingPostEthicUiState.Success).post.ethicrateMAX
-                )
+                if (this.size != 0) {
+                    this[0] = this[0].copy(
+                        ethiclabel = (postingViewModel.analyzingPostEthicUiState as AnalyzingPostEthicUiState.Success).post.ethiclabel,
+                        ethicrateMAX = (postingViewModel.analyzingPostEthicUiState as AnalyzingPostEthicUiState.Success).post.ethicrateMAX
+                    )
+                }
             }
         }
     }
@@ -88,13 +105,14 @@ fun CommuGrid(
                 ) {
                     TextButton(
                         onClick = {
-                            commuViewModel.commuClassificationUiState = CommuClassificationUiState.AllCommuPosts
+                            commuViewModel.commuClassificationUiState =
+                                CommuClassificationUiState.AllCommuPosts
                         },
                         colors = ButtonDefaults.textButtonColors(
-                            containerColor = if(commuViewModel.commuClassificationUiState is CommuClassificationUiState.AllCommuPosts){
+                            containerColor = if (commuViewModel.commuClassificationUiState is CommuClassificationUiState.AllCommuPosts) {
                                 Color(0xFF006400)
                             } else Color.White,
-                            contentColor = if(commuViewModel.commuClassificationUiState is CommuClassificationUiState.AllCommuPosts){
+                            contentColor = if (commuViewModel.commuClassificationUiState is CommuClassificationUiState.AllCommuPosts) {
                                 Color.White
                             } else Color(0xFF006400),
                         ),
@@ -108,13 +126,14 @@ fun CommuGrid(
                     }
                     TextButton(
                         onClick = {
-                            commuViewModel.commuClassificationUiState = CommuClassificationUiState.PublicCommu
+                            commuViewModel.commuClassificationUiState =
+                                CommuClassificationUiState.PublicCommu
                         },
                         colors = ButtonDefaults.textButtonColors(
-                            containerColor = if(commuViewModel.commuClassificationUiState is CommuClassificationUiState.PublicCommu){
+                            containerColor = if (commuViewModel.commuClassificationUiState is CommuClassificationUiState.PublicCommu) {
                                 Color(0xFF006400)
                             } else Color.White,
-                            contentColor = if(commuViewModel.commuClassificationUiState is CommuClassificationUiState.PublicCommu){
+                            contentColor = if (commuViewModel.commuClassificationUiState is CommuClassificationUiState.PublicCommu) {
                                 Color.White
                             } else Color(0xFF006400),
                         ),
@@ -128,13 +147,14 @@ fun CommuGrid(
                     }
                     TextButton(
                         onClick = {
-                            commuViewModel.commuClassificationUiState = CommuClassificationUiState.PrivateCommu
+                            commuViewModel.commuClassificationUiState =
+                                CommuClassificationUiState.PrivateCommu
                         },
                         colors = ButtonDefaults.textButtonColors(
-                            containerColor = if(commuViewModel.commuClassificationUiState is CommuClassificationUiState.PrivateCommu){
+                            containerColor = if (commuViewModel.commuClassificationUiState is CommuClassificationUiState.PrivateCommu) {
                                 Color(0xFF006400)
                             } else Color.White,
-                            contentColor = if(commuViewModel.commuClassificationUiState is CommuClassificationUiState.PrivateCommu){
+                            contentColor = if (commuViewModel.commuClassificationUiState is CommuClassificationUiState.PrivateCommu) {
                                 Color.White
                             } else Color(0xFF006400),
                         ),
@@ -160,9 +180,11 @@ fun CommuGrid(
                 )
             }
         }
-        if(commuViewModel.commuClassificationUiState is CommuClassificationUiState.AllCommuPosts){
+        if (commuViewModel.commuClassificationUiState is CommuClassificationUiState.AllCommuPosts) {
+            Log.d("HippoLog, CommuGrid", "AllCommuPosts: $sortedRibbitPost")
             itemsIndexed(items = sortedRibbitPost) { index, post ->
                 RibbitCard(
+                    index = index,
                     post = post,
                     getCardViewModel = getCardViewModel,
                     postingViewModel = postingViewModel,
@@ -175,7 +197,7 @@ fun CommuGrid(
                     modifier = modifier
                 )
             }
-        }else {
+        } else {
             items(
                 items = sortedRibbitCommuItem,
                 key = { commuItem -> commuItem.id!! }) {   // commuItem 을 받아오면 id 는 반드시 있음.

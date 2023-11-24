@@ -5,7 +5,7 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
-import { Avatar, Box, Button, Modal } from "@mui/material";
+import { Avatar, Box, Button, Modal, Tooltip } from "@mui/material";
 import Tab from "@mui/material/Tab";
 import React, { Suspense, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,9 +21,12 @@ import TwitCard from "../Home/MiddlePart/TwitCard/TwitCard";
 //import Maplocation from "./Maplocation";
 //import ProfileModel from "./ProfileModel";
 import CloseIcon from "@mui/icons-material/Close";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import ProgressBar from "@ramonak/react-progress-bar";
+import Linkify from "react-linkify";
 import "../RightPart/Scrollbar.css";
 import Loading from "./Loading/Loading";
+
 
 const Maplocation = React.lazy(() => import("./Maplocation"));
 const ProfileModel = React.lazy(() => import("./ProfileModel"));
@@ -43,7 +46,7 @@ const Profile = ({sendRefreshPage, changePage}) => {
     outline: "none",
     overflow: "scroll-y",
   };
-
+  const [tooltipOpen, setTooltipOpen] = useState(false);
   const [address, setAddress] = useState("");
   const [tabValue, setTabValue] = useState("1");
   const [isLocationFormOpen, setLocationFormOpen] = useState(false);
@@ -69,13 +72,12 @@ const Profile = ({sendRefreshPage, changePage}) => {
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
-    
-    // 리빗 탭 여부 확인
+
     setIsLobitTab(newValue === "1");
-  
+
     if (newValue === "4") {
       dispatch(findTwitsByLikesContainUser(param.id));
-    } else if (newValue === "1") {
+    } else if (newValue === "1" || "3") {
       dispatch(getUsersTweets(param.id));
     } else if (newValue === "2") {
       dispatch(getUsersReplies(param.id));
@@ -182,9 +184,7 @@ const Profile = ({sendRefreshPage, changePage}) => {
     if (isLobitTab) {
       const totalEthicRateMAXValue = twit.twits.reduce((sum, tweet) => {
         return sum + (tweet.ethiclabel === 4 ? 0 : tweet.ethicrateMAX || 0);
-      },
-      0
-    );
+      },0);
 
     // Calculate average ethicrateMAX
     const averageEthicRateMAXValue =
@@ -198,6 +198,7 @@ const Profile = ({sendRefreshPage, changePage}) => {
     // 상태 업데이트
     setTotalEthicRateMAX(totalEthicRateMAXValue);
     setAverageEthicRateMAX(roundedAverageEthicRateMAX);
+    
     }
     // ... (다른 코드)
   }, [twit.twits, auth.user, sendRefreshPage]);
@@ -261,6 +262,18 @@ const Profile = ({sendRefreshPage, changePage}) => {
           )}
         </div>
         <p className="flex items-center text-gray-500">
+        <Tooltip
+              title="게시글의 윤리수치를 분석해 그래프로 보여줍니다"
+              open={tooltipOpen}
+              onClose={() => setTooltipOpen(false)}
+              arrow
+            >
+              <InfoOutlinedIcon
+                fontSize="small"
+                style={{ cursor: "pointer" }}
+                onClick={() => setTooltipOpen(!tooltipOpen)}
+              />
+            </Tooltip>
           {`${
             averageEthicRateMAX < 25
               ? "😄"
@@ -302,7 +315,27 @@ const Profile = ({sendRefreshPage, changePage}) => {
               {auth.findUser?.email?.toLowerCase()}
             </h1>
             <h1 className="text-gray-500">
-              {auth.findUser?.website?.toLowerCase()}
+            <p className="mb-2 p-0 ">
+                    <Linkify
+                      componentDecorator={(
+                        decoratedHref,
+                        decoratedText,
+                        key
+                      ) => (
+                        <a
+                          key={key}
+                          href={decoratedHref}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ color: "blue", textDecoration: "underline" }}
+                        >
+                          {decoratedText}
+                        </a>
+                      )}
+                    >
+                      {auth.findUser?.website?.toLowerCase()}
+                    </Linkify>
+                  </p>
             </h1>
           </div>
           <div className="mt-2 space-y-3">

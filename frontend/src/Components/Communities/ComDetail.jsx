@@ -1,9 +1,10 @@
 import FmdGoodIcon from "@mui/icons-material/FmdGood";
 import ImageIcon from "@mui/icons-material/Image";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import SlideshowIcon from "@mui/icons-material/Slideshow";
 import TagFacesIcon from "@mui/icons-material/TagFaces";
-import { Avatar, Button } from "@mui/material";
+import { Avatar, Button, Tooltip } from "@mui/material";
 import ProgressBar from "@ramonak/react-progress-bar";
 import EmojiPicker from "emoji-picker-react";
 import { useFormik } from "formik";
@@ -27,6 +28,7 @@ import "../Home/MiddlePart/TwitMap.css";
 const Loading = React.lazy(() => import("../Profile/Loading/Loading"));
 
 const ComDetail = ({changePage, sendRefreshPage}) => {
+  const [tooltipOpen, setTooltipOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
@@ -476,6 +478,18 @@ const ComDetail = ({changePage, sendRefreshPage}) => {
         </section>
 
         <div className="flex mt-5 ml-auto" style={{ width: "200px" }}>
+        <Tooltip
+              title="게시글의 윤리수치를 분석해 그래프로 보여줍니다"
+              open={tooltipOpen}
+              onClose={() => setTooltipOpen(false)}
+              arrow
+            >
+              <InfoOutlinedIcon
+                fontSize="small"
+                style={{ cursor: "pointer" }}
+                onClick={() => setTooltipOpen(!tooltipOpen)}
+              />
+            </Tooltip>
           {`${
             averageEthicRateMAX < 25
               ? "😄"

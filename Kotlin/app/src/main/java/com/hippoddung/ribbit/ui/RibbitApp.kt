@@ -1,22 +1,51 @@
 package com.hippoddung.ribbit.ui
 
 import ChatScreen
+import android.annotation.SuppressLint
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.ChatBubble
+import androidx.compose.material.icons.filled.FormatListBulleted
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.SupervisorAccount
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -26,6 +55,7 @@ import com.hippoddung.ribbit.R
 import com.hippoddung.ribbit.network.bodys.User
 import com.hippoddung.ribbit.ui.screens.CreatingPostScreen
 import com.hippoddung.ribbit.ui.screens.EditingPostScreen
+import com.hippoddung.ribbit.ui.screens.RibbitTopAppBar
 import com.hippoddung.ribbit.ui.screens.authscreens.LoginScreen
 import com.hippoddung.ribbit.ui.screens.authscreens.SignUpScreen
 import com.hippoddung.ribbit.ui.screens.chatscreens.ChatRoomListScreen
@@ -55,6 +85,8 @@ import com.hippoddung.ribbit.ui.viewmodel.MyProfileUiState
 import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
 import com.hippoddung.ribbit.ui.viewmodel.TokenViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 enum class RibbitScreen(@StringRes val title: Int) {
     HomeScreen(title = R.string.home_screen),
@@ -118,6 +150,7 @@ fun RibbitApp(
     }
 }
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalComposeUiApi::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -147,242 +180,437 @@ fun RibbitScreen(
 //    val currentScreen = RibbitScreen.valueOf(backStackEntry?.destination?.route ?: RibbitScreen.HomeScreen.name)
 //    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Log.d("HippoLog, RibbitApp", "RibbitScreen")
-    NavHost(
-        navController = navController,
-        startDestination = RibbitScreen.HomeScreen.name,
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+
+    Scaffold(
         modifier = modifier,
-    ) {
-        composable(route = RibbitScreen.HomeScreen.name) {
-//            homeViewModel.getRibbitPosts() // recomposition 시 계속 실행됨. 여기 함수를 두면 안 됨. (수정: 반복 recomposition 을 해결하여 상관 없음.) NavHostController 호출시 항상 실행되는 문제
-//                // navigate 메소드 호출시마다 backstack 으로 보내면서 다시 실행하므로 여기 함수를 두면 안됨.
-            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> HomeScreen")
-            HomeScreen(
+//        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        // scrollBehavior 에 따라 리컴포지션이 트리거되는 것으로 추측, 해결할 방법을 찾아야 함.
+        // navigation 위(RibbitApp)에 있던 scrollBehavior 을 navigation 하위에 있는 HomeScreen 으로 옮겨서 해결.
+        // scrollBehavior 을 삭제하고 고정시키는 것으로 결정
+        topBar = {
+            RibbitTopAppBar(
+                drawerState = drawerState,
+                scope = scope,
+                getCardViewModel = getCardViewModel,
+                userViewModel = userViewModel,
 //                scrollBehavior = scrollBehavior,
                 navController = navController,
-                getCardViewModel = getCardViewModel,
-                postingViewModel = postingViewModel,
-                tokenViewModel = tokenViewModel,
-                authViewModel = authViewModel,
-                userViewModel = userViewModel,
-                listViewModel = listViewModel,
-                commuViewModel = commuViewModel,
-                myId = myId,   // myProfile 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 것으로 가정한다.
                 modifier = modifier
             )
         }
+    ) {
+        ModalNavigationDrawer(
+            drawerState = drawerState,
+            modifier = modifier
+                .wrapContentSize()
+                .padding(it),
+            drawerContent = {
+                ModalDrawerSheet(
+                    modifier = modifier
+                        .width(200.dp),
+                ) {
+                    Column(
+                        modifier = modifier
+                            .fillMaxWidth()
+                    ) {
+                        TextButton(
+                            onClick = {
+                                navController.navigate(RibbitScreen.HomeScreen.name)
+                                scope.launch {
+                                    drawerState.apply {
+                                        if (isClosed) open() else close()
+                                    }
+                                }
+                            },
+                            content = {
+                                Row(modifier = modifier) {
+                                    Icon(
+                                        imageVector = Icons.Default.Home,
+                                        contentDescription = "Commu",
+                                        tint = Color(0xFF006400),
+                                        modifier = modifier
+                                    )
+                                    Spacer(modifier = modifier.padding(horizontal = 8.dp))
+                                    Text(
+                                        text = "Home",
+                                        color = Color(0xFF006400),
+                                        fontSize = 20.sp,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        modifier = modifier
+                                            .fillMaxWidth()
+                                    )
+                                }
+                            },
+                            modifier = modifier
+                        )
+                        TextButton(
+                            onClick = {
+                                navController.navigate(RibbitScreen.ChatRoomListScreen.name)
+                                scope.launch {
+                                    drawerState.apply {
+                                        if (isClosed) open() else close()
+                                    }
+                                }
+                            },
+                            content = {
+                                Row(modifier = modifier) {
+                                    Icon(
+                                        imageVector = Icons.Default.ChatBubble,
+                                        contentDescription = "Chat",
+                                        tint = Color(0xFF006400),
+                                        modifier = modifier
+                                    )
+                                    Spacer(modifier = modifier.padding(horizontal = 8.dp))
+                                    Text(
+                                        text = "Chat",
+                                        color = Color(0xFF006400),
+                                        fontSize = 20.sp,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        modifier = modifier
+                                            .fillMaxWidth()
+                                    )
+                                }
+                            },
+                            modifier = modifier
+                        )
+                        TextButton(
+                            onClick = {
+                                navController.navigate(RibbitScreen.ListScreen.name)
+                                scope.launch {
+                                    drawerState.apply {
+                                        if (isClosed) open() else close()
+                                    }
+                                }
+                            },
+                            content = {
+                                Icon(
+                                    imageVector = Icons.Default.FormatListBulleted,
+                                    contentDescription = "List",
+                                    tint = Color(0xFF006400),
+                                    modifier = modifier
+                                )
+                                Spacer(modifier = modifier.padding(horizontal = 8.dp))
+                                Text(
+                                    text = "List",
+                                    color = Color(0xFF006400),
+                                    fontSize = 20.sp,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    modifier = modifier
+                                        .fillMaxWidth()
+                                )
+                            },
+                            modifier = modifier
+                        )
+                        TextButton(
+                            onClick = {
+                                navController.navigate(RibbitScreen.CommuScreen.name)
+                                scope.launch {
+                                    drawerState.apply {
+                                        if (isClosed) open() else close()
+                                    }
+                                }
+                            },
+                            content = {
+                                Row(modifier = modifier) {
+                                    Icon(
+                                        imageVector = Icons.Default.SupervisorAccount,
+                                        contentDescription = "List",
+                                        tint = Color(0xFF006400),
+                                        modifier = modifier
+                                    )
+                                    Spacer(modifier = modifier.padding(horizontal = 8.dp))
+                                    Text(
+                                        text = "Community",
+                                        color = Color(0xFF006400),
+                                        fontSize = 20.sp,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        modifier = modifier
+                                            .fillMaxWidth()
+                                    )
+                                }
+                            },
+                            modifier = modifier
+                        )
+                        TextButton(
+                            onClick = {
+                                userViewModel.myProfile.value?.id?.let {
+                                    getCardViewModel.getUserIdPosts(userId = it)
+                                    userViewModel.getProfile(userId = it)
+                                }   // userViewModel 의 user 가 없는 경우 접근 자체가 불가능
+                                navController.navigate(RibbitScreen.ProfileScreen.name)
+                                scope.launch {
+                                    drawerState.apply {
+                                        if (isClosed) open() else close()
+                                    }
+                                }
+                            },
+                            content = {
+                                Row(modifier = modifier) {
+                                    Icon(
+                                        imageVector = Icons.Default.AccountCircle,
+                                        contentDescription = "List",
+                                        tint = Color(0xFF006400),
+                                        modifier = modifier
+                                    )
+                                    Spacer(modifier = modifier.padding(horizontal = 8.dp))
+                                    Text(
+                                        text = "My Profile",
+                                        color = Color(0xFF006400),
+                                        fontSize = 20.sp,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        modifier = modifier
+                                            .fillMaxWidth()
+                                    )
+                                }
+                            },
+                            modifier = modifier
+                        )
+                        TextButton(
+                            onClick = {
+                                runBlocking {
+                                    Log.d("HippoLog, HomeTopAppBar", "LogOut")
+                                    userViewModel.resetMyProfile()   // 유저 정보 리셋
+                                    authViewModel.deleteLoginInfo() // 로그인 정보 삭제
+                                    tokenViewModel.deleteToken()    // 토큰 정보 삭제. token 을 먼저 지우면 다시 로그인 됨
+                                }
+                                scope.launch {
+                                    drawerState.apply {
+                                        if (isClosed) open() else close()
+                                    }
+                                }
+                            },
+                            content = {
+                                Row(modifier = modifier) {
+                                    Icon(
+                                        imageVector = Icons.Default.Logout,
+                                        contentDescription = "List",
+                                        tint = Color(0xFF006400),
+                                        modifier = modifier
+                                    )
+                                    Spacer(modifier = modifier.padding(horizontal = 8.dp))
+                                    Text(
+                                        text = "Log out",
+                                        color = Color(0xFF006400),
+                                        fontSize = 20.sp,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        modifier = modifier
+                                            .fillMaxWidth()
+                                    )
+                                }
+                            },
+                            modifier = modifier
+                        )
+                    }
+                }
+            }
+        ) {
+            NavHost(
+                navController = navController,
+                startDestination = RibbitScreen.HomeScreen.name,
+                modifier = modifier
+            ) {
+                composable(route = RibbitScreen.HomeScreen.name) {
+//            homeViewModel.getRibbitPosts() // recomposition 시 계속 실행됨. 여기 함수를 두면 안 됨. (수정: 반복 recomposition 을 해결하여 상관 없음.) NavHostController 호출시 항상 실행되는 문제
+//                // navigate 메소드 호출시마다 backstack 으로 보내면서 다시 실행하므로 여기 함수를 두면 안됨.
+                    Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> HomeScreen")
+                    HomeScreen(
+//                scrollBehavior = scrollBehavior,
+                        navController = navController,
+                        getCardViewModel = getCardViewModel,
+                        postingViewModel = postingViewModel,
+                        userViewModel = userViewModel,
+                        myId = myId,   // myProfile 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 것으로 가정한다.
+                        modifier = modifier
+                    )
+                }
 
-        composable(route = RibbitScreen.PostIdScreen.name) {
-            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> PostIdScreen")
-            PostIdScreen(
-                navController = navController,
-                getCardViewModel = getCardViewModel,
-                postingViewModel = postingViewModel,
-                tokenViewModel = tokenViewModel,
-                authViewModel = authViewModel,
-                userViewModel = userViewModel,
-                listViewModel = listViewModel,
-                commuViewModel = commuViewModel,
-                myId = myId,   // 유저 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 것으로 가정한다.
-                modifier = modifier
-            )
-        }
+                composable(route = RibbitScreen.PostIdScreen.name) {
+                    Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> PostIdScreen")
+                    PostIdScreen(
+                        navController = navController,
+                        getCardViewModel = getCardViewModel,
+                        postingViewModel = postingViewModel,
+                        userViewModel = userViewModel,
+                        myId = myId,   // 유저 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 것으로 가정한다.
+                        modifier = modifier
+                    )
+                }
 
-        composable(route = RibbitScreen.ProfileScreen.name) {
-            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> ProfileScreen")
-            ProfileScreen(
-                navController = navController,
-                getCardViewModel = getCardViewModel,
-                postingViewModel = postingViewModel,
-                tokenViewModel = tokenViewModel,
-                authViewModel = authViewModel,
-                userViewModel = userViewModel,
-                listViewModel = listViewModel,
-                commuViewModel = commuViewModel,
-                myId = myId,
-                modifier = modifier
-            )
-        }
-        composable(route = RibbitScreen.EditProfileScreen.name) {
-            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> EditProfileScreen")
-            EditProfileScreen(
-                navController = navController,
-                userViewModel = userViewModel,
-                myId = myId,
-                modifier = modifier
-            )
-        }
+                composable(route = RibbitScreen.ProfileScreen.name) {
+                    Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> ProfileScreen")
+                    ProfileScreen(
+                        navController = navController,
+                        getCardViewModel = getCardViewModel,
+                        postingViewModel = postingViewModel,
+                        tokenViewModel = tokenViewModel,
+                        authViewModel = authViewModel,
+                        userViewModel = userViewModel,
+                        myId = myId,
+                        modifier = modifier
+                    )
+                }
+                composable(route = RibbitScreen.EditProfileScreen.name) {
+                    Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> EditProfileScreen")
+                    EditProfileScreen(
+                        navController = navController,
+                        userViewModel = userViewModel,
+                        myId = myId,
+                        modifier = modifier
+                    )
+                }
 
-        composable(route = RibbitScreen.CreatingPostScreen.name) {
-            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> CreatingPostScreen")
-            CreatingPostScreen(
-                getCardViewModel = getCardViewModel,
-                postingViewModel = postingViewModel,
-                commuViewModel = commuViewModel,
-                navController = navController,
-                modifier = modifier
-            )
-        }
-        composable(route = RibbitScreen.EditingPostScreen.name) {
-            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> EditingPostScreen")
-            EditingPostScreen(
-                getCardViewModel = getCardViewModel,
-                postingViewModel = postingViewModel,
-                navController = navController,
-                modifier = modifier
-            )
-        }
+                composable(route = RibbitScreen.CreatingPostScreen.name) {
+                    Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> CreatingPostScreen")
+                    CreatingPostScreen(
+                        getCardViewModel = getCardViewModel,
+                        postingViewModel = postingViewModel,
+                        commuViewModel = commuViewModel,
+                        navController = navController,
+                        modifier = modifier
+                    )
+                }
+                composable(route = RibbitScreen.EditingPostScreen.name) {
+                    Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> EditingPostScreen")
+                    EditingPostScreen(
+                        getCardViewModel = getCardViewModel,
+                        postingViewModel = postingViewModel,
+                        navController = navController,
+                        modifier = modifier
+                    )
+                }
 
-        composable(route = RibbitScreen.ListScreen.name) {
-            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> ListScreen")
-            ListScreen(
-                navController = navController,
-                getCardViewModel = getCardViewModel,
-                tokenViewModel = tokenViewModel,
-                authViewModel = authViewModel,
-                userViewModel = userViewModel,
-                listViewModel = listViewModel,
-                commuViewModel = commuViewModel,
-                modifier = modifier
-            )
-        }
-        composable(route = RibbitScreen.ListIdScreen.name) {
-            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> ListIdScreen")
-            ListIdScreen(
-                navController = navController,
-                getCardViewModel = getCardViewModel,
-                postingViewModel = postingViewModel,
-                tokenViewModel = tokenViewModel,
-                authViewModel = authViewModel,
-                userViewModel = userViewModel,
-                listViewModel = listViewModel,
-                commuViewModel = commuViewModel,
-                myId = myId,   // 유저 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 것으로 가정한다.
-                modifier = modifier
-            )
-        }
-        composable(route = RibbitScreen.CreatingListScreen.name) {
-            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> CreatingListScreen")
-            CreatingListScreen(
-                navController = navController,
-                userViewModel = userViewModel,
-                listViewModel = listViewModel,
-                modifier = modifier
-            )
-        }
-        composable(route = RibbitScreen.EditingListScreen.name) {
-            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> EditingListScreen")
-            EditingListScreen(
-                navController = navController,
-                listViewModel = listViewModel,
-                modifier = modifier
-            )
-        }
+                composable(route = RibbitScreen.ListScreen.name) {
+                    Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> ListScreen")
+                    ListScreen(
+                        navController = navController,
+                        getCardViewModel = getCardViewModel,
+                        userViewModel = userViewModel,
+                        listViewModel = listViewModel,
+                        modifier = modifier
+                    )
+                }
+                composable(route = RibbitScreen.ListIdScreen.name) {
+                    Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> ListIdScreen")
+                    ListIdScreen(
+                        navController = navController,
+                        getCardViewModel = getCardViewModel,
+                        postingViewModel = postingViewModel,
+                        userViewModel = userViewModel,
+                        listViewModel = listViewModel,
+                        myId = myId,   // 유저 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 것으로 가정한다.
+                        modifier = modifier
+                    )
+                }
+                composable(route = RibbitScreen.CreatingListScreen.name) {
+                    Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> CreatingListScreen")
+                    CreatingListScreen(
+                        navController = navController,
+                        userViewModel = userViewModel,
+                        listViewModel = listViewModel,
+                        modifier = modifier
+                    )
+                }
+                composable(route = RibbitScreen.EditingListScreen.name) {
+                    Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> EditingListScreen")
+                    EditingListScreen(
+                        navController = navController,
+                        listViewModel = listViewModel,
+                        modifier = modifier
+                    )
+                }
 
-        composable(route = RibbitScreen.CommuScreen.name) {
-            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> CommuScreen")
-            CommuScreen(
-                navController = navController,
-                getCardViewModel = getCardViewModel,
-                postingViewModel = postingViewModel,
-                tokenViewModel = tokenViewModel,
-                authViewModel = authViewModel,
-                userViewModel = userViewModel,
-                listViewModel = listViewModel,
-                commuViewModel = commuViewModel,
-                modifier = modifier
-            )
-        }
-        composable(route = RibbitScreen.CommuIdScreen.name) {
-            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> CommuIdScreen")
-            CommuIdScreen(
-                navController = navController,
-                getCardViewModel = getCardViewModel,
-                tokenViewModel = tokenViewModel,
-                authViewModel = authViewModel,
-                userViewModel = userViewModel,
-                listViewModel = listViewModel,
-                commuViewModel = commuViewModel,
-                postingViewModel = postingViewModel,
-                myId = myId,   // 유저 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 것으로 가정한다.
-                modifier = modifier
-            )
-        }
-        composable(route = RibbitScreen.CreatingCommuScreen.name) {
-            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> CreatingCommuScreen")
-            CreatingCommuScreen(
-                navController = navController,
-                userViewModel = userViewModel,
-                commuViewModel = commuViewModel,
-                modifier = modifier
-            )
-        }
-        composable(route = RibbitScreen.ManageCommuScreen.name) {
-            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> ManageCommuScreen")
-            ManageCommuScreen(
-                navController = navController,
-                getCardViewModel = getCardViewModel,
-                authViewModel = authViewModel,
-                tokenViewModel = tokenViewModel,
-                userViewModel = userViewModel,
-                listViewModel = listViewModel,
-                commuViewModel = commuViewModel,
-                modifier = modifier
-            )
-        }
-        composable(route = RibbitScreen.EditingCommuScreen.name) {
-            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> EditingCommuScreen")
-            EditingCommuScreen(
-                navController = navController,
-                commuViewModel = commuViewModel,
-                modifier = modifier
-            )
-        }
+                composable(route = RibbitScreen.CommuScreen.name) {
+                    Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> CommuScreen")
+                    CommuScreen(
+                        navController = navController,
+                        getCardViewModel = getCardViewModel,
+                        postingViewModel = postingViewModel,
+                        userViewModel = userViewModel,
+                        commuViewModel = commuViewModel,
+                        modifier = modifier
+                    )
+                }
+                composable(route = RibbitScreen.CommuIdScreen.name) {
+                    Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> CommuIdScreen")
+                    CommuIdScreen(
+                        navController = navController,
+                        getCardViewModel = getCardViewModel,
+                        userViewModel = userViewModel,
+                        commuViewModel = commuViewModel,
+                        postingViewModel = postingViewModel,
+                        myId = myId,   // 유저 정보를 불러오지 못한 경우 화면 전환을 막았으므로 현재 반드시 있는 것으로 가정한다.
+                        modifier = modifier
+                    )
+                }
+                composable(route = RibbitScreen.CreatingCommuScreen.name) {
+                    Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> CreatingCommuScreen")
+                    CreatingCommuScreen(
+                        navController = navController,
+                        userViewModel = userViewModel,
+                        commuViewModel = commuViewModel,
+                        modifier = modifier
+                    )
+                }
+                composable(route = RibbitScreen.ManageCommuScreen.name) {
+                    Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> ManageCommuScreen")
+                    ManageCommuScreen(
+                        navController = navController,
+                        userViewModel = userViewModel,
+                        commuViewModel = commuViewModel,
+                        modifier = modifier
+                    )
+                }
+                composable(route = RibbitScreen.EditingCommuScreen.name) {
+                    Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> EditingCommuScreen")
+                    EditingCommuScreen(
+                        navController = navController,
+                        commuViewModel = commuViewModel,
+                        modifier = modifier
+                    )
+                }
 
-        composable(route = RibbitScreen.ChatRoomListScreen.name) {
-            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> ChatRoomListScreen")
-            ChatRoomListScreen(
-                navController = navController,
-                chatViewModel = chatViewModel,
-                myProfile = myProfile,
-                modifier = modifier
-            )
-        }
-        composable(route = RibbitScreen.CreateChatRoomScreen.name) {
-            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> CreateChatRoomScreen")
-            CreateChatRoomScreen(
-                navController = navController,
-                chatViewModel = chatViewModel,
-                myProfile = myProfile,
-                modifier = modifier
-            )
-        }
-        composable(route = RibbitScreen.ChatScreen.name) {
-            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> ChatScreen")
-            ChatScreen(
-                modifier = modifier,
-                chatViewModel = chatViewModel,
-                getCardViewModel = getCardViewModel,
-                tokenViewModel = tokenViewModel,
-                authViewModel = authViewModel,
-                userViewModel = userViewModel,
-                listViewModel = listViewModel,
-                commuViewModel = commuViewModel,
-                navController = navController,
-                myProfile = myProfile,
-            )
-        }
+                composable(route = RibbitScreen.ChatRoomListScreen.name) {
+                    Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> ChatRoomListScreen")
+                    ChatRoomListScreen(
+                        navController = navController,
+                        chatViewModel = chatViewModel,
+                        modifier = modifier
+                    )
+                }
+                composable(route = RibbitScreen.CreateChatRoomScreen.name) {
+                    Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> CreateChatRoomScreen")
+                    CreateChatRoomScreen(
+                        navController = navController,
+                        chatViewModel = chatViewModel,
+                        myProfile = myProfile,
+                        modifier = modifier
+                    )
+                }
+                composable(route = RibbitScreen.ChatScreen.name) {
+                    Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> ChatScreen")
+                    ChatScreen(
+                        modifier = modifier,
+                        chatViewModel = chatViewModel,
+                        userViewModel = userViewModel,
+                        myProfile = myProfile,
+                    )
+                }
 
-        composable(route = RibbitScreen.LoadingScreen.name) {
-            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> LoadingScreen")
-            LoadingScreen(
-                modifier = modifier
-            )
-        }
-        composable(route = RibbitScreen.ErrorScreen.name) {
-            Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> ErrorScreen")
-            ErrorScreen(
-                modifier = modifier
-            )
+                composable(route = RibbitScreen.LoadingScreen.name) {
+                    Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> LoadingScreen")
+                    LoadingScreen(
+                        modifier = modifier
+                    )
+                }
+                composable(route = RibbitScreen.ErrorScreen.name) {
+                    Log.d("HippoLog, RibbitApp, NavHost", "RibbitScreen -> ErrorScreen")
+                    ErrorScreen(
+                        modifier = modifier
+                    )
+                }
+            }
         }
     }
 }

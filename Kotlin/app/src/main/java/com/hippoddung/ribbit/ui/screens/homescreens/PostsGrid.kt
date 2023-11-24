@@ -56,17 +56,19 @@ fun PostsGrid(
     var sortedRibbitPost by remember(posts) {
         mutableStateOf(posts.toMutableList().apply {
             sortedWith(comparator)
-        })
+        }
+        )
     }   // LazyColumn items 에 List 를 바로 주는 것이 아니라 Comparator 로 정렬하여 remember 로 기억시켜서 recomposition 을 방지하여 성능을 올린다.
     LaunchedEffect(postingViewModel.analyzingPostEthicUiState, Unit) {
         if (postingViewModel.analyzingPostEthicUiState is AnalyzingPostEthicUiState.Success) {
             sortedRibbitPost = sortedRibbitPost.toMutableList().apply {
-                this[0] = this[0].copy(
+                this[(postingViewModel.analyzingPostEthicUiState as AnalyzingPostEthicUiState.Success).index] = this[(postingViewModel.analyzingPostEthicUiState as AnalyzingPostEthicUiState.Success).index].copy(
                     ethiclabel = (postingViewModel.analyzingPostEthicUiState as AnalyzingPostEthicUiState.Success).post.ethiclabel,
                     ethicrateMAX = (postingViewModel.analyzingPostEthicUiState as AnalyzingPostEthicUiState.Success).post.ethicrateMAX
                 )
             }
-            postingViewModel.analyzingPostEthicUiState = AnalyzingPostEthicUiState.Loading  // 변경사항 적용 후 초기화
+            postingViewModel.analyzingPostEthicUiState =
+                AnalyzingPostEthicUiState.Loading  // 변경사항 적용 후 초기화
         }
     }
     LazyColumn(modifier = modifier) {
@@ -173,6 +175,7 @@ fun PostsGrid(
         }
         itemsIndexed(items = sortedRibbitPost) { index, post ->
             RibbitCard(
+                index = index,
                 post = post,
                 getCardViewModel = getCardViewModel,
                 postingViewModel = postingViewModel,

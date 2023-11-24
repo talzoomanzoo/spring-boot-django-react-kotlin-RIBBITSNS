@@ -200,7 +200,7 @@ fun EditListScreen(
             }
 
             val image = if (privateMode) Icons.Filled.Lock else Icons.Filled.LockOpen
-            val description = if (privateMode) "Locked" else "Unlocked"
+            val description = if (privateMode) "Private" else "Public"
 
             Button(
                 onClick = { privateMode = !privateMode },
@@ -247,7 +247,7 @@ fun EditListScreen(
                 modifier = modifier.padding(14.dp)
             ) {
                 Text(
-                    text = stringResource(R.string.edit_list),
+                    text = stringResource(R.string.save),
                     modifier = modifier
                 )
             }

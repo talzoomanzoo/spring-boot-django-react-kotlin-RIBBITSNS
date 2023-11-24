@@ -71,7 +71,7 @@ fun EditProfileScreenTopBar(
                 modifier = modifier.padding(14.dp)
             ) {
                 Text(
-                    text = stringResource(R.string.edit),
+                    text = stringResource(R.string.save),
                     modifier = modifier
                 )
             }

@@ -31,8 +31,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 const val BASE_IP =
-//    "3.36.249.200:8080"
-    "54.180.96.205:8080"
+    "3.36.249.200:8080"
+//    "54.180.96.205:8080"
 const val BASE_URL =
     "http://$BASE_IP/"
 const val WS_URL =

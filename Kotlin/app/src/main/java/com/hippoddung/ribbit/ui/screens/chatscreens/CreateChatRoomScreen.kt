@@ -1,10 +1,12 @@
 package com.hippoddung.ribbit.ui.screens.chatscreens
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,21 +35,24 @@ fun CreateChatRoomScreen(
 ) {
     var chatRoomName by remember { mutableStateOf("") }
 
-    Column(modifier = modifier) {
-
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = modifier.padding(16.dp))
         Text(
             text = stringResource(R.string.create_chat_room),
             color = Color.Black,
             modifier = modifier
-                .padding(bottom = 16.dp)
-                .align(alignment = Alignment.Start)
+                .padding(16.dp)
         )
-        InputTextField(
+        TextField(
             value = chatRoomName,
             onValueChange = { chatRoomName = it },
             modifier = modifier
-                .padding(bottom = 32.dp)
-                .fillMaxWidth()
+                .padding(32.dp)
+                .fillMaxWidth(),
+            label = { Text(text = "Chat Room Name")}
         )
 
         Button(
@@ -55,7 +60,7 @@ fun CreateChatRoomScreen(
                 // Create a new chat room
                 val newChatRoom = ChatRoomDto(
                     name = chatRoomName,
-                    creator = myProfile.fullName ?: "",
+                    creator = myProfile.fullName,
                     creatorEmail = myProfile.email
                 )
                 chatViewModel.createChatRoom(newChatRoom)

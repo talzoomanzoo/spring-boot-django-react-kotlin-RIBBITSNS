@@ -1,8 +1,10 @@
 import FmdGoodIcon from "@mui/icons-material/FmdGood";
 import ImageIcon from "@mui/icons-material/Image";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import SlideshowIcon from "@mui/icons-material/Slideshow";
 import TagFacesIcon from "@mui/icons-material/TagFaces";
-import { Avatar, Button } from "@mui/material";
+import { Avatar, Button, Tooltip } from "@mui/material";
+import ProgressBar from "@ramonak/react-progress-bar";
 import EmojiPicker from "emoji-picker-react";
 import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
@@ -10,18 +12,16 @@ import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
 import { API_BASE_URL, api } from "../../../Config/apiConfig";
 import { getAllTweets } from "../../../Store/Tweet/Action";
-import { uploadToCloudinary } from "../../../Utils/UploadToCloudinary";
-import Loading from "../../Profile/Loading/Loading";
-import TwitCard from "./TwitCard/TwitCard";
-import "./TwitMap.css";
-
-import ProgressBar from "@ramonak/react-progress-bar";
 import {
   TWEET_CREATE_FAILURE,
   TWEET_CREATE_REQUEST,
   TWEET_CREATE_SUCCESS,
 } from "../../../Store/Tweet/ActionType";
+import { uploadToCloudinary } from "../../../Utils/UploadToCloudinary";
+import Loading from "../../Profile/Loading/Loading";
 import ScrollToTop from "./ScrollToTop";
+import TwitCard from "./TwitCard/TwitCard";
+import "./TwitMap.css";
 
 const validationSchema = Yup.object().shape({
   content: Yup.string().required("내용이 없습니다"),
@@ -42,6 +42,7 @@ const createTweetFailure = (error) => ({
 });
 
 const HomeSection = ({ sendRefreshPage, changePage }) => {
+  const [tooltipOpen, setTooltipOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
@@ -314,12 +315,23 @@ const HomeSection = ({ sendRefreshPage, changePage }) => {
   };
 
   const handleSubmit = (values, actions) => {
-    dispatch(HomeCreateTweet(values));
-    actions.resetForm();
-    setSelectedImage("");
-    setSelectedVideo("");
-    setAddress(""); // 게시글을 작성하고 나면 주소값 초기화
+    if (values.content.trim() !== "") {
+      //게시글이 비어있지 않을 때만 실행
+      const tweetData = {
+        content: values.content,
+        image: values.image,
+        video: values.video,
+        location: address, // 저장한 주소값을 사용
+      };
+
+      dispatch(HomeCreateTweet(tweetData));
+      actions.resetForm();
+      setSelectedImage("");
+      setSelectedVideo("");
+      setAddress(""); // 게시글을 작성하고 나면 주소값 초기화
+    }
     handleCloseEmoji();
+    //window.location.reload();
   };
 
   const ethicreveal = async (twitid, twitcontent) => {
@@ -337,7 +349,7 @@ const HomeSection = ({ sendRefreshPage, changePage }) => {
       });
       console.log("response.status: ", response);
       if (response.status === 200) {
-        console.log("response: ",response.json());
+        console.log("response: ", response.json());
         setLoading(false);
         setRefreshTwits((prev) => prev + 1);
       }
@@ -420,6 +432,8 @@ const HomeSection = ({ sendRefreshPage, changePage }) => {
     // ... (다른 코드)
   }, [twit.twits, auth.user]);
 
+  console.log("address", address);
+
   return (
     <div className="space-y-5">
       <section
@@ -431,6 +445,19 @@ const HomeSection = ({ sendRefreshPage, changePage }) => {
         <h1 className="py-5 text-xl font-bold opacity-90 ml-5 flex">
           홈
           <p className="flex" style={{ marginLeft: "70%" }}>
+            {/* Information Icon with Tooltip */}
+            <Tooltip
+              title="게시글의 윤리수치를 분석해 그래프로 보여줍니다"
+              open={tooltipOpen}
+              onClose={() => setTooltipOpen(false)}
+              arrow
+            >
+              <InfoOutlinedIcon
+                fontSize="small"
+                style={{ cursor: "pointer" }}
+                onClick={() => setTooltipOpen(!tooltipOpen)}
+              />
+            </Tooltip>
             {`${
               averageEthicRateMAX < 25
                 ? "😄"
@@ -553,7 +580,7 @@ const HomeSection = ({ sendRefreshPage, changePage }) => {
                       paddingY: "8px",
                       paddingX: "20px",
                       color: "white",
-                      fontFamily: 'ChosunGu'
+                      fontFamily: "ChosunGu",
                     }}
                   >
                     Ribbit
@@ -576,6 +603,7 @@ const HomeSection = ({ sendRefreshPage, changePage }) => {
                     overflow: "hidden",
                   }}
                 ></div>
+                {console.log("address", address)}
                 <div id="list_wrap" className="bg_white">
                   <div className="option" style={{ textAlign: "right" }}>
                     <div>
@@ -627,7 +655,12 @@ const HomeSection = ({ sendRefreshPage, changePage }) => {
           {loading ? <Loading /> : null}
           {twit.twits && twit.twits.length > 0 ? (
             twit.twits.map((item) => (
-              <TwitCard twit={item} key={item.id} changePage={changePage} />
+              <TwitCard
+                twit={item}
+                key={item.id}
+                changePage={changePage}
+                sendRefreshPage={sendRefreshPage}
+              />
             ))
           ) : (
             <div>게시된 리빗이 없습니다.</div>

@@ -22,7 +22,7 @@ import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
-@SuppressLint("UnrememberedMutableState")
+@SuppressLint("UnrememberedMutableState", "MutableCollectionMutableState")
 @Composable
 fun ListIdPostsGrid(
     posts: List<RibbitPost>,
@@ -59,6 +59,7 @@ fun ListIdPostsGrid(
         LazyColumn(modifier = modifier) {
             itemsIndexed(items = sortedRibbitPost) { index, post ->
                 RibbitCard(
+                    index = index,
                     post = post,
                     getCardViewModel = getCardViewModel,
                     postingViewModel = postingViewModel,

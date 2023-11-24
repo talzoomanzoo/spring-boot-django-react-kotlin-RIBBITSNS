@@ -28,18 +28,16 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.hippoddung.ribbit.R
 import com.hippoddung.ribbit.network.bodys.RibbitPost
+import com.hippoddung.ribbit.ribbitmethod.calculationTime
 import com.hippoddung.ribbit.ui.RibbitScreen
 import com.hippoddung.ribbit.ui.viewmodel.GetCardViewModel
 import com.hippoddung.ribbit.ui.viewmodel.PostingViewModel
 import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
-import java.time.Duration
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.concurrent.TimeUnit
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun CardTopBar(
+    index: Int,
     post: RibbitPost,
     getCardViewModel: GetCardViewModel,
     postingViewModel: PostingViewModel,
@@ -58,7 +56,7 @@ fun CardTopBar(
         ) {
             if(post.user?.image == null){
                 Image(
-                    painter = painterResource(id = R.drawable.pngwing_com),
+                    painter = painterResource(id = R.drawable.frog_8341850_1280),
                     contentDescription = "default image",
                     contentScale = ContentScale.Crop,
                     modifier = modifier
@@ -81,7 +79,7 @@ fun CardTopBar(
 //                                ?: "https://img.animalplanet.co.kr/news/2020/01/13/700/sfu2275cc174s39hi89k.jpg"
                         )
                         .crossfade(true).build(),
-                    error = painterResource(R.drawable.ic_broken_image),
+                    error = painterResource(R.drawable.frog_8341850_1280),
                     placeholder = painterResource(R.drawable.loading_img),
                     contentDescription = stringResource(R.string.user_image),
                     contentScale = ContentScale.Crop,
@@ -102,12 +100,12 @@ fun CardTopBar(
         Row(
             modifier = modifier.padding(bottom = 4.dp)
         ) {
-            Text(
-                text = "No." + post.id.toString(),
-                fontSize = 14.sp,
-                modifier = modifier.padding(start = 4.dp, end = 4.dp),
-                style = MaterialTheme.typography.headlineSmall
-            )
+//            Text(
+//                text = "No." + post.id.toString(),
+//                fontSize = 14.sp,
+//                modifier = modifier.padding(start = 4.dp, end = 4.dp),
+//                style = MaterialTheme.typography.headlineSmall
+//            )
             post.user?.let {
                 Text(
                     text = it.email,
@@ -133,6 +131,7 @@ fun CardTopBar(
             }
         }
         RibbitDropDownMenu(
+            index = index,
             post = post,
             getCardViewModel = getCardViewModel,
             postingViewModel = postingViewModel,
@@ -141,76 +140,4 @@ fun CardTopBar(
             modifier = modifier
         )
     }
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-fun calculationTime(targetDateTimeStr: String): String {
-    val currentDateTime = LocalDateTime.now()
-    val formatterWithNoDigits = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
-//    val formatterWith6Digits = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
-//    val formatterWith5Digits = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSS")
-//    val formatterWith4Digits = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSS")
-//    val formatterWith3Digits = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
-
-    val value: String
-
-    val targetDateTime: LocalDateTime?
-
-    try {
-        targetDateTime = LocalDateTime.parse(targetDateTimeStr.substring(0, 19), formatterWithNoDigits)
-    } catch (e: Exception) {
-        Log.d("HippoLog, CardTopBar", "${e.message}")
-        return "확인중"
-    }
-
-//    try {
-//        targetDateTime = LocalDateTime.parse(targetDateTimeStr, formatterWith6Digits)
-//    } catch (e: Exception) {
-//        try {
-//            targetDateTime = LocalDateTime.parse(targetDateTimeStr, formatterWith5Digits)
-//        } catch (e: Exception) {
-//            try {
-//                targetDateTime = LocalDateTime.parse(targetDateTimeStr, formatterWith4Digits)
-//            } catch (e: Exception) {
-//                try {
-//                    targetDateTime = LocalDateTime.parse(targetDateTimeStr, formatterWith3Digits)
-//                } catch (e: Exception) {
-//                    Log.d("HippoLog, CardTopBar", "${e.message}")
-//                    return "확인중"
-//                }
-//            }
-//        }
-//    }
-    val differenceValue = Duration.between(targetDateTime, currentDateTime).toMillis()
-
-    when {
-        differenceValue < 60000 -> {
-            value = "방금 전"
-        }
-
-        differenceValue < 3600000 -> {
-            value = TimeUnit.MILLISECONDS.toMinutes(differenceValue).toString() + "분 전"
-        }
-
-        differenceValue < 86400000 -> {
-            value = TimeUnit.MILLISECONDS.toHours(differenceValue).toString() + "시간 전"
-        }
-
-        differenceValue < 604800000 -> {
-            value = TimeUnit.MILLISECONDS.toDays(differenceValue).toString() + "일 전"
-        }
-
-        differenceValue < 2419200000 -> {
-            value = (TimeUnit.MILLISECONDS.toDays(differenceValue) / 7).toString() + "주 전"
-        }
-
-        differenceValue < 31556952000 -> {
-            value = (TimeUnit.MILLISECONDS.toDays(differenceValue) / 30).toString() + "개월 전"
-        }
-
-        else -> {
-            value = (TimeUnit.MILLISECONDS.toDays(differenceValue) / 365).toString() + "년 전"
-        }
-    }
-    return value
 }

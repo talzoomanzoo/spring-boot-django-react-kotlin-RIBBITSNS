@@ -9,13 +9,14 @@ const LikeTop = ({sendRefreshPage, changePage}) => {
 
     useEffect(() => {
         dispatch(findByTopLikes());
+        
     }, [sendRefreshPage])
 
     return (
             <div>
                 {twit?.topLikesTwits && twit.topLikesTwits?.length > 0 ?
                     (
-                        twit.topLikesTwits?.map((item) => <TwitCard twit={item} key={item.id} changePage={changePage}/>)
+                        twit.topLikesTwits?.map((item) => <TwitCard twit={item} key={item.id} changePage={changePage} sendRefreshPage={sendRefreshPage}/>)
                     ) :
                     (
                         <div>게시된 리빗이 없습니다.</div>
