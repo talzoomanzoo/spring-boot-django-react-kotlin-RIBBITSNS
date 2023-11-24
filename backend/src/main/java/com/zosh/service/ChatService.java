@@ -1,30 +1,21 @@
 package com.zosh.service;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketSession;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zosh.dto.ChatDto;
 import com.zosh.dto.ChatRoomDto;
-import com.zosh.exception.UserException;
 import com.zosh.model.Chat;
 import com.zosh.model.ChatRoom;
-import com.zosh.model.User;
 import com.zosh.repository.ChatRepository;
 import com.zosh.repository.ChatRoomRepository;
 import com.zosh.repository.UserRepository;
 
-import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 

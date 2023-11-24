@@ -15,6 +15,8 @@ import ComModel2 from "./ComModel2";
 import ComModel3 from "./ComModel3";
 import "../RightPart/Scrollbar.css";
 import CloseIcon from "@mui/icons-material/Close";
+import LockIcon from '@mui/icons-material/Lock';
+
 
 const ComCard = ({ changeComs, com, changePage }) => {
 
@@ -89,11 +91,17 @@ const ComCard = ({ changeComs, com, changePage }) => {
 
     const showDeleteButton = com.user.id === auth.user.id;
 
+    const showMemberButton = com.followingsc.id === auth.user.id;
+
+    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", com)
+
     return (
     <section className="space-x-5 py-3 rounded-full items-center justify-content">
         <section className="my-5 space-x-5 items-center justify-content mt-5" style={{ marginTop: 3 }}>
             <div className="card">
-            <GroupsIcon className="cursor-pointer" onClick={openMembersModal} style={{marginTop: 3, marginLeft: 10}}/>
+            {com.privateMode === true ? 
+            com.followingsc.id ? <GroupsIcon className="cursor-pointer" onClick={openMembersModal} style={{marginTop: 3, marginLeft: 10}}/> : <LockIcon fontSize='small'/>
+        : <GroupsIcon className="cursor-pointer" onClick={openMembersModal} style={{marginTop: 3, marginLeft: 10}}/> }
 
             <Modal
                 open={openMembers}
