@@ -203,15 +203,15 @@ class ListViewModel @Inject constructor(
                 listItem.description = description
                 listItem.listName = listName
                 listItem.privateMode = privateMode
-                postEditList(listItem)
+                putEditList(listItem)
             } else {    // uploadImageCloudinaryUiState 와 uploadVideoCloudinaryUiState 가 다른 상태일 때 처리를 위함 미구현
             }
         }
     }
 
-    private suspend fun postEditList(ribbitListItem: RibbitListItem) {
+    private suspend fun putEditList(ribbitListItem: RibbitListItem) {
         try {
-            listRepository.postEditList(ribbitListItem)
+            listRepository.putEditList(ribbitListItem)
         } catch (e: IOException) {
             editingListUiState = EditingListUiState.Error
             println(e.stackTrace)

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -20,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -46,11 +48,8 @@ fun ListIdScreen(
     navController: NavHostController,
     getCardViewModel: GetCardViewModel,
     postingViewModel: PostingViewModel,
-    tokenViewModel: TokenViewModel,
-    authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
     listViewModel: ListViewModel,
-    commuViewModel: CommuViewModel,
     myId: Int,
     modifier: Modifier
 ) {
@@ -85,11 +84,8 @@ fun ListIdScreen(
                     ListIdSuccessScreen(
                         getCardViewModel = getCardViewModel,
                         postingViewModel = postingViewModel,
-                        authViewModel = authViewModel,
-                        tokenViewModel = tokenViewModel,
                         userViewModel = userViewModel,
                         listViewModel = listViewModel,
-                        commuViewModel = commuViewModel,
                         navController = navController,
                         myId = myId,
                         modifier = modifier
@@ -106,11 +102,8 @@ fun ListIdScreen(
 fun ListIdSuccessScreen(
     getCardViewModel: GetCardViewModel,
     postingViewModel: PostingViewModel,
-    tokenViewModel: TokenViewModel,
-    authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
     listViewModel: ListViewModel,
-    commuViewModel: CommuViewModel,
     navController: NavHostController,
     myId: Int,
     modifier: Modifier
@@ -123,18 +116,6 @@ fun ListIdSuccessScreen(
 
     Scaffold(
         modifier = modifier,
-        topBar = {
-            RibbitTopAppBar(
-                getCardViewModel = getCardViewModel,
-                tokenViewModel = tokenViewModel,
-                authViewModel = authViewModel,
-                userViewModel = userViewModel,
-                navController = navController,
-                listViewModel = listViewModel,
-                commuViewModel = commuViewModel,
-                modifier = modifier
-            )
-        },
         floatingActionButton = {
             if ((listViewModel.listIdUiState as ListIdUiState.Success).listItem.user?.id == myId) {
                 FloatingActionButton(
@@ -155,13 +136,14 @@ fun ListIdSuccessScreen(
         Surface(
             modifier = modifier
                 .fillMaxSize()
-                .padding(it)
         ) {
             if((listViewModel.listIdUiState as ListIdUiState.Success).listItem.followingsl.isNullOrEmpty()){
-                Text(
-                    text ="There is no following user at this list",
-                    modifier = modifier
-                )
+                Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(
+                        text = "There are no following users at this list",
+                        modifier = modifier
+                    )
+                }
             }else {
                 ListIdPostsGrid(
                     posts = posts,

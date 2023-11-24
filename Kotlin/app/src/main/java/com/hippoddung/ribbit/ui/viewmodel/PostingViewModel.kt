@@ -33,9 +33,9 @@ sealed interface CreatingPostUiState {
 }
 
 sealed interface EditingPostUiState {
-    data class Ready(val post: RibbitPost) : EditingPostUiState
-    data class Loading(val post: RibbitPost) : EditingPostUiState
-    object Success : EditingPostUiState
+    data class Ready(val post: RibbitPost, val index: Int) : EditingPostUiState
+    data class Loading(val post: RibbitPost, val index: Int) : EditingPostUiState
+    data class Success(val post: RibbitPost, val index: Int) : EditingPostUiState
     object Error : EditingPostUiState
 }
 
@@ -55,7 +55,7 @@ sealed interface UploadVideoCloudinaryUiState {
 
 sealed interface AnalyzingPostEthicUiState {
     object Loading : AnalyzingPostEthicUiState
-    data class Success(val post: RibbitPost) : AnalyzingPostEthicUiState
+    data class Success(val post: RibbitPost, val index: Int) : AnalyzingPostEthicUiState
     data class Error(val error: String) : AnalyzingPostEthicUiState
 }
 
@@ -66,7 +66,7 @@ class PostingViewModel @Inject constructor(
 ) : ViewModel() {
     var creatingPostUiState: CreatingPostUiState by mutableStateOf(CreatingPostUiState.Ready)
     var editingPostUiState: EditingPostUiState by mutableStateOf(
-        EditingPostUiState.Loading(RibbitPost())
+        EditingPostUiState.Loading(RibbitPost(), 0)
     )
     var analyzingPostEthicUiState: AnalyzingPostEthicUiState by mutableStateOf(
         AnalyzingPostEthicUiState.Loading
@@ -180,7 +180,7 @@ class PostingViewModel @Inject constructor(
         }
     }
 
-    private fun postCreatePostEthic(ribbitPost: RibbitPost) {
+    private fun postCreatePostEthic(ribbitPost: RibbitPost, index: Int = 0) {
         viewModelScope.launch(Dispatchers.IO) {
             analyzingPostEthicUiState = AnalyzingPostEthicUiState.Loading
             Thread.sleep(2000)
@@ -189,7 +189,8 @@ class PostingViewModel @Inject constructor(
                     AnalyzingPostEthicUiState.Success(
                         post = ribbitRepository.postCreatePostEthic(
                             ribbitPost
-                        )
+                        ),
+                        index = index
                     )
                 } catch (e: IOException) {
                     Log.d("HippoLog PostingViewModel", "postCreatePostEthic, ${e.message}")
@@ -217,7 +218,7 @@ class PostingViewModel @Inject constructor(
 
         viewModelScope.launch(Dispatchers.IO) {
             editingPostUiState =
-                EditingPostUiState.Loading((editingPostUiState as EditingPostUiState.Ready).post)
+                EditingPostUiState.Loading((editingPostUiState as EditingPostUiState.Ready).post, (editingPostUiState as EditingPostUiState.Ready).index)
             val post = (editingPostUiState as EditingPostUiState.Loading).post
             uploadImageCloudinaryUiState = UploadImageCloudinaryUiState.None
             uploadVideoCloudinaryUiState = UploadVideoCloudinaryUiState.None
@@ -278,20 +279,22 @@ class PostingViewModel @Inject constructor(
                 )
             } else {    // uploadImageCloudinaryUiState 와 uploadVideoCloudinaryUiState 가 다른 상태일 때 처리를 위함 미구현
             }
+
+            if (editingPostUiState is EditingPostUiState.Success) { // editingPostUiState 가 Success 되면 윤리검사 함수를 실행
+                postCreatePostEthic((editingPostUiState as EditingPostUiState.Success).post, (editingPostUiState as EditingPostUiState.Success).index)
+            }
         }
     }
 
     private suspend fun postEditPost(post: RibbitPost) {
-        try {
-            ribbitRepository.postEditPost(post)
-        } catch (e: IOException) {
-            editingPostUiState = EditingPostUiState.Error
-            println(e.stackTrace)
-        } catch (e: ExceptionInInitializerError) {
-            editingPostUiState = EditingPostUiState.Error
-            println(e.stackTrace)
-        }
-        editingPostUiState = EditingPostUiState.Success
+        editingPostUiState =
+            try {
+                EditingPostUiState.Success(ribbitRepository.postEditPost(post),(editingPostUiState as EditingPostUiState.Loading).index)
+            } catch (e: IOException) {
+                EditingPostUiState.Error
+            } catch (e: ExceptionInInitializerError) {
+                EditingPostUiState.Error
+            }
     }
 
     fun getFilePathFromUri(context: Context, uri: Uri): String? {

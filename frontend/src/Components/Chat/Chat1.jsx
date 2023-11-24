@@ -118,6 +118,18 @@ const Chat = React.memo(() => {
   };
   const [modalState, setModalState] = useState(false);
 
+  const scrollRef = useRef();
+
+  const scrollToBottom = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [message]);
+
   function OnOffModal() {
     if (modalState === true) {
       setModalState(false);
@@ -690,7 +702,8 @@ const Chat = React.memo(() => {
             }}
           />
           <div
-            className={`customeScrollbar overflow-y-scroll css-scroll h-[40vh]`}
+            className={`customeScrollbar overflow-y-scroll css-scroll h-[45vh]`}
+            ref={scrollRef}
           >
             {chatHistory.length > 0 ? ( //채팅 내역
               chatHistory.map((chat) => (

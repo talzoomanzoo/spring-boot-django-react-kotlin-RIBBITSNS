@@ -83,7 +83,7 @@ fun EditingPostScreen(
             Log.d("HippoLog, EditingPostScreen", "Success, ${postingViewModel.editingPostUiState}")
             getCardViewModel.getRibbitPosts()
             navController.navigate(RibbitScreen.HomeScreen.name)
-            postingViewModel.editingPostUiState = EditingPostUiState.Ready(RibbitPost())
+            postingViewModel.editingPostUiState = EditingPostUiState.Ready(RibbitPost(), 0)
         }
 
         is EditingPostUiState.Loading -> {
@@ -175,7 +175,7 @@ fun EditPostScreen(
                 }
             }
         } else {
-            if (post.image != null) {
+            if (!post.image.isNullOrBlank()) {
                 Box(
                     modifier = modifier
                         .clickable(
@@ -221,7 +221,7 @@ fun EditPostScreen(
                 )
             }
         } else {
-            if (post.video != null) {
+            if (!post.video.isNullOrBlank()) {
                 RibbitVideo(
                     videoUrl = post.video!!,
                     getCardViewModel = getCardViewModel,

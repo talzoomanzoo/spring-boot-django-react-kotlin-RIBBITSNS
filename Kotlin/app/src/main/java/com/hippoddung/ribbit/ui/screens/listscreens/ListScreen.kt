@@ -18,6 +18,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,13 +48,13 @@ import kotlinx.coroutines.runBlocking
 fun ListScreen(
     navController: NavHostController,
     getCardViewModel: GetCardViewModel,
-    tokenViewModel: TokenViewModel,
-    authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
     listViewModel: ListViewModel,
-    commuViewModel: CommuViewModel,
     modifier: Modifier = Modifier
 ) {
+    LaunchedEffect(true) {
+        listViewModel.getLists()
+    }
     when (listViewModel.listUiState) {
         is ListUiState.Loading -> {
             Log.d("HippoLog, ListScreen", "Loading")
@@ -64,11 +65,8 @@ fun ListScreen(
             val listItems = (listViewModel.listUiState as ListUiState.Success).listItems
             ListSuccessScreen(
                 getCardViewModel = getCardViewModel,
-                authViewModel = authViewModel,
-                tokenViewModel = tokenViewModel,
                 userViewModel = userViewModel,
                 listViewModel = listViewModel,
-                commuViewModel = commuViewModel,
                 navController = navController,
                 listItems = listItems,
                 modifier = modifier
@@ -86,11 +84,8 @@ fun ListScreen(
 @Composable
 fun ListSuccessScreen(
     getCardViewModel: GetCardViewModel,
-    tokenViewModel: TokenViewModel,
-    authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
     listViewModel: ListViewModel,
-    commuViewModel: CommuViewModel,
     navController: NavHostController,
     listItems: List<RibbitListItem>,
     modifier: Modifier
@@ -105,18 +100,6 @@ fun ListSuccessScreen(
     val myId by remember { mutableStateOf(userViewModel.myProfile.value?.id!!) }    // 로그인시 저장한 정보기 때문에 반드시 값이 존재함.
     Scaffold(
         modifier = modifier,
-        topBar = {
-            RibbitTopAppBar(
-                getCardViewModel = getCardViewModel,
-                tokenViewModel = tokenViewModel,
-                authViewModel = authViewModel,
-                userViewModel = userViewModel,
-                listViewModel = listViewModel,
-                commuViewModel = commuViewModel,
-                navController = navController,
-                modifier = modifier
-            )
-        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { navController.navigate(RibbitScreen.CreatingListScreen.name) },
@@ -135,7 +118,6 @@ fun ListSuccessScreen(
         Surface(
             modifier = modifier
                 .fillMaxSize()
-                .padding(it)
         ) {
             Box(modifier = modifier) {
                 ListGrid(

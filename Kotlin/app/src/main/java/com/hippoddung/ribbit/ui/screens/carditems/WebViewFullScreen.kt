@@ -3,7 +3,7 @@ package com.hippoddung.ribbit.ui.screens.carditems
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.pm.ActivityInfo
-import android.os.Build
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebChromeClient
@@ -11,7 +11,6 @@ import android.webkit.WebView
 import android.webkit.WebView.setWebContentsDebuggingEnabled
 import android.webkit.WebViewClient
 import android.widget.FrameLayout
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -39,6 +38,7 @@ fun WebViewFullScreen(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
+        Log.d("HippoLog WebViewFullScreen", "videoUrl: $videoUrl")
         AndroidView(
             modifier = modifier.width(400.dp)
                 .height(250.dp)
@@ -52,7 +52,7 @@ fun WebViewFullScreen(
                         var customView: View? = null
 //                        @RequiresApi(Build.VERSION_CODES.R)
 //                        val controller = windowInsetsController
-                        @RequiresApi(Build.VERSION_CODES.R)
+//                        @RequiresApi(Build.VERSION_CODES.R)
                         override fun onShowCustomView(view: View?, callback: CustomViewCallback?) {
                             super.onShowCustomView(view, callback)
                             isFullScreen.value = true

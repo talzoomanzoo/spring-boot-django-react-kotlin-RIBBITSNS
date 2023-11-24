@@ -1,4 +1,4 @@
-package com.hippoddung.ribbit.ui.screens.searchitems
+package com.hippoddung.ribbit.ui.screens.chatscreens
 
 import android.os.Build
 import android.util.Log
@@ -16,7 +16,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,12 +36,9 @@ import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun SearchedUserCard(
-    isExpanded: MutableState<Boolean>,
+fun SearchedUserAtChatCard(
     user: User,
-    getCardViewModel: GetCardViewModel,
     userViewModel: UserViewModel,
-    navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -54,11 +50,8 @@ fun SearchedUserCard(
             .clickable {
                 Log.d("HippoLog, UserCard", "UserCardClick")
                 user.id?.let {
-                    getCardViewModel.getUserIdPosts(userId = it)
-                    userViewModel.getProfile(userId = it)
+
                 }
-                navController.navigate(RibbitScreen.ProfileScreen.name)
-                isExpanded.value = !isExpanded.value
             }
     ) {
         Box(
@@ -66,7 +59,7 @@ fun SearchedUserCard(
             modifier = modifier
                 .size(40.dp)
         ) {
-            if(user.image == null){
+            if(user.image.isNullOrBlank()){
                 Image(
                     painter = painterResource(id = R.drawable.frog_8341850_1280),
                     contentDescription = "default image",
@@ -74,14 +67,6 @@ fun SearchedUserCard(
                     modifier = modifier
                         .fillMaxSize()
                         .clip(CircleShape)
-                        .clickable {    // 해당 Composable function 을 click 하여 "() -> unit" 을 받을 수 있는 형태로 만들어 줌.
-                            Log.d("HippoLog, CardTopBar", "profileImageClick")
-                            user.id?.let {
-                                getCardViewModel.getUserIdPosts(userId = it)
-                                userViewModel.getProfile(userId = it)
-                            }
-                            navController.navigate(RibbitScreen.ProfileScreen.name)
-                        }
                 )
             }else {
                 AsyncImage(

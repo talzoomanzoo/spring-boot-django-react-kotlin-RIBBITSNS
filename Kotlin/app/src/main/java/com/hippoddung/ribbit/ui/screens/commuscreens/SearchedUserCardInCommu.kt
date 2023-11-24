@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -76,19 +77,21 @@ fun SearchedUserCardInCommu(
                 .padding(start = 12.dp, bottom = 4.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Row(modifier = modifier) {
-                Text(
-                    text = "${user.fullName}",
-                    fontSize = 14.sp,
-                    modifier = modifier.padding(start = 4.dp, end = 4.dp),
-                    style = MaterialTheme.typography.headlineSmall
-                )
-                Text(
-                    text = user.email,
-                    fontSize = 14.sp,
-                    modifier = modifier.padding(start = 4.dp, end = 4.dp),
-                    style = MaterialTheme.typography.headlineSmall
-                )
+            Row(modifier = modifier.weight(1f)) {
+                Column(modifier = modifier) {
+                    Text(
+                        text = "${user.fullName}",
+                        fontSize = 14.sp,
+                        modifier = modifier.padding(start = 4.dp, end = 4.dp),
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                    Text(
+                        text = user.email,
+                        fontSize = 14.sp,
+                        modifier = modifier.padding(start = 4.dp, end = 4.dp),
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                }
             }
             IconButton(
                 onClick = {

@@ -44,9 +44,10 @@ import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
-@SuppressLint("SetJavaScriptEnabled", "JavascriptInterface")
+@SuppressLint("SetJavaScriptEnabled", "JavascriptInterface", "StateFlowValueCalledInComposition")
 @Composable
 fun RibbitCard(
+    index: Int,
     post: RibbitPost,
     getCardViewModel: GetCardViewModel,
     postingViewModel: PostingViewModel,
@@ -82,6 +83,7 @@ fun RibbitCard(
             .padding(start = 16.dp, top = 16.dp, end = 16.dp)
     ) {
         Column(modifier = modifier) {
+            // 프로필 페이지의 경우, 본인의 글이 아닐 경우 Rebbit 된 것을 표시
             if (currentScreen == RibbitScreen.ProfileScreen) {
                 if (getCardViewModel.userIdClassificationUiState is UserIdClassificationUiState.Ribbit) {
                     if (userViewModel.profileUiState is ProfileUiState.Exist) {
@@ -108,6 +110,7 @@ fun RibbitCard(
                 }
             }
             CardTopBar(
+                index = index,
                 post = post,
                 getCardViewModel = getCardViewModel,
                 postingViewModel = postingViewModel,
@@ -137,71 +140,70 @@ fun RibbitCard(
                     modifier = modifier
                 )
             }
-            if ((post.ethicrateMAX != null) and (post.ethicrateMAX != 0)) {
-                Row(modifier = modifier) {
-                    // EthicLabel 0: '폭력',1: '선정',2: '욕설',3: '차별',4: '정상'
-                    when (post.ethiclabel) {
-                        0 -> {
-                            Text("폭력성", modifier = modifier)
-                        }
+            if (post.ethicrateMAX != null) {
+                if ((post.ethicrateMAX != 0) and (post.ethiclabel != 4)) {   // 값이 있을 때,  라벨이 정상이 아닐 때만 출력
+                    Row(modifier = modifier) {
+                        // EthicLabel 0: '폭력',1: '선정',2: '욕설',3: '차별',4: '정상'
+                        when (post.ethiclabel) {
+                            0 -> {
+                                Text("폭력성", modifier = modifier)
+                            }
 
-                        1 -> {
-                            Text("선정성", modifier = modifier)
-                        }
+                            1 -> {
+                                Text("선정성", modifier = modifier)
+                            }
 
-                        2 -> {
-                            Text("욕설", modifier = modifier)
-                        }
+                            2 -> {
+                                Text("욕설", modifier = modifier)
+                            }
 
-                        3 -> {
-                            Text("차별성", modifier = modifier)
+                            3 -> {
+                                Text("차별성", modifier = modifier)
+                            }
                         }
-
-                        4 -> {
-                            Text("정상", modifier = modifier)
-                        }
-                    }
-                    Row(
-                        modifier = modifier
-                        .fillMaxWidth()
-                    ) {
-                        LinearProgressIndicator(
-                            progress = 1f,
+                        Row(
                             modifier = modifier
-                                .fillMaxWidth((post.ethicrateMAX!!.toFloat()) / 120)
-                                .height(20.dp)
-                                .padding(8.dp),
-                            strokeCap = StrokeCap.Round
-                        )
-                        Text("${post.ethicrateMAX}", modifier = modifier)
-                    }
+                                .fillMaxWidth()
+                        ) {
+                            LinearProgressIndicator(
+                                progress = 1f,
+                                modifier = modifier
+                                    .fillMaxWidth((post.ethicrateMAX!!.toFloat()) / 120)
+                                    .height(20.dp)
+                                    .padding(8.dp),
+                                strokeCap = StrokeCap.Round
+                            )
+                            Text("${post.ethicrateMAX}", modifier = modifier)
+                        }
 
+                    }
+                } else {
+                    if (post.ethiclabel != 4) {
+                        Text(
+                            text = "Your text is being analyzed",
+                            modifier = modifier
+                                .align(Alignment.CenterHorizontally)
+                        )
+                    }
                 }
-            } else {
-                Text(
-                    text = "Your text is being analyzed",
-                    modifier = modifier
-                        .align(Alignment.CenterHorizontally)
+            }
+        }
+        CardBottomBar(
+            myId = myId,
+            post = post,
+            getCardViewModel = getCardViewModel
+        )
+        Canvas(
+            modifier = modifier,
+            onDraw = {
+                drawLine(
+                    color = Color(0xFF4c6c4a),
+                    start = Offset(0.dp.toPx(), 0.dp.toPx()),
+                    end = Offset(400.dp.toPx(), 0.dp.toPx()),
+                    strokeWidth = 1.dp.toPx(),
                 )
             }
-            CardBottomBar(
-                myId = myId,
-                post = post,
-                getCardViewModel = getCardViewModel
-            )
-            Canvas(
-                modifier = modifier,
-                onDraw = {
-                    drawLine(
-                        color = Color(0xFF4c6c4a),
-                        start = Offset(0.dp.toPx(), 0.dp.toPx()),
-                        end = Offset(400.dp.toPx(), 0.dp.toPx()),
-                        strokeWidth = 1.dp.toPx(),
-//                        cap = StrokeCap.Round
-                    )
-                }
-            )
-        }
+        )
     }
 }
 

@@ -1,5 +1,6 @@
 package com.hippoddung.ribbit.ui.screens.profilescreens
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
@@ -116,6 +117,7 @@ fun EditProfileScreen(
     }
 }
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun EditProfileReadyScreen(
     navController: NavHostController,
@@ -127,7 +129,7 @@ fun EditProfileReadyScreen(
     if (userViewModel.profileUiState is ProfileUiState.Exist) {   // navigation 으로 이동시 현재 스크린을 backStack 으로 보내면서 재실행, state casting 오류가 발생, state check 삽입
         myProfile = (userViewModel.profileUiState as ProfileUiState.Exist).user
     }
-    var inputFullName by remember { mutableStateOf(myProfile.fullName ?: "") }
+    var inputFullName by remember { mutableStateOf(myProfile.fullName) }
     var inputBio by remember { mutableStateOf(myProfile.bio ?: "") }
     var inputWebsite by remember { mutableStateOf(myProfile.website ?: "") }
     var inputEducation by remember { mutableStateOf(myProfile.education ?: "") }
@@ -326,7 +328,7 @@ fun EditProfileReadyScreen(
                                 )
                             } else {
                                 Image(
-                                    painter = painterResource(id = R.drawable.pngwing_com),
+                                    painter = painterResource(id = R.drawable.frog_8341850_1280),
                                     contentDescription = "default profile image",
                                     modifier = modifier
                                         .size(100.dp)
@@ -635,6 +637,7 @@ fun EditProfileReadyScreen(
                                 Button(
                                     onClick = {
                                         profileImageLauncher.launch("image/*")
+                                        profileImageIsClicked = false
                                     },
                                     modifier = modifier
                                 ) {
@@ -650,7 +653,12 @@ fun EditProfileReadyScreen(
                         when (userViewModel.getAiImageUiState) {
                             is GetAiImageUrlUiState.Error -> {}
                             is GetAiImageUrlUiState.Loading -> {
-                                Column(modifier = modifier) {
+                                Column(
+                                    modifier = modifier
+                                    .background(Color.White, shape = RoundedCornerShape(16.dp)),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center
+                                ) {
                                     Text(text = "Loading your AI Image", modifier = modifier)
                                     Image(
                                         modifier = modifier.size(200.dp),

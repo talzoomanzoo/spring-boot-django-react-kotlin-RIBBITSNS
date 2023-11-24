@@ -5,7 +5,9 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -52,10 +54,14 @@ fun ListCard(
                 navController.navigate(RibbitScreen.ListIdScreen.name)
             }
     ) {
-        Row(modifier = modifier) {
+        Row(
+            modifier = modifier
+                .weight(1f)
+        ) {
             Icon(imageVector = Icons.Default.List, contentDescription = "RibbitList")
             Row(
-                modifier = modifier.padding(start = 12.dp, bottom = 4.dp)
+                modifier = modifier
+                    .padding(start = 12.dp, bottom = 4.dp)
             ) {
                 Log.d("HippoLog, ListCard", "$listItem")
                 listItem.listName?.let {
@@ -77,34 +83,40 @@ fun ListCard(
             }
         }
         if(listItem.user?.id == myId) {
-            OutlinedButton(
-                onClick = {
-                    listViewModel.editingListUiState = EditingListUiState.Ready(listItem)
-                    navController.navigate(RibbitScreen.EditingListScreen.name)
-                },
-                modifier = modifier
-            ) {
-                Text(
-                    text = "Edit",
-                    color = Color(0xFF006400),
-                    fontSize = 14.sp,
+                Row(
                     modifier = modifier
-                )
-            }
-            OutlinedButton(
-                onClick = {
-                    listViewModel.deleteListIdState = listItem.id
-                    listViewModel.deleteListClickedUiState = true
-                },
-                modifier = modifier
-            ) {
-                Text(
-                    text = "Delete",
-                    color = Color(0xFF006400),
-                    fontSize = 14.sp,
-                    modifier = modifier
-                )
-            }
+                        .weight(1f)
+                ) {
+                    OutlinedButton(
+                        onClick = {
+                            listViewModel.editingListUiState = EditingListUiState.Ready(listItem)
+                            navController.navigate(RibbitScreen.EditingListScreen.name)
+                        },
+                        modifier = modifier
+                    ) {
+                        Text(
+                            text = "Edit",
+                            color = Color(0xFF006400),
+                            fontSize = 14.sp,
+                            modifier = modifier
+                        )
+                    }
+                    Spacer(modifier = modifier.padding(horizontal = 4.dp))
+                    OutlinedButton(
+                        onClick = {
+                            listViewModel.deleteListIdState = listItem.id
+                            listViewModel.deleteListClickedUiState = true
+                        },
+                        modifier = modifier
+                    ) {
+                        Text(
+                            text = "Delete",
+                            color = Color(0xFF006400),
+                            fontSize = 14.sp,
+                            modifier = modifier
+                        )
+                    }
+                }
         }
     }
 }

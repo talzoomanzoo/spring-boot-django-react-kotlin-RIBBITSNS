@@ -15,6 +15,8 @@ import ComModel2 from "./ComModel2";
 import ComModel3 from "./ComModel3";
 import "../RightPart/Scrollbar.css";
 import CloseIcon from "@mui/icons-material/Close";
+import LockIcon from '@mui/icons-material/Lock';
+
 
 const ComCard = ({ changeComs, com, changePage }) => {
 
@@ -220,7 +222,7 @@ const ComCard = ({ changeComs, com, changePage }) => {
                 }}
                 className="mt-5 items-center justify-content cursor-pointer"
                 onClick={() => handleNavigateToComDetail(com)}>
-                <div className="text-xl items-center justify-content" >{com.comName}</div>
+                <div className="text-xl items-center justify-content" >{com.comName}{com.privateMode ? <LockIcon fontSize='small'/> : "" }</div>
             </section>
             </div>
         </section>
