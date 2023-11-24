@@ -122,16 +122,16 @@ const Chat = () => {
 
   const [userList, setUserList] = useState([]);
 
-  useEffect(() => {
-    //웹소켓 연결
-    const socket = new SockJS("http://localhost:8080/ws");
-    const stompClient = Stomp.over(socket);
-    const stoconnect = stompClient.connect({}, () => {
-      setStompClient(stompClient);
-    });
+  // useEffect(() => {
+  //   //웹소켓 연결
+  //   const socket = new SockJS("http://localhost:8080/ws");
+  //   const stompClient = Stomp.over(socket);
+  //   const stoconnect = stompClient.connect({}, () => {
+  //     setStompClient(stompClient);
+  //   });
 
-    console.log("stoconnect: ", stoconnect);
-  }, []);
+  //   console.log("stoconnect: ", stoconnect);
+  // }, []);
 
   const createRoom = () => {
     //채팅방 만드는 함수
@@ -229,7 +229,7 @@ const Chat = () => {
       setStompClient(stompClient);
 
       const subscription = stompClient.subscribe(
-        `/topic/${selectedRoom}`,
+        `/topic/${selectedRoomId}`,
         onMessageReceived
       );
 
@@ -252,7 +252,7 @@ const Chat = () => {
       };
 
       stompClient.send(
-        `/app/savechat/${selectedRoom}`,
+        `/app/savechat/${selectedRoomId}`,
         {},
         JSON.stringify(chatMessage)
       );
@@ -283,10 +283,10 @@ const Chat = () => {
   };
 
   useEffect(() => {
-    if (stompClient && selectedRoom) {
+    if (stompClient && selectedRoomId) {
       //채팅이 오는 것을 받는 함수(받을때)
       const subscription = stompClient.subscribe(
-        `/topic/${selectedRoom}`,
+        `/topic/${selectedRoomId}`,
         (message) => {
           const chatMessage = JSON.parse(message.body);
           setChatHistory((prevChatHistory) => [
