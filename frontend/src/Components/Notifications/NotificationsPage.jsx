@@ -8,7 +8,7 @@ import NotificationsCard from "./NotificationsCard/NotificationsCard";
 const NotificationsPage = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const {notification, theme} = useSelector((store) => store);
+    const {notification} = useSelector((store) => store);
     const handleBack = () => {
         navigate(-1);
     };
@@ -18,7 +18,7 @@ const NotificationsPage = () => {
 
     return (
         <div>
-            <section className={`z-50 flex items-center sticky top-0 ${theme.currentTheme==="dark"?" bg-[#0D0D0D]":"bg-white"}`}>
+            <section className={`z-50 flex items-center sticky top-0`}>
             <div className="z-50 flex items-center sticky top-0 space-x-5">
                     <KeyboardBackspaceIcon
                         className="cursor-pointer"

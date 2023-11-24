@@ -10,7 +10,7 @@ const TwitDetail = ({changePage, sendRefreshPage}) => {
     const param=useParams();
     // twit/83
     const dispatch=useDispatch();
-    const {twit,theme}=useSelector(store=>store);
+    const {twit}=useSelector(store=>store);
     // useSelector로 twit과 theme이라는 모듈의 상태값을 가져오도록 한 후, twit과 theme의 상태를 변경해서 궁극적으로 스토어의 상태를 변경
     // twit: twitReducer, theme: themeReducer
     const navigate=useNavigate();
@@ -22,16 +22,10 @@ const TwitDetail = ({changePage, sendRefreshPage}) => {
         changePage();
     },[param.id, sendRefreshPage])
 
-    console.log("twitdetail twit check", twit);
   return (
     <div>
         <section
-        className={`z-50 flex items-center sticky top-0 
-        ${
-          theme.currentTheme === "light" ? "bg-white" : "bg-[#0D0D0D]"
-          // theme, 즉 themeReducer의 initialState 속성의 currentTheme 변경
-          // 속성이 light이면,전자 아니면 후자
-        } bg-opacity-95`}
+        className={`z-50 flex items-center sticky top-0 bg-opacity-95`}
       >
         <KeyboardBackspaceIcon
           className="cursor-pointer"

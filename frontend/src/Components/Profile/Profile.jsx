@@ -206,9 +206,7 @@ const Profile = ({sendRefreshPage, changePage}) => {
   return (
     <div>
       <section
-        className={`z-50 flex items-center sticky top-0 ${
-          theme.currentTheme === "dark" ? " bg-[#0D0D0D]" : "bg-white"
-        }`}
+        className={`z-50 flex items-center sticky top-0`}
       >
         <KeyboardBackspaceIcon
           className="cursor-pointer"

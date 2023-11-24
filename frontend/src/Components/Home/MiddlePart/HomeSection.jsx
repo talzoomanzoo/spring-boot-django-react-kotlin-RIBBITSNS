@@ -437,9 +437,7 @@ const HomeSection = ({ sendRefreshPage, changePage }) => {
   return (
     <div className="space-y-5">
       <section
-        className={`sticky top-0 ${
-          theme.currentTheme === "dark" ? " bg-[#0D0D0D]" : "bg-white"
-        }`}
+        className={`sticky top-0`}
         style={{ zIndex: "100" }}
       >
         <h1 className="py-5 text-xl font-bold opacity-90 ml-5 flex">

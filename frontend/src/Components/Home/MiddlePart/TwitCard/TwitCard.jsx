@@ -47,13 +47,13 @@ import { uploadToCloudinary } from "../../../../Utils/UploadToCloudinary";
 import Loading from "../../../Profile/Loading/Loading";
 import "../TwitMap.css";
 import ReplyModal from "./ReplyModal";
+import { ReactDOM } from "react";
 
 const validationSchema = Yup.object().shape({
   content: Yup.string().required("내용이 없습니다"),
 });
 
 const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
-  const { com } = useSelector((store) => store);
   const [selectedImage, setSelectedImage] = useState(twit.image);
   const [selectedVideo, setSelectedVideo] = useState(twit.video);
   const [selectedLocation, setSelectedLocation] = useState(twit.location);
@@ -61,7 +61,6 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
   const [openEmoji, setOpenEmoji] = useState(false);
   const handleOpenEmoji = () => setOpenEmoji(!openEmoji);
   const handleCloseEmoji = () => setOpenEmoji(false);
-  const [twits, setTwits] = useState([]);
   const dispatch = useDispatch();
   const { theme, auth } = useSelector((store) => store);
   const [isLiked, setIsLiked] = useState(twit.liked);
@@ -71,13 +70,16 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
 
   const [ethiclabel, setEthiclabel] = useState(twit.ethiclabel);
   const [ethicrateMAX, setEthicrateMAX] = useState(twit.ethicrateMAX); //윤리수치 최대 수치
-  console.log("twit.ethicratemax: ", twit);
+  console.log("twit: ", twit);
   //  const [isLoading, setIsLoading] = useState(false); //로딩창의 띄어짐의 유무를 판단한다. default는 true이다.
   const jwtToken = localStorage.getItem("jwt");
   const [isEdited, setIsEdited] = useState(twit.edited);
   const [datetime, setDatetimes] = useState(twit.createdAt);
   const [edittime, setEdittimes] = useState(twit.editedAt);
   const [retwit, setRetwit] = useState(twit.totalRetweets);
+  const [isRetwit, setIsRetwit] = useState(
+    twit.retwitUsersId?.includes(auth.user.id)
+  );
   const [openReplyModel, setOpenReplyModel] = useState();
   const location = useLocation();
   const navigate = useNavigate();
@@ -103,13 +105,6 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
   const handleCloseAlertModal = () => setOpenAlertModal(false);
   const handleOpenAlertModal = () => setOpenAlertModal(true);
 
-  // const authCheck = (auth) => {
-  //   for (let i = 0; i < twit.retwitUsersId?.length; i++) {
-  //     if (auth.findUser?.id === twit.retwitUsersId) {
-  //       return true;
-  //     }
-  //   }
-  // };
 
   useEffect(() => {
     if (isLocationFormOpen && showLocation) {
@@ -133,7 +128,7 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
         }
       }
     }
-  }, [isLocationFormOpen, showLocation, sendRefreshPage]);
+  }, [isLocationFormOpen, showLocation, sendRefreshPage, refreshTwits]);
 
   const formikLocation = useFormik({
     initialValues: {
@@ -333,10 +328,6 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
     pageNumbers.push(i);
   }
 
-  const [isRetwit, setIsRetwit] = useState(
-    twit.retwitUsersId?.includes(auth.user.id)
-  );
-
   const handleToggleLocationForm = () => {
     setLocationFormOpen((prev) => !prev);
   };
@@ -351,14 +342,15 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
   const handleLikeTweet = (num) => {
     changePage();
     setIsLiked(!isLiked);
-    setLikes(likes + num);
     dispatch(likeTweet(twit.id));
+    setLikes(likes + num);
   };
 
-  const handleIncrement = () => {
-    const twitId = twit.id;
+  const handleIncrement = (twitId) => {
+    //const twitId = twit.id;
     dispatch(incrementNotificationCount(twitId));
   };
+
   const handleDecrease = () => {
     const TuserId = twit.user.id;
     dispatch(decreaseNotificationCount(TuserId));
@@ -369,10 +361,12 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
       dispatch(createRetweet(twit.id));
       setRetwit(isRetwit ? retwit - 1 : retwit + 1);
       setIsRetwit(!retwit);
+      setRefreshTwits((prev) => prev + 1);
       changePage();
     } else {
       handleOpenAlertModal();
     }
+    
   };
 
   const handleCloseReplyModel = () => setOpenReplyModel(false);
@@ -438,6 +432,7 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
       setIsEditing(false);
       setLoading(false);
       handleCloseEditClick();
+
     } catch (error) {}
   };
 
@@ -972,6 +967,7 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
                     {twit.totalReplies > 0 && <p>{twit.totalReplies}</p>}
                     {/* twit 객체의 totalReplies 속성 값이 0보다 큰 경우에만 해당 값을 포함하는 <p> 태그로 래핑 시도*/}
                   </div>
+
                   <div
                     className={`${
                       isRetwit ? "text-yellow-500" : "text-gray-600"
@@ -985,27 +981,29 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
                     />
                     {retwit > 0 && <p>{retwit}</p>}
                   </div>
+                  
                   <div
-                    className={`${
-                      isLiked ? "text-yellow-500" : "text-gray-600"
-                    } space-x-3 flex items-center `}
+                    className={`space-x-3 flex items-center `}
                   >
-                    {isLiked ? (
+                    {twit.liked ? (
                       <FavoriteIcon
+                      className={`text-yellow-500`}
                         onClick={() => {
                           handleLikeTweet(-1);
                         }}
                       />
                     ) : (
                       <FavoriteBorderIcon
+                        className={`text-gray-600`}
                         onClick={() => {
                           handleLikeTweet(1);
-                          handleIncrement();
+                          handleIncrement(twit.id);
                         }}
                       />
                     )}
-                    {likes > 0 && <p>{likes}</p>}
+                    {likes > 0 && <p>{twit.totalLikes}</p>}
                   </div>
+
                   <div className="space-x-3 flex items-center text-gray-600">
                     <BarChartIcon />
                     <p>{twit.viewCount}</p>
