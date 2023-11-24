@@ -77,7 +77,6 @@ const Communities = ({changePage, sendRefreshPage}) => {
             navigation
             pagination={{ clickable: true }}
             scrollbar={{ draggable: true }}
-            loop={true}
           >
             {com.coms?.map((item) => (
               <SwiperSlide>
