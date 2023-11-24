@@ -20,7 +20,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -92,7 +91,7 @@ public class Twit {
     private LocalDateTime createdAt;
     private LocalDateTime retwitAt;
     
-    @Column(nullable = false)
+    // @Column(nullable = false)
     private LocalDateTime editedAt;
     
     @Column(nullable = false)
