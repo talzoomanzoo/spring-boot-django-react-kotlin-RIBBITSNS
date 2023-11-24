@@ -17,9 +17,8 @@ import axios from "axios";
 import React, {
   useCallback,
   useEffect,
-  useLayoutEffect,
   useRef,
-  useState,
+  useState
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -272,7 +271,7 @@ const Chat = React.memo(() => {
         JSON.stringify(chatMessage)
       );
       
-      addChatMessage(chatMessage); // 메시지를 받아서 채팅 히스토리에 추가하는 함수 호출
+      // addChatMessage(chatMessage); // 메시지를 받아서 채팅 히스토리에 추가하는 함수 호출
   
       setMessage("");
     } else {
@@ -404,11 +403,17 @@ const Chat = React.memo(() => {
   }, []);
 
   const scrollToBottom = () => {
-    const chatContainer = chatContainerRef.current;
-    if (chatContainer) {
-      chatContainer.scrollTop = chatContainer.scrollHeight;
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   };
+
+  // const scrollToBottom = () => {
+  //   const chatContainer = chatContainerRef.current;
+  //   if (chatContainer) {
+  //     chatContainer.scrollTop = chatContainer.scrollHeight;
+  //   }
+  // };
 
   useEffect(() => {
     scrollToBottom();
@@ -418,9 +423,9 @@ const Chat = React.memo(() => {
     scrollToBottom();
   }, [chatHistory.length]); // Assuming chatHistory is the state that contains the chat messages
 
-  useLayoutEffect(() => {
-    scrollToBottom();
-  }, [chatHistory]);
+  // useLayoutEffect(() => {
+  //   scrollToBottom();
+  // }, [chatHistory]);
 
   useEffect(() => {
     const chatContainer = document.getElementById("chat-container");
@@ -446,18 +451,18 @@ const Chat = React.memo(() => {
     }
   }, [chatHistory]);
 
-  const addChatMessage = (chatMessage) => {
-    const isDuplicate = chatHistory.some((message) => message.id === chatMessage.id);
+  // const addChatMessage = (chatMessage) => {
+  //   const isDuplicate = chatHistory.some((message) => message.id === chatMessage.id);
   
-    if (!isDuplicate) {
-      setChatHistory((prevChatHistory) => [...prevChatHistory, chatMessage]);
+  //   if (!isDuplicate) {
+  //     setChatHistory((prevChatHistory) => [...prevChatHistory, chatMessage]);
   
-      const lastChatMessage = document.getElementById(`chat-message-${chatMessage.id}`);
-      if (lastChatMessage) {
-        lastChatMessage.scrollIntoView({ behavior: "auto" });
-      }
-    }
-  };
+  //     const lastChatMessage = document.getElementById(`chat-message-${chatMessage.id}`);
+  //     if (lastChatMessage) {
+  //       lastChatMessage.scrollIntoView({ behavior: "auto" });
+  //     }
+  //   }
+  // };
   
 
   return (
@@ -753,6 +758,7 @@ const Chat = React.memo(() => {
                           >
                             {chat.message}
                           </div>
+                          {/* {chat.message} */}
                         </p>
                       ) : (
                         <div
@@ -806,6 +812,7 @@ const Chat = React.memo(() => {
                               >
                                 {chat.message}
                               </div>
+                              {/* {chat.message} */}
                             </p>
                           </div>
                         </div>
