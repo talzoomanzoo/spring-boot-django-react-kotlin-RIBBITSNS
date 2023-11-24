@@ -47,6 +47,7 @@ import { uploadToCloudinary } from "../../../../Utils/UploadToCloudinary";
 import Loading from "../../../Profile/Loading/Loading";
 import "../TwitMap.css";
 import ReplyModal from "./ReplyModal";
+import { ReactDOM } from "react";
 
 const validationSchema = Yup.object().shape({
   content: Yup.string().required("내용이 없습니다"),
@@ -351,14 +352,15 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
   const handleLikeTweet = (num) => {
     changePage();
     setIsLiked(!isLiked);
-    setLikes(likes + num);
     dispatch(likeTweet(twit.id));
+    setLikes(likes + num);
   };
 
   const handleIncrement = () => {
     const twitId = twit.id;
     dispatch(incrementNotificationCount(twitId));
   };
+
   const handleDecrease = () => {
     const TuserId = twit.user.id;
     dispatch(decreaseNotificationCount(TuserId));
@@ -985,7 +987,9 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
                     />
                     {retwit > 0 && <p>{retwit}</p>}
                   </div>
+                  
                   <div
+                    id = 'element'
                     className={`${
                       isLiked ? "text-yellow-500" : "text-gray-600"
                     } space-x-3 flex items-center `}
@@ -1006,6 +1010,7 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
                     )}
                     {likes > 0 && <p>{likes}</p>}
                   </div>
+
                   <div className="space-x-3 flex items-center text-gray-600">
                     <BarChartIcon />
                     <p>{twit.viewCount}</p>

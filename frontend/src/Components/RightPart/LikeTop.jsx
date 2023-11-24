@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { findByTopLikes } from "../../Store/Tweet/Action";
 import TwitCard from "../Home/MiddlePart/TwitCard/TwitCard";
+import { useState } from "react";
 
 const LikeTop = ({sendRefreshPage, changePage}) => {
     const dispatch = useDispatch();
@@ -9,7 +10,6 @@ const LikeTop = ({sendRefreshPage, changePage}) => {
 
     useEffect(() => {
         dispatch(findByTopLikes());
-        
     }, [sendRefreshPage])
 
     return (

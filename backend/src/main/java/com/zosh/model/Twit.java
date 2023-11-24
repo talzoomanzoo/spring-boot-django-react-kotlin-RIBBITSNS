@@ -91,8 +91,6 @@ public class Twit {
     @Column(nullable = false)
     private LocalDateTime createdAt;
     private LocalDateTime retwitAt;
-    
-    @Column(nullable = false)
     private LocalDateTime editedAt;
     
     @Column(nullable = false)

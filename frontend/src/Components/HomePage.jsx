@@ -1,5 +1,5 @@
 import { Grid } from "@mui/material";
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Route, Routes } from "react-router-dom";
 import HomeSection from "./Home/MiddlePart/HomeSection";
@@ -20,7 +20,7 @@ const NotificationsPage = React.lazy(() => import("./Notifications/Notifications
 const HomePage = () => {
   const { theme, list } = useSelector((store) => store);
   const [uploading, setUploading] = useState(false);
-  const [sendTheme, setSendTheme] = useState(theme);
+  const [sendTheme, setSendTheme] = useState(null);
   const [sendRefreshPage, setSendRefreshPage] = useState(0);
 
   const changeThemeAllFunc = (newTheme) => {
@@ -30,7 +30,6 @@ const HomePage = () => {
   const changePageFunc = () => {
     setSendRefreshPage((prev) => prev + 1);
   }
-
 
   return (
     <Grid container className="px-5 lg:px-36 justify-between" xs={12}>
@@ -49,39 +48,39 @@ const HomePage = () => {
           }></Route>
           <Route path="/profile/:id" element={
             <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
-              <Profile sendTheme={sendTheme} changePage={changePageFunc} sendRefreshPage= {sendRefreshPage}/>
+              <Profile changePage={changePageFunc} sendRefreshPage= {sendRefreshPage}/>
             </Suspense>}></Route>
           <Route path="/followtwit" element={
             <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
-              <FollowTwitEnc sendTheme={sendTheme} changePage={changePageFunc} sendRefreshPage= {sendRefreshPage}/>
+              <FollowTwitEnc changePage={changePageFunc} sendRefreshPage= {sendRefreshPage}/>
             </Suspense>}></Route>
           <Route path="/messages" element={
             <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
-              <Chatroom sendTheme={sendTheme}/>
+              <Chatroom />
             </Suspense>}></Route>
           <Route path="/lists" element={
             <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
-              <Lists sendTheme={sendTheme}/>
+              <Lists />
             </Suspense>}></Route>
           <Route path="/communities" element={
             <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
-              <Communities sendTheme={sendTheme} changePage={changePageFunc} sendRefreshPage= {sendRefreshPage}/>
+              <Communities changePage={changePageFunc} sendRefreshPage= {sendRefreshPage}/>
             </Suspense>}></Route>
           <Route path="/twit/:id" element={
             <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
-              <TwitDetail sendTheme={sendTheme} changePage={changePageFunc} sendRefreshPage= {sendRefreshPage}/>
+              <TwitDetail changePage={changePageFunc} sendRefreshPage= {sendRefreshPage}/>
             </Suspense>}></Route>
           <Route path="/lists/:id" element={
             <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
-              <ListsDetail sendTheme={sendTheme} changePage={changePageFunc} sendRefreshPage= {sendRefreshPage}/>
+              <ListsDetail changePage={changePageFunc} sendRefreshPage= {sendRefreshPage}/>
             </Suspense>}></Route>
             <Route path="/communities/:id" element={
             <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
-              <ComDetail sendTheme={sendTheme} changePage={changePageFunc} sendRefreshPage= {sendRefreshPage}/>
+              <ComDetail changePage={changePageFunc} sendRefreshPage= {sendRefreshPage}/>
             </Suspense>}></Route>
             <Route path="/notifications" element={
             <Suspense fallback={<div> {uploading ? <Loading/> : null}  </div>}>
-              <NotificationsPage sendTheme={sendTheme}/>
+              <NotificationsPage />
             </Suspense>}></Route>
         </Routes>
       </Grid>

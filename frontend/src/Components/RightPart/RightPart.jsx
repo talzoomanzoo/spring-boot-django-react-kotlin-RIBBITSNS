@@ -2,7 +2,7 @@ import NightsStayIcon from '@mui/icons-material/NightsStay';
 import NotesIcon from '@mui/icons-material/Notes';
 import SearchIcon from "@mui/icons-material/Search";
 import { Avatar } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { changeTheme } from "../../Store/Theme/Action";
 import SubscriptionModel from "./SubscriptionModel";
@@ -15,7 +15,6 @@ import "./Scrollbar.css";
 import ViewTop from "./ViewTop";
 
 const RightPart = ({changeThemeAll, sendRefreshPage, changePage, sendTheme}) => {
-  const { theme, auth } = useSelector((store) => store);
   const [search, setSearch] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -53,6 +52,8 @@ const RightPart = ({changeThemeAll, sendRefreshPage, changePage, sendTheme}) => 
     navigate(`/twit/${i.id}`);
     dispatch(viewPlus(i.id));
   };
+
+  const { theme, auth } = useSelector((store) => store);
 
   const handleChangeTheme = () => {
     dispatch(changeTheme(theme.currentTheme === "light" ? "dark" : "light"));
