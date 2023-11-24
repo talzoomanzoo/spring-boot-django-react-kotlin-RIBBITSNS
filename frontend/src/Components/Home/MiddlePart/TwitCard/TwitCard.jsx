@@ -572,7 +572,7 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
               </span>
 
               <span className="flex items-center text-gray-500">
-                <LocationOnIcon />
+                {twit.location ? <LocationOnIcon /> : ""}
                 <p className="text-gray-500">{twit.location || address}</p>
               </span>
 
