@@ -62,7 +62,6 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
   const [openEmoji, setOpenEmoji] = useState(false);
   const handleOpenEmoji = () => setOpenEmoji(!openEmoji);
   const handleCloseEmoji = () => setOpenEmoji(false);
-  const [twits, setTwits] = useState([]);
   const dispatch = useDispatch();
   const { theme, auth } = useSelector((store) => store);
   const [isLiked, setIsLiked] = useState(twit.liked);
@@ -104,13 +103,18 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
   const handleCloseAlertModal = () => setOpenAlertModal(false);
   const handleOpenAlertModal = () => setOpenAlertModal(true);
 
-  // const authCheck = (auth) => {
-  //   for (let i = 0; i < twit.retwitUsersId?.length; i++) {
-  //     if (auth.findUser?.id === twit.retwitUsersId) {
-  //       return true;
-  //     }
-  //   }
-  // };
+  const authCheck = (auth) => {
+    for (let i = 0; i < twit.retwitUsersId?.length; i++) {
+      if (auth.findUser?.id === twit.retwitUsersId) {
+        return true;
+      }
+    }
+  };
+
+  const [isRetwit, setIsRetwit] = useState(
+    twit.retwitUsersId?.includes(auth.user.id)
+  );
+
 
   useEffect(() => {
     if (isLocationFormOpen && showLocation) {
@@ -334,10 +338,6 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
     pageNumbers.push(i);
   }
 
-  const [isRetwit, setIsRetwit] = useState(
-    twit.retwitUsersId?.includes(auth.user.id)
-  );
-
   const handleToggleLocationForm = () => {
     setLocationFormOpen((prev) => !prev);
   };
@@ -356,8 +356,8 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
     setLikes(likes + num);
   };
 
-  const handleIncrement = () => {
-    const twitId = twit.id;
+  const handleIncrement = (twitId) => {
+    //const twitId = twit.id;
     dispatch(incrementNotificationCount(twitId));
   };
 
@@ -371,10 +371,12 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
       dispatch(createRetweet(twit.id));
       setRetwit(isRetwit ? retwit - 1 : retwit + 1);
       setIsRetwit(!retwit);
+      setRefreshTwits((prev) => prev + 1);
       changePage();
     } else {
       handleOpenAlertModal();
     }
+    
   };
 
   const handleCloseReplyModel = () => setOpenReplyModel(false);
@@ -440,6 +442,7 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
       setIsEditing(false);
       setLoading(false);
       handleCloseEditClick();
+
     } catch (error) {}
   };
 
@@ -974,6 +977,7 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
                     {twit.totalReplies > 0 && <p>{twit.totalReplies}</p>}
                     {/* twit 객체의 totalReplies 속성 값이 0보다 큰 경우에만 해당 값을 포함하는 <p> 태그로 래핑 시도*/}
                   </div>
+
                   <div
                     className={`${
                       isRetwit ? "text-yellow-500" : "text-gray-600"
@@ -989,26 +993,25 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
                   </div>
                   
                   <div
-                    id = 'element'
-                    className={`${
-                      isLiked ? "text-yellow-500" : "text-gray-600"
-                    } space-x-3 flex items-center `}
+                    className={`space-x-3 flex items-center `}
                   >
-                    {isLiked ? (
+                    {twit.liked ? (
                       <FavoriteIcon
+                      className={`text-yellow-500`}
                         onClick={() => {
                           handleLikeTweet(-1);
                         }}
                       />
                     ) : (
                       <FavoriteBorderIcon
+                        className={`text-gray-600`}
                         onClick={() => {
                           handleLikeTweet(1);
-                          handleIncrement();
+                          handleIncrement(twit.id);
                         }}
                       />
                     )}
-                    {likes > 0 && <p>{likes}</p>}
+                    {likes > 0 && <p>{twit.totalLikes}</p>}
                   </div>
 
                   <div className="space-x-3 flex items-center text-gray-600">

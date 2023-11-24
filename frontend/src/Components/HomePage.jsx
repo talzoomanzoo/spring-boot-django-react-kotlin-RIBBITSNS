@@ -18,9 +18,9 @@ const ComDetail = React.lazy(() => import("./Communities/ComDetail"));
 const NotificationsPage = React.lazy(() => import("./Notifications/NotificationsPage"));
 
 const HomePage = () => {
-  const { theme, list } = useSelector((store) => store);
+  const { theme } = useSelector((store) => store);
   const [uploading, setUploading] = useState(false);
-  const [sendTheme, setSendTheme] = useState(null);
+  const [sendTheme, setSendTheme] = useState(theme);
   const [sendRefreshPage, setSendRefreshPage] = useState(0);
 
   const changeThemeAllFunc = (newTheme) => {
@@ -85,7 +85,8 @@ const HomePage = () => {
         </Routes>
       </Grid>
       <Grid item xs={0} lg={3} className="hidden lg:block">
-        <RightPart changeThemeAll={changeThemeAllFunc} sendRefreshPage={sendRefreshPage} changePage={changePageFunc} sendTheme={sendTheme}/>
+        <RightPart 
+          changeThemeAll={changeThemeAllFunc} sendRefreshPage={sendRefreshPage} changePage={changePageFunc} sendTheme={sendTheme}/>
       </Grid>
     </Grid>
   );

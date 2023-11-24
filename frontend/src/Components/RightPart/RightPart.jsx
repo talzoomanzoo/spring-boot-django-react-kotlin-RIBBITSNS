@@ -14,7 +14,7 @@ import LikeTop from "./LikeTop";
 import "./Scrollbar.css";
 import ViewTop from "./ViewTop";
 
-const RightPart = ({changeThemeAll, sendRefreshPage, changePage, sendTheme}) => {
+const RightPart = ({changeThemeAll, sendRefreshPage, changePage}) => {
   const [search, setSearch] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -54,12 +54,6 @@ const RightPart = ({changeThemeAll, sendRefreshPage, changePage, sendTheme}) => 
   };
 
   const { theme, auth } = useSelector((store) => store);
-
-  const [rightTheme, setRightTheme] = useState(false);
-
-  useEffect(() => {
-    setRightTheme(rightTheme)
-  }, [rightTheme])
 
   const handleChangeTheme = () => {
     dispatch(changeTheme(theme.currentTheme === "light" ? "dark" : "light"));

@@ -8,7 +8,7 @@ import NotificationsCard from "./NotificationsCard/NotificationsCard";
 const NotificationsPage = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const {notification, theme} = useSelector((store) => store);
+    const {notification} = useSelector((store) => store);
     const handleBack = () => {
         navigate(-1);
     };
