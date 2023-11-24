@@ -63,7 +63,7 @@ const ListCard = ({ changeLists, list }) => {
           <section className="inline-block" style={{marginLeft: 10}}>
             <Button
               onClick={handleDelete}
-              sx={{ borderRadius: "20px" }}
+              sx={{ borderRadius: "20px", boxShadow: "0 19px 38px rgba(0,0,0,0.05), 0 15px 12px rgba(0,0,0,0.05)" }}
               variant="outlined"
               className="rounded-full btn btn-primary items-center btn-ghost btn-close"
             >
@@ -75,7 +75,7 @@ const ListCard = ({ changeLists, list }) => {
             <Button
               onClick={handleOpenListsModel}
               //handleClose={handleCloseListsModel}
-              sx={{ borderRadius: "20px" }}
+              sx={{ borderRadius: "20px", boxShadow: "0 19px 38px rgba(0,0,0,0.05), 0 15px 12px rgba(0,0,0,0.05)" }}
               variant="outlined"
               className="rounded-full"
             >
