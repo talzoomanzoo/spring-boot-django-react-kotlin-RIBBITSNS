@@ -20,7 +20,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -57,7 +56,6 @@ public class Twit {
 
     @Column(nullable = false)
     private String content;
- 
     @JsonIgnore
     @OneToMany(cascade = CascadeType.DETACH)
     //mappedBy = "twit", 

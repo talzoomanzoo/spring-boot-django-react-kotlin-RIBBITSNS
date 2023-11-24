@@ -55,15 +55,16 @@ const RightPart = ({changeThemeAll, sendRefreshPage, changePage, sendTheme}) => 
 
   const { theme, auth } = useSelector((store) => store);
 
+  const [rightTheme, setRightTheme] = useState(false);
+
+  useEffect(() => {
+    setRightTheme(rightTheme)
+  }, [rightTheme])
+
   const handleChangeTheme = () => {
     dispatch(changeTheme(theme.currentTheme === "light" ? "dark" : "light"));
     changeThemeAll(theme);
   };
-
-  // const handleSearchUser = (event) => {
-  //   setSearch(event.target.value)
-  //   dispatch(searchUser(event.target.value));
-  // };
 
   const handleSearchAll = (event) => {
     setSearch(event.target.value); // setSearch({search})
