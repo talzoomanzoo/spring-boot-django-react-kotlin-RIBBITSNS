@@ -32,7 +32,7 @@ const Lists = () => {
     return (
         <div id="lists" className="space-y-5">
             <section
-                className={`z-50 flex items-center sticky top-0 bg-opacity-95 ${theme.currentTheme==="dark"?" bg-[#0D0D0D]":"bg-white"}`}
+                className={`z-50 flex items-center sticky top-0 bg-opacity-95`}
             >
                 <div className="z-50 flex items-center sticky top-0 space-x-5">
                     <KeyboardBackspaceIcon

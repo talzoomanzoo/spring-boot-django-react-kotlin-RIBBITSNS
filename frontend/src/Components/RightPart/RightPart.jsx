@@ -14,7 +14,7 @@ import LikeTop from "./LikeTop";
 import "./Scrollbar.css";
 import ViewTop from "./ViewTop";
 
-const RightPart = ({changeThemeAll, sendRefreshPage, changePage}) => {
+const RightPart = ({changeThemeAll, sendRefreshPage, changePage, sendTheme}) => {
   const { theme, auth } = useSelector((store) => store);
   const [search, setSearch] = useState("");
   const dispatch = useDispatch();

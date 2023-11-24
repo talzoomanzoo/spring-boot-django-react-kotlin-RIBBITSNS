@@ -41,11 +41,7 @@ const HomePage = () => {
         item
         xs={12}
         lg={6}
-        className={`px-5 lg:px-9 border 
-        ${
-          theme.currentTheme === "dark" ? "border-gray-800" : ""
-        } 
-        `}
+        className={`px-5 lg:px-9 border`}
       >
         <Routes>
           <Route path="/" element={
@@ -90,7 +86,7 @@ const HomePage = () => {
         </Routes>
       </Grid>
       <Grid item xs={0} lg={3} className="hidden lg:block">
-        <RightPart changeThemeAll={changeThemeAllFunc} sendRefreshPage={sendRefreshPage} changePage={changePageFunc}/>
+        <RightPart changeThemeAll={changeThemeAllFunc} sendRefreshPage={sendRefreshPage} changePage={changePageFunc} sendTheme={sendTheme}/>
       </Grid>
     </Grid>
   );
