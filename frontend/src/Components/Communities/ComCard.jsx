@@ -49,7 +49,7 @@ const ComCard = ({ changeComs, com, changePage }) => {
     const MembersListRef = useRef(null);
 
     const [openMembers, setOpenMembers] = useState(false);
-    const {theme} = useSelector((store) => store);
+    const { theme } = useSelector((store) => store);
 
     const handleDelete = async () => {
         try {
@@ -93,146 +93,154 @@ const ComCard = ({ changeComs, com, changePage }) => {
 
     const showMemberButton = com.followingsc.id === auth.user.id;
 
-    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", com)
+    console.log("comcard.com1", com);
+    console.log("comcard.auth1", auth);
+
+    const authCheck = (com1, auth1) => {
+        for (let i = 0; i < com1.followingsc?.length; i++) {
+            if (auth1.user?.id === com1.followingsc[i].id) {
+                return true;
+            }
+        }
+    };
 
     return (
-    <section className="space-x-5 py-3 rounded-full items-center justify-content">
-        <section className="my-5 space-x-5 items-center justify-content mt-5" style={{ marginTop: 3 }}>
-            <div className="card">
-            {com.privateMode === true ? 
-            com.followingsc.id ? <GroupsIcon className="cursor-pointer" onClick={openMembersModal} style={{marginTop: 3, marginLeft: 10}}/> : <LockIcon fontSize='small'/>
-        : <GroupsIcon className="cursor-pointer" onClick={openMembersModal} style={{marginTop: 3, marginLeft: 10}}/> }
+        <section className="space-x-5 py-3 rounded-full items-center justify-content">
+            <section className="my-5 space-x-5 items-center justify-content mt-5" style={{ marginTop: 3 }}>
+                <div className="card">
+                    {com.privateMode ? (authCheck(com, auth) ? <GroupsIcon className="cursor-pointer" onClick={openMembersModal} style={{ marginTop: 3, marginLeft: 10 }} /> : <LockIcon fontSize='small' />)
+                        : (<GroupsIcon className="cursor-pointer" onClick={openMembersModal} style={{ marginTop: 3, marginLeft: 10 }} />)}
 
-            <Modal
-                open={openMembers}
-                onClose={closeMembersModal}
-            >
-                <Box
-                    sx={style}
-                >
-                    <Button sx={{ maxWidth: "200px", fontSize: "105%", textDecoration: "underline", left: "137px" }}>Members of {com.comName}</Button>
-                    <button style={{ position: "fixed", top: "25px", right: "30px"}} onClick={() => closeMembersModal()}><CloseIcon className={`${theme.currentTheme === "light" ? "text-black" : "text-white"}`} /></button>
-                    <div
-                        ref={MembersListRef}
-                        className={`overflow-y-scroll css-scroll hideScrollbar h-[40vh]`}>
-                        {com.followingsc?.map((item) => (
-                            <div
-                                onClick={() => { navigateToProfile(item.id); closeMembersModal(); }}
-                                className="flex items-center hover:bg-green-700 p-3 cursor-pointer"
-                                key={item.id}>
-                                <Avatar alt={item.fullName} src={item.image} loading="lazy" />
-                                <div className="ml-2">
-                                    <p>{item.fullName}</p>
-                                    <p className="text-sm text-gray-400">
-                                        @
-                                        {item.fullName.split(" ").join("_").toLowerCase()}
-                                    </p>
-                                </div>
-                                {item.id === com.user.id ?
-                                    <Button sx={{ fontSize: "105%", left: "50%", color: "gray" }}>관리자</Button>
-                                    : null}
-                            </div>
-                        ))}
-                    </div>
-                </Box>
-            </Modal>
-
-            {showDeleteButton ? (
-                <>
-                <Button
-                    onClick={handleOpenComModel}
-                    //handleClose={handleCloseListsModel}
-                    sx={{ borderRadius: "20px", marginLeft: "33%" }}
-                    variant="outlined"
-                    className="rounded-full"
-                >
-                    관리
-                </Button>
-
-                <Button
-                    onClick={handleDelete}
-                    //handleClose={handleCloseListsModel}
-                    sx={{ borderRadius: "20px", marginLeft: "2%"}}
-                    variant="outlined"
-                    className="rounded-full"
-                >
-                    삭제
-                </Button>
-                </>
-            ) :
-                (
-                    <Button
-                        onClick={handleOpenComModel3}
-                        //handleClose={handleCloseListsModel}
-                        sx={{ borderRadius: "20px", marginLeft: "45%"}}
-                        variant="outlined"
-                        className="rounded-full"
+                    <Modal
+                        open={openMembers}
+                        onClose={closeMembersModal}
                     >
-                        정보 보기
-                    </Button>
-                )}
+                        <Box
+                            sx={style}
+                        >
+                            <Button sx={{ maxWidth: "200px", fontSize: "105%", textDecoration: "underline", left: "137px" }}>Members of {com.comName}</Button>
+                            <button style={{ position: "fixed", top: "25px", right: "30px" }} onClick={() => closeMembersModal()}><CloseIcon className={`${theme.currentTheme === "light" ? "text-black" : "text-white"}`} /></button>
+                            <div
+                                ref={MembersListRef}
+                                className={`overflow-y-scroll css-scroll hideScrollbar h-[40vh]`}>
+                                {com.followingsc?.map((item) => (
+                                    <div
+                                        onClick={() => { navigateToProfile(item.id); closeMembersModal(); }}
+                                        className="flex items-center hover:bg-green-700 p-3 cursor-pointer"
+                                        key={item.id}>
+                                        <Avatar alt={item.fullName} src={item.image} loading="lazy" />
+                                        <div className="ml-2">
+                                            <p>{item.fullName}</p>
+                                            <p className="text-sm text-gray-400">
+                                                @
+                                                {item.fullName.split(" ").join("_").toLowerCase()}
+                                            </p>
+                                        </div>
+                                        {item.id === com.user.id ?
+                                            <Button sx={{ fontSize: "105%", left: "50%", color: "gray" }}>관리자</Button>
+                                            : null}
+                                    </div>
+                                ))}
+                            </div>
+                        </Box>
+                    </Modal>
+
+                    {showDeleteButton ? (
+                        <>
+                            <Button
+                                onClick={handleOpenComModel}
+                                //handleClose={handleCloseListsModel}
+                                sx={{ borderRadius: "20px", marginLeft: "33%" }}
+                                variant="outlined"
+                                className="rounded-full"
+                            >
+                                관리
+                            </Button>
+
+                            <Button
+                                onClick={handleDelete}
+                                //handleClose={handleCloseListsModel}
+                                sx={{ borderRadius: "20px", marginLeft: "2%" }}
+                                variant="outlined"
+                                className="rounded-full"
+                            >
+                                삭제
+                            </Button>
+                        </>
+                    ) :
+                        (
+                            <Button
+                                onClick={handleOpenComModel3}
+                                //handleClose={handleCloseListsModel}
+                                sx={{ borderRadius: "20px", marginLeft: "45%" }}
+                                variant="outlined"
+                                className="rounded-full"
+                            >
+                                정보 보기
+                            </Button>
+                        )}
 
 
-            <section>
-                <ComModel2
-                    com={com}
-                    open={openComModel}
-                    handleClose={handleCloseComModel}
-                    changeComs={changeComs}
-                />
+                    <section>
+                        <ComModel2
+                            com={com}
+                            open={openComModel}
+                            handleClose={handleCloseComModel}
+                            changeComs={changeComs}
+                        />
+                    </section>
+
+                    <section>
+                        <ComModel3
+                            com={com}
+                            open={openComModel3}
+                            handleClose={handleCloseComModel3}
+                            changeComs={changeComs}
+                        />
+                    </section>
+
+                    <section>
+                        <Modal
+                            open={openAlertModal}
+                            handleClose={handleCloseAlertModal}
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                            }}
+                        >
+                            <div className={`withdrawal-modal outline-none ${theme.currentTheme === "light" ? "bg-gray-200" : "bg-stone-950"}`} style={{ padding: "20px", borderRadius: "8px" }}>
+                                <p id="description">
+                                    해당 커뮤니티는 비공개입니다.
+                                </p>
+                                <Button style={{ marginLeft: "165px" }} onClick={handleCloseAlertModal}>확인</Button>
+                            </div>
+                        </Modal>
+                    </section>
+
+
+                    <hr
+                        style={{
+                            marginTop: 10,
+                            marginBottom: 1,
+                            background: "hsla(0, 0%, 80%, 1)",
+                            color: 'grey',
+                            borderColor: "hsl(0, 0%, 80%)",
+                            height: '1px',
+                        }}
+                    />
+                    <section
+                        style={{
+                            height: "100px",
+                            textAlign: "center"
+                        }}
+                        className="mt-5 items-center justify-content cursor-pointer"
+                        onClick={() => handleNavigateToComDetail(com)}>
+                        <div className="text-xl items-center justify-content" >{com.comName}</div>
+                    </section>
+                </div>
             </section>
-
-            <section>
-                <ComModel3
-                    com={com}
-                    open={openComModel3}
-                    handleClose={handleCloseComModel3}
-                    changeComs={changeComs}
-                />
-            </section>
-
-            <section> 
-                <Modal
-                    open={openAlertModal}
-                    handleClose={handleCloseAlertModal}
-                    style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}
-                >
-                    <div className={`withdrawal-modal outline-none ${theme.currentTheme === "light" ? "bg-gray-200" : "bg-stone-950"}`}  style={{padding: "20px", borderRadius: "8px" }}>
-                        <p id="description">
-                            해당 커뮤니티는 비공개입니다. 
-                        </p>
-                        <Button style={{marginLeft: "165px"}} onClick={handleCloseAlertModal}>확인</Button>
-                    </div>
-                </Modal>
-            </section>
-
-
-            <hr
-                style={{
-                    marginTop: 10,
-                    marginBottom: 1,
-                    background: "hsla(0, 0%, 80%, 1)",
-                    color: 'grey',
-                    borderColor: "hsl(0, 0%, 80%)",
-                    height: '1px',
-                }}
-            />
-            <section
-                style={{
-                    height: "100px",
-                    textAlign: "center"
-                }}
-                className="mt-5 items-center justify-content cursor-pointer"
-                onClick={() => handleNavigateToComDetail(com)}>
-                <div className="text-xl items-center justify-content" >{com.comName}</div>
-            </section>
-            </div>
-        </section>
-    </section >
+        </section >
 
     );
 };

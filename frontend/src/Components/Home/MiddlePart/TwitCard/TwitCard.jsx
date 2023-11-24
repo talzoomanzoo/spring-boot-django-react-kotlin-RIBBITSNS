@@ -54,7 +54,6 @@ const validationSchema = Yup.object().shape({
 });
 
 const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
-  const { com } = useSelector((store) => store);
   const [selectedImage, setSelectedImage] = useState(twit.image);
   const [selectedVideo, setSelectedVideo] = useState(twit.video);
   const [selectedLocation, setSelectedLocation] = useState(twit.location);
@@ -78,6 +77,9 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
   const [datetime, setDatetimes] = useState(twit.createdAt);
   const [edittime, setEdittimes] = useState(twit.editedAt);
   const [retwit, setRetwit] = useState(twit.totalRetweets);
+  const [isRetwit, setIsRetwit] = useState(
+    twit.retwitUsersId?.includes(auth.user.id)
+  );
   const [openReplyModel, setOpenReplyModel] = useState();
   const location = useLocation();
   const navigate = useNavigate();
@@ -103,18 +105,6 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
   const handleCloseAlertModal = () => setOpenAlertModal(false);
   const handleOpenAlertModal = () => setOpenAlertModal(true);
 
-  const authCheck = (auth) => {
-    for (let i = 0; i < twit.retwitUsersId?.length; i++) {
-      if (auth.findUser?.id === twit.retwitUsersId) {
-        return true;
-      }
-    }
-  };
-
-  const [isRetwit, setIsRetwit] = useState(
-    twit.retwitUsersId?.includes(auth.user.id)
-  );
-
 
   useEffect(() => {
     if (isLocationFormOpen && showLocation) {
@@ -138,7 +128,7 @@ const TwitCard = ({ twit, changePage, sendRefreshPage }) => {
         }
       }
     }
-  }, [isLocationFormOpen, showLocation, sendRefreshPage]);
+  }, [isLocationFormOpen, showLocation, sendRefreshPage, refreshTwits]);
 
   const formikLocation = useFormik({
     initialValues: {
