@@ -120,12 +120,6 @@ const Chat = React.memo(() => {
 
   const scrollRef = useRef();
 
-  const scrollToBottom = () => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  };
-
   useEffect(() => {
     scrollToBottom();
   }, [message]);
