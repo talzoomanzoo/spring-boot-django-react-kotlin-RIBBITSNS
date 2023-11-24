@@ -91,11 +91,17 @@ const ComCard = ({ changeComs, com, changePage }) => {
 
     const showDeleteButton = com.user.id === auth.user.id;
 
+    const showMemberButton = com.followingsc.id === auth.user.id;
+
+    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", com)
+
     return (
     <section className="space-x-5 py-3 rounded-full items-center justify-content">
         <section className="my-5 space-x-5 items-center justify-content mt-5" style={{ marginTop: 3 }}>
             <div className="card">
-            <GroupsIcon className="cursor-pointer" onClick={openMembersModal} style={{marginTop: 3, marginLeft: 10}}/>
+            {com.privateMode === true ? 
+            com.followingsc.id ? <GroupsIcon className="cursor-pointer" onClick={openMembersModal} style={{marginTop: 3, marginLeft: 10}}/> : <LockIcon fontSize='small'/>
+        : <GroupsIcon className="cursor-pointer" onClick={openMembersModal} style={{marginTop: 3, marginLeft: 10}}/> }
 
             <Modal
                 open={openMembers}
@@ -222,7 +228,7 @@ const ComCard = ({ changeComs, com, changePage }) => {
                 }}
                 className="mt-5 items-center justify-content cursor-pointer"
                 onClick={() => handleNavigateToComDetail(com)}>
-                <div className="text-xl items-center justify-content" >{com.comName}{com.privateMode ? <LockIcon fontSize='small'/> : "" }</div>
+                <div className="text-xl items-center justify-content" >{com.comName}</div>
             </section>
             </div>
         </section>
