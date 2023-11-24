@@ -5,6 +5,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import com.hippoddung.ribbit.network.bodys.RibbitPost
@@ -16,6 +17,7 @@ import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun SearchedGrid(
+    isExpanded: MutableState<Boolean>,
     sortedUsersSearch: List<User>,
     sortedPostsSearch: List<RibbitPost>,
     getCardViewModel: GetCardViewModel,
@@ -31,6 +33,7 @@ fun SearchedGrid(
         Column(modifier = modifier) {
             sortedUsersSearch.forEach { user ->
                 SearchedUserCard(
+                    isExpanded = isExpanded,
                     user = user,
                     getCardViewModel = getCardViewModel,
                     navController = navController,
@@ -43,6 +46,7 @@ fun SearchedGrid(
         Column(modifier = modifier) {
             sortedPostsSearch.forEach { post ->
                 SearchedPostCard(
+                    isExpanded = isExpanded,
                     post = post,
                     getCardViewModel = getCardViewModel,
                     navController = navController,

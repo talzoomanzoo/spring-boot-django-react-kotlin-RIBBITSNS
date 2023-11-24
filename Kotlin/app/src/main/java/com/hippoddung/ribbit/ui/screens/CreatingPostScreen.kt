@@ -180,10 +180,12 @@ fun InputPostScreen(
                     contentDescription = "Video Uri",
                     modifier = modifier.padding(8.dp)
                 )
-                Text(
-                    text = videoFile!!.name,
-                    modifier = modifier.padding(8.dp)
-                )
+                videoFile?.let {
+                    Text(
+                        text = it.name,
+                        modifier = modifier.padding(8.dp)
+                    )
+                }
             }
         }
         Row(modifier = modifier) {

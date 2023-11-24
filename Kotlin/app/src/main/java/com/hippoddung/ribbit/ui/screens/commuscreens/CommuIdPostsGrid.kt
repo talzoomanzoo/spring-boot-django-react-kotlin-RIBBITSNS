@@ -59,6 +59,7 @@ fun CommuIdPostsGrid(
         LazyColumn(modifier = modifier) {
             itemsIndexed(items = sortedRibbitPost) { index, post ->
                 RibbitCard(
+                    index = index,
                     post = post,
                     getCardViewModel = getCardViewModel,
                     postingViewModel = postingViewModel,

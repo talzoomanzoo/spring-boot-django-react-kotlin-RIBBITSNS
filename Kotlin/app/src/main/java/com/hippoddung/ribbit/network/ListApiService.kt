@@ -6,6 +6,7 @@ import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface ListApiService {
@@ -28,8 +29,8 @@ interface ListApiService {
         @Path("listId") listId : Int
     ): DeleteResponse
 
-    @POST("api/lists/update")
-    suspend fun postEditList(
+    @PUT("api/lists/update")
+    suspend fun putEditList(
         @Body listItem: RibbitListItem
     ): RibbitListItem
 

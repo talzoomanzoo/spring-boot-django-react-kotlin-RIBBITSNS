@@ -229,7 +229,7 @@ fun EditCommuScreen(
             }
 
             val image = if (privateMode) Icons.Filled.Lock else Icons.Filled.LockOpen
-            val description = if (privateMode) "Locked" else "Unlocked"
+            val description = if (privateMode) "Private" else "Public"
 
             Button(
                 onClick = { privateMode = !privateMode },
@@ -276,7 +276,7 @@ fun EditCommuScreen(
                 modifier = modifier.padding(14.dp)
             ) {
                 Text(
-                    text = stringResource(R.string.edit_commu),
+                    text = stringResource(R.string.save),
                     modifier = modifier
                 )
             }

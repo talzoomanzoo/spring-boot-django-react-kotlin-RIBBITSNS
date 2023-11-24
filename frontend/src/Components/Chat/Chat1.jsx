@@ -13,7 +13,7 @@ import {
   TextField,
 } from "@mui/material";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
@@ -111,6 +111,18 @@ const Chat = () => {
     navigate(-1);
   };
   const [modalState, setModalState] = useState(false);
+
+  const scrollRef = useRef();
+
+  const scrollToBottom = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [message]);
 
   function OnOffModal() {
     if (modalState === true) {
@@ -416,7 +428,7 @@ const Chat = () => {
       {/* <button onClick={createRoom}>Create Chat Room</button> */}
       {error && <div style={{ color: "red" }}>{error}</div>}
       <div className="space-y-3"
-          style={{ marginTop: 20}}>
+        style={{ marginTop: 20 }}>
         {chatRooms.length > 0 ? ( //채팅방 목록 출력
           chatRooms.map((room) => (
             <div
@@ -436,7 +448,7 @@ const Chat = () => {
                   //채팅방 입장
                   style={{ cursor: "pointer", fontSize: "larger" }}
                 >
-                  <ChatIcon style={{marginLeft: 10,marginRight: 10}}/>
+                  <ChatIcon style={{ marginLeft: 10, marginRight: 10 }} />
                   <span style={{ marginLeft: "5px", }}>{room.name}</span>
                 </button>
               </div>
@@ -493,9 +505,9 @@ const Chat = () => {
               className={`py-2 rounded-full outline-none text-gray-500 pl-12 ${theme.currentTheme === "light" ? "bg-stone-300" : "bg-[#080808]"
                 }`}
             />
-                      <span className="absolute top-16 left-4 pl-3 pt-3">
-            <SearchIcon className="text-gray-400" />
-          </span>
+            <span className="absolute top-16 left-4 pl-3 pt-3">
+              <SearchIcon className="text-gray-400" />
+            </span>
             <IconButton
               onClick={openUserModal} // Toggle showUserList
               aria-label="list"
@@ -622,7 +634,8 @@ const Chat = () => {
             }}
           />
           <div
-            className={`customeScrollbar overflow-y-scroll css-scroll h-[40vh]`}
+            className={`customeScrollbar overflow-y-scroll css-scroll h-[45vh]`}
+            ref={scrollRef}
           >
             {chatHistory.length > 0 ? ( //채팅 내역
               chatHistory.map((chat) => (

@@ -37,11 +37,7 @@ import com.hippoddung.ribbit.ui.viewmodel.UserViewModel
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun ManageCommuScreen(
-    getCardViewModel: GetCardViewModel,
-    tokenViewModel: TokenViewModel,
-    authViewModel: AuthViewModel,
     userViewModel: UserViewModel,
-    listViewModel: ListViewModel,
     commuViewModel: CommuViewModel,
     navController: NavHostController,
     modifier: Modifier
@@ -52,18 +48,6 @@ fun ManageCommuScreen(
     }
     Scaffold(
         modifier = modifier,
-        topBar = {
-            RibbitTopAppBar(
-                getCardViewModel = getCardViewModel,
-                tokenViewModel = tokenViewModel,
-                authViewModel = authViewModel,
-                userViewModel = userViewModel,
-                listViewModel = listViewModel,
-                commuViewModel = commuViewModel,
-                navController = navController,
-                modifier = modifier
-            )
-        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { commuViewModel.searchingUserClickedUiState = true },
@@ -82,7 +66,6 @@ fun ManageCommuScreen(
         Surface(
             modifier = modifier
                 .fillMaxSize()
-                .padding(it)
         ) {
             Box(modifier = modifier) {
                 ManageCommuGrid(

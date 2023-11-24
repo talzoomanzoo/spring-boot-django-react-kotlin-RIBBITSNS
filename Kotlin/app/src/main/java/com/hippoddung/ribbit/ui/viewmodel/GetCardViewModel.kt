@@ -545,7 +545,7 @@ class GetCardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으
     fun getAllCommuPosts() {  // 모든 Post 를 불러오는 메소드
         viewModelScope.launch(Dispatchers.IO) {
             getAllCommuPostsUiState = GetAllCommuPostsUiState.Loading
-            Log.d("HippoLog, GetCardViewModel", "getAllCommuPosts, $homeUiState")
+            Log.d("HippoLog, GetCardViewModel", "getAllCommuPosts, $getAllCommuPostsUiState")
             getAllCommuPostsUiState = try {
                 GetAllCommuPostsUiState.Success(ribbitRepository.getAllCommuPosts())
             } catch (e: IOException) {
@@ -562,7 +562,7 @@ class GetCardViewModel @Inject constructor(    // 원래 HomeViewModel 이었으
                     GetAllCommuPostsUiState.Error(e.message.toString())
                 }
             }
-            Log.d("HippoLog, GetCardViewModel", "getAllCommuPosts, $homeUiState")
+            Log.d("HippoLog, GetCardViewModel", "getAllCommuPosts, $getAllCommuPostsUiState")
         }
     }
 
