@@ -24,14 +24,15 @@ import CloseIcon from "@mui/icons-material/Close";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import ProgressBar from "@ramonak/react-progress-bar";
 import Linkify from "react-linkify";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "../RightPart/Scrollbar.css";
 import Loading from "./Loading/Loading";
-
 
 const Maplocation = React.lazy(() => import("./Maplocation"));
 const ProfileModel = React.lazy(() => import("./ProfileModel"));
 
-const Profile = ({sendRefreshPage, changePage}) => {
+const Profile = ({ sendRefreshPage, changePage }) => {
   const style = {
     position: "absolute",
     top: "50%",
@@ -61,6 +62,23 @@ const Profile = ({sendRefreshPage, changePage}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isLobitTab, setIsLobitTab] = useState(true);
+
+  useEffect(() => {
+    const messageEventListener = (event) => {
+      const message = event.data;
+
+      if (message.type === "navigate") {
+        // 메시지가 navigate 타입일 때만 경로 변경
+        navigate(message.path);
+      }
+    };
+
+    window.addEventListener("message", messageEventListener);
+
+    return () => {
+      window.removeEventListener("message", messageEventListener);
+    };
+  }, [navigate]);
 
   const handleToggleLocationForm = () => {
     setLocationFormOpen((prev) => !prev);
@@ -184,21 +202,18 @@ const Profile = ({sendRefreshPage, changePage}) => {
     if (isLobitTab) {
       const totalEthicRateMAXValue = twit.twits.reduce((sum, tweet) => {
         return sum + (tweet.ethiclabel === 4 ? 0 : tweet.ethicrateMAX || 0);
-      },0);
+      }, 0);
 
-    // Calculate average ethicrateMAX
-    const averageEthicRateMAXValue =
-    twit.twits.length > 0
-      ? totalEthicRateMAXValue / twit.twits.length
-      : 0;
+      // Calculate average ethicrateMAX
+      const averageEthicRateMAXValue =
+        twit.twits.length > 0 ? totalEthicRateMAXValue / twit.twits.length : 0;
 
-    // 정수로 변환
-    const roundedAverageEthicRateMAX = Math.floor(averageEthicRateMAXValue);
+      // 정수로 변환
+      const roundedAverageEthicRateMAX = Math.floor(averageEthicRateMAXValue);
 
-    // 상태 업데이트
-    setTotalEthicRateMAX(totalEthicRateMAXValue);
-    setAverageEthicRateMAX(roundedAverageEthicRateMAX);
-    
+      // 상태 업데이트
+      setTotalEthicRateMAX(totalEthicRateMAXValue);
+      setAverageEthicRateMAX(roundedAverageEthicRateMAX);
     }
     // ... (다른 코드)
   }, [twit.twits, auth.user, sendRefreshPage]);
@@ -243,7 +258,7 @@ const Profile = ({sendRefreshPage, changePage}) => {
           {auth.findUser?.req_user ? (
             <Button
               onClick={handleOpenProfileModel}
-              sx={{ borderRadius: "20px", fontFamily: 'ChosunGu' }}
+              sx={{ borderRadius: "20px", fontFamily: "ChosunGu" }}
               variant="outlined"
             >
               프로필 변경
@@ -260,18 +275,18 @@ const Profile = ({sendRefreshPage, changePage}) => {
           )}
         </div>
         <p className="flex items-center text-gray-500">
-        <Tooltip
-              title="게시글의 윤리수치를 분석해 그래프로 보여줍니다"
-              open={tooltipOpen}
-              onClose={() => setTooltipOpen(false)}
-              arrow
-            >
-              <InfoOutlinedIcon
-                fontSize="small"
-                style={{ cursor: "pointer" }}
-                onClick={() => setTooltipOpen(!tooltipOpen)}
-              />
-            </Tooltip>
+          <Tooltip
+            title="게시글의 윤리수치를 분석해 그래프로 보여줍니다"
+            open={tooltipOpen}
+            onClose={() => setTooltipOpen(false)}
+            arrow
+          >
+            <InfoOutlinedIcon
+              fontSize="small"
+              style={{ cursor: "pointer" }}
+              onClick={() => setTooltipOpen(!tooltipOpen)}
+            />
+          </Tooltip>
           {`${
             averageEthicRateMAX < 25
               ? "😄"
@@ -313,27 +328,23 @@ const Profile = ({sendRefreshPage, changePage}) => {
               {auth.findUser?.email?.toLowerCase()}
             </h1>
             <h1 className="text-gray-500">
-            <p className="mb-2 p-0 ">
-                    <Linkify
-                      componentDecorator={(
-                        decoratedHref,
-                        decoratedText,
-                        key
-                      ) => (
-                        <a
-                          key={key}
-                          href={decoratedHref}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{ color: "blue", textDecoration: "underline" }}
-                        >
-                          {decoratedText}
-                        </a>
-                      )}
+              <p className="mb-2 p-0 ">
+                <Linkify
+                  componentDecorator={(decoratedHref, decoratedText, key) => (
+                    <a
+                      key={key}
+                      href={decoratedHref}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: "blue", textDecoration: "underline" }}
                     >
-                      {auth.findUser?.website?.toLowerCase()}
-                    </Linkify>
-                  </p>
+                      {decoratedText}
+                    </a>
+                  )}
+                >
+                  {auth.findUser?.website?.toLowerCase()}
+                </Linkify>
+              </p>
             </h1>
           </div>
           <div className="mt-2 space-y-3">
@@ -389,7 +400,10 @@ const Profile = ({sendRefreshPage, changePage}) => {
             </div>
             <div className="flex items-center space-x-5">
               <div className="flex items-center space-x-1 font-semibold">
-                <span onClick={openFollowingsModal} className="text-gray-500 cursor-pointer">
+                <span
+                  onClick={openFollowingsModal}
+                  className="text-gray-500 cursor-pointer"
+                >
                   {auth.findUser?.followings?.length} followings
                 </span>
                 <Modal open={openFollowings} onClose={closeFollowingsModal}>
@@ -462,7 +476,10 @@ const Profile = ({sendRefreshPage, changePage}) => {
                 </Modal>
               </div>
               <div className="flex items-center space-x-1 font-semibold">
-                <span onClick={openFollowersModal} className="text-gray-500 cursor-pointer">
+                <span
+                  onClick={openFollowersModal}
+                  className="text-gray-500 cursor-pointer"
+                >
                   {auth.findUser?.followers?.length} followers
                 </span>
                 <Modal open={openFollowers} onClose={closeFollowersModal}>
@@ -590,7 +607,7 @@ const Profile = ({sendRefreshPage, changePage}) => {
             <TabPanel value="4">
               {twit.likedTwits?.map((item) => (
                 <div>
-                <TwitCard twit={item} key={item.id} changePage={changePage}/>
+                  <TwitCard twit={item} key={item.id} changePage={changePage} />
                 </div>
               ))}
             </TabPanel>
@@ -605,21 +622,17 @@ const Profile = ({sendRefreshPage, changePage}) => {
           />
         </Suspense>
       </section>
-      <section>
-        {/* <Backdrop
-          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={twit.loading}
-        >
-          <CircularProgress color="inherit" />
-        </Backdrop> */}
-      </section>
-      {/* <section>
-        <SnackbarComponent
-          handleClose={handleCloseSnackBar}
-          open={openSnackBar}
-          message={"user updated successfully"}
-        />
-      </section> */}
+      <ToastContainer
+        position="bottom-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </div>
   );
 };

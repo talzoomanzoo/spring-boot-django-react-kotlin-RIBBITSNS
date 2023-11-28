@@ -1,10 +1,11 @@
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
-import { Divider } from '@mui/material';
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
-import { findTwitsById } from '../../../Store/Tweet/Action';
-import TwitCard from './TwitCard/TwitCard';
+import { Divider } from "@mui/material";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import { findTwitsById } from "../../../Store/Tweet/Action";
+import TwitCard from "./TwitCard/TwitCard";
 
 const TwitDetail = ({changePage, sendRefreshPage}) => {
     const param=useParams();
@@ -21,6 +22,25 @@ const TwitDetail = ({changePage, sendRefreshPage}) => {
         dispatch(findTwitsById(param.id))
     },[param.id, sendRefreshPage])
 
+  console.log("twitdetail twit check", twit);
+
+  useEffect(() => {
+    const messageEventListener = (event) => {
+      const message = event.data;
+
+      if (message.type === "navigate") {
+        // 메시지가 navigate 타입일 때만 경로 변경
+        navigate(message.path);
+      }
+    };
+
+    window.addEventListener("message", messageEventListener);
+
+    return () => {
+      window.removeEventListener("message", messageEventListener);
+    };
+  }, [navigate]);
+
   return (
     <div>
         <section
@@ -30,20 +50,36 @@ const TwitDetail = ({changePage, sendRefreshPage}) => {
           className="cursor-pointer"
           onClick={handleBack}
         />
-        <h1 className="py-5 text-xl font-bold opacity-90 ml-5 ${}">
-          {"리빗"}
-        </h1>
+        <h1 className="py-5 text-xl font-bold opacity-90 ml-5 ${}">{"리빗"}</h1>
       </section>
-       {twit.twit && <TwitCard twit={twit.twit} changePage={changePage}/>}
-       {/* twit.twit가 참이라면 TwitCard 렌더링 됨 */}
-       <Divider sx={{margin:"2rem 0rem"}}/>
+      {twit.twit && <TwitCard twit={twit.twit} changePage={changePage} />}
+      {/* twit.twit가 참이라면 TwitCard 렌더링 됨 */}
+      <Divider sx={{ margin: "2rem 0rem" }} />
 
-       <div>
-        {twit.twit?.replyTwits.slice().reverse().map((item)=><TwitCard twit={item} key={item.id} changePage={changePage}/>)}
+      <div>
+        {twit.twit?.replyTwits
+          .slice()
+          .reverse()
+          .map((item) => (
+            <TwitCard twit={item} key={item.id} changePage={changePage} />
+          ))}
         {/* twit.twit notnull 일때 replyTwits 역순 배열 */}
-       </div>
+      </div>
+
+      <ToastContainer
+        position="bottom-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
+      
     </div>
-  )
-}
+  );
+};
 
 export default TwitDetail;
