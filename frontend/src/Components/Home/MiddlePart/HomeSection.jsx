@@ -9,6 +9,9 @@ import EmojiPicker from "emoji-picker-react";
 import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import * as Yup from "yup";
 import { API_BASE_URL, api } from "../../../Config/apiConfig";
 import { getAllTweets } from "../../../Store/Tweet/Action";
@@ -68,6 +71,25 @@ const HomeSection = ({ sendRefreshPage, changePage }) => {
   const [currentMarkers, setCurrentMarkers] = useState([]);
   const [hoveredMarkerIndex, setHoveredMarkerIndex] = useState(null);
   const [showLocation, setShowLocation] = useState(true);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const messageEventListener = (event) => {
+      const message = event.data;
+
+      if (message.type === "navigate") {
+        // 메시지가 navigate 타입일 때만 경로 변경
+        navigate(message.path);
+      }
+    };
+
+    window.addEventListener("message", messageEventListener);
+
+    return () => {
+      window.removeEventListener("message", messageEventListener);
+    };
+  }, [navigate]);
 
   useEffect(() => {
     if (isLocationFormOpen && showLocation) {
@@ -669,6 +691,17 @@ const HomeSection = ({ sendRefreshPage, changePage }) => {
       </section>
       <section>{uploadingImage ? <Loading /> : null}</section>
       <ScrollToTop />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </div>
   );
 };

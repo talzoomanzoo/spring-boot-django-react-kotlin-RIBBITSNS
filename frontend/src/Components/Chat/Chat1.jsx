@@ -14,12 +14,7 @@ import {
   TextField,
 } from "@mui/material";
 import axios from "axios";
-import React, {
-  useCallback,
-  useEffect,
-  useRef,
-  useState
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
@@ -90,7 +85,6 @@ const Chat = React.memo(() => {
 
   const [chatHistory, setChatHistory] = useState([]);
   const [message, setMessage] = useState("");
-  const [sender, setSender] = useState("");
   const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const [stompClient, setStompClient] = useState(null);
@@ -175,13 +169,13 @@ const Chat = React.memo(() => {
 
   const enterChatRoom = (roomId, roomname) => {
     const chatWindow = document.getElementById("chat-window");
-
+  
     if (chatWindow) {
       chatWindow.addEventListener("DOMNodeInserted", () => {
         chatWindow.scrollTop = chatWindow.scrollHeight;
       });
     }
-
+  
     axios
       .post("http://localhost:8080/getchat", roomId, {
         headers: {
@@ -194,12 +188,18 @@ const Chat = React.memo(() => {
         }
       })
       .catch((error) => {});
-
-    setSelectedRoom(roomname); //해당 채팅방 이름
+  
+    setSelectedRoom(roomname); // Set the selectedRoom to the room name
     setSelectedRoomId(roomId); //해당 채팅방 id
     setModalIsOpen(true); //모달 열어둠
+  
+    // Use navigate to the correct URL
+    navigate(`/messages`); // Update the path as needed
+  
+    // Return the room details here
+    return { roomId, roomName: roomname };
   };
-
+  
   const openEditModal = (roomId, roomname) => {
     setSelectedEditRoomId(roomId); //해당 채팅방 id
     setNewRoomName(roomname); //기존 채팅방 이름이자, 새롭게 입력될 채팅방 이름
@@ -225,15 +225,25 @@ const Chat = React.memo(() => {
     const socket = new SockJS("http://localhost:8080/ws");
     const stompClient = Stomp.over(socket);
 
-    const onMessageReceived = (message) => { 
+    const onMessageReceived = (message) => {
       const chatMessage = JSON.parse(message.body);
       console.log("chatMessage", chatMessage);
+
       if (chatMessage.roomId === selectedRoomId) {
         if (auth.user?.email.split(" ")[0] !== chatMessage.email) {
-          toast.info(`${chatMessage.sender}: ${chatMessage.message}`);
+          const notificationMessage = `${chatMessage.sender}: ${chatMessage.message}`;
+
+          toast.info(notificationMessage, {
+            onClick: () =>
+              handleNotificationClick(chatMessage.roomId, chatMessage.roomName),
+          });
         }
       }
     };
+
+    const handleNotificationClick = (roomId) => {
+      enterChatRoom(roomId, chatRooms.find(room => room.roomId === roomId)?.name || "");
+    };       
 
     const connectCallback = () => {
       setStompClient(stompClient);
@@ -255,7 +265,7 @@ const Chat = React.memo(() => {
     setTimeout(() => {
       scrollToBottom();
     }, 0);
-  
+
     if (stompClient) {
       const chatMessage = {
         type: "TALK",
@@ -264,15 +274,13 @@ const Chat = React.memo(() => {
         email: auth.user?.email.split(" ")[0],
         message: message,
       };
-  
+
       stompClient.send(
         `/app/savechat/${selectedRoom}`,
         {},
         JSON.stringify(chatMessage)
       );
-      
-      // addChatMessage(chatMessage); // 메시지를 받아서 채팅 히스토리에 추가하는 함수 호출
-  
+
       setMessage("");
     } else {
       console.error("WebSocket 연결이 설정되지 않았습니다.");
@@ -408,13 +416,6 @@ const Chat = React.memo(() => {
     }
   };
 
-  // const scrollToBottom = () => {
-  //   const chatContainer = chatContainerRef.current;
-  //   if (chatContainer) {
-  //     chatContainer.scrollTop = chatContainer.scrollHeight;
-  //   }
-  // };
-
   useEffect(() => {
     scrollToBottom();
   }, [chatHistory]); // Assuming chatHistory is the state that contains the chat messages
@@ -422,10 +423,6 @@ const Chat = React.memo(() => {
   useEffect(() => {
     scrollToBottom();
   }, [chatHistory.length]); // Assuming chatHistory is the state that contains the chat messages
-
-  // useLayoutEffect(() => {
-  //   scrollToBottom();
-  // }, [chatHistory]);
 
   useEffect(() => {
     const chatContainer = document.getElementById("chat-container");
@@ -450,20 +447,6 @@ const Chat = React.memo(() => {
         chatContainerRef.current.scrollHeight;
     }
   }, [chatHistory]);
-
-  // const addChatMessage = (chatMessage) => {
-  //   const isDuplicate = chatHistory.some((message) => message.id === chatMessage.id);
-  
-  //   if (!isDuplicate) {
-  //     setChatHistory((prevChatHistory) => [...prevChatHistory, chatMessage]);
-  
-  //     const lastChatMessage = document.getElementById(`chat-message-${chatMessage.id}`);
-  //     if (lastChatMessage) {
-  //       lastChatMessage.scrollIntoView({ behavior: "auto" });
-  //     }
-  //   }
-  // };
-  
 
   return (
     <div>
@@ -758,7 +741,6 @@ const Chat = React.memo(() => {
                           >
                             {chat.message}
                           </div>
-                          {/* {chat.message} */}
                         </p>
                       ) : (
                         <div
@@ -812,7 +794,6 @@ const Chat = React.memo(() => {
                               >
                                 {chat.message}
                               </div>
-                              {/* {chat.message} */}
                             </p>
                           </div>
                         </div>
@@ -860,17 +841,6 @@ const Chat = React.memo(() => {
                 style={{ cursor: "pointer" }}
               />
             </div>
-            <ToastContainer
-              position="top-right"
-              autoClose={3000}
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-            />
           </div>
         </Box>
       </Modal>
@@ -896,6 +866,18 @@ const Chat = React.memo(() => {
           </Button>
         </Box>
       </Modal>
+
+      <ToastContainer
+        position="bottom-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </div>
   );
 });

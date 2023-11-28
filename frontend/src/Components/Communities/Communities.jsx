@@ -3,18 +3,19 @@ import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Navigation, Pagination } from 'swiper';
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
-import 'swiper/css/scrollbar';
-import { Swiper, SwiperSlide } from 'swiper/react';
+import { ToastContainer } from "react-toastify";
+import { Navigation, Pagination } from "swiper";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import "swiper/css/scrollbar";
+import { Swiper, SwiperSlide } from "swiper/react";
 import { getAllComs } from "../../Store/Community/Action";
 import ComBottom from "./ComBottom";
 import ComCard from "./ComCard";
 import ComModel from "./ComModel";
 
-const Communities = ({changePage, sendRefreshPage}) => {
+const Communities = ({ changePage, sendRefreshPage }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { com, theme } = useSelector((store) => store);
@@ -28,11 +29,28 @@ const Communities = ({changePage, sendRefreshPage}) => {
 
   const changeComs = () => {
     setRefreshComs((prev) => prev + 1);
-}
+  };
+
+  useEffect(() => {
+    const messageEventListener = (event) => {
+      const message = event.data;
+
+      if (message.type === "navigate") {
+        // 메시지가 navigate 타입일 때만 경로 변경
+        navigate(message.path);
+      }
+    };
+
+    window.addEventListener("message", messageEventListener);
+
+    return () => {
+      window.removeEventListener("message", messageEventListener);
+    };
+  }, [navigate]);
 
   useEffect(() => {
     dispatch(getAllComs());
-    }, [refreshComs, sendRefreshPage]);
+  }, [refreshComs, sendRefreshPage]);
 
   console.log("comcheck", com);
 
@@ -80,9 +98,12 @@ const Communities = ({changePage, sendRefreshPage}) => {
           >
             {com.coms?.map((item) => (
               <SwiperSlide>
-                <ComCard style={{ marginTop: 10 }} com={item} changeComs={changeComs}/>
+                <ComCard
+                  style={{ marginTop: 10 }}
+                  com={item}
+                  changeComs={changeComs}
+                />
               </SwiperSlide>
-
             ))}
           </Swiper>
         </div>
@@ -104,13 +125,32 @@ const Communities = ({changePage, sendRefreshPage}) => {
         </div>
 
         <div>
-          <ComBottom changePage={changePage} sendRefreshPage= {sendRefreshPage}/>
+          <ComBottom
+            changePage={changePage}
+            sendRefreshPage={sendRefreshPage}
+          />
         </div>
       </section>
 
       <section>
-        <ComModel open={openComModel} handleClose={handleCloseComModel} changeComs={changeComs}/>
+        <ComModel
+          open={openComModel}
+          handleClose={handleCloseComModel}
+          changeComs={changeComs}
+        />
       </section>
+
+      <ToastContainer
+        position="bottom-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </div>
   );
 };

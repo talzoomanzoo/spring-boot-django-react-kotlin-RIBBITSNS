@@ -11,6 +11,7 @@ import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router";
+import { ToastContainer } from "react-toastify";
 import * as Yup from "yup";
 import { api } from "../../Config/apiConfig";
 import { findComById } from "../../Store/Community/Action";
@@ -27,7 +28,7 @@ import "../Home/MiddlePart/TwitMap.css";
 // const Maplocation = React.lazy(() => import("../Profile/Maplocation"));
 const Loading = React.lazy(() => import("../Profile/Loading/Loading"));
 
-const ComDetail = ({changePage, sendRefreshPage}) => {
+const ComDetail = ({ changePage, sendRefreshPage }) => {
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -54,6 +55,29 @@ const ComDetail = ({changePage, sendRefreshPage}) => {
   const [currentMarkers, setCurrentMarkers] = useState([]);
   const [hoveredMarkerIndex, setHoveredMarkerIndex] = useState(null);
   const [showLocation, setShowLocation] = useState(true);
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    const messageEventListener = (event) => {
+      const message = event.data;
+
+      if (event.source !== window.parent) {
+        // 메시지가 부모 창에서 온 것이 아닌 경우 처리하지 않음
+        return;
+      }
+
+      if (message.type === "navigate") {
+        // 메시지가 navigate 타입일 때만 경로 변경
+        navigate(message.path);
+      }
+    };
+
+    window.addEventListener("message", messageEventListener);
+
+    return () => {
+      window.removeEventListener("message", messageEventListener);
+    };
+  }, [navigate]);
 
   useEffect(() => {
     if (isLocationFormOpen && showLocation) {
@@ -112,7 +136,6 @@ const ComDetail = ({changePage, sendRefreshPage}) => {
         });
       }
     }
-  
   }, [sendRefreshPage, refreshTwits]);
 
   useEffect(() => {
@@ -278,7 +301,6 @@ const ComDetail = ({changePage, sendRefreshPage}) => {
   });
 
   const param = useParams();
-  const navigate = useNavigate();
   const handleBack = () => navigate(-1);
 
   const createComTweetRequest = (comId) => ({
@@ -478,18 +500,18 @@ const ComDetail = ({changePage, sendRefreshPage}) => {
         </section>
 
         <div className="flex mt-5 ml-auto" style={{ width: "200px" }}>
-        <Tooltip
-              title="게시글의 윤리수치를 분석해 그래프로 보여줍니다"
-              open={tooltipOpen}
-              onClose={() => setTooltipOpen(false)}
-              arrow
-            >
-              <InfoOutlinedIcon
-                fontSize="small"
-                style={{ cursor: "pointer" }}
-                onClick={() => setTooltipOpen(!tooltipOpen)}
-              />
-            </Tooltip>
+          <Tooltip
+            title="게시글의 윤리수치를 분석해 그래프로 보여줍니다"
+            open={tooltipOpen}
+            onClose={() => setTooltipOpen(false)}
+            arrow
+          >
+            <InfoOutlinedIcon
+              fontSize="small"
+              style={{ cursor: "pointer" }}
+              onClick={() => setTooltipOpen(!tooltipOpen)}
+            />
+          </Tooltip>
           {`${
             averageEthicRateMAX < 25
               ? "😄"
@@ -721,6 +743,18 @@ const ComDetail = ({changePage, sendRefreshPage}) => {
           <div>게시된 리빗이 없습니다.</div>
         )}
       </div>
+
+      <ToastContainer
+        position="bottom-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </div>
   );
 };

@@ -5,6 +5,7 @@ import ProgressBar from "@ramonak/react-progress-bar";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router";
+import { ToastContainer } from "react-toastify";
 import { findListById } from "../../Store/List/Action";
 import { findTwitsByListId } from "../../Store/Tweet/Action";
 import TwitCard from "../Home/MiddlePart/TwitCard/TwitCard";
@@ -50,6 +51,23 @@ const ListsDetail = ({ changePage, sendRefreshPage }) => {
 
     // ... (다른 코드)
   }, [twit.twits, auth.user]);
+
+  useEffect(() => {
+    const messageEventListener = (event) => {
+      const message = event.data;
+
+      if (message.type === "navigate") {
+        // 메시지가 navigate 타입일 때만 경로 변경
+        navigate(message.path);
+      }
+    };
+
+    window.addEventListener("message", messageEventListener);
+
+    return () => {
+      window.removeEventListener("message", messageEventListener);
+    };
+  }, [navigate]);
 
   return (
     <div>
@@ -128,6 +146,18 @@ const ListsDetail = ({ changePage, sendRefreshPage }) => {
           <div>게시된 리빗이 없습니다.</div>
         )}
       </div>
+
+      <ToastContainer
+        position="bottom-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </div>
   );
 };
