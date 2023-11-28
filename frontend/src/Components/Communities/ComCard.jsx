@@ -107,7 +107,7 @@ const ComCard = ({ changeComs, com, changePage }) => {
     return (
         <section className="space-x-5 py-3 rounded-full items-center justify-content">
             <section className="my-5 space-x-5 items-center justify-content mt-5" style={{ marginTop: 3 }}>
-                <div className="card">
+                <div className={`${com.privateMode ? (authCheck(com, auth) ? "card" : "card1") : "card"}`}>
                     {com.privateMode ? (authCheck(com, auth) ? <GroupsIcon className="cursor-pointer" onClick={openMembersModal} style={{ marginTop: 3, marginLeft: 10 }} /> : <LockIcon fontSize='small' />)
                         : (<GroupsIcon className="cursor-pointer" onClick={openMembersModal} style={{ marginTop: 3, marginLeft: 10 }} />)}
 
