@@ -46,27 +46,27 @@ const Lists = () => {
     };
   }, [navigate]);
 
-  return (
-    <div id="lists" className="space-y-5">
-      <section
-        className={`z-50 flex items-center sticky top-0 bg-opacity-95 ${
-          theme.currentTheme === "dark" ? " bg-[#0D0D0D]" : "bg-white"
-        }`}
-      >
-        <div className="z-50 flex items-center sticky top-0 space-x-5">
-          <KeyboardBackspaceIcon
-            className="cursor-pointer"
-            onClick={handleBack}
-          />
-          <h1 className="py-5 text-xl font-bold opacity-90 ml-5">리스트</h1>
-        </div>
-        <div
-          className="absolute right-0 cursor-pointer" // 오른쪽 정렬, 클릭 커서
-          onClick={handleOpenListsModel} //리스트 추가
-        >
-          <PlaylistAddIcon /> 리스트 추가
-        </div>
-      </section>
+    return (
+        <div id="lists" className="space-y-5">
+            <section
+                className={`z-50 flex items-center sticky top-0 bg-opacity-95`}
+            >
+                <div className="z-50 flex items-center sticky top-0 space-x-5">
+                    <KeyboardBackspaceIcon
+                        className="cursor-pointer"
+                        onClick={handleBack}
+                    />
+                    <h1 className="py-5 text-xl font-bold opacity-90 ml-5">
+                        리스트
+                    </h1>
+                </div>
+                <div
+                    className="absolute right-0 cursor-pointer" // 오른쪽 정렬, 클릭 커서
+                    onClick={handleOpenListsModel} //리스트 추가
+                >
+                    <PlaylistAddIcon /> 리스트 추가
+                </div>
+            </section>
 
       <section>
         <ListsModel

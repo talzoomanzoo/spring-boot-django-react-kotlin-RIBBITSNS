@@ -459,16 +459,15 @@ const HomeSection = ({ sendRefreshPage, changePage }) => {
   return (
     <div className="space-y-5">
       <section
-        className={`sticky top-0 ${
-          theme.currentTheme === "dark" ? " bg-[#0D0D0D]" : "bg-white"
-        }`}
+        className={`sticky top-0`}
         style={{ zIndex: "100" }}
       >
         <h1 className="py-5 text-xl font-bold opacity-90 ml-5 flex">
           홈
-          <p className="flex" style={{ marginLeft: "70%" }}>
+          <p className="flex" style={{ marginLeft: "68%" }}>
             {/* Information Icon with Tooltip */}
             <Tooltip
+              sx={{ marginTop: "2%", marginRight: "1%"}}
               title="게시글의 윤리수치를 분석해 그래프로 보여줍니다"
               open={tooltipOpen}
               onClose={() => setTooltipOpen(false)}

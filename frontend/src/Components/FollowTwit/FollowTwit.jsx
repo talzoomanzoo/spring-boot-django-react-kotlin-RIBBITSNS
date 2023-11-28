@@ -37,14 +37,9 @@ const FollowTwit = ({ changePage, sendRefreshPage }) => {
 
   return (
     <div>
-      <section
-        className={`z-50 flex items-center sticky top-0 
-        ${
-          theme.currentTheme === "light" ? "bg-white" : "bg-[#0D0D0D]"
-          // theme, 즉 themeReducer의 initialState 속성의 currentTheme 변경
-          // 속성이 light이면,전자 아니면 후자
-        } bg-opacity-95`}
-      >
+            <section
+                className={`z-50 flex items-center sticky top-0 bg-opacity-95`}
+            >
         <KeyboardBackspaceIcon
           className="cursor-pointer"
           onClick={handleBack}

@@ -17,7 +17,7 @@ const ViewTop = ({sendRefreshPage, changePage}) => {
         <div>
             {twit?.topViewsTwits && twit.topViewsTwits?.length > 0 ?
                 (
-                    twit.topViewsTwits?.map((item) => <TwitCard twit={item} key={item.id} changePage={changePage}/>)
+                    twit.topViewsTwits?.map((item) => <TwitCard twit={item} key={item.id} changePage={changePage} sendRefreshPage={sendRefreshPage}/>)
                 ) :
                 (
                     <div>게시된 리빗이 없습니다.</div>

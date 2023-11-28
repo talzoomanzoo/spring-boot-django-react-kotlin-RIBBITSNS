@@ -127,16 +127,16 @@ const Chat = React.memo(() => {
 
   const [userList, setUserList] = useState([]);
 
-  useEffect(() => {
-    //웹소켓 연결
-    const socket = new SockJS("http://localhost:8080/ws");
-    const stompClient = Stomp.over(socket);
-    const stoconnect = stompClient.connect({}, () => {
-      setStompClient(stompClient);
-    });
+  // useEffect(() => {
+  //   //웹소켓 연결
+  //   const socket = new SockJS("http://localhost:8080/ws");
+  //   const stompClient = Stomp.over(socket);
+  //   const stoconnect = stompClient.connect({}, () => {
+  //     setStompClient(stompClient);
+  //   });
 
-    console.log("stoconnect: ", stoconnect);
-  }, []);
+  //   console.log("stoconnect: ", stoconnect);
+  // }, []);
 
   const createRoom = () => {
     if (!roomName) {
@@ -249,7 +249,7 @@ const Chat = React.memo(() => {
       setStompClient(stompClient);
 
       const subscription = stompClient.subscribe(
-        `/topic/${selectedRoom}`,
+        `/topic/${selectedRoomId}`,
         onMessageReceived
       );
 
@@ -276,7 +276,7 @@ const Chat = React.memo(() => {
       };
 
       stompClient.send(
-        `/app/savechat/${selectedRoom}`,
+        `/app/savechat/${selectedRoomId}`,
         {},
         JSON.stringify(chatMessage)
       );
@@ -306,9 +306,10 @@ const Chat = React.memo(() => {
   };
 
   useEffect(() => {
-    if (stompClient && selectedRoom) {
+    if (stompClient && selectedRoomId) {
+      //채팅이 오는 것을 받는 함수(받을때)
       const subscription = stompClient.subscribe(
-        `/topic/${selectedRoom}`,
+        `/topic/${selectedRoomId}`,
         (message) => {
           const chatMessage = JSON.parse(message.body);
           setChatHistory((prevChatHistory) => [
@@ -451,9 +452,7 @@ const Chat = React.memo(() => {
   return (
     <div>
       <section
-        className={`z-50 flex items-center sticky top-0 bg-opacity-95 ${
-          theme.currentTheme === "dark" ? " bg-[#0D0D0D]" : "bg-white"
-        }`}
+        className={`z-50 flex items-center sticky top-0 bg-opacity-95`}
       >
         <div className="z-50 flex items-center sticky top-0 space-x-5">
           <KeyboardBackspaceIcon

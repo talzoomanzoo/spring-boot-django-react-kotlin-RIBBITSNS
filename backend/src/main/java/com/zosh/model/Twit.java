@@ -56,7 +56,6 @@ public class Twit {
 
     @Column(nullable = false)
     private String content;
- 
     @JsonIgnore
     @OneToMany(cascade = CascadeType.DETACH)
     //mappedBy = "twit", 
@@ -90,8 +89,6 @@ public class Twit {
     @Column(nullable = false)
     private LocalDateTime createdAt;
     private LocalDateTime retwitAt;
-    
-    // @Column(nullable = false)
     private LocalDateTime editedAt;
     
     @Column(nullable = false)
