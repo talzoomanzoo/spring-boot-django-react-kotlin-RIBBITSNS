@@ -19,7 +19,7 @@ REST_API_KEY = '472d2c640e9e91717a08a4de64af8974'
 def t2i(prompt, negative_prompt):
     try:
         r = requests.post(
-            'https://api.kakaobrain.com/v2/inference/karlo/t2i',
+            '',
             json = {
                 'prompt': prompt,
                 'negative_prompt': negative_prompt
@@ -42,7 +42,7 @@ client_secret = "K1AtAfkobv" # 개발자센터에서 발급받은 Client Secret 
 def translation(text):
     encText = urllib.parse.quote(text)
     data = "source=ko&target=en&text=" + encText
-    url = "https://openapi.naver.com/v1/papago/n2mt"
+    url = ""
     request = urllib.request.Request(url)
     request.add_header("X-Naver-Client-Id",client_id)
     request.add_header("X-Naver-Client-Secret",client_secret)
