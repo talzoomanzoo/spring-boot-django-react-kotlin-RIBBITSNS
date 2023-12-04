@@ -2,7 +2,7 @@
 SpringBoot + Django + React + Kotlin 을 활용한 웹 및 안드로이드앱 SNS 서비스: RIBBIT
 
 ## 💻 프로젝트 소개
-* 트위터를 참고하여 만든 SNS 서비스입니다.
+* 비트교육센터 AI기반 웹서비스 응용SW 개발자 양성과정 3회차: 트위터를 참고하여 만든 SNS 서비스입니다.
 - 도메인: https://www.ribbit1234.com/
 <br>
 
