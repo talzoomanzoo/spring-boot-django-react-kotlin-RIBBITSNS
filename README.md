@@ -41,6 +41,5 @@ SpringBoot + Django + React + Kotlin 을 활용한 웹 및 안드로이드앱 SN
 ## 📓 참고 코드 및 문헌
  - 카카오브레인의 텍스트 기반 이미지 생성 기술 소개, 카카오브레인 (2022). https://www.youtube.com/watch?v=tar1ZzeTRTY
  - 텍스트 윤리검증 데이터, AI Hub (2021). https://www.aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&aihubDataSe=realm&dataSetSn=558.
- - Building A Twitter Full Stack Clone With Spring Boot, React, MySQL, MUI Tailwind  And Formik, Code With Zosh (2023). https://www.youtube.com/watch?v=8vnWmtUoyLE&list=PL7Oro2kvkIzIyKI6dOsc19mUwa58WTXaV
- - 참조 코드 https://cosmofeed.com/vp/654389e13a47e3001e5f2e19
+ - Building A Twitter Full Stack Clone With Spring Boot, React, MySQL, MUI Tailwind  And Formik, Code With Zosh (2023). https://www.youtube.com/watch?v=8vnWmtUoyLE&list=PL7Oro2kvkIzIyKI6dOsc19mUwa58WTXaV (참조 코드 https://cosmofeed.com/vp/654389e13a47e3001e5f2e19)
  - 더북 딥러닝 파이토치 교과서 (2022). https://thebook.io/080289/
