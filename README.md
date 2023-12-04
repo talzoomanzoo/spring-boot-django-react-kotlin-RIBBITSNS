@@ -10,13 +10,13 @@ SpringBoot + Django + React + Kotlin 을 활용한 웹 및 안드로이드앱 SN
 * 23.09.11일 - 23.12.11일
 
 ### 👤 멤버 구성 및 주요 역할
- -(웹 개발)
-   -Julian-Hwang: Bert AI 모델 학습 및 적용, Karlo 이미지 생성 API 적용, 웹소켓 채팅 기능 적용, 도메인 배포, 포트폴리오 작성
-   -kDyeong: KakaoMaps API 적용, 프론트엔드 기능 최적화, 백엔드 서버 엔티티 및 리포지토리 수정
-   -Rohjeonghyun: 프론트엔드 UI 및 로고, 사진 디자인
-   -talzoomanzoo: 프론트엔드 렌더링 최적화 및 서버 간 통신 관리, 백엔드 서버 전반, PPT제작
-  -(앱 개발)
-   -hippoddung: 안드로이드 웹 뷰 전반, 스프링부트 엔티티 수정
+ - (웹 개발)
+   - Julian-Hwang: Bert AI 모델 학습 및 적용, Karlo 이미지 생성 API 적용, 웹소켓 채팅 기능 적용, 도메인 배포, 포트폴리오 작성
+   - kDyeong: KakaoMaps API 적용, 프론트엔드 기능 최적화, 백엔드 서버 엔티티 및 리포지토리 수정
+   - Rohjeonghyun: 프론트엔드 UI 및 로고, 사진 디자인
+   - talzoomanzoo: 프론트엔드 렌더링 최적화 및 서버 간 통신 관리, 백엔드 서버 전반, PPT제작
+  - (앱 개발)
+   - hippoddung: 안드로이드 웹 뷰 전반, 스프링부트 엔티티 수정
 
 ### ⚙️ 개발 환경, 도구, 사용 기술
 - **개발 환경**: Windows10, Ubuntu, Android, AWS(EC2, RDS, Route53)
