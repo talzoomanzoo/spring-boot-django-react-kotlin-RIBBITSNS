@@ -25,22 +25,22 @@ SpringBoot + Django + React + Kotlin 을 활용한 웹 및 안드로이드앱 SN
 - **기술 스택** : React, Axios, Redux, Toastify, React-Router, Tailwind, MUI, Node, Jetpack Compose, Retrofit2, Django, Pytorch, Bert, SpringBoot, Spring Data JPA, Spring Security, Stomp, WebSocket, MySQL, Nginx, Gunicorn
 
 ## 📌 상세 기능
- - 1) 게시글 (리빗) 기능
- - 2) 리스트 기능
- - 3) 커뮤니티 기능
- - 4) 알림 기능
- - 5) 채팅 기능
- - 6) 로그인 기능
+ - 게시글 (리빗) 기능
+ - 리스트 기능
+ - 커뮤니티 기능
+ - 알림 기능
+ - 채팅 기능
+ - 로그인 기능
   
 ## 🛠 설계 주안점
- - 1) Springboot, React, Kotlin을 활용한 웹 및 앱 상의 Restful한 통신 구현
- - 2) Django 프레임워크를 이용하여 Karlo 이미지 생성 ai, BERT 윤리수치 ai 서비스 분리하여 구축
- - 3) Https 활용 및 JWT 사용을 통한 보안 강화
- - 4) AWS, Nginx, Gunicorn을 사용한 도메인 배포
+ - Springboot, React, Kotlin을 활용한 웹 및 앱 상의 Restful한 통신 구현
+ - Django 프레임워크를 이용하여 Karlo 이미지 생성 ai, BERT 윤리수치 ai 서비스 분리하여 구축
+ - Https 활용 및 JWT 사용을 통한 보안 강화
+ - AWS, Nginx, Gunicorn을 사용한 도메인 배포
    
 ## 📓 참고 코드 및 문헌
- - 1) 카카오브레인의 텍스트 기반 이미지 생성 기술 소개, 카카오브레인 (2022). https://www.youtube.com/watch?v=tar1ZzeTRTY
- - 2) 텍스트 윤리검증 데이터, AI Hub (2021). https://www.aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&aihubDataSe=realm&dataSetSn=558.
- - 3) Building A Twitter Full Stack Clone With Spring Boot, React, MySQL, MUI Tailwind  And Formik, Code With Zosh (2023). https://www.youtube.com/watch?v=8vnWmtUoyLE&list=PL7Oro2kvkIzIyKI6dOsc19mUwa58WTXaV
-      -참조 코드 https://cosmofeed.com/vp/654389e13a47e3001e5f2e19
- - 4) 더북 딥러닝 파이토치 교과서 (2022). https://thebook.io/080289/
+ - 카카오브레인의 텍스트 기반 이미지 생성 기술 소개, 카카오브레인 (2022). https://www.youtube.com/watch?v=tar1ZzeTRTY
+ - 텍스트 윤리검증 데이터, AI Hub (2021). https://www.aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&aihubDataSe=realm&dataSetSn=558.
+ - Building A Twitter Full Stack Clone With Spring Boot, React, MySQL, MUI Tailwind  And Formik, Code With Zosh (2023). https://www.youtube.com/watch?v=8vnWmtUoyLE&list=PL7Oro2kvkIzIyKI6dOsc19mUwa58WTXaV
+ - 참조 코드 https://cosmofeed.com/vp/654389e13a47e3001e5f2e19
+ - 더북 딥러닝 파이토치 교과서 (2022). https://thebook.io/080289/
