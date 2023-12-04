@@ -3,7 +3,7 @@ SpringBoot + Django + React + Kotlin 을 활용한 웹 및 안드로이드앱 SN
 
 ## 💻 프로젝트 소개
 * 트위터를 참고하여 만든 SNS 서비스입니다.
-* 도메인: https://www.ribbit1234.com/
+- 도메인: https://www.ribbit1234.com/
 <br>
 
 ## ⏰ 개발 기간
