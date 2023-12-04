@@ -15,7 +15,7 @@ SpringBoot + Django + React + Kotlin 을 활용한 웹 및 안드로이드앱 SN
    - kDyeong: KakaoMaps API 적용, 프론트엔드 기능 최적화, 백엔드 서버 엔티티 및 리포지토리 수정
    - Rohjeonghyun: 프론트엔드 UI 및 로고, 사진 디자인
    - talzoomanzoo: 프론트엔드 렌더링 최적화 및 서버 간 통신 관리, 백엔드 서버 전반, PPT제작
-  - (앱 개발)
+ - (앱 개발)
    - hippoddung: 안드로이드 웹 뷰 전반, 스프링부트 엔티티 수정
 
 ### ⚙️ 개발 환경, 도구, 사용 기술
