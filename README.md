@@ -1,4 +1,4 @@
-# spring-boot-react-kotlin-RIBBITSNS
+# spring-boot-django-react-kotlin-RIBBITSNS
 SpringBoot + Django + React + Kotlin 을 활용한 웹 및 안드로이드앱 SNS 서비스: RIBBIT
 
 ## 💻 프로젝트 소개
