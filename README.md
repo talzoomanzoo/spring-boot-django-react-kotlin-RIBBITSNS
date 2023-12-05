@@ -2,8 +2,10 @@
 SpringBoot + Django + React + Kotlin 을 활용한 웹 및 안드로이드앱 SNS 서비스: RIBBIT
 
 ## 💻 프로젝트 소개
-* 비트교육센터 AI기반 웹서비스 응용SW 개발자 양성과정 3회차: 트위터를 참고하여 만든 SNS 서비스입니다.
+* 비트교육센터 AI기반 웹서비스 응용SW 개발자 양성과정 3회차: 가상캐릭터 생성 및 윤리성 판별 AI를 활용한 웹 및 앱 SNS 서비스
+* 23년도 KDT 벤처스타트업아카데미 통합프로젝트발표회·토크콘서트: 한국소프트웨어산업협회장상 우수상 수상작 (고용노동부, KOSA 한국소프트웨어산업현회 주최)
 - 도메인: https://www.ribbit1234.com/
+- 웹 및 앱 시연 영상: https://drive.google.com/file/d/1E1qgfPoOpD3sXq8WlT3Jp4KZQGauSyw8/view?usp=sharing
 <br>
 
 ## ⏰ 개발 기간
@@ -25,6 +27,8 @@ SpringBoot + Django + React + Kotlin 을 활용한 웹 및 안드로이드앱 SN
 - **기술 스택** : React, Axios, Redux, Toastify, React-Router, Tailwind, MUI, Node, Jetpack Compose, Retrofit2, Django, Pytorch, Bert, SpringBoot, Spring Data JPA, Spring Security, Stomp, WebSocket, MySQL, Nginx, Gunicorn, Docker
 
 ## 📌 상세 기능
+ - 윤리 수치 AI 기능
+ - 프로필 이미지 생성 AI 기능
  - 게시글 (리빗) 기능
  - 리스트 기능
  - 커뮤니티 기능
@@ -36,7 +40,7 @@ SpringBoot + Django + React + Kotlin 을 활용한 웹 및 안드로이드앱 SN
  - Springboot, React, Kotlin을 활용한 웹 및 앱 상의 Restful한 통신 구현
  - Django 프레임워크를 이용하여 Karlo 이미지 생성 ai, BERT 윤리수치 ai 서비스 분리하여 구축
  - Https 활용 및 JWT 사용을 통한 보안 강화
- - AWS, Nginx, Gunicorn을 사용한 도메인 배포
+ - AWS, Nginx, Gunicorn, Docker를 사용한 도메인 배포
    
 ## 📓 참고 코드 및 문헌
  - 카카오브레인의 텍스트 기반 이미지 생성 기술 소개, 카카오브레인 (2022). https://www.youtube.com/watch?v=tar1ZzeTRTY
