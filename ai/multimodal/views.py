@@ -14,7 +14,7 @@ from PIL import Image
 from django.views.decorators.csrf import csrf_exempt
 import sys
 import urllib.request
-REST_API_KEY = '472d2c640e9e91717a08a4de64af8974'
+REST_API_KEY = ''
 
 def t2i(prompt, negative_prompt):
     try:
@@ -36,8 +36,8 @@ def t2i(prompt, negative_prompt):
         # 오류 처리: 오류 메시지 출력
         return None
 
-client_id = "2TW_ZaDKuPgyUdP484ax" # 개발자센터에서 발급받은 Client ID 값
-client_secret = "K1AtAfkobv" # 개발자센터에서 발급받은 Client Secret 값
+client_id = "" # 개발자센터에서 발급받은 Client ID 값
+client_secret = "" # 개발자센터에서 발급받은 Client Secret 값
 
 def translation(text):
     encText = urllib.parse.quote(text)
