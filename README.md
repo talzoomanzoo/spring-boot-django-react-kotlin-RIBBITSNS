@@ -3,7 +3,7 @@ SpringBoot + Django + React + Kotlin 을 활용한 웹 및 안드로이드앱 SN
 
 ## 💻 프로젝트 소개
 * 비트교육센터 AI기반 웹서비스 응용SW 개발자 양성과정 3회차: 가상캐릭터 생성 및 윤리성 판별 AI를 활용한 웹 및 앱 SNS 서비스
-* 23년도 KDT 벤처스타트업아카데미 통합프로젝트발표회·토크콘서트: 한국소프트웨어산업협회장상 우수상 수상작 (고용노동부, KOSA 한국소프트웨어산업현회 주최)
+* 23년도 KDT 벤처스타트업아카데미 통합프로젝트발표회·토크콘서트: 한국소프트웨어산업협회장상 우수상 수상작 (고용노동부, KOSA 한국소프트웨어산업협회 주최)
 - 도메인: https://www.ribbit1234.com/
 - 웹 및 앱 시연 영상: https://drive.google.com/file/d/1E1qgfPoOpD3sXq8WlT3Jp4KZQGauSyw8/view?usp=sharing
 <br>
